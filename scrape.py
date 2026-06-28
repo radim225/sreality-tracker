@@ -225,6 +225,14 @@ def fetch_comparables():
             print(f"  ...{i}/{len(comparables)}", file=sys.stderr)
         time.sleep(0.15)
 
+    stale = [c for c in comparables if not c.get("active")]
+    if stale:
+        print(
+            f"Dropping {len(stale)} listing(s) that went inactive between search and detail fetch",
+            file=sys.stderr,
+        )
+    comparables = [c for c in comparables if c.get("active")]
+
     apply_approx_locations(comparables)
     return comparables
 
