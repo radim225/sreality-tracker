@@ -3,7 +3,12 @@ name: Scrape Sreality
 on:
   schedule:
     - cron: "0 */8 * * *"
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      add_url:
+        description: "Sreality listing URL to add to tracked.json before scraping"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -32,6 +37,10 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Add tracked listing (if requested)
+        if: github.event.inputs.add_url != ''
+        run: python add_tracked.py "${{ github.event.inputs.add_url }}"
+
       - name: Run scraper
         run: python scrape.py
 
@@ -42,7 +51,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add snapshots latest_snapshot.json last_changes.json dashboard.html index.html
+          git add snapshots latest_snapshot.json last_changes.json changes_history.json dashboard.html index.html tracked.json
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else

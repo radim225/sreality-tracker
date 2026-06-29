@@ -18,9 +18,8 @@ SNAPSHOTS_DIR = ROOT / "snapshots"
 DASHBOARD_PATH = ROOT / "dashboard.html"
 CHANGES_PATH = ROOT / "last_changes.json"
 LATEST_SNAPSHOT_PATH = ROOT / "latest_snapshot.json"
-
-SEED_URL = "https://www.sreality.cz/detail/pronajem/byt/1+kk/praha-vysocany-pod-harfou/3182461004"
-SEED_ID = 3182461004
+TRACKED_PATH = ROOT / "tracked.json"
+CHANGES_HISTORY_PATH = ROOT / "changes_history.json"
 
 # Sreality category_sub_cb codes (from /hledani estatesFilterPage)
 DISPOSITION_CODES = {2: "1+kk", 4: "2+kk"}
@@ -28,6 +27,13 @@ TRANSACTION_TYPES = ["pronajem", "prodej"]  # rent, sale
 SEARCH_REGION_TEXT = "Vysočany"  # free-text resolved server-side to the ward/locality
 MAX_IMAGES_PER_LISTING = 5
 MAX_DESCRIPTION_CHARS = 1200
+MAX_HISTORY_EVENTS = 300
+
+# Sreality's "estate" payload gives base rent (price) and service fees
+# (params.costOfLiving) separately, but never itemizes electricity -- it's
+# folded into "energie"/"služby" inconsistently or omitted entirely. We add a
+# single uniform estimate so every rental has a comparable all-in total.
+ELECTRICITY_ESTIMATE_CZK = 1500
 
 HEADERS = {
     "User-Agent": (
@@ -105,12 +111,51 @@ def extract_thumb(images_field):
     return bases[0] + THUMB_SUFFIX if bases else None
 
 
-def fetch_seed():
-    next_data, status = fetch_next_data(SEED_URL)
+def parse_fees_czk(raw):
+    try:
+        v = int(raw)
+        return v if v > 0 else None
+    except (TypeError, ValueError):
+        return None
+
+
+def cost_breakdown(price_czk, fees_czk, transaction_type):
+    """Returns (fees_czk, fees_missing, electricity_czk, electricity_estimated,
+    total_czk) for a listing. Only rentals (pronajem) get an electricity
+    estimate and a fees+electricity total; sales just total to the purchase
+    price."""
+    fees_missing = fees_czk is None
+    if transaction_type != "pronajem":
+        return fees_czk, fees_missing, None, False, price_czk
+    electricity_czk = ELECTRICITY_ESTIMATE_CZK
+    total_czk = None
+    if price_czk is not None:
+        total_czk = price_czk + (fees_czk or 0) + electricity_czk
+    return fees_czk, fees_missing, electricity_czk, True, total_czk
+
+
+def garage_parking_from_params(params):
+    garage = params.get("garage")
+    garage = bool(garage) if garage is not None else None
+    parking = params.get("parkingLots")
+    if parking is None:
+        parking = params.get("parking")
+    parking = bool(parking) if parking is not None else None
+    return garage, parking
+
+
+def load_tracked_config():
+    if not TRACKED_PATH.exists():
+        return []
+    return json.loads(TRACKED_PATH.read_text())
+
+
+def fetch_tracked(url, listing_id):
+    next_data, status = fetch_next_data(url)
     if next_data is None:
         return {
-            "id": SEED_ID,
-            "url": SEED_URL,
+            "id": listing_id,
+            "url": url,
             "active": False,
             "fetched_at": now_iso(),
             "error": f"HTTP {status}",
@@ -118,8 +163,8 @@ def fetch_seed():
     data, _ = get_query_data(next_data, "estate")
     if data is None:
         return {
-            "id": SEED_ID,
-            "url": SEED_URL,
+            "id": listing_id,
+            "url": url,
             "active": False,
             "fetched_at": now_iso(),
             "error": "estate query missing from page",
@@ -129,28 +174,39 @@ def fetch_seed():
     seller = data.get("seller") or {}
     premise = data.get("premise") or {}
     rent_czk = data.get("priceCzk")
-    fees_czk = params.get("costOfLiving")
-    try:
-        fees_czk = int(fees_czk) if fees_czk is not None else None
-    except (TypeError, ValueError):
-        fees_czk = None
-    total_czk = None
-    if rent_czk is not None and fees_czk is not None:
-        total_czk = rent_czk + fees_czk
+    # categoryTypeCb.name is a Czech display string ("Pronájem"/"Prodej");
+    # normalize via its numeric code (1=sale, 2=rent) to match the ASCII
+    # "pronajem"/"prodej" values used everywhere else (comparables, URLs).
+    type_code = (data.get("categoryTypeCb") or {}).get("value")
+    transaction_type = "pronajem" if type_code == 2 else "prodej"
+    fees_czk = parse_fees_czk(params.get("costOfLiving"))
+    fees_czk, fees_missing, electricity_czk, electricity_estimated, total_czk = (
+        cost_breakdown(rent_czk, fees_czk, transaction_type)
+    )
+    garage, parking = garage_parking_from_params(params)
+    floor_area_sqm = params.get("floorArea")
+    price_czk_per_sqm = data.get("priceCzkPerSqM")
+    if transaction_type == "pronajem" and total_czk and floor_area_sqm:
+        price_czk_per_sqm = round(total_czk / floor_area_sqm)
 
     return {
-        "id": SEED_ID,
-        "url": SEED_URL,
+        "id": listing_id,
+        "url": url,
         "active": True,
         "fetched_at": now_iso(),
         "title": data.get("name"),
         "disposition": (data.get("categorySubCb") or {}).get("name"),
-        "transaction_type": (data.get("categoryTypeCb") or {}).get("name"),
+        "transaction_type": transaction_type,
         "rent_czk": rent_czk,
         "fees_czk": fees_czk,
+        "fees_missing": fees_missing,
+        "electricity_czk": electricity_czk,
+        "electricity_estimated": electricity_estimated,
         "total_czk": total_czk,
-        "price_czk_per_sqm": data.get("priceCzkPerSqM"),
-        "floor_area_sqm": params.get("floorArea"),
+        "garage": garage,
+        "parking": parking,
+        "price_czk_per_sqm": price_czk_per_sqm,
+        "floor_area_sqm": floor_area_sqm,
         "floor_number": params.get("floorNumber"),
         "floors_total": params.get("floors"),
         "locality": format_locality(locality),
@@ -278,12 +334,22 @@ def parse_comparable(r, tx_type):
         "thumb": extract_thumb(r.get("images")),
         "description": None,
         "seller_name": None,
+        # Fees/electricity/garage need the detail page (not in search payload);
+        # filled in by enrich_comparable. price_czk_per_sqm above is rent-only
+        # until enrichment recomputes it against the all-in total for rentals.
+        "fees_czk": None,
+        "fees_missing": True,
+        "electricity_czk": None,
+        "electricity_estimated": False,
+        "total_czk": price_czk if price_czk else None,
+        "garage": None,
+        "parking": None,
     }
 
 
 def enrich_comparable(comp):
-    """Fetch the full detail page for description/seller/photos. GPS and a
-    thumbnail already came from the search payload, so this is best-effort."""
+    """Fetch the full detail page for description/seller/photos/fees. GPS and
+    a thumbnail already came from the search payload, so this is best-effort."""
     next_data, status = fetch_next_data(comp["url"])
     if next_data is None:
         if status == 404:
@@ -309,6 +375,23 @@ def enrich_comparable(comp):
         comp["floor_area_sqm"] = params.get("floorArea")
     comp["floor_number"] = params.get("floorNumber")
     comp["floors_total"] = params.get("floors")
+
+    fees_czk = parse_fees_czk(params.get("costOfLiving"))
+    fees_czk, fees_missing, electricity_czk, electricity_estimated, total_czk = (
+        cost_breakdown(comp.get("price_czk"), fees_czk, comp.get("transaction_type"))
+    )
+    comp["fees_czk"] = fees_czk
+    comp["fees_missing"] = fees_missing
+    comp["electricity_czk"] = electricity_czk
+    comp["electricity_estimated"] = electricity_estimated
+    comp["total_czk"] = total_czk
+    comp["garage"], comp["parking"] = garage_parking_from_params(params)
+    if (
+        comp.get("transaction_type") == "pronajem"
+        and total_czk
+        and comp.get("floor_area_sqm")
+    ):
+        comp["price_czk_per_sqm"] = round(total_czk / comp["floor_area_sqm"])
 
 
 def apply_approx_locations(comparables):
@@ -349,10 +432,56 @@ def load_latest_snapshot():
     return json.loads(LATEST_SNAPSHOT_PATH.read_text())
 
 
+def load_changes_history():
+    if not CHANGES_HISTORY_PATH.exists():
+        return []
+    return json.loads(CHANGES_HISTORY_PATH.read_text())
+
+
+def update_changes_history(changes):
+    """Accumulates new/removed/price-change events across runs (capped) so the
+    dashboard can show a scrollable history, not just the latest diff."""
+    history = load_changes_history()
+    at = changes["generated_at"]
+    new_events = []
+    for tc in changes.get("tracked_price_changes", []):
+        new_events.append(
+            {
+                "at": at,
+                "kind": "price_change",
+                "id": tc["id"],
+                "old_total_czk": tc.get("old_total_czk"),
+                "new_total_czk": tc.get("new_total_czk"),
+                "item": None,
+            }
+        )
+    for c in changes.get("price_changes", []):
+        new_events.append(
+            {
+                "at": at,
+                "kind": "price_change",
+                "id": c["id"],
+                "old_price_czk": c.get("old_price_czk"),
+                "new_price_czk": c.get("new_price_czk"),
+                "old_total_czk": c.get("old_total_czk"),
+                "new_total_czk": c.get("new_total_czk"),
+                "item": c,
+            }
+        )
+    for c in changes.get("new_listings", []):
+        new_events.append({"at": at, "kind": "new", "id": c["id"], "item": c})
+    for c in changes.get("newly_inactive", []):
+        new_events.append({"at": at, "kind": "removed", "id": c["id"], "item": c})
+
+    history = (new_events + history)[:MAX_HISTORY_EVENTS]
+    CHANGES_HISTORY_PATH.write_text(json.dumps(history, ensure_ascii=False, indent=2))
+    return history
+
+
 def diff_snapshots(prev, curr):
     changes = {
         "generated_at": now_iso(),
-        "seed_price_change": None,
+        "tracked_price_changes": [],
         "newly_inactive": [],
         "new_listings": [],
         "price_changes": [],
@@ -360,42 +489,58 @@ def diff_snapshots(prev, curr):
     if prev is None:
         return changes
 
-    prev_seed = prev.get("seed") or {}
-    curr_seed = curr.get("seed") or {}
-    if prev_seed.get("total_czk") != curr_seed.get("total_czk") and curr_seed.get(
-        "active"
-    ):
-        changes["seed_price_change"] = {
-            "id": SEED_ID,
-            "old_total_czk": prev_seed.get("total_czk"),
-            "new_total_czk": curr_seed.get("total_czk"),
-        }
+    # Snapshots from before the cost-breakdown feature don't have
+    # "electricity_estimated" -- their total_czk meant rent+fees only. Comparing
+    # those against the new all-in total would report every rental as a "price
+    # change" on this one transition run. Fall back to comparing base price for
+    # any record that predates the new schema.
+    def cmp_value(item):
+        if item.get("total_czk") is not None and "electricity_estimated" in item:
+            return item["total_czk"]
+        return item.get("price_czk")
+
+    prev_tracked_by_id = {t["id"]: t for t in prev.get("tracked", [])}
+    for curr_t in curr.get("tracked", []):
+        prev_t = prev_tracked_by_id.get(curr_t["id"])
+        if (
+            prev_t is not None
+            and cmp_value(prev_t) != cmp_value(curr_t)
+            and curr_t.get("active")
+        ):
+            changes["tracked_price_changes"].append(
+                {
+                    "id": curr_t["id"],
+                    "old_total_czk": prev_t.get("total_czk"),
+                    "new_total_czk": curr_t.get("total_czk"),
+                }
+            )
 
     prev_by_id = {c["id"]: c for c in prev.get("comparables", [])}
     curr_by_id = {c["id"]: c for c in curr.get("comparables", [])}
 
     for cid, old in prev_by_id.items():
         if cid not in curr_by_id:
-            changes["newly_inactive"].append(
-                {"id": cid, "title": old.get("title"), "url": old.get("url")}
-            )
+            changes["newly_inactive"].append({**old, "removed_since": changes["generated_at"]})
 
     for cid, new in curr_by_id.items():
         old = prev_by_id.get(cid)
         if old is None:
-            changes["new_listings"].append(
-                {"id": cid, "title": new.get("title"), "url": new.get("url")}
-            )
-        elif old.get("price_czk") != new.get("price_czk"):
-            changes["price_changes"].append(
-                {
-                    "id": cid,
-                    "title": new.get("title"),
-                    "old_price_czk": old.get("price_czk"),
-                    "new_price_czk": new.get("price_czk"),
-                    "url": new.get("url"),
-                }
-            )
+            changes["new_listings"].append({**new, "first_seen": changes["generated_at"]})
+        else:
+            # Compare on total cost (rent+fees+electricity for rentals), not
+            # just base price, so a fee change shows up as a price change too.
+            old_cmp = cmp_value(old)
+            new_cmp = cmp_value(new)
+            if old_cmp != new_cmp:
+                changes["price_changes"].append(
+                    {
+                        **new,
+                        "old_price_czk": old.get("price_czk"),
+                        "new_price_czk": new.get("price_czk"),
+                        "old_total_czk": old.get("total_czk"),
+                        "new_total_czk": new.get("total_czk"),
+                    }
+                )
     return changes
 
 
@@ -434,67 +579,104 @@ def fmt_czk(v):
 
 
 def build_change_note(item_id, changes):
-    sc = changes.get("seed_price_change")
-    if sc and sc.get("id") == item_id:
-        return f"Price changed: {fmt_czk(sc['old_total_czk'])} → {fmt_czk(sc['new_total_czk'])}"
+    for tc in changes.get("tracked_price_changes", []):
+        if tc.get("id") == item_id:
+            return f"Price changed: {fmt_czk(tc['old_total_czk'])} → {fmt_czk(tc['new_total_czk'])}"
     for c in changes.get("price_changes", []):
         if c["id"] == item_id:
-            return f"Price changed: {fmt_czk(c['old_price_czk'])} → {fmt_czk(c['new_price_czk'])}"
+            return f"Price changed: {fmt_czk(c['old_total_czk'])} → {fmt_czk(c['new_total_czk'])}"
     for c in changes.get("new_listings", []):
         if c["id"] == item_id:
             return "New listing since last check"
     return None
 
 
-def build_seed_item(seed, changes):
+def build_tracked_item(tracked, changes):
+    change_note = build_change_note(tracked["id"], changes)
+    if not change_note and not tracked.get("active") and tracked.get("last_active_at"):
+        change_note = f"No longer listed — showing last known details from {tracked['last_active_at']}"
     return {
-        "id": seed["id"],
+        "id": tracked["id"],
         "is_seed": True,
-        "title": seed.get("title"),
-        "disposition": seed.get("disposition"),
+        "title": tracked.get("title"),
+        "disposition": tracked.get("disposition"),
         "transaction_type": "pronajem",
-        "price_czk": seed.get("rent_czk"),
-        "total_czk": seed.get("total_czk"),
-        "fees_czk": seed.get("fees_czk"),
-        "floor_area_sqm": seed.get("floor_area_sqm"),
-        "price_czk_per_sqm": seed.get("price_czk_per_sqm"),
-        "floor_number": seed.get("floor_number"),
-        "floors_total": seed.get("floors_total"),
-        "locality": seed.get("locality"),
-        "city_part": seed.get("city_part"),
-        "street": seed.get("street"),
-        "pod_harfou": True,
-        "description": seed.get("description"),
-        "seller_name": seed.get("seller_name"),
-        "images": seed.get("images") or [],
-        "thumb": seed.get("thumb"),
-        "lat": seed.get("lat"),
-        "lon": seed.get("lon"),
+        "price_czk": tracked.get("rent_czk"),
+        "total_czk": tracked.get("total_czk"),
+        "fees_czk": tracked.get("fees_czk"),
+        "fees_missing": tracked.get("fees_missing"),
+        "electricity_czk": tracked.get("electricity_czk"),
+        "electricity_estimated": tracked.get("electricity_estimated"),
+        "garage": tracked.get("garage"),
+        "parking": tracked.get("parking"),
+        "floor_area_sqm": tracked.get("floor_area_sqm"),
+        "price_czk_per_sqm": tracked.get("price_czk_per_sqm"),
+        "floor_number": tracked.get("floor_number"),
+        "floors_total": tracked.get("floors_total"),
+        "locality": tracked.get("locality"),
+        "city_part": tracked.get("city_part"),
+        "street": tracked.get("street"),
+        "pod_harfou": tracked.get("street") == "Pod Harfou",
+        "description": tracked.get("description"),
+        "seller_name": tracked.get("seller_name"),
+        "images": tracked.get("images") or [],
+        "thumb": tracked.get("thumb"),
+        "lat": tracked.get("lat"),
+        "lon": tracked.get("lon"),
         "approx_location": False,
-        "url": seed.get("url"),
-        "active": seed.get("active"),
-        "change_note": build_change_note(seed["id"], changes),
+        "url": tracked.get("url"),
+        "active": tracked.get("active"),
+        "change_note": change_note,
     }
 
 
-def render_dashboard(snapshot, changes, stats):
-    seed = snapshot["seed"]
+def render_tracked_card(tracked):
+    active_badge = (
+        '<span class="badge ok">active</span>'
+        if tracked.get("active")
+        else '<span class="badge bad">inactive / removed</span>'
+    )
+    last_active_html = (
+        f'<div class="modal-note" style="margin-top:8px;">Showing last known details from {tracked["last_active_at"]}</div>'
+        if not tracked.get("active") and tracked.get("last_active_at")
+        else ""
+    )
+    return f"""<div class="card seed-card" onclick="openModal({tracked['id']})">
+  <img class="seed-thumb" src="{tracked.get('thumb') or ''}" onerror="this.style.visibility='hidden'" alt="">
+  <div style="flex:1;">
+    <h2 style="margin-top:0;font-size:1rem;">Tracked listing {active_badge}</h2>
+    <div class="seed-grid">
+      <div><b>Title</b>{tracked.get('title') or '—'}</div>
+      <div><b>Disposition</b>{tracked.get('disposition') or '—'}</div>
+      <div><b>Nájem</b>{fmt_czk(tracked.get('rent_czk'))}</div>
+      <div><b>Poplatky</b>{'neuvedeno' if tracked.get('fees_missing') else fmt_czk(tracked.get('fees_czk'))}</div>
+      <div><b>Elektřina (odhad)</b>{fmt_czk(tracked.get('electricity_czk'))}</div>
+      <div><b>Cena s elektřinou</b>{fmt_czk(tracked.get('total_czk'))}</div>
+      <div><b>Kč/m² (total)</b>{fmt_czk(tracked.get('price_czk_per_sqm'))}</div>
+      <div><b>m²</b>{tracked.get('floor_area_sqm') or '—'}</div>
+      <div><b>Locality</b>{tracked.get('locality') or '—'}</div>
+    </div>
+    {last_active_html}
+    <div style="font-size:0.75rem;color:#7ab8ff;margin-top:6px;">Tap for full details →</div>
+  </div>
+</div>"""
+
+
+def render_dashboard(snapshot, changes, stats, history):
+    tracked_list = snapshot["tracked"]
     comparables = snapshot["comparables"]
 
     for c in comparables:
         c["change_note"] = build_change_note(c["id"], changes)
-    seed_item = build_seed_item(seed, changes)
+    tracked_items = [build_tracked_item(t, changes) for t in tracked_list]
 
     data_json = json.dumps(comparables, ensure_ascii=False)
-    seed_json = json.dumps(seed_item, ensure_ascii=False)
+    tracked_json = json.dumps(tracked_items, ensure_ascii=False)
+    history_json = json.dumps(history, ensure_ascii=False)
     changed_ids = {c["id"] for c in changes.get("price_changes", [])}
     changed_ids_json = json.dumps(list(changed_ids))
 
-    seed_active_badge = (
-        '<span class="badge ok">active</span>'
-        if seed.get("active")
-        else '<span class="badge bad">inactive / removed</span>'
-    )
+    tracked_cards_html = "\n".join(render_tracked_card(t) for t in tracked_list)
 
     head_and_body = f"""<!DOCTYPE html>
 <html lang="cs">
@@ -563,6 +745,16 @@ def render_dashboard(snapshot, changes, stats):
   .modal-note {{ background: #2a2410; color: #fc6; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; margin: 8px 0; }}
   .modal-link {{ display: inline-block; margin-top: 12px; padding: 8px 14px; background: #2563eb; color: #fff;
                  border-radius: 8px; font-size: 0.85rem; }}
+  .cost-box {{ background: #11141b; border-radius: 8px; padding: 8px 10px; margin: 10px 0; font-size: 0.85rem; }}
+  .cost-row {{ display: flex; justify-content: space-between; padding: 3px 0; }}
+  .cost-row.total {{ border-top: 1px solid #2a2f3a; margin-top: 4px; padding-top: 6px; font-weight: 600; }}
+  .cost-note {{ font-size: 0.7rem; color: #998; margin-top: 4px; }}
+  .history-item {{ display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid #262a33; cursor: pointer; }}
+  .history-item:last-child {{ border-bottom: none; }}
+  .history-item .htxt {{ flex: 1; font-size: 0.8rem; }}
+  .history-item .hat {{ font-size: 0.68rem; color: #888; }}
+  .history-list {{ max-height: 420px; overflow-y: auto; }}
+  .hkind {{ font-size: 0.95rem; }}
 </style>
 </head>
 <body>
@@ -571,33 +763,33 @@ def render_dashboard(snapshot, changes, stats):
   <div class="updated">Last updated: {snapshot['generated_at']}</div>
 </header>
 
-<div class="card seed-card" id="seedCard" onclick="openModal({seed['id']})">
-  <img class="seed-thumb" src="{seed.get('thumb') or ''}" onerror="this.style.visibility='hidden'" alt="">
-  <div style="flex:1;">
-    <h2 style="margin-top:0;font-size:1rem;">Tracked listing {seed_active_badge}</h2>
-    <div class="seed-grid">
-      <div><b>Title</b>{seed.get('title') or '—'}</div>
-      <div><b>Disposition</b>{seed.get('disposition') or '—'}</div>
-      <div><b>Total / month</b>{fmt_czk(seed.get('total_czk'))}</div>
-      <div><b>Kč/m²</b>{fmt_czk(seed.get('price_czk_per_sqm'))}</div>
-      <div><b>m²</b>{seed.get('floor_area_sqm') or '—'}</div>
-      <div><b>Locality</b>{seed.get('locality') or '—'}</div>
-    </div>
-    <div style="font-size:0.75rem;color:#7ab8ff;margin-top:6px;">Tap for full details →</div>
+{tracked_cards_html}
+
+<div class="card" id="addTrackedCard">
+  <h2 style="margin-top:0;font-size:1rem;">+ Track a new listing</h2>
+  <div style="font-size:0.8rem;color:#999;margin-bottom:8px;">Paste a sreality.cz listing URL to start live-tracking it (photos, price, description). Runs via GitHub Actions, so it takes ~5–15 min and a page refresh to show up.</div>
+  <div class="controls" style="margin:0;">
+    <input id="addUrlInput" type="text" placeholder="https://www.sreality.cz/detail/..." style="flex:1;min-width:200px;">
+    <button class="popup-btn" onclick="triggerAddTracked(document.getElementById('addUrlInput').value)">Track</button>
   </div>
+  <div id="addStatus" style="font-size:0.8rem;margin-top:8px;color:#7ab8ff;"></div>
 </div>
 
 <div class="card">
   <h2 style="margin-top:0;font-size:1rem;">Area stats (1+kk &amp; 2+kk, Vysočany)</h2>
   <div class="stats">
-    <div class="stat"><div class="num">{fmt_czk(stats['rent_median_czk_per_sqm'])}</div><div class="lbl">rent median Kč/m² ({stats['rent_count']})</div></div>
-    <div class="stat"><div class="num">{fmt_czk(stats['rent_avg_czk_per_sqm'])}</div><div class="lbl">rent avg Kč/m²</div></div>
+    <div class="stat"><div class="num">{fmt_czk(stats['rent_median_czk_per_sqm'])}</div><div class="lbl">rent median Kč/m² total* ({stats['rent_count']})</div></div>
+    <div class="stat"><div class="num">{fmt_czk(stats['rent_avg_czk_per_sqm'])}</div><div class="lbl">rent avg Kč/m² total*</div></div>
     <div class="stat"><div class="num">{fmt_czk(stats['sale_median_czk_per_sqm'])}</div><div class="lbl">sale median Kč/m² ({stats['sale_count']})</div></div>
     <div class="stat"><div class="num">{fmt_czk(stats['sale_avg_czk_per_sqm'])}</div><div class="lbl">sale avg Kč/m²</div></div>
   </div>
+  <div class="cost-note">*rent Kč/m² = nájem + poplatky + odhad elektřiny ({ELECTRICITY_ESTIMATE_CZK} Kč), not base rent alone</div>
 </div>
 
-{render_changes_card(changes)}
+<div class="card" id="historyCard">
+  <h2 style="margin-top:0;font-size:1rem;">📜 Historie změn</h2>
+  <div id="historyList" class="history-list"></div>
+</div>
 
 <div class="card">
   <h2 style="margin-top:0;font-size:1rem;">🗺️ Map</h2>
@@ -644,7 +836,7 @@ def render_dashboard(snapshot, changes, stats):
       <th data-k="title">Title</th>
       <th data-k="transaction_type">Type</th>
       <th data-k="disposition">Disp.</th>
-      <th data-k="price_czk">Price</th>
+      <th data-k="total_czk" title="Rent: total incl. fees + estimated electricity. Sale: purchase price.">Price</th>
       <th data-k="floor_area_sqm">m²</th>
       <th data-k="price_czk_per_sqm">Kč/m²</th>
       <th data-k="city_part">Locality</th>
@@ -665,11 +857,17 @@ def render_dashboard(snapshot, changes, stats):
 """
 
     js_template = r"""
-const SEED = __SEED_JSON__;
+const TRACKED = __TRACKED_JSON__;
 const DATA = __DATA_JSON__;
-const ALL = [SEED, ...DATA];
+const HISTORY = __HISTORY_JSON__;
+const ALL = [...TRACKED, ...DATA];
+const TRACKED_IDS = new Set(TRACKED.map(t => t.id));
 const CHANGED_IDS = new Set(__CHANGED_IDS_JSON__);
+const ELECTRICITY_ESTIMATE_CZK = __ELECTRICITY_CZK__;
 let sortKey = "price_czk_per_sqm", sortDir = 1;
+
+const GH_REPO = "radim225/sreality-tracker";
+const GH_WORKFLOW = "scrape.yml";
 
 const PLACEHOLDER = "data:image/svg+xml;utf8," + encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="90">' +
@@ -682,45 +880,163 @@ function fmtCzk(v) {
   return v.toLocaleString("cs-CZ") + " Kč";
 }
 
+function fmtTotal(r) {
+  const v = r.total_czk ?? r.price_czk;
+  const txt = fmtCzk(v);
+  return r.transaction_type === "pronajem" ? txt + (r.fees_missing ? "*" : "") : txt;
+}
+
 function escapeHtml(s) {
   return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
 
-function openModal(id) {
-  const item = ALL.find(r => r.id === id);
-  if (!item) return;
+async function triggerAddTracked(url, statusElId) {
+  const statusEl = document.getElementById(statusElId || "addStatus");
+  url = (url || "").trim();
+  if (!url) {
+    if (statusEl) statusEl.textContent = "Paste a sreality.cz listing URL first.";
+    return;
+  }
+  let token = localStorage.getItem("gh_pat");
+  if (!token) {
+    token = prompt(
+      "GitHub personal access token (needs Actions: write on " + GH_REPO + ").\n" +
+      "Stored only in this browser's localStorage."
+    );
+    if (!token) return;
+    localStorage.setItem("gh_pat", token);
+  }
+  if (statusEl) statusEl.textContent = "Triggering…";
+  try {
+    const resp = await fetch(
+      `https://api.github.com/repos/${GH_REPO}/actions/workflows/${GH_WORKFLOW}/dispatches`,
+      {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + token,
+          "Accept": "application/vnd.github+json",
+        },
+        body: JSON.stringify({ ref: "main", inputs: { add_url: url } }),
+      }
+    );
+    if (resp.status === 204) {
+      if (statusEl) statusEl.textContent = "Triggered — refresh in ~5–15 min once the run finishes.";
+    } else if (resp.status === 401 || resp.status === 403) {
+      localStorage.removeItem("gh_pat");
+      if (statusEl) statusEl.textContent = `GitHub rejected the token (HTTP ${resp.status}). Try again.`;
+    } else {
+      if (statusEl) statusEl.textContent = `Unexpected response (HTTP ${resp.status}).`;
+    }
+  } catch (e) {
+    if (statusEl) statusEl.textContent = "Request failed: " + e.message;
+  }
+}
+
+function costBreakdownHtml(item) {
+  if (item.transaction_type !== "pronajem") {
+    return `<div class="cost-box"><div class="cost-row total"><span>💰 Cena</span><span>${fmtCzk(item.price_czk)}</span></div></div>`;
+  }
+  const feesHtml = item.fees_missing
+    ? `<span style="color:#998;">neuvedeno listingem</span>`
+    : fmtCzk(item.fees_czk);
+  return `<div class="cost-box">
+    <div class="cost-row"><span>🏠 Nájem</span><span>${fmtCzk(item.price_czk)}</span></div>
+    <div class="cost-row"><span>🧾 Poplatky / služby</span><span>${feesHtml}</span></div>
+    <div class="cost-row"><span>⚡ Elektřina${item.electricity_estimated ? " (odhad)" : ""}</span><span>${fmtCzk(item.electricity_czk)}</span></div>
+    <div class="cost-row total"><span>💰 Cena s elektřinou</span><span>${fmtCzk(item.total_czk)}</span></div>
+    ${item.fees_missing ? '<div class="cost-note">Poplatky/služby nejsou u tohoto inzerátu uvedeny -- do celkové ceny započteny jako 0 navíc k odhadu elektřiny.</div>' : ''}
+    <div class="cost-note">Elektřina není v API inzerátu rozepsána -- jednotný odhad ${ELECTRICITY_ESTIMATE_CZK} Kč/měsíc pro srovnatelnost.</div>
+  </div>`;
+}
+
+function garageParkingHtml(item) {
+  const fmt = v => v === true ? "Ano" : v === false ? "Ne" : "neuvedeno";
+  return `<div><b>Garáž</b>${fmt(item.garage)}</div><div><b>Parkování</b>${fmt(item.parking)}</div>`;
+}
+
+function buildModalHtml(item) {
   const gallery = (item.images && item.images.length)
     ? item.images.map(u => `<img src="${u}" loading="lazy">`).join("")
     : `<img src="${PLACEHOLDER}">`;
-  const priceLine = item.is_seed
-    ? `${fmtCzk(item.total_czk)} / month <span style="color:#888;font-size:0.75rem;">(rent ${fmtCzk(item.price_czk)} + fees ${fmtCzk(item.fees_czk)})</span>`
-    : (item.transaction_type === "pronajem" ? fmtCzk(item.price_czk) + " / month" : fmtCzk(item.price_czk));
   const floorLine = item.floor_number != null ? `${item.floor_number}/${item.floors_total ?? "?"}` : "—";
   const noteHtml = item.change_note ? `<div class="modal-note">⚡ ${escapeHtml(item.change_note)}</div>` : "";
   const approxHtml = item.approx_location ? `<span class="badge approx">approximate location</span>` : "";
-  document.getElementById("modalSheet").innerHTML = `
+  const trackHtml = TRACKED_IDS.has(item.id) ? "" : `
+    <button class="popup-btn" style="margin-top:12px;margin-left:8px;" id="modalTrackBtn"
+      onclick="triggerAddTracked(${JSON.stringify(item.url)}); this.textContent='Triggered…'; this.disabled=true;">
+      📌 Track this listing live
+    </button>`;
+  return `
     <button id="modalClose" onclick="closeModal()">&times;</button>
     <h2>${escapeHtml(item.title || "Listing")} ${approxHtml}</h2>
     ${noteHtml}
     <div class="modal-gallery">${gallery}</div>
+    ${costBreakdownHtml(item)}
     <div class="modal-grid">
-      <div><b>Price</b>${priceLine}</div>
-      <div><b>Kč/m²</b>${fmtCzk(item.price_czk_per_sqm)}</div>
+      <div><b>Kč/m²${item.transaction_type === "pronajem" ? " (total)" : ""}</b>${fmtCzk(item.price_czk_per_sqm)}</div>
       <div><b>Disposition</b>${item.disposition || "—"}</div>
       <div><b>m²</b>${item.floor_area_sqm ?? "—"}</div>
       <div><b>Floor</b>${floorLine}</div>
       <div><b>Type</b>${item.transaction_type === "pronajem" ? "Rent" : "Sale"}</div>
       <div><b>Locality</b>${escapeHtml(item.locality || item.city_part || "—")}</div>
+      ${garageParkingHtml(item)}
       <div><b>Seller / agent</b>${escapeHtml(item.seller_name || "—")}</div>
     </div>
     <div class="modal-desc">${escapeHtml(item.description || "No description available.")}</div>
     <a class="modal-link" href="${item.url}" target="_blank" rel="noopener">Otevřít na Sreality →</a>
+    ${trackHtml}
   `;
+}
+
+function openModal(id) {
+  const item = ALL.find(r => r.id === id);
+  if (!item) return;
+  document.getElementById("modalSheet").innerHTML = buildModalHtml(item);
+  document.getElementById("modalOverlay").classList.add("open");
+}
+
+function openHistoryItem(idx) {
+  const ev = HISTORY[idx];
+  if (!ev) return;
+  const liveItem = ALL.find(r => r.id === ev.id);
+  const item = liveItem || ev.item;
+  if (!item) return;
+  document.getElementById("modalSheet").innerHTML = buildModalHtml(item);
   document.getElementById("modalOverlay").classList.add("open");
 }
 
 function closeModal() {
   document.getElementById("modalOverlay").classList.remove("open");
+}
+
+function renderHistory() {
+  const list = document.getElementById("historyList");
+  if (!HISTORY.length) {
+    list.innerHTML = `<div style="color:#888;font-size:0.8rem;">No changes recorded yet.</div>`;
+    return;
+  }
+  list.innerHTML = HISTORY.map((ev, idx) => {
+    const item = ev.item || {};
+    const thumb = item.thumb || PLACEHOLDER;
+    let icon = "🆕", text = "";
+    if (ev.kind === "new") {
+      icon = "🆕";
+      text = `New: ${escapeHtml(item.title || ev.id)} — ${fmtCzk(item.total_czk ?? item.price_czk)}`;
+    } else if (ev.kind === "removed") {
+      icon = "❌";
+      text = `Gone: ${escapeHtml(item.title || ev.id)} — last seen at ${fmtCzk(item.total_czk ?? item.price_czk)}`;
+    } else {
+      icon = "💰";
+      const oldP = ev.old_total_czk ?? ev.old_price_czk;
+      const newP = ev.new_total_czk ?? ev.new_price_czk;
+      text = `${escapeHtml((item && item.title) || ("#" + ev.id))}: ${fmtCzk(oldP)} → ${fmtCzk(newP)}`;
+    }
+    return `<div class="history-item" onclick="openHistoryItem(${idx})">
+      <img class="thumb" src="${thumb}" loading="lazy" onerror="this.src='${PLACEHOLDER}'">
+      <div class="htxt">${text}<div class="hat">${escapeHtml(ev.at || "")}</div></div>
+      <div class="hkind">${icon}</div>
+    </div>`;
+  }).join("");
 }
 
 function renderPodHarfou() {
@@ -732,7 +1048,7 @@ function renderPodHarfou() {
       <td><button class="linklike" onclick="event.stopPropagation();openModal(${r.id})">${escapeHtml(r.title) || '—'}</button></td>
       <td>${r.transaction_type === 'pronajem' ? 'rent' : 'sale'}</td>
       <td>${r.disposition || '—'}</td>
-      <td>${fmtCzk(r.price_czk)}</td>
+      <td>${fmtTotal(r)}</td>
       <td>${r.floor_area_sqm ?? '—'}</td>
       <td>${fmtCzk(r.price_czk_per_sqm)}</td>
     </tr>`).join("") : `<tr><td colspan="7" style="color:#888;">No other Pod Harfou listings currently found.</td></tr>`;
@@ -765,7 +1081,7 @@ function render() {
       <td><button class="linklike" onclick="event.stopPropagation();openModal(${r.id})">${escapeHtml(r.title) || '—'}</button></td>
       <td>${r.transaction_type === 'pronajem' ? 'rent' : 'sale'}</td>
       <td>${r.disposition || '—'}</td>
-      <td>${fmtCzk(r.price_czk)}</td>
+      <td>${fmtTotal(r)}</td>
       <td>${r.floor_area_sqm ?? '—'}</td>
       <td>${fmtCzk(r.price_czk_per_sqm)}${CHANGED_IDS.has(r.id) ? ' ⚡' : ''}</td>
       <td>${escapeHtml(r.locality || r.city_part || '—')}</td>
@@ -773,8 +1089,9 @@ function render() {
 }
 
 function initMap() {
-  if (!SEED.lat) return;
-  const map = L.map("map").setView([SEED.lat, SEED.lon], 14);
+  const center = TRACKED.find(t => t.lat != null) || DATA.find(d => d.lat != null);
+  if (!center) return;
+  const map = L.map("map").setView([center.lat, center.lon], 14);
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
     attribution: "&copy; OpenStreetMap contributors",
@@ -782,7 +1099,7 @@ function initMap() {
 
   function popupHtml(item) {
     const thumb = item.thumb || (item.images && item.images[0]) || PLACEHOLDER;
-    const price = item.is_seed ? fmtCzk(item.total_czk) + "/mo" : fmtCzk(item.price_czk);
+    const price = item.transaction_type === "pronajem" ? fmtTotal(item) + "/mo" : fmtCzk(item.price_czk);
     return `<div style="min-width:150px;">
       <img class="popup-thumb" src="${thumb}" onerror="this.src='${PLACEHOLDER}'">
       <div style="font-weight:600;font-size:0.85rem;">${escapeHtml(item.title || "Listing")}</div>
@@ -827,11 +1144,14 @@ document.getElementById("filterPodHarfou").addEventListener("change", render);
 document.getElementById("search").addEventListener("input", render);
 render();
 renderPodHarfou();
+renderHistory();
 initMap();
 """
 
     js = (
-        js_template.replace("__SEED_JSON__", seed_json)
+        js_template.replace("__TRACKED_JSON__", tracked_json)
+        .replace("__HISTORY_JSON__", history_json)
+        .replace("__ELECTRICITY_CZK__", str(ELECTRICITY_ESTIMATE_CZK))
         .replace("__DATA_JSON__", data_json)
         .replace("__CHANGED_IDS_JSON__", changed_ids_json)
     )
@@ -840,41 +1160,30 @@ initMap();
     DASHBOARD_PATH.write_text(html, encoding="utf-8")
 
 
-def render_changes_card(changes):
-    if not any(
-        [
-            changes.get("seed_price_change"),
-            changes.get("newly_inactive"),
-            changes.get("new_listings"),
-            changes.get("price_changes"),
-        ]
-    ):
-        return ""
-    items = []
-    if changes.get("seed_price_change"):
-        sc = changes["seed_price_change"]
-        items.append(
-            f"<li>Tracked listing price changed: {fmt_czk(sc['old_total_czk'])} → {fmt_czk(sc['new_total_czk'])}</li>"
-        )
-    for c in changes.get("price_changes", [])[:20]:
-        items.append(
-            f"<li>{c.get('title') or c['id']}: {fmt_czk(c['old_price_czk'])} → {fmt_czk(c['new_price_czk'])}</li>"
-        )
-    for c in changes.get("new_listings", [])[:20]:
-        items.append(f"<li>New: <a href=\"{c.get('url')}\">{c.get('title') or c['id']}</a></li>")
-    for c in changes.get("newly_inactive", [])[:20]:
-        items.append(f"<li>Removed/inactive: {c.get('title') or c['id']}</li>")
-    return f"""<div class="card">
-  <h2 style="margin-top:0;font-size:1rem;">Changes since last run</h2>
-  <ul class="changes-list">{''.join(items)}</ul>
-</div>"""
-
-
 def main():
     SNAPSHOTS_DIR.mkdir(exist_ok=True)
-    print("Fetching seed listing...", file=sys.stderr)
-    seed = fetch_seed()
-    print(f"Seed active={seed.get('active')} title={seed.get('title')!r}", file=sys.stderr)
+    prev = load_latest_snapshot()
+    prev_tracked_by_id = {t["id"]: t for t in (prev or {}).get("tracked", [])}
+
+    tracked_config = load_tracked_config()
+    print(f"Fetching {len(tracked_config)} tracked listing(s)...", file=sys.stderr)
+    tracked = []
+    for t in tracked_config:
+        fetched = fetch_tracked(t["url"], t["id"])
+        if not fetched.get("active"):
+            prev_t = prev_tracked_by_id.get(t["id"])
+            if prev_t:
+                # Carry forward the last time it was *actually* seen active, even
+                # across multiple consecutive inactive runs (prev_t may itself
+                # already be a backfilled record with no fresh active sighting).
+                last_active_at = prev_t.get("last_active_at") or (
+                    prev_t.get("fetched_at") if prev_t.get("active") else None
+                )
+                fetched = {**prev_t, **fetched}
+                if last_active_at:
+                    fetched["last_active_at"] = last_active_at
+        tracked.append(fetched)
+        print(f"Tracked id={fetched['id']} active={fetched.get('active')} title={fetched.get('title')!r}", file=sys.stderr)
 
     print("Fetching comparables...", file=sys.stderr)
     comparables = fetch_comparables()
@@ -882,14 +1191,14 @@ def main():
 
     snapshot = {
         "generated_at": now_iso(),
-        "seed": seed,
+        "tracked": tracked,
         "comparables": comparables,
     }
 
-    prev = load_latest_snapshot()
     changes = diff_snapshots(prev, snapshot)
     stats = compute_stats(comparables)
     snapshot["stats"] = stats
+    history = update_changes_history(changes)
 
     ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     snapshot_path = SNAPSHOTS_DIR / f"snapshot-{ts}.json"
@@ -897,12 +1206,12 @@ def main():
     LATEST_SNAPSHOT_PATH.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2))
     CHANGES_PATH.write_text(json.dumps(changes, ensure_ascii=False, indent=2))
 
-    render_dashboard(snapshot, changes, stats)
+    render_dashboard(snapshot, changes, stats, history)
 
     print(f"Snapshot saved: {snapshot_path}", file=sys.stderr)
     print(f"Stats: {stats}", file=sys.stderr)
     print(
-        f"Changes: seed_price_change={bool(changes['seed_price_change'])} "
+        f"Changes: tracked_price_changes={len(changes['tracked_price_changes'])} "
         f"new={len(changes['new_listings'])} gone={len(changes['newly_inactive'])} "
         f"price_changes={len(changes['price_changes'])}",
         file=sys.stderr,
