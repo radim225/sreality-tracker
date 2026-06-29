@@ -111,27 +111,112 @@ def extract_thumb(images_field):
     return bases[0] + THUMB_SUFFIX if bases else None
 
 
-def parse_fees_czk(raw):
+# params.costOfLiving is almost never a clean integer -- it's usually a short
+# Czech phrase like "+ poplatky 3.400 Kč + el. energie + vratná kauce + provize
+# RK" that bundles the actual monthly fee together with one-time costs
+# (deposit, agency commission) and a vague electricity mention. We split it
+# (and, as a fallback, the free-text description) into clauses and only keep
+# amounts attached to recurring-fee language, never deposit/commission ones.
+FEE_KEYWORDS = [
+    "poplatky", "poplatek", "služby", "zálohy", "záloha", "měsíční výdaje",
+    "provozní náklady", "fond oprav", "svj", "společné prostory", "správa domu",
+]
+EXCLUDE_KEYWORDS = ["kauce", "provize", "jednorázov", "deposit", "refundable"]
+ELECTRICITY_KEYWORDS = ["energie", "elektřin"]
+
+# Splits on '+', ';', newline, "plus", a sentence comma (not a Czech
+# thousands-separator comma like "3,400"), or a sentence-ending period
+# (not an abbreviation period like "el." before a lowercase word).
+CLAUSE_SPLIT_RE = re.compile(r'\+|;|\n|\bplus\b|,\s+|(?<=[a-zá-ž])\.\s+(?=[A-ZÁ-Ž])', re.I)
+# Czech number formats: "3 400", "3.400", "3,400", "3400", with optional Kč/CZK.
+NUMBER_RE = re.compile(r'(\d{1,3}(?:[ .,]\d{3})+|\d{3,6})\s*(?:k[čc]|czk)?', re.I)
+
+
+def parse_amount(clause):
+    m = NUMBER_RE.search(clause)
+    if not m:
+        return None
+    digits = re.sub(r"[ .,]", "", m.group(1))
+    try:
+        v = int(digits)
+    except ValueError:
+        return None
+    return v if v > 0 else None
+
+
+def parse_cost_of_living_text(text):
+    """costOfLiving is themed as monthly living costs already, so any amount
+    in it that isn't in a deposit/commission clause is the fee -- no keyword
+    required (e.g. "4800 Kč plus elektřina")."""
+    fee = electricity = None
+    for clause in CLAUSE_SPLIT_RE.split(text or ""):
+        low = clause.lower()
+        if any(k in low for k in EXCLUDE_KEYWORDS):
+            continue
+        amt = parse_amount(clause)
+        if amt is None:
+            continue
+        if any(k in low for k in ELECTRICITY_KEYWORDS):
+            electricity = electricity if electricity is not None else amt
+        else:
+            fee = fee if fee is not None else amt
+    return fee, electricity
+
+
+def parse_fee_from_description(text):
+    """Free-text description fallback -- here a fee keyword IS required, since
+    unanchored numbers in prose are far more likely to be unrelated (m²,
+    floor, year built, etc.)."""
+    fee = electricity = None
+    for clause in CLAUSE_SPLIT_RE.split(text or ""):
+        low = clause.lower()
+        if any(k in low for k in EXCLUDE_KEYWORDS):
+            continue
+        if fee is None and any(k in low for k in FEE_KEYWORDS):
+            fee = parse_amount(clause)
+        if electricity is None and any(k in low for k in ELECTRICITY_KEYWORDS):
+            electricity = parse_amount(clause)
+    return fee, electricity
+
+
+def extract_fees_and_electricity(cost_of_living_raw, description):
+    """Returns (fees_czk, fees_source, electricity_explicit_czk).
+    fees_source is "field" (clean int or parsed from costOfLiving text),
+    "text" (parsed from the description), or None (not found anywhere)."""
+    raw = (cost_of_living_raw or "").strip()
     try:
         v = int(raw)
-        return v if v > 0 else None
-    except (TypeError, ValueError):
-        return None
+        if v > 0:
+            return v, "field", None
+    except ValueError:
+        pass
+    fee, electricity = parse_cost_of_living_text(raw)
+    if fee is not None:
+        return fee, "field", electricity
+    fee, electricity_2 = parse_fee_from_description(description)
+    electricity = electricity if electricity is not None else electricity_2
+    if fee is not None:
+        return fee, "text", electricity
+    return None, None, electricity
 
 
-def cost_breakdown(price_czk, fees_czk, transaction_type):
+def cost_breakdown(price_czk, fees_czk, transaction_type, electricity_explicit=None):
     """Returns (fees_czk, fees_missing, electricity_czk, electricity_estimated,
     total_czk) for a listing. Only rentals (pronajem) get an electricity
-    estimate and a fees+electricity total; sales just total to the purchase
-    price."""
+    figure and a fees+electricity total; sales just total to the purchase
+    price. If the listing states a real electricity amount, use it instead of
+    the uniform estimate."""
     fees_missing = fees_czk is None
     if transaction_type != "pronajem":
         return fees_czk, fees_missing, None, False, price_czk
-    electricity_czk = ELECTRICITY_ESTIMATE_CZK
+    if electricity_explicit is not None:
+        electricity_czk, electricity_estimated = electricity_explicit, False
+    else:
+        electricity_czk, electricity_estimated = ELECTRICITY_ESTIMATE_CZK, True
     total_czk = None
     if price_czk is not None:
         total_czk = price_czk + (fees_czk or 0) + electricity_czk
-    return fees_czk, fees_missing, electricity_czk, True, total_czk
+    return fees_czk, fees_missing, electricity_czk, electricity_estimated, total_czk
 
 
 def garage_parking_from_params(params):
@@ -179,9 +264,11 @@ def fetch_tracked(url, listing_id):
     # "pronajem"/"prodej" values used everywhere else (comparables, URLs).
     type_code = (data.get("categoryTypeCb") or {}).get("value")
     transaction_type = "pronajem" if type_code == 2 else "prodej"
-    fees_czk = parse_fees_czk(params.get("costOfLiving"))
+    fees_czk, fees_source, electricity_explicit = extract_fees_and_electricity(
+        params.get("costOfLiving"), data.get("description")
+    )
     fees_czk, fees_missing, electricity_czk, electricity_estimated, total_czk = (
-        cost_breakdown(rent_czk, fees_czk, transaction_type)
+        cost_breakdown(rent_czk, fees_czk, transaction_type, electricity_explicit)
     )
     garage, parking = garage_parking_from_params(params)
     floor_area_sqm = params.get("floorArea")
@@ -200,6 +287,7 @@ def fetch_tracked(url, listing_id):
         "rent_czk": rent_czk,
         "fees_czk": fees_czk,
         "fees_missing": fees_missing,
+        "fees_source": fees_source,
         "electricity_czk": electricity_czk,
         "electricity_estimated": electricity_estimated,
         "total_czk": total_czk,
@@ -339,6 +427,7 @@ def parse_comparable(r, tx_type):
         # until enrichment recomputes it against the all-in total for rentals.
         "fees_czk": None,
         "fees_missing": True,
+        "fees_source": None,
         "electricity_czk": None,
         "electricity_estimated": False,
         "total_czk": price_czk if price_czk else None,
@@ -376,12 +465,15 @@ def enrich_comparable(comp):
     comp["floor_number"] = params.get("floorNumber")
     comp["floors_total"] = params.get("floors")
 
-    fees_czk = parse_fees_czk(params.get("costOfLiving"))
+    fees_czk, fees_source, electricity_explicit = extract_fees_and_electricity(
+        params.get("costOfLiving"), data.get("description")
+    )
     fees_czk, fees_missing, electricity_czk, electricity_estimated, total_czk = (
-        cost_breakdown(comp.get("price_czk"), fees_czk, comp.get("transaction_type"))
+        cost_breakdown(comp.get("price_czk"), fees_czk, comp.get("transaction_type"), electricity_explicit)
     )
     comp["fees_czk"] = fees_czk
     comp["fees_missing"] = fees_missing
+    comp["fees_source"] = fees_source
     comp["electricity_czk"] = electricity_czk
     comp["electricity_estimated"] = electricity_estimated
     comp["total_czk"] = total_czk
@@ -605,6 +697,7 @@ def build_tracked_item(tracked, changes):
         "total_czk": tracked.get("total_czk"),
         "fees_czk": tracked.get("fees_czk"),
         "fees_missing": tracked.get("fees_missing"),
+        "fees_source": tracked.get("fees_source"),
         "electricity_czk": tracked.get("electricity_czk"),
         "electricity_estimated": tracked.get("electricity_estimated"),
         "garage": tracked.get("garage"),
@@ -648,10 +741,10 @@ def render_tracked_card(tracked):
     <div class="seed-grid">
       <div><b>Title</b>{tracked.get('title') or '—'}</div>
       <div><b>Disposition</b>{tracked.get('disposition') or '—'}</div>
-      <div><b>Nájem</b>{fmt_czk(tracked.get('rent_czk'))}</div>
-      <div><b>Poplatky</b>{'neuvedeno' if tracked.get('fees_missing') else fmt_czk(tracked.get('fees_czk'))}</div>
-      <div><b>Elektřina (odhad)</b>{fmt_czk(tracked.get('electricity_czk'))}</div>
-      <div><b>Cena s elektřinou</b>{fmt_czk(tracked.get('total_czk'))}</div>
+      <div><b>Nájem (net)</b>{fmt_czk(tracked.get('rent_czk'))}</div>
+      <div><b>Poplatky{' (z popisu)' if tracked.get('fees_source') == 'text' else ''}</b>{'neuvedeno' if tracked.get('fees_missing') else fmt_czk(tracked.get('fees_czk'))}</div>
+      <div><b>Elektřina{' (odhad)' if tracked.get('electricity_estimated') else ''}</b>{fmt_czk(tracked.get('electricity_czk'))}</div>
+      <div><b>Celkem</b>{fmt_czk(tracked.get('total_czk'))}</div>
       <div><b>Kč/m² (total)</b>{fmt_czk(tracked.get('price_czk_per_sqm'))}</div>
       <div><b>m²</b>{tracked.get('floor_area_sqm') or '—'}</div>
       <div><b>Locality</b>{tracked.get('locality') or '—'}</div>
@@ -809,7 +902,7 @@ def render_dashboard(snapshot, changes, stats, history):
   <table id="tblPod">
     <thead>
       <tr>
-        <th></th><th>Title</th><th>Type</th><th>Disp.</th><th>Price</th><th>m²</th><th>Kč/m²</th>
+        <th></th><th>Title</th><th>Type</th><th>Disp.</th><th>Nájem</th><th>Celkem</th><th>m²</th><th>Kč/m²</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -842,7 +935,8 @@ def render_dashboard(snapshot, changes, stats, history):
       <th data-k="title">Title</th>
       <th data-k="transaction_type">Type</th>
       <th data-k="disposition">Disp.</th>
-      <th data-k="total_czk" title="Rent: total incl. fees + estimated electricity. Sale: purchase price.">Price</th>
+      <th data-k="price_czk" title="Base rent (sale: purchase price)">Nájem</th>
+      <th data-k="total_czk" title="Rent: nájem + poplatky + elektřina (real or estimated). Sale: purchase price.">Celkem</th>
       <th data-k="floor_area_sqm">m²</th>
       <th data-k="price_czk_per_sqm">Kč/m²</th>
       <th data-k="city_part">Locality</th>
@@ -944,14 +1038,17 @@ function costBreakdownHtml(item) {
   }
   const feesHtml = item.fees_missing
     ? `<span style="color:#998;">neuvedeno listingem</span>`
-    : fmtCzk(item.fees_czk);
+    : fmtCzk(item.fees_czk) + (item.fees_source === "text" ? ' <i style="color:#888;font-size:0.7rem;">(z popisu)</i>' : '');
+  const elecNote = item.electricity_estimated
+    ? `<div class="cost-note">Elektřina není u tohoto inzerátu uvedena přesně -- jednotný odhad ${ELECTRICITY_ESTIMATE_CZK} Kč/měsíc pro srovnatelnost.</div>`
+    : `<div class="cost-note">Elektřina dle částky uvedené v inzerátu.</div>`;
   return `<div class="cost-box">
-    <div class="cost-row"><span>🏠 Nájem</span><span>${fmtCzk(item.price_czk)}</span></div>
+    <div class="cost-row"><span>🏠 Nájem (net)</span><span>${fmtCzk(item.price_czk)}</span></div>
     <div class="cost-row"><span>🧾 Poplatky / služby</span><span>${feesHtml}</span></div>
     <div class="cost-row"><span>⚡ Elektřina${item.electricity_estimated ? " (odhad)" : ""}</span><span>${fmtCzk(item.electricity_czk)}</span></div>
-    <div class="cost-row total"><span>💰 Cena s elektřinou</span><span>${fmtCzk(item.total_czk)}</span></div>
+    <div class="cost-row total"><span>💰 Celkem (s elektřinou)</span><span>${fmtCzk(item.total_czk)}</span></div>
     ${item.fees_missing ? '<div class="cost-note">Poplatky/služby nejsou u tohoto inzerátu uvedeny -- do celkové ceny započteny jako 0 navíc k odhadu elektřiny.</div>' : ''}
-    <div class="cost-note">Elektřina není v API inzerátu rozepsána -- jednotný odhad ${ELECTRICITY_ESTIMATE_CZK} Kč/měsíc pro srovnatelnost.</div>
+    ${elecNote}
   </div>`;
 }
 
@@ -1058,10 +1155,11 @@ function renderPodHarfou() {
       <td><button class="linklike" onclick="event.stopPropagation();openModal(${r.id})">${escapeHtml(r.title) || '—'}</button></td>
       <td>${r.transaction_type === 'pronajem' ? 'rent' : 'sale'}</td>
       <td>${r.disposition || '—'}</td>
+      <td>${fmtCzk(r.price_czk)}</td>
       <td>${fmtTotal(r)}</td>
       <td>${r.floor_area_sqm ?? '—'}</td>
       <td>${fmtCzk(r.price_czk_per_sqm)}</td>
-    </tr>`).join("") : `<tr><td colspan="7" style="color:#888;">No other Pod Harfou listings currently found.</td></tr>`;
+    </tr>`).join("") : `<tr><td colspan="8" style="color:#888;">No other Pod Harfou listings currently found.</td></tr>`;
 }
 
 function render() {
@@ -1091,6 +1189,7 @@ function render() {
       <td><button class="linklike" onclick="event.stopPropagation();openModal(${r.id})">${escapeHtml(r.title) || '—'}</button></td>
       <td>${r.transaction_type === 'pronajem' ? 'rent' : 'sale'}</td>
       <td>${r.disposition || '—'}</td>
+      <td>${fmtCzk(r.price_czk)}</td>
       <td>${fmtTotal(r)}</td>
       <td>${r.floor_area_sqm ?? '—'}</td>
       <td>${fmtCzk(r.price_czk_per_sqm)}${CHANGED_IDS.has(r.id) ? ' ⚡' : ''}</td>
