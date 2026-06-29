@@ -765,6 +765,10 @@ def render_dashboard(snapshot, changes, stats, history):
 
 {tracked_cards_html}
 
+<!-- "+ Track a new listing" box hidden -- the GitHub PAT prompt confused users.
+     Send new listing URLs to be added via add_tracked.py instead. The
+     workflow_dispatch add_url mechanism and triggerAddTracked() JS stay intact
+     below in case this gets re-enabled later.
 <div class="card" id="addTrackedCard">
   <h2 style="margin-top:0;font-size:1rem;">+ Track a new listing</h2>
   <div style="font-size:0.8rem;color:#999;margin-bottom:8px;">Paste a sreality.cz listing URL to start live-tracking it (photos, price, description). Runs via GitHub Actions, so it takes ~5–15 min and a page refresh to show up.</div>
@@ -774,6 +778,8 @@ def render_dashboard(snapshot, changes, stats, history):
   </div>
   <div id="addStatus" style="font-size:0.8rem;margin-top:8px;color:#7ab8ff;"></div>
 </div>
+-->
+
 
 <div class="card">
   <h2 style="margin-top:0;font-size:1rem;">Area stats (1+kk &amp; 2+kk, Vysočany)</h2>
@@ -961,7 +967,11 @@ function buildModalHtml(item) {
   const floorLine = item.floor_number != null ? `${item.floor_number}/${item.floors_total ?? "?"}` : "—";
   const noteHtml = item.change_note ? `<div class="modal-note">⚡ ${escapeHtml(item.change_note)}</div>` : "";
   const approxHtml = item.approx_location ? `<span class="badge approx">approximate location</span>` : "";
-  const trackHtml = TRACKED_IDS.has(item.id) ? "" : `
+  // SHOW_TRACK_BUTTON: the GitHub PAT prompt behind this button confused
+  // users, who'd rather just send a URL to be added via add_tracked.py. Set
+  // to true to re-enable the in-app "track this listing live" flow.
+  const SHOW_TRACK_BUTTON = false;
+  const trackHtml = (!SHOW_TRACK_BUTTON || TRACKED_IDS.has(item.id)) ? "" : `
     <button class="popup-btn" style="margin-top:12px;margin-left:8px;" id="modalTrackBtn"
       onclick="triggerAddTracked(${JSON.stringify(item.url)}); this.textContent='Triggered…'; this.disabled=true;">
       📌 Track this listing live
