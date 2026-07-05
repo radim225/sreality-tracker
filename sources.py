@@ -94,7 +94,31 @@ def _walk_adverts(obj):
     return found
 
 
-def _bez_parse_advert(a):
+def _build_bez_image_map(obj, out=None):
+    """Map normalized Image id -> (thumb_url, main_url). Bezrealitky's Next.js
+    store references images by {"__ref": "Image:<id>"}; the actual URLs live on
+    separate Image entities keyed like url({"filter":"RECORD_THUMB"})."""
+    if out is None:
+        out = {}
+    if isinstance(obj, dict):
+        if obj.get("__typename") == "Image" and obj.get("id") is not None:
+            thumb = main = None
+            for k, v in obj.items():
+                if isinstance(v, str) and k.startswith("url("):
+                    if "RECORD_THUMB" in k:
+                        thumb = v
+                    elif "RECORD_MAIN" in k:
+                        main = v
+            out[str(obj["id"])] = (thumb, main)
+        for v in obj.values():
+            _build_bez_image_map(v, out)
+    elif isinstance(obj, list):
+        for v in obj:
+            _build_bez_image_map(v, out)
+    return out
+
+
+def _bez_parse_advert(a, img_map):
     disp = BEZ_DISPOSITION_MAP.get(a.get("disposition"))
     if disp not in TARGET_DISPOSITIONS:
         return None
@@ -109,6 +133,11 @@ def _bez_parse_advert(a):
     tx = "pronajem" if a.get("offerType") == "PRONAJEM" else "prodej"
     uri = a.get("uri")
     comp = _blank_comparable()
+    # Resolve the advert's main photo via its normalized Image reference.
+    thumb = main = None
+    ref = (a.get("mainImage") or {}).get("__ref")
+    if ref:
+        thumb, main = img_map.get(ref.split(":", 1)[-1], (None, None))
     comp.update({
         "id": f"bez-{a.get('id')}",
         "source": "bezrealitky",
@@ -121,6 +150,8 @@ def _bez_parse_advert(a):
         "city_part": "Praha 9",
         "url": f"https://www.bezrealitky.cz/nemovitosti-byty-domy/{uri}" if uri else None,
         "lat": lat, "lon": lng,
+        "thumb": thumb or main,
+        "images": [main or thumb] if (main or thumb) else [],
     })
     return _finalize_costs(comp)
 
@@ -146,8 +177,9 @@ def fetch_bezrealitky(max_pages=8, sleep=0.4):
             adverts = _walk_adverts(data)
             if not adverts:
                 break
+            img_map = _build_bez_image_map(data)
             for a in adverts:
-                comp = _bez_parse_advert(a)
+                comp = _bez_parse_advert(a, img_map)
                 if comp:
                     out[comp["id"]] = comp
             time.sleep(sleep)
@@ -192,6 +224,14 @@ def _idnes_parse_card(seg, tx):
     sqm = float(area_m.group(1).replace(",", ".")) if area_m else None
     digits = re.sub(r"[^\d]", "", price_txt)
     price = int(digits) if digits else None
+    # Thumbnail: the listing photo is served off iDNES's reality image CDN
+    # (1gr.cz); skip icons/logos by matching that host only.
+    thumb = None
+    for im in re.findall(r"<img[^>]+>", seg):
+        mm = re.search(r'(?:data-src|src)="([^"]*1gr\.cz[^"]*)"', im)
+        if mm:
+            thumb = mm.group(1)
+            break
     comp = _blank_comparable()
     comp.update({
         "id": f"idnes-{listing_id}",
@@ -204,6 +244,8 @@ def _idnes_parse_card(seg, tx):
         "locality": info or "Praha 9",
         "city_part": "Praha 9",
         "url": url,
+        "thumb": thumb,
+        "images": [thumb] if thumb else [],
     })
     return _finalize_costs(comp)
 

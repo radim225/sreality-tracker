@@ -988,6 +988,10 @@ function srcBadge(s) {
   return ` <span class="src" style="color:${col};border-color:${col}66;">${lbl}</span>`;
 }
 
+function portalName(s) {
+  return ({ sreality: "Sreality", bezrealitky: "Bezrealitky", idnes: "iDNES" })[s] || "Sreality";
+}
+
 function costBreakdownHtml(item) {
   if (item.transaction_type !== "pronajem") {
     return `<div class="cost-box"><div class="cost-row total"><span>💰 Cena</span><span>${fmtCzk(item.price_czk)}</span></div></div>`;
@@ -1037,7 +1041,7 @@ function buildModalHtml(item) {
       <div><b>Seller / agent</b>${escapeHtml(item.seller_name || "—")}</div>
     </div>
     <div class="modal-desc">${escapeHtml(item.description || "No description available.")}</div>
-    <a class="modal-link" href="${escapeHtml(item.url)}" target="_blank" rel="noopener">Otevřít na Sreality →</a>
+    <a class="modal-link" href="${escapeHtml(item.url)}" target="_blank" rel="noopener">Otevřít na ${portalName(item.source)} →</a>
   `;
 }
 
@@ -1162,7 +1166,7 @@ function initMap() {
       <div style="font-weight:600;font-size:0.85rem;">${escapeHtml(item.title || "Listing")}</div>
       <div style="font-size:0.8rem;">${price}</div>
       <button class="popup-btn" onclick="openModal(${JSON.stringify(item.id)})">View details</button>
-      <div><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener" style="font-size:0.7rem;">Otevřít na Sreality →</a></div>
+      <div><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener" style="font-size:0.7rem;">Otevřít na ${portalName(item.source)} →</a></div>
     </div>`;
   }
 
