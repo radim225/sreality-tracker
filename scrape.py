@@ -2,6 +2,7 @@
 """Sreality.cz property monitor: scrapes a seed listing plus comparable
 listings in the same area, snapshots the result, diffs against the previous
 snapshot, and regenerates a mobile-friendly dashboard with photos and a map."""
+import html
 import json
 import re
 import statistics
@@ -735,19 +736,19 @@ def render_tracked_card(tracked):
         else ""
     )
     return f"""<div class="card seed-card" onclick="openModal({tracked['id']})">
-  <img class="seed-thumb" src="{tracked.get('thumb') or ''}" onerror="this.style.visibility='hidden'" alt="">
+  <img class="seed-thumb" src="{html.escape(tracked.get('thumb') or '', quote=True)}" onerror="this.style.visibility='hidden'" alt="">
   <div style="flex:1;">
     <h2 style="margin-top:0;font-size:1rem;">Tracked listing {active_badge}</h2>
     <div class="seed-grid">
-      <div><b>Title</b>{tracked.get('title') or '—'}</div>
-      <div><b>Disposition</b>{tracked.get('disposition') or '—'}</div>
+      <div><b>Title</b>{html.escape(tracked.get('title') or '—')}</div>
+      <div><b>Disposition</b>{html.escape(tracked.get('disposition') or '—')}</div>
       <div><b>Nájem (net)</b>{fmt_czk(tracked.get('rent_czk'))}</div>
       <div><b>Poplatky{' (z popisu)' if tracked.get('fees_source') == 'text' else ''}</b>{'neuvedeno' if tracked.get('fees_missing') else fmt_czk(tracked.get('fees_czk'))}</div>
       <div><b>Elektřina{' (odhad)' if tracked.get('electricity_estimated') else ''}</b>{fmt_czk(tracked.get('electricity_czk'))}</div>
       <div><b>Celkem</b>{fmt_czk(tracked.get('total_czk'))}</div>
       <div><b>Kč/m² (total)</b>{fmt_czk(tracked.get('price_czk_per_sqm'))}</div>
-      <div><b>m²</b>{tracked.get('floor_area_sqm') or '—'}</div>
-      <div><b>Locality</b>{tracked.get('locality') or '—'}</div>
+      <div><b>m²</b>{html.escape(str(tracked.get('floor_area_sqm')) if tracked.get('floor_area_sqm') is not None else '—')}</div>
+      <div><b>Locality</b>{html.escape(tracked.get('locality') or '—')}</div>
     </div>
     {last_active_html}
     <div style="font-size:0.75rem;color:#7ab8ff;margin-top:6px;">Tap for full details →</div>
@@ -804,14 +805,14 @@ def render_dashboard(snapshot, changes, stats, history):
                     padding: 6px 8px; font-size: 0.85rem; }}
   table {{ width: 100%; border-collapse: collapse; font-size: 0.8rem; }}
   th, td {{ padding: 8px 6px; text-align: left; border-bottom: 1px solid #262a33; vertical-align: middle; }}
-  th {{ cursor: pointer; color: #aab; white-space: nowrap; position: sticky; top: 0; background: #1b1f29; }}
+  th {{ cursor: pointer; color: #aab; white-space: nowrap; position: sticky; top: 0; z-index: 2; background: #1b1f29; }}
   tr.changed td {{ background: #2a2410; }}
   tr.clickable-row {{ cursor: pointer; }}
   tr.clickable-row:hover td {{ background: #20242f; }}
   .thumb {{ width: 48px; height: 48px; object-fit: cover; border-radius: 6px; background: #11141b; display: block; }}
   .linklike {{ background: none; border: none; color: #7ab8ff; cursor: pointer; padding: 0; font-size: 0.8rem; text-align: left; }}
   a {{ color: #7ab8ff; text-decoration: none; }}
-  .scroll {{ overflow-x: auto; margin: 0 12px; }}
+  .scroll {{ overflow: auto; max-height: 78vh; margin: 0 12px; }}
   .changes-list {{ font-size: 0.8rem; }}
   .changes-list li {{ margin-bottom: 4px; }}
   footer {{ text-align: center; color: #666; font-size: 0.7rem; margin-top: 24px; }}
@@ -858,22 +859,6 @@ def render_dashboard(snapshot, changes, stats, history):
 
 {tracked_cards_html}
 
-<!-- "+ Track a new listing" box hidden -- the GitHub PAT prompt confused users.
-     Send new listing URLs to be added via add_tracked.py instead. The
-     workflow_dispatch add_url mechanism and triggerAddTracked() JS stay intact
-     below in case this gets re-enabled later.
-<div class="card" id="addTrackedCard">
-  <h2 style="margin-top:0;font-size:1rem;">+ Track a new listing</h2>
-  <div style="font-size:0.8rem;color:#999;margin-bottom:8px;">Paste a sreality.cz listing URL to start live-tracking it (photos, price, description). Runs via GitHub Actions, so it takes ~5–15 min and a page refresh to show up.</div>
-  <div class="controls" style="margin:0;">
-    <input id="addUrlInput" type="text" placeholder="https://www.sreality.cz/detail/..." style="flex:1;min-width:200px;">
-    <button class="popup-btn" onclick="triggerAddTracked(document.getElementById('addUrlInput').value)">Track</button>
-  </div>
-  <div id="addStatus" style="font-size:0.8rem;margin-top:8px;color:#7ab8ff;"></div>
-</div>
--->
-
-
 <div class="card">
   <h2 style="margin-top:0;font-size:1rem;">Area stats (1+kk &amp; 2+kk, Vysočany)</h2>
   <div class="stats">
@@ -890,7 +875,7 @@ def render_dashboard(snapshot, changes, stats, history):
   <div id="historyList" class="history-list"></div>
 </div>
 
-<div class="card">
+<div class="card" style="position:relative;z-index:0;">
   <h2 style="margin-top:0;font-size:1rem;">🗺️ Map</h2>
   <div id="map"></div>
   <div style="font-size:0.7rem;color:#888;margin-top:6px;">Solid pin = exact GPS · dashed/orange pin = approximate locality center</div>
@@ -961,13 +946,9 @@ const TRACKED = __TRACKED_JSON__;
 const DATA = __DATA_JSON__;
 const HISTORY = __HISTORY_JSON__;
 const ALL = [...TRACKED, ...DATA];
-const TRACKED_IDS = new Set(TRACKED.map(t => t.id));
 const CHANGED_IDS = new Set(__CHANGED_IDS_JSON__);
 const ELECTRICITY_ESTIMATE_CZK = __ELECTRICITY_CZK__;
 let sortKey = "price_czk_per_sqm", sortDir = 1;
-
-const GH_REPO = "radim225/sreality-tracker";
-const GH_WORKFLOW = "scrape.yml";
 
 const PLACEHOLDER = "data:image/svg+xml;utf8," + encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="90">' +
@@ -988,48 +969,6 @@ function fmtTotal(r) {
 
 function escapeHtml(s) {
   return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-}
-
-async function triggerAddTracked(url, statusElId) {
-  const statusEl = document.getElementById(statusElId || "addStatus");
-  url = (url || "").trim();
-  if (!url) {
-    if (statusEl) statusEl.textContent = "Paste a sreality.cz listing URL first.";
-    return;
-  }
-  let token = localStorage.getItem("gh_pat");
-  if (!token) {
-    token = prompt(
-      "GitHub personal access token (needs Actions: write on " + GH_REPO + ").\n" +
-      "Stored only in this browser's localStorage."
-    );
-    if (!token) return;
-    localStorage.setItem("gh_pat", token);
-  }
-  if (statusEl) statusEl.textContent = "Triggering…";
-  try {
-    const resp = await fetch(
-      `https://api.github.com/repos/${GH_REPO}/actions/workflows/${GH_WORKFLOW}/dispatches`,
-      {
-        method: "POST",
-        headers: {
-          "Authorization": "Bearer " + token,
-          "Accept": "application/vnd.github+json",
-        },
-        body: JSON.stringify({ ref: "main", inputs: { add_url: url } }),
-      }
-    );
-    if (resp.status === 204) {
-      if (statusEl) statusEl.textContent = "Triggered — refresh in ~5–15 min once the run finishes.";
-    } else if (resp.status === 401 || resp.status === 403) {
-      localStorage.removeItem("gh_pat");
-      if (statusEl) statusEl.textContent = `GitHub rejected the token (HTTP ${resp.status}). Try again.`;
-    } else {
-      if (statusEl) statusEl.textContent = `Unexpected response (HTTP ${resp.status}).`;
-    }
-  } catch (e) {
-    if (statusEl) statusEl.textContent = "Request failed: " + e.message;
-  }
 }
 
 function costBreakdownHtml(item) {
@@ -1059,20 +998,11 @@ function garageParkingHtml(item) {
 
 function buildModalHtml(item) {
   const gallery = (item.images && item.images.length)
-    ? item.images.map(u => `<img src="${u}" loading="lazy">`).join("")
+    ? item.images.map(u => `<img src="${escapeHtml(u)}" loading="lazy">`).join("")
     : `<img src="${PLACEHOLDER}">`;
   const floorLine = item.floor_number != null ? `${item.floor_number}/${item.floors_total ?? "?"}` : "—";
   const noteHtml = item.change_note ? `<div class="modal-note">⚡ ${escapeHtml(item.change_note)}</div>` : "";
   const approxHtml = item.approx_location ? `<span class="badge approx">approximate location</span>` : "";
-  // SHOW_TRACK_BUTTON: the GitHub PAT prompt behind this button confused
-  // users, who'd rather just send a URL to be added via add_tracked.py. Set
-  // to true to re-enable the in-app "track this listing live" flow.
-  const SHOW_TRACK_BUTTON = false;
-  const trackHtml = (!SHOW_TRACK_BUTTON || TRACKED_IDS.has(item.id)) ? "" : `
-    <button class="popup-btn" style="margin-top:12px;margin-left:8px;" id="modalTrackBtn"
-      onclick="triggerAddTracked(${JSON.stringify(item.url)}); this.textContent='Triggered…'; this.disabled=true;">
-      📌 Track this listing live
-    </button>`;
   return `
     <button id="modalClose" onclick="closeModal()">&times;</button>
     <h2>${escapeHtml(item.title || "Listing")} ${approxHtml}</h2>
@@ -1090,8 +1020,7 @@ function buildModalHtml(item) {
       <div><b>Seller / agent</b>${escapeHtml(item.seller_name || "—")}</div>
     </div>
     <div class="modal-desc">${escapeHtml(item.description || "No description available.")}</div>
-    <a class="modal-link" href="${item.url}" target="_blank" rel="noopener">Otevřít na Sreality →</a>
-    ${trackHtml}
+    <a class="modal-link" href="${escapeHtml(item.url)}" target="_blank" rel="noopener">Otevřít na Sreality →</a>
   `;
 }
 
@@ -1139,7 +1068,7 @@ function renderHistory() {
       text = `${escapeHtml((item && item.title) || ("#" + ev.id))}: ${fmtCzk(oldP)} → ${fmtCzk(newP)}`;
     }
     return `<div class="history-item" onclick="openHistoryItem(${idx})">
-      <img class="thumb" src="${thumb}" loading="lazy" onerror="this.src='${PLACEHOLDER}'">
+      <img class="thumb" src="${escapeHtml(thumb)}" loading="lazy" onerror="this.src='${PLACEHOLDER}'">
       <div class="htxt">${text}<div class="hat">${escapeHtml(ev.at || "")}</div></div>
       <div class="hkind">${icon}</div>
     </div>`;
@@ -1151,7 +1080,7 @@ function renderPodHarfou() {
   const tbody = document.querySelector("#tblPod tbody");
   tbody.innerHTML = rows.length ? rows.map(r => `
     <tr class="clickable-row ${CHANGED_IDS.has(r.id) ? 'changed' : ''}" onclick="openModal(${r.id})">
-      <td><img class="thumb" src="${r.thumb || PLACEHOLDER}" loading="lazy" onerror="this.src=PLACEHOLDER"></td>
+      <td><img class="thumb" src="${escapeHtml(r.thumb || PLACEHOLDER)}" loading="lazy" onerror="this.src=PLACEHOLDER"></td>
       <td><button class="linklike" onclick="event.stopPropagation();openModal(${r.id})">${escapeHtml(r.title) || '—'}</button></td>
       <td>${r.transaction_type === 'pronajem' ? 'rent' : 'sale'}</td>
       <td>${r.disposition || '—'}</td>
@@ -1185,7 +1114,7 @@ function render() {
   const tbody = document.querySelector("#tbl tbody");
   tbody.innerHTML = rows.map(r => `
     <tr class="clickable-row ${CHANGED_IDS.has(r.id) ? 'changed' : ''}" onclick="openModal(${r.id})">
-      <td><img class="thumb" src="${r.thumb || PLACEHOLDER}" loading="lazy" onerror="this.src=PLACEHOLDER"></td>
+      <td><img class="thumb" src="${escapeHtml(r.thumb || PLACEHOLDER)}" loading="lazy" onerror="this.src=PLACEHOLDER"></td>
       <td><button class="linklike" onclick="event.stopPropagation();openModal(${r.id})">${escapeHtml(r.title) || '—'}</button></td>
       <td>${r.transaction_type === 'pronajem' ? 'rent' : 'sale'}</td>
       <td>${r.disposition || '—'}</td>
@@ -1210,11 +1139,11 @@ function initMap() {
     const thumb = item.thumb || (item.images && item.images[0]) || PLACEHOLDER;
     const price = item.transaction_type === "pronajem" ? fmtTotal(item) + "/mo" : fmtCzk(item.price_czk);
     return `<div style="min-width:150px;">
-      <img class="popup-thumb" src="${thumb}" onerror="this.src='${PLACEHOLDER}'">
+      <img class="popup-thumb" src="${escapeHtml(thumb)}" onerror="this.src='${PLACEHOLDER}'">
       <div style="font-weight:600;font-size:0.85rem;">${escapeHtml(item.title || "Listing")}</div>
       <div style="font-size:0.8rem;">${price}</div>
       <button class="popup-btn" onclick="openModal(${item.id})">View details</button>
-      <div><a href="${item.url}" target="_blank" rel="noopener" style="font-size:0.7rem;">Otevřít na Sreality →</a></div>
+      <div><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener" style="font-size:0.7rem;">Otevřít na Sreality →</a></div>
     </div>`;
   }
 

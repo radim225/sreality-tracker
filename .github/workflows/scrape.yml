@@ -9,6 +9,10 @@ on:
         description: "Sreality listing URL to add to tracked.json before scraping"
         required: false
         default: ""
+      remove_url:
+        description: "Sreality listing URL (or numeric id) to remove from tracked.json before scraping"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -40,6 +44,10 @@ jobs:
       - name: Add tracked listing (if requested)
         if: github.event.inputs.add_url != ''
         run: python add_tracked.py "${{ github.event.inputs.add_url }}"
+
+      - name: Remove tracked listing (if requested)
+        if: github.event.inputs.remove_url != ''
+        run: python remove_tracked.py "${{ github.event.inputs.remove_url }}"
 
       - name: Run scraper
         run: python scrape.py

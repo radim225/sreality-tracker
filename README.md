@@ -36,12 +36,22 @@ Tři možnosti:
    (ID se vytáhne z konce URL; opakované přidání stejného ID nic neudělá).
 3. **Přes GitHub** – ručně spustit workflow *Scrape Sreality* a vyplnit pole `add_url`.
 
+## Jak přestat sledovat inzerát
+
+Symetricky k přidání:
+
+1. **Ručně** – smazat příslušný objekt z [`tracked.json`](tracked.json).
+2. **Lokálně skriptem** – `python remove_tracked.py "<URL nebo id>"`
+   (přijímá URL i holé číselné ID; odebrání nesledovaného ID nic neudělá).
+3. **Přes GitHub** – ručně spustit workflow *Scrape Sreality* a vyplnit pole `remove_url`.
+
 ## Struktura souborů
 
 | Soubor / složka | Účel |
 | --- | --- |
 | `scrape.py` | Hlavní scraper – stáhne inzeráty a vygeneruje výstupy. |
 | `add_tracked.py` | Přidá URL inzerátu do `tracked.json` (idempotentní). |
+| `remove_tracked.py` | Odebere inzerát z `tracked.json` podle URL nebo id (idempotentní). |
 | `tracked.json` | Seznam sledovaných inzerátů (`id` + `url`). |
 | `latest_snapshot.json` | Poslední kompletní stav všech sledovaných inzerátů. |
 | `last_changes.json` | Změny z posledního běhu. |
