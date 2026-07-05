@@ -14,6 +14,8 @@ from pathlib import Path
 
 import requests
 
+import sources
+
 ROOT = Path(__file__).parent
 SNAPSHOTS_DIR = ROOT / "snapshots"
 DASHBOARD_PATH = ROOT / "dashboard.html"
@@ -796,6 +798,8 @@ def render_dashboard(snapshot, changes, stats, history):
   .badge.ok {{ background: #1e4620; color: #6f6; }}
   .badge.bad {{ background: #4a1c1c; color: #f88; }}
   .badge.approx {{ background: #4a3c1c; color: #fc6; }}
+  .src {{ display: inline-block; padding: 0 5px; margin-left: 4px; border-radius: 6px;
+          font-size: 0.62rem; font-weight: 700; vertical-align: middle; border: 1px solid; }}
   .stats {{ display: flex; gap: 12px; flex-wrap: wrap; }}
   .stat {{ flex: 1; min-width: 130px; text-align: center; padding: 8px; background: #11141b; border-radius: 8px; }}
   .stat .num {{ font-size: 1.2rem; font-weight: 600; }}
@@ -906,6 +910,12 @@ def render_dashboard(snapshot, changes, stats, history):
     <option value="1+kk">1+kk</option>
     <option value="2+kk">2+kk</option>
   </select>
+  <select id="filterSource">
+    <option value="">All sources</option>
+    <option value="sreality">Sreality</option>
+    <option value="bezrealitky">Bezrealitky</option>
+    <option value="idnes">iDNES</option>
+  </select>
   <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;">
     <input type="checkbox" id="filterPodHarfou" style="width:auto;"> Pod Harfou only
   </label>
@@ -969,6 +979,13 @@ function fmtTotal(r) {
 
 function escapeHtml(s) {
   return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+function srcBadge(s) {
+  const map = { sreality: ["SR", "#7ab8ff"], bezrealitky: ["BR", "#6fd08c"], idnes: ["iD", "#f2a65a"] };
+  if (!s || !map[s]) return "";
+  const [lbl, col] = map[s];
+  return ` <span class="src" style="color:${col};border-color:${col}66;">${lbl}</span>`;
 }
 
 function costBreakdownHtml(item) {
@@ -1079,9 +1096,9 @@ function renderPodHarfou() {
   const rows = DATA.filter(r => r.pod_harfou);
   const tbody = document.querySelector("#tblPod tbody");
   tbody.innerHTML = rows.length ? rows.map(r => `
-    <tr class="clickable-row ${CHANGED_IDS.has(r.id) ? 'changed' : ''}" onclick="openModal(${r.id})">
+    <tr class="clickable-row ${CHANGED_IDS.has(r.id) ? 'changed' : ''}" onclick="openModal(${JSON.stringify(r.id)})">
       <td><img class="thumb" src="${escapeHtml(r.thumb || PLACEHOLDER)}" loading="lazy" onerror="this.src=PLACEHOLDER"></td>
-      <td><button class="linklike" onclick="event.stopPropagation();openModal(${r.id})">${escapeHtml(r.title) || '—'}</button></td>
+      <td><button class="linklike" onclick="event.stopPropagation();openModal(${JSON.stringify(r.id)})">${escapeHtml(r.title) || '—'}</button></td>
       <td>${r.transaction_type === 'pronajem' ? 'rent' : 'sale'}</td>
       <td>${r.disposition || '—'}</td>
       <td>${fmtCzk(r.price_czk)}</td>
@@ -1094,11 +1111,13 @@ function renderPodHarfou() {
 function render() {
   const tx = document.getElementById("filterTx").value;
   const disp = document.getElementById("filterDisp").value;
+  const source = document.getElementById("filterSource").value;
   const podOnly = document.getElementById("filterPodHarfou").checked;
   const q = document.getElementById("search").value.toLowerCase();
   let rows = DATA.filter(r => {
     if (tx && r.transaction_type !== tx) return false;
     if (disp && r.disposition !== disp) return false;
+    if (source && r.source !== source) return false;
     if (podOnly && !r.pod_harfou) return false;
     if (q && !((r.title||"").toLowerCase().includes(q) || (r.city_part||"").toLowerCase().includes(q) || (r.locality||"").toLowerCase().includes(q))) return false;
     return true;
@@ -1113,16 +1132,16 @@ function render() {
   });
   const tbody = document.querySelector("#tbl tbody");
   tbody.innerHTML = rows.map(r => `
-    <tr class="clickable-row ${CHANGED_IDS.has(r.id) ? 'changed' : ''}" onclick="openModal(${r.id})">
+    <tr class="clickable-row ${CHANGED_IDS.has(r.id) ? 'changed' : ''}" onclick="openModal(${JSON.stringify(r.id)})">
       <td><img class="thumb" src="${escapeHtml(r.thumb || PLACEHOLDER)}" loading="lazy" onerror="this.src=PLACEHOLDER"></td>
-      <td><button class="linklike" onclick="event.stopPropagation();openModal(${r.id})">${escapeHtml(r.title) || '—'}</button></td>
+      <td><button class="linklike" onclick="event.stopPropagation();openModal(${JSON.stringify(r.id)})">${escapeHtml(r.title) || '—'}</button></td>
       <td>${r.transaction_type === 'pronajem' ? 'rent' : 'sale'}</td>
       <td>${r.disposition || '—'}</td>
       <td>${fmtCzk(r.price_czk)}</td>
       <td>${fmtTotal(r)}</td>
       <td>${r.floor_area_sqm ?? '—'}</td>
       <td>${fmtCzk(r.price_czk_per_sqm)}${CHANGED_IDS.has(r.id) ? ' ⚡' : ''}</td>
-      <td>${escapeHtml(r.locality || r.city_part || '—')}</td>
+      <td>${escapeHtml(r.locality || r.city_part || '—')}${srcBadge(r.source)}</td>
     </tr>`).join("");
 }
 
@@ -1142,7 +1161,7 @@ function initMap() {
       <img class="popup-thumb" src="${escapeHtml(thumb)}" onerror="this.src='${PLACEHOLDER}'">
       <div style="font-weight:600;font-size:0.85rem;">${escapeHtml(item.title || "Listing")}</div>
       <div style="font-size:0.8rem;">${price}</div>
-      <button class="popup-btn" onclick="openModal(${item.id})">View details</button>
+      <button class="popup-btn" onclick="openModal(${JSON.stringify(item.id)})">View details</button>
       <div><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener" style="font-size:0.7rem;">Otevřít na Sreality →</a></div>
     </div>`;
   }
@@ -1178,6 +1197,7 @@ document.querySelectorAll("#tbl th[data-k]").forEach(th => {
 });
 document.getElementById("filterTx").addEventListener("change", render);
 document.getElementById("filterDisp").addEventListener("change", render);
+document.getElementById("filterSource").addEventListener("change", render);
 document.getElementById("filterPodHarfou").addEventListener("change", render);
 document.getElementById("search").addEventListener("input", render);
 render();
@@ -1225,6 +1245,10 @@ def main():
 
     print("Fetching comparables...", file=sys.stderr)
     comparables = fetch_comparables()
+    for c in comparables:
+        c.setdefault("source", "sreality")
+    print("Fetching extra sources (Bezrealitky, iDNES)...", file=sys.stderr)
+    comparables += sources.fetch_extra_comparables()
     print(f"Found {len(comparables)} unique comparable listings", file=sys.stderr)
 
     snapshot = {
