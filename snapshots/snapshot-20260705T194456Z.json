@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-07-05T20:03:51Z",
+  "generated_at": "2026-07-05T19:44:56Z",
   "tracked": [
     {
       "id": 3182461004,
       "url": "https://www.sreality.cz/detail/pronajem/byt/1+kk/praha-vysocany-pod-harfou/3182461004",
       "active": true,
-      "fetched_at": "2026-07-05T19:59:25Z",
+      "fetched_at": "2026-07-05T19:40:52Z",
       "title": "Pronájem bytu 1+kk 33 m²",
       "disposition": "1+kk",
       "transaction_type": "pronajem",
@@ -46,7 +46,7 @@
       "id": 3966083148,
       "url": "https://www.sreality.cz/detail/pronajem/byt/2+kk/praha-vysocany-pod-harfou/3966083148",
       "active": false,
-      "fetched_at": "2026-07-05T19:59:25Z",
+      "fetched_at": "2026-07-05T19:40:52Z",
       "title": "Pronájem bytu 2+kk 47 m²",
       "disposition": "2+kk",
       "transaction_type": "pronajem",
@@ -7027,6 +7027,84 @@
       "source": "sreality"
     },
     {
+      "id": 3106308172,
+      "title": "Prodej bytu 1+kk 29 m²",
+      "disposition": "1+kk",
+      "transaction_type": "prodej",
+      "price_czk": 5690000,
+      "floor_area_sqm": 29.0,
+      "price_czk_per_sqm": 196207,
+      "locality": "Kolbenova, Vysočany, Praha",
+      "city_part": "Vysočany",
+      "street": "Kolbenova",
+      "pod_harfou": false,
+      "url": "https://www.sreality.cz/detail/prodej/byt/1%2Bkk/x/3106308172",
+      "active": true,
+      "lat": 50.1106579662919,
+      "lon": 14.5178059313854,
+      "approx_location": false,
+      "images": [
+        "https://d18-a.sdn.cz/d_18/c_img_qC_E/nO2CysqjGrCDmo6XwHEwiPv/4f62.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+        "https://d18-a.sdn.cz/d_18/c_img_qC_F/kQMlcCt5zmChFvGMMYHExkOI/bcc9.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+        "https://d18-a.sdn.cz/d_18/c_img_qC_D/nO2CysqjGrRICCSCsG8muBV/cc17.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+        "https://d18-a.sdn.cz/d_18/c_img_qC_F/nO2CysqjGrRICCVMHExkPR/9ea7.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+        "https://d18-a.sdn.cz/d_18/c_img_qC_F/nO2CysqjGrBgjUXZIHExkQf/7145.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+      ],
+      "thumb": "https://d18-a.sdn.cz/d_18/c_img_qC_E/nO2CysqjGrCDmo6XwHEwiPv/4f62.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+      "description": "Tento útulný byt o dispozici 1+kk a výměře 29 m² v žádané lokalitě Praha – Vysočany představuje ideální příležitost pro startovací bydlení i bezpečnou investici. \r\n\r\nNemovitost se nachází v udržovaném domě s moderním výtahem a jejím největším technickým benefitem jsou kompletně nové rozvody elektřiny a vody, které novému majiteli ušetří čas i peníze za nákladné předělávky. Budovu navíc v nadcházejících měsících čeká rekonstrukce zateplení a fasády, a také montáž venkovních zatemňovacích rolet, které budou taktéž i velkým benefitem proti vnějšímu hluku. Na rozdíl od klasických garsonek nabízí tato dispozice prakticky oddělenou kuchyň od obytné ložnice, což zajišťuje dostatek soukromí i pohodlí.\r\n\r\nSamotné Vysočany procházejí dynamickou proměnou a staly se jednou z nejpopulárnějších pražských čtvrtí, která vyniká perfektní občanskou vybaveností v docházkové vzdálenosti. Doslova za rohem tak najdete supermarkety, vyhlášené kavárny, restaurace, polikliniku i sportoviště. Lokalita nabízí také skvělou dopravní dostupnost do centra metrem, tramvají i vlakem, a pro chvíle odpočinku v zeleni je kousek od domu k dispozici oblíbený park Podviní. \r\n\r\nDíky hotové rekonstrukci rozvodů a neutucha",
+      "seller_name": "Ing. Karolína Suchánková",
+      "fees_czk": 3300,
+      "fees_missing": false,
+      "fees_source": "field",
+      "electricity_czk": null,
+      "electricity_estimated": false,
+      "total_czk": 5690000,
+      "garage": false,
+      "parking": false,
+      "floor_number": 5,
+      "floors_total": 6,
+      "source": "sreality"
+    },
+    {
+      "id": 1218420812,
+      "title": "Prodej bytu 2+kk 56 m²",
+      "disposition": "2+kk",
+      "transaction_type": "prodej",
+      "price_czk": 10890000,
+      "floor_area_sqm": 56.0,
+      "price_czk_per_sqm": 194464,
+      "locality": "Gerstelova, Vysočany, Praha",
+      "city_part": "Vysočany",
+      "street": "Gerstelova",
+      "pod_harfou": false,
+      "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/1218420812",
+      "active": true,
+      "lat": 50.103396,
+      "lon": 14.507591,
+      "approx_location": false,
+      "images": [
+        "https://d18-a.sdn.cz/d_18/c_img_qC_B/nO2CysqjGrCP7qOHnDG13dMW/b706.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+        "https://d18-a.sdn.cz/d_18/c_img_qC_B/nO2CysqjGrud5yHFkG13dND/ae17.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+        "https://d18-a.sdn.cz/d_18/c_img_qC_B/kQMlcCt5zmUKhkE6YG13dNz/81c5.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+        "https://d18-a.sdn.cz/d_18/c_img_qC_B/nO2CysqjGrRICCJusG13dOY/3908.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+        "https://d18-a.sdn.cz/d_18/c_img_qC_B/kQMlcCt5zmCni4DE9JG13dO4/1fed.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+      ],
+      "thumb": "https://d18-a.sdn.cz/d_18/c_img_qC_B/nO2CysqjGrCP7qOHnDG13dMW/b706.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+      "description": "Dovolte mi nabídnout Vám k prodeji nový světlý byt 2+kk v projektu Harfa Living o velikosti 56 m² + balkon 16 m² + uzavíratelná garáž v suterénu domu. Dům je zkolaudován v roce 2026, situován je v klidné lokalitě Prahy 9, Vysočany, ulice Gerstelova. Samotný byt se nachází ve 2. nadzemním podlaží moderního bytového domu.\r\n\r\nDispozici bytu si prohlédněte na přiloženém půdorysu. Byt zahrnuje předsíň s prostorem na vestavěnou skříň, pokoj s přípravou na kuchyň se vstupem na balkon (dovolil jsem si navrhnout vizualizaci obývacíiho pokoje, fotografie s vizualizacemi jsou označeny nápisem VIZUALIZACE). Samostatný pokoj se vstupem na prostornou terasu, koupelnu se sprchovým koutem, toaletou a přípravou na pračku. Podlahy tvoří kombinace dlažby a vinilu, okna jsou orientována jih a východ. Byt je připravený k okamžitému nastěhování. K bytu náleží prostorná uzaviratelná garáž  24 m², která splní roli garáže a zároveň nabízí další úložný prostor (policová skříň apod.)\r\n\r\nV bezprostřední blízkosti domu se nachází nákupní centrum Galerie Harfa a také OC Fénix, kde je k dispozici široká nabídka obchodů, restaurací a služeb pro každodenní potřeby. V okolí nechybí ani mateřské a základní školy, zd",
+      "seller_name": "Petr Berka",
+      "fees_czk": null,
+      "fees_missing": true,
+      "fees_source": null,
+      "electricity_czk": null,
+      "electricity_estimated": false,
+      "total_czk": 10890000,
+      "garage": true,
+      "parking": false,
+      "floor_number": 2,
+      "floors_total": 4,
+      "source": "sreality"
+    },
+    {
       "id": 3310125132,
       "title": "Prodej bytu 2+kk 55 m²",
       "disposition": "2+kk",
@@ -8700,6 +8778,123 @@
       "source": "sreality"
     },
     {
+      "id": 3130479436,
+      "title": "Prodej bytu 2+kk 51 m²",
+      "disposition": "2+kk",
+      "transaction_type": "prodej",
+      "price_czk": 7499000,
+      "floor_area_sqm": 51.0,
+      "price_czk_per_sqm": 147039,
+      "locality": "Kolbenova, Vysočany, Praha",
+      "city_part": "Vysočany",
+      "street": "Kolbenova",
+      "pod_harfou": false,
+      "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/3130479436",
+      "active": true,
+      "lat": 50.1106579662919,
+      "lon": 14.5178059313854,
+      "approx_location": false,
+      "images": [
+        "https://d18-a.sdn.cz/d_18/c_img_p9_C/kcHp2YdDtBM3KVDiDGEMXKh/ea62.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+        "https://d18-a.sdn.cz/d_18/c_img_p9_C/nCTUX1iX5CNPfpDgXGEMXLQ/c9e9.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+        "https://d18-a.sdn.cz/d_18/c_img_p9_C/kcHp2YdDtEBMvIDgvGEMXLz/1852.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+        "https://d18-a.sdn.cz/d_18/c_img_p9_C/kcHp2YdDtCDcb5DceGEMXMe/5b89.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+        "https://d18-a.sdn.cz/d_18/c_img_p9_C/kcHp2YdDtEBMvIDfsGEMXNF/533f.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+      ],
+      "thumb": "https://d18-a.sdn.cz/d_18/c_img_p9_C/kcHp2YdDtBM3KVDiDGEMXKh/ea62.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+      "description": "Nabízím Vám naši další „novostavbu bytu“ v dispozičním uspořádání 2+kk ve 2. patře, o celkové ploše 60 m², se sklepem, ještě v původním stavu, s rekonstrukcí na klíč dle standardů a se zárukou kvality od společnosti OAK Group.\r\n\r\nUvedená cena v sobě zahrnuje kompletní rekonstrukci, v rámci které bude vyzděno nové jádro pro koupelnu a WC a také provedena pokládka velkoformátové dlažby a obkladů. Samozřejmostí je rozvod nové elektroinstalace a vodoinstalace vč. odpadů. Stávající omítky budou nahrazeny novými se základní bílou malbou. Součástí rekonstrukce je vyrovnání podlah samonivelační stěrkou. Stropy budou zakryty sádrokartonovými podhledy.\r\n\r\nSoučástí je také vybavení, u kterého si sami určíte barevné odstíny všech povrchů pro vinylové podlahy a vstupní i interiérové dveře. Dále je možná instalace nové kuchyňské linky, vestavěných skříní a šatního systému dle individuálních požadavků.\r\n\r\nByt se nachází ve 2. patře činžovního domu bez výtahu. Dům i společné prostory jsou po částečné revitalizaci, dokončení (zateplení a nová fasáda) se plánuje v roce 2028. Má dobrou dopravní dostupnost. Jedná se o žádanou lokalitu s kompletní občanskou vybaveností – MŠ, ZŠ, obchodní centrum, pošta",
+      "seller_name": "Lukáš Rak",
+      "fees_czk": null,
+      "fees_missing": true,
+      "fees_source": null,
+      "electricity_czk": null,
+      "electricity_estimated": false,
+      "total_czk": 7499000,
+      "garage": false,
+      "parking": false,
+      "floor_number": 3,
+      "floors_total": 5,
+      "source": "sreality"
+    },
+    {
+      "id": 299324236,
+      "title": "Prodej bytu 2+kk 62 m²",
+      "disposition": "2+kk",
+      "transaction_type": "prodej",
+      "price_czk": null,
+      "floor_area_sqm": 62.0,
+      "price_czk_per_sqm": null,
+      "locality": "Odkolkova, Vysočany, Praha",
+      "city_part": "Vysočany",
+      "street": "Odkolkova",
+      "pod_harfou": false,
+      "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/299324236",
+      "active": true,
+      "lat": 50.113334111017565,
+      "lon": 14.505072734050005,
+      "approx_location": false,
+      "images": [
+        "https://d18-a.sdn.cz/d_18/c_img_p9_B/nCTUX1iX5bIUBCcIGDlvWo/1a5d.png?fl=res,800,800,1|shr,,20|jpg,80",
+        "https://d18-a.sdn.cz/d_18/c_img_p9_B/kcHp2YdDtEBMvIDQMGDlujA/6e1d.png?fl=res,800,800,1|shr,,20|jpg,80",
+        "https://d18-a.sdn.cz/d_18/c_img_p9_B/kcHp2YdDtEDuRmEXbGDluZ8/c90b.png?fl=res,800,800,1|shr,,20|jpg,80",
+        "https://d18-a.sdn.cz/d_18/c_img_p9_B/kcHp2YdDtEBMvIDPmGDluMe/b8e8.png?fl=res,800,800,1|shr,,20|jpg,80",
+        "https://d18-a.sdn.cz/d_18/c_img_p9_B/nCTUX1iX5CGpNZCM9GDltaG/8cb2.png?fl=res,800,800,1|shr,,20|jpg,80"
+      ],
+      "thumb": "https://d18-a.sdn.cz/d_18/c_img_p9_B/nCTUX1iX5bIUBCcIGDlvWo/1a5d.png?fl=res,400,400,1|shr,,20|webp,60",
+      "description": "Dovolujeme si Vám představit byt, který je součástí nově vznikajícího rezidenčního areálu Bakers Court, společnosti Metrostav Development. \n\nTento dvoupokojový byt s promyšlenou dispozicí nabízí prostorné řešení s dostatkem úložných prostor. Obývací pokoj s chytře ukrytým kuchyňským koutem, balkonem o výměře 7,5m2 či ložnicí s vestavnou skříní a dostatečným prostorem kolem manželského lůžka zaručují maximální komfort bydlení. Další předností tohoto bytu jsou stropy vysoké až 320 cm,  nabízející nebývalou vzdušnost a světlost.  K bytu náleží podzemní parkovací stání a sklep. \n\nByt 233 se nachází v domě The Baker, který je ikonou celého areálu a dílem mezinárodního studia Bogle Architects, držitele řady prestižních architektonických ocenění. Už samotný vstup do budovy naznačuje její reprezentativní charakter – lobby s recepcí a výškou téměř pět metrů vytváří působivý dojem a zároveň slouží jako lounge zóna pro příjemné posezení rezidentů i jejich hostů. Vedle vstupního lobby naleznete i privátní fitness, meeting room či dětský koutek.\n\nByty v The Baker mají premiový standard vybavení, stropy vysoké 3,2 až 4,5 metru, velká hliníková, dělená okna a zahrnují i nejnovější technologie vče",
+      "seller_name": "Jiří Maštálka",
+      "fees_czk": null,
+      "fees_missing": true,
+      "fees_source": null,
+      "electricity_czk": null,
+      "electricity_estimated": false,
+      "total_czk": null,
+      "garage": false,
+      "parking": true,
+      "floor_number": 3,
+      "floors_total": null,
+      "source": "sreality"
+    },
+    {
+      "id": 603451468,
+      "title": "Prodej bytu 2+kk 53 m²",
+      "disposition": "2+kk",
+      "transaction_type": "prodej",
+      "price_czk": 10290000,
+      "floor_area_sqm": 53.0,
+      "price_czk_per_sqm": 194151,
+      "locality": "Kolbenova, Vysočany, Praha",
+      "city_part": "Vysočany",
+      "street": "Kolbenova",
+      "pod_harfou": false,
+      "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/603451468",
+      "active": true,
+      "lat": 50.111321,
+      "lon": 14.510686,
+      "approx_location": false,
+      "images": [
+        "https://d18-a.sdn.cz/d_18/c_img_qC_E/kQMlcCt5zmBDkXaTgMHClM2B/8516.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+        "https://d18-a.sdn.cz/d_18/c_img_qC_E/nO2CysqjGrCe62NQp7HClM2g/200a.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+        "https://d18-a.sdn.cz/d_18/c_img_qC_E/kQMlcCt5zmC5zFHK8tHClM3A/b27d.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+        "https://d18-a.sdn.cz/d_18/c_img_qC_E/nO2CysqjGrCDmo6RH5HClM3a/e8cc.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+        "https://d18-a.sdn.cz/d_18/c_img_qC_E/nO2CysqjGrCP7qORNcHClNLF/6085.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+      ],
+      "thumb": "https://d18-a.sdn.cz/d_18/c_img_qC_E/kQMlcCt5zmBDkXaTgMHClM2B/8516.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+      "description": "Nabízíme k prodeji kompletně vybavený designový loftový byt 2+kk v projektu Lofty Kolbenova, Praha 9. Byt se nachází ve 3. nadzemním podlaží na jižní straně budovy, hned u výtahu. Velkoformátová okna jsou orientována na západ, díky čemuž je byt velmi světlý zejména v odpoledních a večerních hodinách.\r\n\r\nDominantou bytu je velkorysá výška stropu cca 6 metrů a loftové řešení s galerií. Spodní podlaží tvoří vstupní chodba s vestavěnými skříněmi na míru, obývací pokoj s kuchyní, samostatné WC a vstup na prostorný hluboký balkon. V horní části bytu se nachází ložnice, koupelna s pračkou a druhé WC. Byt tak nabízí komfort dvou toalet.\r\nCelková velikost bytové jednotky je 58,75 m2, z toho plocha bytu je 53,35 m2 a balkon 5,4 m2.\r\n\r\nByt se prodává kompletně vybavený nábytkem a je připraven k okamžitému nastěhování nebo pronájmu. Součástí je nová kuchyňská linka včetně spotřebičů a lednice, klimatizace, rekuperace, podlahové vytápění a dřevěná podlaha v dekoru běleného dubu. V celém bytě je instalováno designové osvětlení, na oknech jsou dálkově ovládané záclony a předokenní žaluzie.\r\n\r\nProjekt Lofty Kolbenova nabízí moderní bydlení s industriálním charakterem a skvělou dopravní dostupností",
+      "seller_name": "Erika Mezková",
+      "fees_czk": null,
+      "fees_missing": true,
+      "fees_source": null,
+      "electricity_czk": null,
+      "electricity_estimated": false,
+      "total_czk": 10290000,
+      "garage": false,
+      "parking": false,
+      "floor_number": 4,
+      "floors_total": 6,
+      "source": "sreality"
+    },
+    {
       "id": 2816435020,
       "title": "Prodej bytu 2+kk 43 m²",
       "disposition": "2+kk",
@@ -8799,7 +8994,7 @@
         "https://api.bezrealitky.cz/media/cache/record_main/data/images/advert/1013k/1013334/1783249237-kwxfgtuuca-raw04691-hdr-edit.jpg"
       ],
       "thumb": "https://api.bezrealitky.cz/media/cache/record_thumb/data/images/advert/1013k/1013334/1783249237-kwxfgtuuca-raw04691-hdr-edit.jpg",
-      "description": "Nabízím k prodeji kompletně vybavený designový loftový byt 2+kk v projektu Lofty Kolbenova na Praze 9 jen pár minut chůze od metra Kolbenova. Naproti přes silnici se nachází populární Pragovka s fitness centrem, kavárnou a dalšími službami. Projekt Lofty Kolbenova získala 1.místo v Estate Awards 2025 v kategorii rekonstrukce.\n\nByt se nachází ve 3 nadzemním podlaží, na jižní straně domu, hned u výtahu. Byt je velmi světlý, má velká okna, stropy ve výšce 6 m a prostorný balkon s krásným výhledem. \n\nByt je kompletně vybavený nábytkem a je připraven k okamžitému nastěhování nebo pronájmu. Součástí je nová kuchyňská linka včetně spotřebičů a lednice, klimatizace, rekuperace, podlahové vytápění a dřevěná dubová podlaha. V bytě jsou dvě toalety a prostorná koupelna s pračkou a sušičkou. V celém bytě je designové osvětlení a na oknech jsou dálkově ovládané záclony a předokenní žaluzie. V chodbě jsou vestavěné skříně na míru.",
+      "description": null,
       "seller_name": null,
       "fees_czk": null,
       "fees_missing": true,
@@ -8808,8 +9003,7 @@
       "electricity_estimated": false,
       "total_czk": 10290000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": 0
+      "parking": null
     },
     {
       "id": "bez-863730",
@@ -8833,7 +9027,7 @@
         "https://api.bezrealitky.cz/media/cache/record_main/data/images/advert/863k/863730/1727355136-vzvcxkdowq-kitchen-straight-view.jpg"
       ],
       "thumb": "https://api.bezrealitky.cz/media/cache/record_thumb/data/images/advert/863k/863730/1727355136-vzvcxkdowq-kitchen-straight-view.jpg",
-      "description": "Dovolte mi nabídnout Vám ke koupi krásnou moderní novostavbu nezařízeného bytu 2kk o výměře 60m2 v populárním projektu Harfa Design Residence v Praze Libni, v docházkové vzdálenosti od stanice metra Českomoravská, v těsné blízkosti OC Harfa. Lokalita nabízí veškerou občanskou vybavenost a výborné spojení do centra města.\nByt je vybaven moderní kuchyňskou linkou s vestavnými spotřebiči a krásnou terasou.\nV bytě je rekuperace, dřevěné podlahy, podlahové topení, hliníková okna osazena interiérovými žaluziemi.\nSamozřejmostí jsou sklep a parkovací stání v podzemním prostoru projektu.\nHledáte li trendy bydlení v dynamické čtvrti s nonstop recepcí neváhejte mne kontaktovat.\nPokud hledáte investiční příležitost, byt je aktuálně pronajímán bezproblémovému nájemníkovi, který by rád v bytě setrval.\nProhlídky po dohodě.\nCena 11.000.000 Kč, neplatíte provizi, přímá inzerce vlastníka.",
+      "description": null,
       "seller_name": null,
       "fees_czk": null,
       "fees_missing": true,
@@ -8842,8 +9036,7 @@
       "electricity_estimated": false,
       "total_czk": 11000000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": 0
+      "parking": null
     },
     {
       "id": "bez-1006128",
@@ -8867,7 +9060,7 @@
         "https://api.bezrealitky.cz/media/cache/record_main/data/images/advert/1006k/1006128/1778789564-a-wide-frontal-shot-of-a-minimal-empty-room-inte.png"
       ],
       "thumb": "https://api.bezrealitky.cz/media/cache/record_thumb/data/images/advert/1006k/1006128/1778789564-a-wide-frontal-shot-of-a-minimal-empty-room-inte.png",
-      "description": "K prodeji nabízíme moderní byt v osobním vlastnictví o dispozici 1+kk s balkonem ve vyhledávané lokalitě Praha 9 - Vysočany.\n\nCelková plocha jednotky včetně sklepní kóje činí 37,8 m², samotná podlahová plocha bytu je 34,3 m². Dispozici tvoří obytný pokoj s kuchyňským koutem (22,7 m²), vstupní chodba (6,7 m²) a koupelna s WC (4,9 m²). K bytu náleží balkon o velikosti 5,6 m² a sklepní kóje o výměře 1,7 m².\n\nByt se nachází v 1. nadzemním podlaží z celkových 7 podlaží novostavby dokončené v roce 2022. Jedná se o moderní bydlení bez nutnosti dalších investic. Vytápění je řešeno centrálně s možností regulace prostřednictvím mobilní aplikace, která umožňuje pohodlné ovládání a optimalizaci spotřeby. Energetická náročnost budovy je třídy A – mimořádně úsporná. Parkování je možné v okolí domu na veřejných parkovacích místech.\n\nMěsíční zálohy na služby činí přibližně 2 554 Kč. Součástí této částky je přibližně 500 Kč určených na fond oprav, správní poplatky a pravidelné revize.\n\nLokalita Vysočany patří mezi dynamicky se rozvíjející části Prahy s kompletní občanskou vybaveností a výbornou dopravní dostupností. V docházkové vzdálenosti se nachází obchody, restaurace, kavárny, fitness centra, š",
+      "description": null,
       "seller_name": null,
       "fees_czk": null,
       "fees_missing": true,
@@ -8876,8 +9069,7 @@
       "electricity_estimated": false,
       "total_czk": 6390000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": 0
+      "parking": null
     },
     {
       "id": "bez-993134",
@@ -8901,7 +9093,7 @@
         "https://api.bezrealitky.cz/media/cache/record_main/data/images/advert/993k/993134/1771597861-lpggjmpxyl-15.jpg"
       ],
       "thumb": "https://api.bezrealitky.cz/media/cache/record_thumb/data/images/advert/993k/993134/1771597861-lpggjmpxyl-15.jpg",
-      "description": "Prodej bytu 2+kk, 67 m2 s lodžií, komorou a parkovacím stáním – Pod Harfou 25, Praha 9 – Vysočany\n\n nabízíme k prodeji byt nacházející se v 6 NP projektu Nová Harfa v žádané lokalitě Praha 9 – Vysočany. Celková výměra bytu činí 59 m2 + lodžie 8 m2. Součástí bytu je vnitřní komora a podzemní parkovací stání.\n\nDispozice 2+kk nabízí praktické a komfortní uspořádání vhodné jak pro vlastní bydlení, tak pro investici. Součástí bytu je komora, která poskytuje vítaný úložný prostor. Lodžie o velikosti 8 m2 nabízí příjemné místo k odpočinku a podzemní parkovací stání zajišťuje pohodlí každodenního parkování.\n\nVelkou výhodou je samotná poloha – přímo naproti domu se nachází supermarket Albert, v bezprostřední blízkosti je tramvajová zastávka Kabešova a v docházkové vzdálenosti stanice metra B Českomoravská. Nedaleko se nachází obchodní centrum Galerie Harfa i multifunkční hala O2 arena. Lokalita nabízí kompletní občanskou vybavenost, služby, restaurace i zeleň v okolí říčky Rokytky.\n\nNemovitost představuje stabilní investici a komfortní bydlení v dynamicky se rozvíjející části Prahy 9.\n\nPro více informací či sjednání prohlídky mě neváhejte kontaktovat.",
+      "description": null,
       "seller_name": null,
       "fees_czk": null,
       "fees_missing": true,
@@ -8910,8 +9102,7 @@
       "electricity_estimated": false,
       "total_czk": 9250000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": 0
+      "parking": null
     },
     {
       "id": "bez-1041803",
@@ -8935,7 +9126,7 @@
         "https://api.bezrealitky.cz/media/cache/record_main/data/images/advert/1041k/1041803/1783156336-podwxufnwq-4-poschodie.png"
       ],
       "thumb": "https://api.bezrealitky.cz/media/cache/record_thumb/data/images/advert/1041k/1041803/1783156336-podwxufnwq-4-poschodie.png",
-      "description": "Jako výhradní vlastník družstevního podílu nabízím k převodu družstevní podíl, se kterým je spojeno právo užívání výjimečného bytu o dispozici 2+kk s podlahovou plochou 54,8 m² a balkonem o výměře 7,0 m² v rezidenčním projektu Prosek – Nad Krocínkou.\n\nCena za převod družstevního podílu činí 4 300 000 Kč, přičemž v této ceně je již zahrnuto i parkovací stání umístněné v 1.PP.\n\nJelikož se jedná o družstevní byt, jeho pořízení je výrazně jednodušší a finančně dostupnější. Nemusíte řešit hypoteční úvěr ani prokazovat výši příjmu a nevzniká Vám žádné zadlužení vůči bance. Kupní cenu bytu splácíte postupně formou měsíčních plateb (anuita), a to až po dokončení a kolaudaci domu – do té doby nehradíte žádné splátky.\n\nTento způsob financování Vám umožňuje pohodlnou cestu k vlastnímu bydlení bez úvěrové zátěže a zároveň představuje velmi atraktivní investiční příležitost.\n\nCelková výše nesplacené anuity činí 6 198 284 Kč.\n\nMěsíční splátka anuity je v současné době orientačně vyčíslena na 34 790 Kč. Tato kalkulace byla provedena při úrokové sazbě 5,65 % p.a. Od doby jejího výpočtu však došlo k poklesu hypotečních sazeb a aktuální tržní úrokové sazby se pohybují přibližně v rozmezí 4,4–4,8 % p",
+      "description": null,
       "seller_name": null,
       "fees_czk": null,
       "fees_missing": true,
@@ -8944,8 +9135,7 @@
       "electricity_estimated": false,
       "total_czk": 4300000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": 0
+      "parking": null
     },
     {
       "id": "bez-1029927",
@@ -8969,7 +9159,7 @@
         "https://api.bezrealitky.cz/media/cache/record_main/data/images/advert/1029k/1029927/1780421429-jbtzsiwcxe-img-5058.jpg"
       ],
       "thumb": "https://api.bezrealitky.cz/media/cache/record_thumb/data/images/advert/1029k/1029927/1780421429-jbtzsiwcxe-img-5058.jpg",
-      "description": "Nabízím k prodeji útulný byt s dispozicí 1+kk, který nabízí příjemné a moderní bydlení. Nachází se ve třetím patře osmipodlažní cihlové budovy vybavené výtahem a celkový stav bytu je opravdu velmi dobrý. Byt má plochu 32 m² a je v osobním vlastnictví, což zaručuje rychlý převod vlastnictví. Byt je situován do vnitrobloku, disponuje balkonem a sklepem. Je v dochozí vzdálenosti cca 5 minut na stanici metra Vysočanská , stanice tramvaji a zastávka vlaku. V blízkosti se nachází obchodní centrum Galerie Fénix, restaurace a obchody. \n\nInteriér bytu je částečně vybaven, novou kuchyňskou linkou , dále  si můžete zútulnit prostor dle vlastních představ a potřeb. Energetický štítek budovy je v kategorii B, což svědčí o relativně nízké energetické náročnosti objektu. \n\nV případě zájmu o bližší informace či prohlídku mě neváhejte kontaktovat skrz zprávy na této komunikační platformě.",
+      "description": null,
       "seller_name": null,
       "fees_czk": null,
       "fees_missing": true,
@@ -8978,8 +9168,7 @@
       "electricity_estimated": false,
       "total_czk": 6500000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": 0
+      "parking": null
     },
     {
       "id": "bez-841259",
@@ -9003,7 +9192,7 @@
         "https://api.bezrealitky.cz/media/cache/record_main/data/images/advert/841k/841259/1715955358-ekayomaeyy-img-3257.jpg"
       ],
       "thumb": "https://api.bezrealitky.cz/media/cache/record_thumb/data/images/advert/841k/841259/1715955358-ekayomaeyy-img-3257.jpg",
-      "description": "Pronájmu světlý, krásný a moderně zařízený byt 1+kk v novostavbě cihlového domu JEDNÉ osobě nekuřákovi, BEZ ZVÍŘAT. Byt se nachází ve 3.  z celkových 5 podlaží domu s výtahem. Celková plocha bytu činí 33 m2. Parkování je možné v hlídaném areálu. Orientace bytu na západ. Začátek od července. Aktuální vybavení - velká postel IKEA, stul, televizni stolek, policky skrinky,pracka; pouze novou ledničku s mrazákem pripadne hezky gauc možnost zakoupit od byvaleho nájemce anebo umistit svoje.\n\nByt se nachází v blízkosti zeleně (rozsáhlý park, cyklostezska) v klidném prostředí a přitom kousek od tram. zastávky Podkovářská.  Začátek nájmu dle dohody počínaje 10. 7.2026 \nApartment situated in Prague 9 near the park and the bicycle alley, very quiet area closed and guarded residenship, 3 floor. Closest tram station Podkovářská tram 8 and 16, 7 min to the metro Palmovka.  One person, no animals, no permanent residence. Contract one year with prolongation every year, would like someone who intends to stay longer.",
+      "description": null,
       "seller_name": null,
       "fees_czk": null,
       "fees_missing": true,
@@ -9012,8 +9201,7 @@
       "electricity_estimated": true,
       "total_czk": 19000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": 0
+      "parking": null
     },
     {
       "id": "bez-764065",
@@ -9037,7 +9225,7 @@
         "https://api.bezrealitky.cz/media/cache/record_main/data/images/advert/764k/764065/1675502336-khdebmfzdx-phpnb7tg9.jpg"
       ],
       "thumb": "https://api.bezrealitky.cz/media/cache/record_thumb/data/images/advert/764k/764065/1675502336-khdebmfzdx-phpnb7tg9.jpg",
-      "description": "PRONÁJEM VYBAVENÉHO BYTU\nSOUSEDÍKOVA 2KK\n\nNabízíme k pronájmu kompletně zařízený, velmi elegantní a prostorný byt v novostavbě s dispozicí 2+kk o výměře 60 m2 – plus balkón (zastřešený), sklep a garážové stání v rezidenčním projektu Rezidence u Rokytky. Tento tichý a velmi světlý byt se nachází v 6. patře a je orientovaný na východ.\n\nPlně vybavený byt\nInteriér bytu tvoří předsíň, kde se nachází samostatná toaleta a šatna. Obývací pokoj s kuchyňskou linkou (vestavné spotřebiče zn. Siemens), plně vybavený (TV zn. Samsung, prostorný gauč, jídelní stůl a TON židle 4x), má přímý vstup na balkón o velikosti 5 m2. Dále je zde ložnice (vybavena šatní skříní a postelí včetně matrace) opět s přímým vstupem na balkón, a koupelna s druhou toaletou, včetně spotřebičů – pračka a sušička zn. LG. Velikost a rozloha ložnice viz ilustrační půdorys developera, momentálně nefoceno z důvodu osobních věcí v místnosti.\n\nSkvělá lokalita\nJedná se o velmi žádanou lokalitu pro bydlení v krásném prostředí Rokytky. Vhodné pro aktivní lidi, kteří rádi tráví čas v přírodě, ale mají rádi zároveň městský život. Ulice je slepá a zakončená branou na zámek. Přímo u parku Zahrádky, vedle domu východ na stezku, kde se ",
+      "description": null,
       "seller_name": null,
       "fees_czk": null,
       "fees_missing": true,
@@ -9046,8 +9234,7 @@
       "electricity_estimated": true,
       "total_czk": 26500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": 0
+      "parking": null
     },
     {
       "id": "bez-1042020",
@@ -9071,7 +9258,7 @@
         "https://api.bezrealitky.cz/media/cache/record_main/data/images/advert/1042k/1042020/1783246698-cvcliqptut-20260517-104452.jpg"
       ],
       "thumb": "https://api.bezrealitky.cz/media/cache/record_thumb/data/images/advert/1042k/1042020/1783246698-cvcliqptut-20260517-104452.jpg",
-      "description": "Od 01.09.2026 nabízíme k pronájmu 2+kk (54 m2) v ulici Čerpadlová, Praha 9. Jedná se o novostavbu s balkonem, samostatným WC a koupelnou + garážovým stáním v ceně. \n\nByt je slunný, s orientací na východ. Dům disponuje výtahem, rekuperací a pěti nabíjecími stanicemi pro elektroauta. V ceně pronájmu je i parkovací stání v podzemní garáži.\nSoučástí vybavení je pračka, lednice a šatní skříň, gauč a postel. Preferujeme zájemce bez domácích mazlíčků.\n\nCena:\nPronájem (včetně garážového stání): 25 000 Kč\nPoplatky za služby 4500 Kč, elektřina a internet se převádějí na nájemce\nKauce: 30 000 Kč\n \nByt se nachází 5 min pěšky od Nádraží Libeň, které nabízí:\n• možnost urychlené přepravy do centra – za 6 min na Hl. nádraží, Masarykově nádraží, příp. N. Holešovice\n• zastávku tramvaje (linky 8, 16)\n• zastávku autobusů \n\nZastávka metra Vysočanská je vzdálená 1 zastávku autobusem.\n\nV okolí se nachází Galerie Harfa, O2 aréna, OC Fénix, nádherný park Zahrádky a cyklostezka směr Palmovka, Karlín, resp. Hloubětín opačným směrem. V širším okolí jsou také Meandry Rokytky.\n\nApartmán se nachází ve druhém patře šestipatrového objektu, kde je k dispozici výtah a zajištěn bezbariérový přístup. Součástí bytu je ",
+      "description": null,
       "seller_name": null,
       "fees_czk": null,
       "fees_missing": true,
@@ -9080,8 +9267,7 @@
       "electricity_estimated": true,
       "total_czk": 26500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": 0
+      "parking": null
     },
     {
       "id": "bez-1020911",
@@ -9105,7 +9291,7 @@
         "https://api.bezrealitky.cz/media/cache/record_main/data/images/advert/1020k/1020911/1020911-1783081352-foto-1.jpg"
       ],
       "thumb": "https://api.bezrealitky.cz/media/cache/record_thumb/data/images/advert/1020k/1020911/1020911-1783081352-foto-1.jpg",
-      "description": "Nové bydlení v Hloubětíně od Mint Living!\r\n\r\nStylový loft 1+kk, který má přes tři metry vysoká okna a díky nim působí jako tvoje vlastní galerie. Světlý, vzdušný a fakt s charakterem. Praktická kuchyň je ready na vše, od rychlé kávy až po večeři s kámošem. Obývák s gaučem a televizí funguje jako chill zóna. Ložnice je chytře řešená v patře, máš tak svůj útulný koutek oddělený od zbytku prostoru. Koupelna se sprchovým koutem je moderní a fresh. A navíc nad koupelnou najdeš úložný prostor na všechno potřebné. Ideální bydlení pro jednoho, ale v pohodě zvládne i dva, když ta příležitost přijde.\r\n\r\nPaušální poplatky 2990 Kč\r\nEnergie dle spotřeby - zálohy.\r\n\r\nRezervuj si prohlídku ještě DNES!\r\nVíce najdeš na hloubetin.mintliving",
+      "description": null,
       "seller_name": null,
       "fees_czk": null,
       "fees_missing": true,
@@ -9114,8 +9300,7 @@
       "electricity_estimated": true,
       "total_czk": 22400,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": 0
+      "parking": null
     },
     {
       "id": "bez-999294",
@@ -9139,7 +9324,7 @@
         "https://api.bezrealitky.cz/media/cache/record_main/data/images/advert/999k/999294/999294-1783081262-foto-1.jpg"
       ],
       "thumb": "https://api.bezrealitky.cz/media/cache/record_thumb/data/images/advert/999k/999294/999294-1783081262-foto-1.jpg",
-      "description": "PLNĚ VYBAVENÉ! Nové nájemní bydlení od Mint Living!\r\n\r\nStylový loft 1+kk, který má přes tři metry vysoká okna a díky nim působí jako tvoje vlastní galerie. Světlý, vzdušný a fakt s charakterem. Praktická kuchyň je ready na vše, od rychlé kávy až po večeři s kámošem. Obývák s gaučem a televizí funguje jako chill zóna. Ložnice je chytře řešená v patře, máš tak svůj útulný koutek oddělený od zbytku prostoru. Koupelna se sprchovým koutem je moderní a fresh. A navíc nad koupelnou najdeš úložný prostor na všechno potřebné. Ideální bydlení pro jednoho, ale v pohodě zvládne i dva, když ta příležitost přijde.\r\n\r\nPaušální poplatky 2 990 Kč\r\nEnergie dle spotřeby - zálohy.\r\n\r\nRezervuj si prohlídku ještě DNES!\r\nVíc najdeš na hloubetin.mintliving",
+      "description": null,
       "seller_name": null,
       "fees_czk": null,
       "fees_missing": true,
@@ -9148,8 +9333,7 @@
       "electricity_estimated": true,
       "total_czk": 21000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": 0
+      "parking": null
     },
     {
       "id": "bez-619113",
@@ -9173,7 +9357,7 @@
         "https://api.bezrealitky.cz/media/cache/record_main/data/images/advert/619k/619113/1595791422-nsckmkjgkx.jpg"
       ],
       "thumb": "https://api.bezrealitky.cz/media/cache/record_thumb/data/images/advert/619k/619113/1595791422-nsckmkjgkx.jpg",
-      "description": "Pronajmeme elegantní, světlý byt 1+kk v novostavbě (kolaudace 2/2020) na ulici Bassova 4, Praha 9. Orientace bytu je na východ. Byt je kompletně vybavený a bude připravený k nastěhování od 1. 8. 2026. \n\nNa místě najdete lednici, pračku, novou pohovku (nově koupenou, na fotce je ještě stará), 140cm širokou postel, indukční varnou desku, troubu a dostatečný úložný prostor pro 2 osoby. K bytu náleží sklep o velikosti 5 m² a vyhrazené parkovací stání pod bytovým domem.\n\nByt je k dispozici od 1. 8. 2026.\n\nByt má, oproti ostatním bytům v této budově, výhodu nainstalovaného stropního ventilátoru, který dokáže v letních měsících příjemně ochladit a v zimě, reverzním chodem, rozdistribuovat teplý vzduch. Byt se nachází ve 3. patře, s výhledem.\n\nDalší výhody v okolí a v pěší dostupnosti:\nPotraviny Lidl – do 1 minuty\nMetro B, zastávka Vysočanská – do 2 minut\nDenní a noční tramvajové spoje, Nádraží Vysočany – do 2 min\nDo centra se dostanete metrem za 15 minut\nOC Fénix – do 3 minut\nGalerie Harfa (OC) – do 7 minut\nO2 Arena – do 7 minut\nSpousta restaurací v okolí\nRelaxační park Podviní hned v blízkém sousedství\n\nNájem 19 500 Kč/měsíc pro maximálně 2 osoby. Zálohy za energie a správu 3 700 Kč/měsí",
+      "description": null,
       "seller_name": null,
       "fees_czk": null,
       "fees_missing": true,
@@ -9182,8 +9366,7 @@
       "electricity_estimated": true,
       "total_czk": 21000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": 0
+      "parking": null
     },
     {
       "id": "bez-903240",
@@ -9207,7 +9390,7 @@
         "https://api.bezrealitky.cz/media/cache/record_main/data/images/advert/903k/903240/1746644740-vithmgaajd-img-0904.jpg"
       ],
       "thumb": "https://api.bezrealitky.cz/media/cache/record_thumb/data/images/advert/903k/903240/1746644740-vithmgaajd-img-0904.jpg",
-      "description": "Nabízím k pronájmu útulný 1+kk byt o rozloze 30 m² v cihlové budově bez výtahu, který se nachází ve 3. NP (podkroví) a je ve velmi dobrém stavu. Byt je plně vybavený a připravený k okamžitému nastěhování, což zaručuje komfort a pohodlí v každodenním životě. Součástí bytu je rovněž pavlač o výměře cca 9 m², kde si můžete vychutnat chvíle klidu za čerstvého vzduchu. \n\nCelkový dojem bytu podtrhuje pečlivě udržovaná nemovitost, Pro více informací mne, prosím, kontaktujte prostřednictvím zpráv na komunikační platformě.",
+      "description": null,
       "seller_name": null,
       "fees_czk": null,
       "fees_missing": true,
@@ -9216,8 +9399,7 @@
       "electricity_estimated": true,
       "total_czk": 17500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": 0
+      "parking": null
     },
     {
       "id": "bez-1014682",
@@ -9241,7 +9423,7 @@
         "https://api.bezrealitky.cz/media/cache/record_main/data/images/advert/1014k/1014682/1014682-1783081138-foto-1.jpg"
       ],
       "thumb": "https://api.bezrealitky.cz/media/cache/record_thumb/data/images/advert/1014k/1014682/1014682-1783081138-foto-1.jpg",
-      "description": "Pronájem nových vybavených bytů v rezidenci Vysočanský mlýn splní všechny vaše požadavky. Recepce s ostrahou a prémiové vybavení všech jednotek jsou jen jedny z mnoha benefitů, které na Vás v tomto exkluzivním nájemním bydlení čekají. \r\n\r\nPLNĚ VYBAVENÉ BYTY\r\nVaše nové prostorné 2+kk je připravené k nastěhování bez starostí spojených s zařizováním domácnosti. V bytě naleznete kvalitní nábytek na míru, který je přizpůsoben životu moderního člověka.\r\n\r\nByt se skládá z ložnice a obytné místnosti, kde naleznete plně vybavenou kuchyni včetně spotřebičů, pohodlnou pohovku a televizor. Nerušený odpočinek zaručuje pohodlná postel s kvalitní matrací, kterou naleznete v oddělené ložnici. Pro větší pohodlí Vám navíc nabízíme dvě varianty jejího uspořádání – dvoulůžko nebo dvě oddělené postele pro spolubydlení. Samozřejmostí je i moderní koupelna se sprchovým koutem a pračkou.\r\n\r\nCelý byt má mnoho chytře řešených úložných prostor, avšak pokud byste přesto potřebovali více místa, je Vám k dispozici vlastní sklepní kóje. Příjemným bonusem je i prosluněná lodžie s posezením, která bytu dodává vzdušnost a dostatek světla. Řidiči pak ocení množnost vlastního parkovacího stání přímo u rezidence.\r\n\r\nL",
+      "description": null,
       "seller_name": null,
       "fees_czk": null,
       "fees_missing": true,
@@ -9250,8 +9432,7 @@
       "electricity_estimated": true,
       "total_czk": 30000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": 0
+      "parking": null
     },
     {
       "id": "bez-996941",
@@ -9275,7 +9456,7 @@
         "https://api.bezrealitky.cz/media/cache/record_main/data/images/advert/996k/996941/996941-1783081124-foto-1.jpg"
       ],
       "thumb": "https://api.bezrealitky.cz/media/cache/record_thumb/data/images/advert/996k/996941/996941-1783081124-foto-1.jpg",
-      "description": "Pronájem 2kk v rezidenci Vysočanský mlýn splní všechny vaše požadavky. Recepce s ostrahou a prémiové vybavení všech jednotek jsou jen jedny z mnoha benefitů, které na Vás v tomto exkluzivním nájemním bydlení čekají. \r\n\r\nPLNĚ VYBAVENÉ BYTY\r\nVaše nové prostorné 2+kk je připravené k nastěhování bez starostí spojených s zařizováním domácnosti. V bytě naleznete kvalitní nábytek na míru, který je přizpůsoben životu moderního člověka.\r\n\r\nByt se skládá z ložnice a obytné místnosti, kde naleznete plně vybavenou kuchyni včetně spotřebičů, pohodlnou pohovku a televizor. Nerušený odpočinek zaručuje pohodlná postel s kvalitní matrací, kterou naleznete v oddělené ložnici. Pro větší pohodlí Vám navíc nabízíme dvě varianty jejího uspořádání – dvoulůžko nebo dvě oddělené postele pro spolubydlení. Samozřejmostí je i moderní koupelna se sprchovým koutem a pračkou.\r\n\r\nCelý byt má mnoho chytře řešených úložných prostor, avšak pokud byste přesto potřebovali více místa, je Vám k dispozici vlastní sklepní kóje. Příjemným bonusem je i prosluněná zahrada s posezením, která bytu dodává vzdušnost a dostatek světla. Řidiči pak ocení množnost vlastního parkovacího stání přímo u rezidence.\r\n\r\nLOKALITA PŘÍMO NA M",
+      "description": null,
       "seller_name": null,
       "fees_czk": null,
       "fees_missing": true,
@@ -9284,8 +9465,7 @@
       "electricity_estimated": true,
       "total_czk": 29400,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": 0
+      "parking": null
     },
     {
       "id": "bez-972132",
@@ -9309,7 +9489,7 @@
         "https://api.bezrealitky.cz/media/cache/record_main/data/images/advert/972k/972132/1765269976-ehdacdszdo-mint-living-hloubetin-01-nahled.jpg"
       ],
       "thumb": "https://api.bezrealitky.cz/media/cache/record_thumb/data/images/advert/972k/972132/1765269976-ehdacdszdo-mint-living-hloubetin-01-nahled.jpg",
-      "description": "Fungl nové LOFTY od 19 500 Kč bez balkónu a 20 500 Kč s balkónem od Mint living! Máme varianty i se zahrádkou!\n\nStylový loft 1+kk, který má přes tři metry vysoká okna a díky nim působí jako tvoje vlastní galerie. Světlý, vzdušný a fakt s charakterem. Praktická kuchyň je ready na vše, od rychlé kávy až po večeři s kámošem. Obývák s gaučem a televizí funguje jako chill zóna. Ložnice je chytře řešená v patře, máš tak svůj útulný koutek oddělený od zbytku prostoru. Koupelna se sprchovým koutem je moderní a fresh. A navíc nad koupelnou najdeš úložný prostor na všechno potřebné. Ideální bydlení pro jednoho, ale v pohodě zvládne i dva, když ta příležitost přijde.\n\nVýše kauce 1-3 nájmy dle prověření!\nEnergie dle spotřeby - záloha!",
+      "description": null,
       "seller_name": null,
       "fees_czk": null,
       "fees_missing": true,
@@ -9318,8 +9498,7 @@
       "electricity_estimated": true,
       "total_czk": 21000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": 0
+      "parking": null
     },
     {
       "id": "bez-531516",
@@ -9343,7 +9522,7 @@
         "https://api.bezrealitky.cz/media/cache/record_main/data/images/advert/531k/531516/1780496358-opagvjqlay-sofa-verze2.png"
       ],
       "thumb": "https://api.bezrealitky.cz/media/cache/record_thumb/data/images/advert/531k/531516/1780496358-opagvjqlay-sofa-verze2.png",
-      "description": "Pronájem bytu 1+kk, 26 m² – Lihovarská, Praha 8 (Libeň)\n\nPlně vybavený byt v kompletně zrekonstruovaném domě (2018), u metra Českomoravská (B)\n\nNabízím k dlouhodobému pronájmu světlý a prakticky řešený byt 1+kk o velikosti 26 m² v ulici Lihovarská, Praha 8 – Libeň, v bezprostřední blízkosti OC Galerie Harfa a stanice metra Českomoravská.\nByt se nachází v domě, který prošel kompletní rekonstrukcí v roce 2018, což se pozitivně projevuje na kvalitě bydlení i celkovém technickém stavu.\n\nDispozice a vybavení\nByt tvoří vstupní chodba, koupelna se sprchovým koutem a toaletou a obytná místnost s kuchyňským koutem. Byt je plně vybaven:\n- kuchyňská linka se spotřebiči (lednice, sporák, myčka)\n- pračka\n- rozkládací pohovka, úložné prostory\n- jídelní stůl se židlemi\nOrientace oken na západ zajišťuje dostatek denního světla.\n\nLokalita\nVýborná dopravní dostupnost – metro Českomoravská v docházkové vzdálenosti, tramvajové i autobusové spojení. V okolí kompletní občanská vybavenost (OC Galerie Harfa, obchody, restaurace, sport).\n\nPodmínky\nnájemné: 17 000 Kč / měsíc\nslužby a elektřina: cca 4 500 Kč (možnost převodu elektřiny na nájemce dle dohody)\nkauce: ve výši 2 nájmů\nbez provize (přímý pronájem ",
+      "description": null,
       "seller_name": null,
       "fees_czk": null,
       "fees_missing": true,
@@ -9352,8 +9531,7 @@
       "electricity_estimated": true,
       "total_czk": 18500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a1c18ee6d13c98fa102e4c8",
@@ -9386,8 +9564,7 @@
       "electricity_estimated": false,
       "total_czk": 6550000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a229aa39c9fadc90908f607",
@@ -9420,8 +9597,7 @@
       "electricity_estimated": false,
       "total_czk": 5500000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a342f58d598bfa32b0b92b6",
@@ -9454,8 +9630,7 @@
       "electricity_estimated": false,
       "total_czk": 9499000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-69b686b5a90d57f42e099ba8",
@@ -9488,8 +9663,7 @@
       "electricity_estimated": false,
       "total_czk": 7499000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a3e2841f948f8b02f0e3cb5",
@@ -9522,8 +9696,7 @@
       "electricity_estimated": false,
       "total_czk": 12100000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a3e23943e564fd5050e2c98",
@@ -9556,8 +9729,7 @@
       "electricity_estimated": false,
       "total_czk": 11599000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a3e2148e8f12d7a4f0f671d",
@@ -9590,8 +9762,7 @@
       "electricity_estimated": false,
       "total_czk": 13945000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a47c81b5c875f13a00e56b4",
@@ -9624,8 +9795,7 @@
       "electricity_estimated": false,
       "total_czk": 8953300,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a47c79167bcdc702f0311a9",
@@ -9658,8 +9828,7 @@
       "electricity_estimated": false,
       "total_czk": 7974910,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a47c72675144a80770a1117",
@@ -9692,8 +9861,7 @@
       "electricity_estimated": false,
       "total_czk": 5999900,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a23f851119a3ab919094bf9",
@@ -9726,8 +9894,7 @@
       "electricity_estimated": false,
       "total_czk": 9360000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-69fc3f93e4a41a60a807b62b",
@@ -9760,8 +9927,7 @@
       "electricity_estimated": false,
       "total_czk": 5490000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a32f5d2ded8a7129100d2dd",
@@ -9794,8 +9960,7 @@
       "electricity_estimated": false,
       "total_czk": 7150000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a033bdd9c177f9bbf073fa6",
@@ -9828,8 +9993,7 @@
       "electricity_estimated": false,
       "total_czk": 5845600,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a0c569ca6043689ce0495d2",
@@ -9862,8 +10026,7 @@
       "electricity_estimated": false,
       "total_czk": 7225600,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a0c59a72b5ffab24208d684",
@@ -9896,8 +10059,7 @@
       "electricity_estimated": false,
       "total_czk": 9286700,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a3170496e725c29510c6cd5",
@@ -9930,8 +10092,7 @@
       "electricity_estimated": false,
       "total_czk": 9599000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a2aca7dae30040b1a04a726",
@@ -9964,8 +10125,7 @@
       "electricity_estimated": false,
       "total_czk": 10600000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-69f0abdcb2b0e8d64209af39",
@@ -9998,8 +10158,7 @@
       "electricity_estimated": false,
       "total_czk": 6750000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a46639e95e4f96f1607ea1c",
@@ -10032,8 +10191,7 @@
       "electricity_estimated": false,
       "total_czk": 9950000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-683ffe97d51a01ae7a04b66b",
@@ -10066,8 +10224,7 @@
       "electricity_estimated": false,
       "total_czk": 9790000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a0311710de6c2d5fb0a9162",
@@ -10100,8 +10257,7 @@
       "electricity_estimated": false,
       "total_czk": 10750000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a4515e71656e413f904ae12",
@@ -10134,8 +10290,7 @@
       "electricity_estimated": false,
       "total_czk": 4280000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a30573fe45e529c2d086895",
@@ -10168,8 +10323,7 @@
       "electricity_estimated": false,
       "total_czk": 6700000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a31118d1b0ef50276002b27",
@@ -10202,8 +10356,7 @@
       "electricity_estimated": false,
       "total_czk": 3990000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a4281e532ee91da90087cf7",
@@ -10236,8 +10389,7 @@
       "electricity_estimated": false,
       "total_czk": 9517000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a1f167d8b019d28a4043547",
@@ -10270,8 +10422,7 @@
       "electricity_estimated": false,
       "total_czk": 7890000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a44fb728fe08c7f8d074e42",
@@ -10304,8 +10455,7 @@
       "electricity_estimated": true,
       "total_czk": 25500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a39094c508484b96c02bf22",
@@ -10338,8 +10488,7 @@
       "electricity_estimated": true,
       "total_czk": 20000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-69c3d63c6029e81c14096c44",
@@ -10372,8 +10521,7 @@
       "electricity_estimated": true,
       "total_czk": 29500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a31554329d6c8434a0aa9ba",
@@ -10406,8 +10554,7 @@
       "electricity_estimated": true,
       "total_czk": 24500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6992f09b9c5d13fcca0272cf",
@@ -10440,8 +10587,7 @@
       "electricity_estimated": true,
       "total_czk": 29400,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a4a44332bb83a9a340d6d6a",
@@ -10474,8 +10620,7 @@
       "electricity_estimated": true,
       "total_czk": 30250,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6989124d57fa157a6e04ab8f",
@@ -10508,8 +10653,7 @@
       "electricity_estimated": true,
       "total_czk": 27500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-69891103029f21e3250260f8",
@@ -10542,8 +10686,7 @@
       "electricity_estimated": true,
       "total_czk": 26500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-69f38af1e0c43bfcba016f41",
@@ -10576,8 +10719,7 @@
       "electricity_estimated": true,
       "total_czk": 21000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a480390351c31fadf097b97",
@@ -10610,8 +10752,7 @@
       "electricity_estimated": true,
       "total_czk": 20500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a319e219c3ff2341f0f0d47",
@@ -10644,8 +10785,7 @@
       "electricity_estimated": true,
       "total_czk": 26500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a21b5c37aafbec7d60419ef",
@@ -10678,8 +10818,7 @@
       "electricity_estimated": true,
       "total_czk": 21000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a47b3ec7bdb75ab9c0c547b",
@@ -10712,8 +10851,7 @@
       "electricity_estimated": true,
       "total_czk": 32500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a4795855260ccb226064167",
@@ -10746,8 +10884,7 @@
       "electricity_estimated": true,
       "total_czk": 19490,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a47895745f7bea1220b935a",
@@ -10780,8 +10917,7 @@
       "electricity_estimated": true,
       "total_czk": 19490,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-69f99ff512fdb59d28038a9e",
@@ -10814,8 +10950,7 @@
       "electricity_estimated": true,
       "total_czk": 19500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a42c4d45b4ffabe8a0a17ba",
@@ -10848,8 +10983,7 @@
       "electricity_estimated": true,
       "total_czk": 22500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a46782d348d28226d06d1ff",
@@ -10882,8 +11016,7 @@
       "electricity_estimated": true,
       "total_czk": 18490,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a0ad989eae8213ff50e4522",
@@ -10916,8 +11049,7 @@
       "electricity_estimated": true,
       "total_czk": 20500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a4661a0fb0bfa1adb02ef6d",
@@ -10950,8 +11082,7 @@
       "electricity_estimated": true,
       "total_czk": 22800,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a464342ff19406f7d0fdbd3",
@@ -10984,8 +11115,7 @@
       "electricity_estimated": true,
       "total_czk": 29490,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a0b3aeebe017feca4009c04",
@@ -11018,8 +11148,7 @@
       "electricity_estimated": true,
       "total_czk": 18490,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a22dfc5c7ee926e64033772",
@@ -11052,8 +11181,7 @@
       "electricity_estimated": true,
       "total_czk": 20500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a44fa4a5c50ba51b806c9ce",
@@ -11086,8 +11214,7 @@
       "electricity_estimated": true,
       "total_czk": 21500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a4430ee2ca2699c6f03a1e8",
@@ -11120,8 +11247,7 @@
       "electricity_estimated": true,
       "total_czk": 26500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a4428c8b5dfb480e402c17f",
@@ -11154,8 +11280,7 @@
       "electricity_estimated": true,
       "total_czk": 22000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a4426999cde316bec0b72f6",
@@ -11188,8 +11313,7 @@
       "electricity_estimated": true,
       "total_czk": 22000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a441eb67e9c9f047f0030a9",
@@ -11222,8 +11346,7 @@
       "electricity_estimated": true,
       "total_czk": 29000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-69e8bd6e35056f6be909b9d5",
@@ -11256,8 +11379,7 @@
       "electricity_estimated": true,
       "total_czk": 21499,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-69ce3276a541ff7e560c3a36",
@@ -11290,8 +11412,7 @@
       "electricity_estimated": true,
       "total_czk": 19000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-69e76b726a625a7f7e0c0933",
@@ -11324,8 +11445,7 @@
       "electricity_estimated": true,
       "total_czk": 30000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a42512c2c13e6f8960cb0a8",
@@ -11358,8 +11478,7 @@
       "electricity_estimated": true,
       "total_czk": 21000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a42712e59ae638d9d08798f",
@@ -11392,8 +11511,7 @@
       "electricity_estimated": true,
       "total_czk": 31500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a425e54b7ea1b95f709f30b",
@@ -11426,8 +11544,7 @@
       "electricity_estimated": true,
       "total_czk": 21490,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a422e3b9968b702b5097a9c",
@@ -11460,8 +11577,7 @@
       "electricity_estimated": true,
       "total_czk": 24500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-69cf9b66edc44f7ac70a4020",
@@ -11494,8 +11610,7 @@
       "electricity_estimated": true,
       "total_czk": 23400,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a21a0a03db7a531bc018d94",
@@ -11528,8 +11643,7 @@
       "electricity_estimated": true,
       "total_czk": 25500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-69778b16d9ad83af4405d2f1",
@@ -11562,8 +11676,7 @@
       "electricity_estimated": true,
       "total_czk": 28500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a2665b998e8978e210ac5c5",
@@ -11596,8 +11709,7 @@
       "electricity_estimated": true,
       "total_czk": 26500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a3e493d805082ed860c4b4c",
@@ -11630,8 +11742,7 @@
       "electricity_estimated": true,
       "total_czk": 26400,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a3e313e49b069cf180cfdd9",
@@ -11664,8 +11775,7 @@
       "electricity_estimated": true,
       "total_czk": 23500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a3e9bd2266d0f09070edd2c",
@@ -11698,8 +11808,7 @@
       "electricity_estimated": true,
       "total_czk": 20500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a3ceb30440e67d0160ca894",
@@ -11732,8 +11841,7 @@
       "electricity_estimated": true,
       "total_czk": 20900,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a3bc33b44cabd3b0a059b8a",
@@ -11766,8 +11874,7 @@
       "electricity_estimated": true,
       "total_czk": 22500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a3b9dc846b1891673063a94",
@@ -11800,8 +11907,7 @@
       "electricity_estimated": true,
       "total_czk": 18500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a35626e314576d800067757",
@@ -11834,8 +11940,7 @@
       "electricity_estimated": true,
       "total_czk": 27000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a3ae9a8b2c9744c5d002c9b",
@@ -11868,8 +11973,7 @@
       "electricity_estimated": true,
       "total_czk": 25500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a35621931e80fd0a403cfc0",
@@ -11902,8 +12006,7 @@
       "electricity_estimated": true,
       "total_czk": 26000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a38f9988f07ab4782040544",
@@ -11936,8 +12039,7 @@
       "electricity_estimated": true,
       "total_czk": 25500,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a3562079cc1b006810055e4",
@@ -11970,8 +12072,7 @@
       "electricity_estimated": true,
       "total_czk": 28000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     },
     {
       "id": "idnes-6a34f01716fbc048460dd223",
@@ -12004,16 +12105,15 @@
       "electricity_estimated": true,
       "total_czk": 26000,
       "garage": null,
-      "parking": null,
-      "admin_fee_czk": null
+      "parking": null
     }
   ],
   "stats": {
     "rent_median_czk_per_sqm": 584,
     "rent_avg_czk_per_sqm": 610,
     "rent_count": 205,
-    "sale_median_czk_per_sqm": 183889,
-    "sale_avg_czk_per_sqm": 182782,
-    "sale_count": 109
+    "sale_median_czk_per_sqm": 185463,
+    "sale_avg_czk_per_sqm": 182789,
+    "sale_count": 113
   }
 }

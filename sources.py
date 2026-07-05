@@ -10,6 +10,7 @@ Robots note: Bezrealitky disallows /vyhledat* and /search* and its API, so we
 only read the sitemap-listed /vypis/ locality pages (allowed) — never the
 search endpoint. iDNES allows its /s/ search pages. Both are fetched politely
 (browser UA, rate-limited, capped)."""
+import math
 import re
 import time
 
@@ -24,11 +25,19 @@ SESSION.headers.update({"User-Agent": UA, "Accept-Language": "cs"})
 
 ELECTRICITY_ESTIMATE_CZK = 1500  # keep in sync with scrape.py for comparable all-in Kč/m²
 TARGET_DISPOSITIONS = {"1+kk", "2+kk"}
+# Bezrealitky charges a one-time "Administrativní poplatek" (advert field `fee`,
+# only on the detail page). Drop listings whose admin fee exceeds this cap.
+MAX_ADMIN_FEE_CZK = 5000
 
-# Rough GPS bounding box for Praha 9 (Vysočany/Prosek/Libeň/Letňany/Kbely area),
-# centred on the tracked Pod Harfou listing. Approximate on purpose — it is a
-# locality filter, not a cadastral boundary.
-PRAHA9_BOX = {"lat_min": 50.085, "lat_max": 50.165, "lng_min": 14.470, "lng_max": 14.620}
+# Match Sreality's locality: its comparables are all the Vysočany ward, within
+# ~2 km of the tracked Pod Harfou listing (median 0.6 km, max 2.0 km). So the
+# extra sources use the SAME tight footprint — a radius around Pod Harfou —
+# rather than all of Praha 9.
+POD_HARFOU = (50.10444, 14.50650)
+RADIUS_KM = 2.0
+# iDNES has no per-listing GPS, so it is filtered by the Vysočany locality label
+# that its result cards carry ("Praha 9 - Vysočany").
+IDNES_LOCALITY = "Vysočany"
 
 NEXT_DATA_RE = re.compile(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', re.S)
 
@@ -50,6 +59,7 @@ def _blank_comparable():
         "fees_czk": None, "fees_missing": True, "fees_source": None,
         "electricity_czk": None, "electricity_estimated": False,
         "total_czk": None, "garage": None, "parking": None,
+        "admin_fee_czk": None,
     }
 
 
@@ -71,11 +81,19 @@ def _finalize_costs(comp):
     return comp
 
 
-def _in_praha9(lat, lng):
+def _km_from_pod_harfou(lat, lng):
     if lat is None or lng is None:
-        return False
-    b = PRAHA9_BOX
-    return b["lat_min"] <= lat <= b["lat_max"] and b["lng_min"] <= lng <= b["lng_max"]
+        return None
+    la1, lo1 = math.radians(POD_HARFOU[0]), math.radians(POD_HARFOU[1])
+    la2, lo2 = math.radians(lat), math.radians(lng)
+    dlat, dlon = la2 - la1, lo2 - lo1
+    a = math.sin(dlat / 2) ** 2 + math.cos(la1) * math.cos(la2) * math.sin(dlon / 2) ** 2
+    return 2 * 6371 * math.asin(math.sqrt(a))
+
+
+def _near_pod_harfou(lat, lng):
+    d = _km_from_pod_harfou(lat, lng)
+    return d is not None and d <= RADIUS_KM
 
 
 # --------------------------------------------------------------------------- #
@@ -124,7 +142,7 @@ def _bez_parse_advert(a, img_map):
         return None
     gps = a.get("gps") or {}
     lat, lng = gps.get("lat"), gps.get("lng")
-    if not _in_praha9(lat, lng):
+    if not _near_pod_harfou(lat, lng):
         return None
     if not a.get("active", True) or a.get("archived"):
         return None
@@ -146,8 +164,8 @@ def _bez_parse_advert(a, img_map):
         "transaction_type": tx,
         "price_czk": price,
         "floor_area_sqm": surface,
-        "locality": "Praha 9 (přibl.)",
-        "city_part": "Praha 9",
+        "locality": "Vysočany (okolí Pod Harfou)",
+        "city_part": "Vysočany",
         "url": f"https://www.bezrealitky.cz/nemovitosti-byty-domy/{uri}" if uri else None,
         "lat": lat, "lon": lng,
         "thumb": thumb or main,
@@ -156,9 +174,34 @@ def _bez_parse_advert(a, img_map):
     return _finalize_costs(comp)
 
 
+def _bez_fetch_detail(url):
+    """Return (admin_fee_czk, description) from a listing detail page. The
+    one-time administrative fee lives in the advert `fee` field, which is only
+    present on the detail page, not the /vypis list."""
+    import json
+    try:
+        resp = SESSION.get(url, timeout=25)
+        if resp.status_code != 200:
+            return None, None
+        m = NEXT_DATA_RE.search(resp.text)
+        if not m:
+            return None, None
+        data = json.loads(m.group(1))
+    except Exception:
+        return None, None
+    adverts = _walk_adverts(data)
+    if not adverts:
+        return None, None
+    a = max(adverts, key=lambda x: len(x.keys()))
+    desc = a.get("description")
+    return a.get("fee"), (desc[:1200] if desc else None)
+
+
 def fetch_bezrealitky(max_pages=8, sleep=0.4):
     """Read the allowed /vypis/ Prague apartment listing pages, page by page,
-    and keep only Praha-9 1+kk/2+kk adverts (both sale and rent)."""
+    and keep only Vysočany-area 1+kk/2+kk adverts (both sale and rent). Then
+    fetch each candidate's detail page for the administrative fee + description,
+    dropping listings whose one-time admin fee exceeds MAX_ADMIN_FEE_CZK."""
     out = {}
     for offer in ("nabidka-prodej", "nabidka-pronajem"):
         for page in range(1, max_pages + 1):
@@ -183,7 +226,21 @@ def fetch_bezrealitky(max_pages=8, sleep=0.4):
                 if comp:
                     out[comp["id"]] = comp
             time.sleep(sleep)
-    return list(out.values())
+
+    # Enrich each candidate from its detail page (admin fee + description),
+    # then drop listings whose one-time administrative fee is above the cap.
+    kept = []
+    for comp in out.values():
+        if comp.get("url"):
+            fee, desc = _bez_fetch_detail(comp["url"])
+            comp["admin_fee_czk"] = fee
+            if desc:
+                comp["description"] = desc
+            time.sleep(sleep)
+        if comp.get("admin_fee_czk") and comp["admin_fee_czk"] > MAX_ADMIN_FEE_CZK:
+            continue
+        kept.append(comp)
+    return kept
 
 
 # --------------------------------------------------------------------------- #
@@ -218,7 +275,7 @@ def _idnes_parse_card(seg, tx):
     disp = disp_m.group(1).replace(" ", "").lower() if disp_m else None
     if disp not in TARGET_DISPOSITIONS:
         return None
-    if "Praha 9" not in info and "Praha 9" not in title:
+    if IDNES_LOCALITY not in info and IDNES_LOCALITY not in title:
         return None
     area_m = IDNES_AREA_RE.search(title)
     sqm = float(area_m.group(1).replace(",", ".")) if area_m else None
@@ -241,8 +298,8 @@ def _idnes_parse_card(seg, tx):
         "transaction_type": tx,
         "price_czk": price,
         "floor_area_sqm": sqm,
-        "locality": info or "Praha 9",
-        "city_part": "Praha 9",
+        "locality": info or "Vysočany",
+        "city_part": "Vysočany",
         "url": url,
         "thumb": thumb,
         "images": [thumb] if thumb else [],
@@ -250,7 +307,7 @@ def _idnes_parse_card(seg, tx):
     return _finalize_costs(comp)
 
 
-def fetch_idnes(max_pages=5, sleep=0.4):
+def fetch_idnes(max_pages=8, sleep=0.4):
     out = {}
     for tx, seg_path in (("prodej", "prodej"), ("pronajem", "pronajem")):
         for page in range(1, max_pages + 1):

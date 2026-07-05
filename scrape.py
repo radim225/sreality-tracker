@@ -891,7 +891,7 @@ def render_dashboard(snapshot, changes, stats, history):
   <table id="tblPod">
     <thead>
       <tr>
-        <th></th><th>Title</th><th>Type</th><th>Disp.</th><th>Nájem</th><th>Celkem</th><th>m²</th><th>Kč/m²</th>
+        <th></th><th>Title</th><th>Type</th><th>Disp.</th><th>Nájem</th><th>Celkem</th><th>m²</th><th>Kč/m²</th><th>Odkaz</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -935,6 +935,7 @@ def render_dashboard(snapshot, changes, stats, history):
       <th data-k="floor_area_sqm">m²</th>
       <th data-k="price_czk_per_sqm">Kč/m²</th>
       <th data-k="city_part">Locality</th>
+      <th>Odkaz</th>
     </tr>
   </thead>
   <tbody></tbody>
@@ -993,8 +994,11 @@ function portalName(s) {
 }
 
 function costBreakdownHtml(item) {
+  const adminRow = item.admin_fee_czk
+    ? `<div class="cost-row"><span>📋 Administrativní poplatek (jednorázově)</span><span>${fmtCzk(item.admin_fee_czk)}</span></div>`
+    : "";
   if (item.transaction_type !== "pronajem") {
-    return `<div class="cost-box"><div class="cost-row total"><span>💰 Cena</span><span>${fmtCzk(item.price_czk)}</span></div></div>`;
+    return `<div class="cost-box"><div class="cost-row total"><span>💰 Cena</span><span>${fmtCzk(item.price_czk)}</span></div>${adminRow}</div>`;
   }
   const feesHtml = item.fees_missing
     ? `<span style="color:#998;">neuvedeno listingem</span>`
@@ -1007,6 +1011,7 @@ function costBreakdownHtml(item) {
     <div class="cost-row"><span>🧾 Poplatky / služby</span><span>${feesHtml}</span></div>
     <div class="cost-row"><span>⚡ Elektřina${item.electricity_estimated ? " (odhad)" : ""}</span><span>${fmtCzk(item.electricity_czk)}</span></div>
     <div class="cost-row total"><span>💰 Celkem (s elektřinou)</span><span>${fmtCzk(item.total_czk)}</span></div>
+    ${adminRow}
     ${item.fees_missing ? '<div class="cost-note">Poplatky/služby nejsou u tohoto inzerátu uvedeny -- do celkové ceny započteny jako 0 navíc k odhadu elektřiny.</div>' : ''}
     ${elecNote}
   </div>`;
@@ -1109,7 +1114,8 @@ function renderPodHarfou() {
       <td>${fmtTotal(r)}</td>
       <td>${r.floor_area_sqm ?? '—'}</td>
       <td>${fmtCzk(r.price_czk_per_sqm)}</td>
-    </tr>`).join("") : `<tr><td colspan="8" style="color:#888;">No other Pod Harfou listings currently found.</td></tr>`;
+      <td>${r.url ? `<a href="${escapeHtml(r.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Otevřít ↗</a>` : '—'}</td>
+    </tr>`).join("") : `<tr><td colspan="9" style="color:#888;">No other Pod Harfou listings currently found.</td></tr>`;
 }
 
 function render() {
@@ -1146,6 +1152,7 @@ function render() {
       <td>${r.floor_area_sqm ?? '—'}</td>
       <td>${fmtCzk(r.price_czk_per_sqm)}${CHANGED_IDS.has(r.id) ? ' ⚡' : ''}</td>
       <td>${escapeHtml(r.locality || r.city_part || '—')}${srcBadge(r.source)}</td>
+      <td>${r.url ? `<a href="${escapeHtml(r.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Otevřít ↗</a>` : '—'}</td>
     </tr>`).join("");
 }
 
