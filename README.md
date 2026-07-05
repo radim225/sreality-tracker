@@ -50,6 +50,7 @@ Symetricky k přidání:
 | Soubor / složka | Účel |
 | --- | --- |
 | `scrape.py` | Hlavní scraper – stáhne inzeráty a vygeneruje výstupy. |
+| `sources.py` | Extra zdroje comparables (Bezrealitky, iDNES) – volané ze `scrape.py`. |
 | `add_tracked.py` | Přidá URL inzerátu do `tracked.json` (idempotentní). |
 | `remove_tracked.py` | Odebere inzerát z `tracked.json` podle URL nebo id (idempotentní). |
 | `tracked.json` | Seznam sledovaných inzerátů (`id` + `url`). |
@@ -59,6 +60,22 @@ Symetricky k přidání:
 | `dashboard.html` / `index.html` | Statický dashboard (GitHub Pages servíruje `index.html`). |
 | `snapshots/` | Historické snapshoty jednotlivých běhů. |
 | `.github/workflows/scrape.yml` | Naplánovaná automatizace. |
+
+## Zdroje comparables
+
+Kromě sledovaných inzerátů (Sreality) tahá dashboard srovnávací byty (Praha 9,
+1+kk/2+kk) z více portálů přes `sources.py`:
+
+- **Sreality** – `/hledani/` (robots povoluje).
+- **Bezrealitky** – jen robots-povolené `/vypis/` lokalitní výpisy (nikdy
+  `/vyhledat` ani API, oboje `Disallow`), parsuje `__NEXT_DATA__`, filtr Praha 9
+  dle GPS boxu.
+- **iDNES** – robots-povolené `/s/` výsledky vyhledávání, parsuje karty.
+
+Na dashboardu je filtr zdroje a barevný odznak (SR/BR/iD). Když jeden zdroj
+spadne, nezhodí zbytek ani celý běh. *Pozn.:* Bezrealitky/iDNES scraping je
+předmětem ToS + databázového práva daných webů — pro osobní ne-komerční,
+nízkoobjemové použití.
 
 ## Napojení na upozornění
 
