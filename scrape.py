@@ -1105,9 +1105,9 @@ function renderPodHarfou() {
   const rows = DATA.filter(r => r.pod_harfou);
   const tbody = document.querySelector("#tblPod tbody");
   tbody.innerHTML = rows.length ? rows.map(r => `
-    <tr class="clickable-row ${CHANGED_IDS.has(r.id) ? 'changed' : ''}" onclick="openModal(${JSON.stringify(r.id)})">
+    <tr class="clickable-row ${CHANGED_IDS.has(r.id) ? 'changed' : ''}" onclick="openModal(${escapeHtml(JSON.stringify(r.id))})">
       <td><img class="thumb" src="${escapeHtml(r.thumb || PLACEHOLDER)}" loading="lazy" onerror="this.src=PLACEHOLDER"></td>
-      <td><button class="linklike" onclick="event.stopPropagation();openModal(${JSON.stringify(r.id)})">${escapeHtml(r.title) || '—'}</button></td>
+      <td><button class="linklike" onclick="event.stopPropagation();openModal(${escapeHtml(JSON.stringify(r.id))})">${escapeHtml(r.title) || '—'}</button></td>
       <td>${r.transaction_type === 'pronajem' ? 'rent' : 'sale'}</td>
       <td>${r.disposition || '—'}</td>
       <td>${fmtCzk(r.price_czk)}</td>
@@ -1142,9 +1142,9 @@ function render() {
   });
   const tbody = document.querySelector("#tbl tbody");
   tbody.innerHTML = rows.map(r => `
-    <tr class="clickable-row ${CHANGED_IDS.has(r.id) ? 'changed' : ''}" onclick="openModal(${JSON.stringify(r.id)})">
+    <tr class="clickable-row ${CHANGED_IDS.has(r.id) ? 'changed' : ''}" onclick="openModal(${escapeHtml(JSON.stringify(r.id))})">
       <td><img class="thumb" src="${escapeHtml(r.thumb || PLACEHOLDER)}" loading="lazy" onerror="this.src=PLACEHOLDER"></td>
-      <td><button class="linklike" onclick="event.stopPropagation();openModal(${JSON.stringify(r.id)})">${escapeHtml(r.title) || '—'}</button></td>
+      <td><button class="linklike" onclick="event.stopPropagation();openModal(${escapeHtml(JSON.stringify(r.id))})">${escapeHtml(r.title) || '—'}</button></td>
       <td>${r.transaction_type === 'pronajem' ? 'rent' : 'sale'}</td>
       <td>${r.disposition || '—'}</td>
       <td>${fmtCzk(r.price_czk)}</td>
@@ -1172,7 +1172,7 @@ function initMap() {
       <img class="popup-thumb" src="${escapeHtml(thumb)}" onerror="this.src='${PLACEHOLDER}'">
       <div style="font-weight:600;font-size:0.85rem;">${escapeHtml(item.title || "Listing")}</div>
       <div style="font-size:0.8rem;">${price}</div>
-      <button class="popup-btn" onclick="openModal(${JSON.stringify(item.id)})">View details</button>
+      <button class="popup-btn" onclick="openModal(${escapeHtml(JSON.stringify(item.id))})">View details</button>
       <div><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener" style="font-size:0.7rem;">Otevřít na ${portalName(item.source)} →</a></div>
     </div>`;
   }
