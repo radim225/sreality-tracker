@@ -31,6 +31,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          # workflow_dispatch pins github.sha at dispatch time; a run that sat in
+          # the concurrency queue would otherwise start from a stale commit and
+          # its push would be rejected as non-fast-forward.
+          ref: main
           fetch-depth: 0
 
       - name: Set up Python
@@ -64,5 +68,17 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "Update Sreality snapshot $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-            git push
+            # main may have moved during the ~6 min scrape (another run, or a
+            # push from a dev machine). Rebase and retry; -X theirs keeps this
+            # run's generated files on conflict since they are the freshest.
+            for attempt in 1 2 3; do
+              if git push; then
+                break
+              fi
+              if [ "$attempt" = 3 ]; then
+                echo "Push failed after 3 attempts" >&2
+                exit 1
+              fi
+              git pull --rebase -X theirs origin main
+            done
           fi
