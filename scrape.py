@@ -863,6 +863,25 @@ def render_dashboard(snapshot, changes, stats, history):
 
 {tracked_cards_html}
 
+<div class="card" id="manageCard">
+  <h2 style="margin-top:0;font-size:1rem;">⚙️ Sledované inzeráty</h2>
+  <div id="trackedList"></div>
+  <div class="controls" style="margin:10px 0 0;">
+    <input id="addUrlInput" type="text" placeholder="https://www.sreality.cz/detail/..." style="flex:1;min-width:200px;">
+    <button class="popup-btn" onclick="manageTracked({{add_url: document.getElementById('addUrlInput').value.trim()}})">➕ Sledovat</button>
+  </div>
+  <div id="patRow" class="controls" style="display:none;margin:8px 0 0;">
+    <input id="patInput" type="password" placeholder="github_pat_…" style="flex:1;min-width:200px;">
+    <button class="popup-btn" onclick="savePat()">Uložit token</button>
+  </div>
+  <div id="manageStatus" style="font-size:0.8rem;margin-top:8px;color:#7ab8ff;"></div>
+  <div style="font-size:0.72rem;color:#888;margin-top:6px;">Spouští GitHub Action — změna se projeví za ~5–15 min, pak obnov stránku.
+    Vyžaduje fine-grained PAT: jen repo sreality-tracker, oprávnění Actions „Read and write".
+    <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Vytvořit token</a> ·
+    <button class="linklike" style="font-size:0.72rem;" onclick="localStorage.removeItem('gh_pat');document.getElementById('manageStatus').textContent='Token zapomenut.'">zapomenout token</button>
+  </div>
+</div>
+
 <div class="card">
   <h2 style="margin-top:0;font-size:1rem;">Area stats (1+kk &amp; 2+kk, Vysočany)</h2>
   <div class="stats">
@@ -991,6 +1010,70 @@ function srcBadge(s) {
 
 function portalName(s) {
   return ({ sreality: "Sreality", bezrealitky: "Bezrealitky", idnes: "iDNES" })[s] || "Sreality";
+}
+
+/* ---- správa sledovaných inzerátů (workflow_dispatch s fine-grained PAT) ---- */
+const GH_REPO = "radim225/sreality-tracker";
+let pendingInputs = null;
+
+function setManageStatus(msg) {
+  document.getElementById("manageStatus").textContent = msg;
+}
+
+function renderTrackedList() {
+  const el = document.getElementById("trackedList");
+  if (!el) return;
+  el.innerHTML = TRACKED.length ? TRACKED.map(t => `
+    <div class="history-item" style="cursor:default;">
+      <img class="thumb" src="${escapeHtml(t.thumb || PLACEHOLDER)}" loading="lazy" onerror="this.src=PLACEHOLDER">
+      <div class="htxt">${escapeHtml(t.title || String(t.id))}
+        <div class="hat">${escapeHtml(t.locality || "")} · ${t.active ? "aktivní" : "neaktivní"}</div>
+      </div>
+      <button class="popup-btn" style="background:#7f1d1d;" title="Přestat sledovat"
+        onclick="manageTracked({remove_url: ${escapeHtml(JSON.stringify(String(t.id).replace(/^(bez|idnes)-/, "")))}})">🗑 Přestat sledovat</button>
+    </div>`).join("") : '<div style="color:#888;font-size:0.8rem;">Žádné sledované inzeráty.</div>';
+}
+
+function savePat() {
+  const v = document.getElementById("patInput").value.trim();
+  if (!v) return;
+  localStorage.setItem("gh_pat", v);
+  document.getElementById("patInput").value = "";
+  document.getElementById("patRow").style.display = "none";
+  if (pendingInputs) { const p = pendingInputs; pendingInputs = null; manageTracked(p); }
+}
+
+async function manageTracked(inputs) {
+  const val = inputs.add_url ?? inputs.remove_url;
+  if (!val) { setManageStatus("Vlož URL inzerátu ze Sreality."); return; }
+  const token = localStorage.getItem("gh_pat");
+  if (!token) {
+    pendingInputs = inputs;
+    document.getElementById("patRow").style.display = "flex";
+    setManageStatus("Vlož GitHub token (fine-grained: jen toto repo, Actions Read & write) — akce se pak provede.");
+    return;
+  }
+  setManageStatus("Spouštím workflow…");
+  try {
+    const resp = await fetch(`https://api.github.com/repos/${GH_REPO}/actions/workflows/scrape.yml/dispatches`, {
+      method: "POST",
+      headers: { "Authorization": "Bearer " + token, "Accept": "application/vnd.github+json" },
+      body: JSON.stringify({ ref: "main", inputs }),
+    });
+    if (resp.status === 204) {
+      setManageStatus((inputs.add_url ? "Přidání" : "Odebrání") + " spuštěno ✓ — hotovo za ~5–15 min, pak obnov stránku.");
+      if (inputs.add_url) document.getElementById("addUrlInput").value = "";
+    } else if (resp.status === 401 || resp.status === 403) {
+      localStorage.removeItem("gh_pat");
+      pendingInputs = inputs;
+      document.getElementById("patRow").style.display = "flex";
+      setManageStatus(`GitHub token odmítl (HTTP ${resp.status}) — vlož platný token.`);
+    } else {
+      setManageStatus(`Neočekávaná odpověď (HTTP ${resp.status}).`);
+    }
+  } catch (e) {
+    setManageStatus("Požadavek selhal: " + e.message);
+  }
 }
 
 function costBreakdownHtml(item) {
@@ -1214,6 +1297,7 @@ document.getElementById("search").addEventListener("input", render);
 render();
 renderPodHarfou();
 renderHistory();
+renderTrackedList();
 initMap();
 """
 
