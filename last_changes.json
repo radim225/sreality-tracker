@@ -1,29 +1,29 @@
 {
-  "generated_at": "2026-07-06T08:10:56Z",
+  "generated_at": "2026-07-06T08:35:50Z",
   "tracked_price_changes": [],
   "newly_inactive": [
     {
-      "id": "idnes-69891103029f21e3250260f8",
+      "id": "idnes-6989124d57fa157a6e04ab8f",
       "source": "idnes",
-      "title": "Pronájem bytu 2+kk 82 m²",
+      "title": "Pronájem bytu 2+kk 87 m²",
       "disposition": "2+kk",
       "transaction_type": "pronajem",
-      "price_czk": 25000,
-      "floor_area_sqm": 82.0,
-      "price_czk_per_sqm": 323,
+      "price_czk": 26000,
+      "floor_area_sqm": 87.0,
+      "price_czk_per_sqm": 316,
       "locality": "Kolbenova, Praha 9 - Vysočany",
       "city_part": "Vysočany",
       "street": null,
       "pod_harfou": false,
-      "url": "https://reality.idnes.cz/detail/pronajem/byt/praha-9-kolbenova/69891103029f21e3250260f8/",
+      "url": "https://reality.idnes.cz/detail/pronajem/byt/praha-9-kolbenova/6989124d57fa157a6e04ab8f/",
       "active": true,
       "lat": null,
       "lon": null,
       "approx_location": false,
       "images": [
-        "https://sta-reality2.1gr.cz/sta/compile/thumbs/e/3/4/9c6ab53cbd750c4d1c9e9f8dc13e5.webp"
+        "https://sta-reality2.1gr.cz/sta/compile/thumbs/e/4/b/38e8752ef8c02600d4b3f9964b89d.webp"
       ],
-      "thumb": "https://sta-reality2.1gr.cz/sta/compile/thumbs/e/3/4/9c6ab53cbd750c4d1c9e9f8dc13e5.webp",
+      "thumb": "https://sta-reality2.1gr.cz/sta/compile/thumbs/e/4/b/38e8752ef8c02600d4b3f9964b89d.webp",
       "description": null,
       "seller_name": null,
       "fees_czk": null,
@@ -31,34 +31,36 @@
       "fees_source": null,
       "electricity_czk": 1500,
       "electricity_estimated": true,
-      "total_czk": 26500,
+      "total_czk": 27500,
       "garage": null,
       "parking": null,
       "admin_fee_czk": null,
-      "removed_since": "2026-07-06T08:10:56Z"
-    },
+      "removed_since": "2026-07-06T08:35:50Z"
+    }
+  ],
+  "new_listings": [
     {
-      "id": "idnes-6a34f01716fbc048460dd223",
+      "id": "idnes-6a171d39d68268c0960ba348",
       "source": "idnes",
-      "title": "Pronájem bytu 2+kk 45 m²",
-      "disposition": "2+kk",
+      "title": "Pronájem bytu 1+kk 33 m²",
+      "disposition": "1+kk",
       "transaction_type": "pronajem",
-      "price_czk": 24500,
-      "floor_area_sqm": 45.0,
-      "price_czk_per_sqm": 578,
-      "locality": "Pod Harfou, Praha 9 - Vysočany",
+      "price_czk": 17500,
+      "floor_area_sqm": 33.0,
+      "price_czk_per_sqm": 576,
+      "locality": "Poděbradská, Praha 9 - Vysočany",
       "city_part": "Vysočany",
       "street": null,
       "pod_harfou": false,
-      "url": "https://reality.idnes.cz/detail/pronajem/byt/praha-9-pod-harfou/6a34f01716fbc048460dd223/",
+      "url": "https://reality.idnes.cz/detail/pronajem/byt/praha-9-podebradska/6a171d39d68268c0960ba348/",
       "active": true,
       "lat": null,
       "lon": null,
       "approx_location": false,
       "images": [
-        "https://sta-reality2.1gr.cz/sta/compile/thumbs/9/1/9/c0a3edf17a641d17057e9098dd1b9.webp"
+        "https://sta-reality2.1gr.cz/sta/compile/thumbs/d/d/a/3509f573277b8d27c09b337df9422.webp"
       ],
-      "thumb": "https://sta-reality2.1gr.cz/sta/compile/thumbs/9/1/9/c0a3edf17a641d17057e9098dd1b9.webp",
+      "thumb": "https://sta-reality2.1gr.cz/sta/compile/thumbs/d/d/a/3509f573277b8d27c09b337df9422.webp",
       "description": null,
       "seller_name": null,
       "fees_czk": null,
@@ -66,13 +68,12 @@
       "fees_source": null,
       "electricity_czk": 1500,
       "electricity_estimated": true,
-      "total_czk": 26000,
+      "total_czk": 19000,
       "garage": null,
       "parking": null,
       "admin_fee_czk": null,
-      "removed_since": "2026-07-06T08:10:56Z"
+      "first_seen": "2026-07-06T08:35:50Z"
     }
   ],
-  "new_listings": [],
   "price_changes": []
 }
