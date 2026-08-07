@@ -54,15 +54,49 @@ SESSION = requests.Session()
 SESSION.headers.update(HEADERS)
 
 
+class TransientFetchError(Exception):
+    """Upstream failed in a way that says nothing about the listing itself -- a
+    5xx, a throttle, a timeout, a dropped connection. Callers must never read
+    this as "the listing is gone"; under load Sreality redirects detail pages to
+    its own /500 page, and treating that as an absence reports live flats as
+    removed (and used to crash the whole run)."""
+
+
+# Sreality throttles the ~200-request detail burst by serving 500s and 429s for
+# a few seconds at a time, so these clear on a retry. 404 is deliberately absent
+# -- it is the one status that genuinely means "delisted".
+RETRY_STATUSES = {429, 500, 502, 503, 504}
+RETRY_BACKOFF_SECONDS = (2, 5, 10)
+
+
 def fetch_next_data(url, params=None):
-    resp = SESSION.get(url, params=params, timeout=20)
-    if resp.status_code == 404:
-        return None, resp.status_code
-    resp.raise_for_status()
-    m = NEXT_DATA_RE.search(resp.text)
-    if not m:
-        return None, resp.status_code
-    return json.loads(m.group(1)), resp.status_code
+    """Returns (next_data, status). Raises TransientFetchError once the retries
+    are exhausted, so a flaky response can never be mistaken for a missing
+    listing. Statuses outside RETRY_STATUSES still raise through
+    raise_for_status() -- a persistent 403 block should fail loudly, not be
+    swallowed into a phantom mass removal."""
+    last_failure = None
+    for backoff in (*RETRY_BACKOFF_SECONDS, None):
+        try:
+            resp = SESSION.get(url, params=params, timeout=20)
+        except (requests.Timeout, requests.ConnectionError) as exc:
+            last_failure = f"{type(exc).__name__}: {exc}"
+        else:
+            if resp.status_code not in RETRY_STATUSES:
+                if resp.status_code == 404:
+                    return None, resp.status_code
+                resp.raise_for_status()
+                m = NEXT_DATA_RE.search(resp.text)
+                if not m:
+                    return None, resp.status_code
+                return json.loads(m.group(1)), resp.status_code
+            last_failure = f"HTTP {resp.status_code}"
+        if backoff is None:
+            break
+        time.sleep(backoff)
+    raise TransientFetchError(
+        f"{url}: {last_failure} after {len(RETRY_BACKOFF_SECONDS) + 1} attempts"
+    )
 
 
 def get_query_data(next_data, key_prefix):
@@ -239,8 +273,27 @@ def load_tracked_config():
 
 
 def fetch_tracked(url, listing_id):
-    next_data, status = fetch_next_data(url)
+    """A record with "unavailable" means the fetch failed, not that the listing
+    went away -- main() carries the previous state forward for those. Only a 404
+    is treated as a real delisting; that is what Sreality actually serves for a
+    removed advert."""
+
+    def unreadable(reason):
+        return {
+            "id": listing_id,
+            "url": url,
+            "unavailable": True,
+            "fetched_at": now_iso(),
+            "error": reason,
+        }
+
+    try:
+        next_data, status = fetch_next_data(url)
+    except TransientFetchError as exc:
+        return unreadable(str(exc))
     if next_data is None:
+        if status != 404:
+            return unreadable(f"no __NEXT_DATA__ in page (HTTP {status})")
         return {
             "id": listing_id,
             "url": url,
@@ -250,13 +303,7 @@ def fetch_tracked(url, listing_id):
         }
     data, _ = get_query_data(next_data, "estate")
     if data is None:
-        return {
-            "id": listing_id,
-            "url": url,
-            "active": False,
-            "fetched_at": now_iso(),
-            "error": "estate query missing from page",
-        }
+        return unreadable("estate query missing from page")
     params = data.get("params") or {}
     locality = data.get("locality") or {}
     seller = data.get("seller") or {}
@@ -331,6 +378,10 @@ def fetch_comparables():
         page = 1
         seen_total = None
         seen_offsets = set()
+        # Every page of the search must land. A half-read result set is worse
+        # than no run at all: diff_snapshots would report the unread remainder
+        # of the market as removed, so any early exit aborts instead.
+        complete = False
         while True:
             url = f"https://www.sreality.cz/hledani/{tx_type}/byty"
             # The site's pagination query param is the Czech "strana" (page),
@@ -339,10 +390,14 @@ def fetch_comparables():
                 url, params={"region": SEARCH_REGION_TEXT, "strana": page}
             )
             if next_data is None:
-                break
+                raise TransientFetchError(
+                    f"search page {page} of {tx_type}: no __NEXT_DATA__ (HTTP {status})"
+                )
             data, _ = get_query_data(next_data, "estatesSearch")
             if data is None:
-                break
+                raise TransientFetchError(
+                    f"search page {page} of {tx_type}: estatesSearch query missing"
+                )
             pagination = data.get("pagination") or {}
             seen_total = pagination.get("total")
             offset = pagination.get("offset")
@@ -360,9 +415,15 @@ def fetch_comparables():
                 by_id[comp["id"]] = comp  # dedup strictly by listing id
             limit = pagination.get("limit") or len(page_results) or 22
             if page * limit >= (seen_total or 0):
+                complete = True
                 break
             page += 1
             time.sleep(0.3)
+        if not complete:
+            raise TransientFetchError(
+                f"search pagination for {tx_type} stopped at page {page} of "
+                f"total={seen_total}; aborting rather than writing a truncated snapshot"
+            )
 
     comparables = list(by_id.values())
     print(f"Enriching {len(comparables)} listings with detail (description, photos)...", file=sys.stderr)
@@ -442,7 +503,15 @@ def parse_comparable(r, tx_type):
 def enrich_comparable(comp):
     """Fetch the full detail page for description/seller/photos/fees. GPS and
     a thumbnail already came from the search payload, so this is best-effort."""
-    next_data, status = fetch_next_data(comp["url"])
+    try:
+        next_data, status = fetch_next_data(comp["url"])
+    except TransientFetchError as exc:
+        # The search returned this listing moments ago, so it exists. Keep it
+        # active and unenriched rather than dropping it -- a dropped listing
+        # reads as "removed" downstream and fires a false alert.
+        print(f"  detail fetch failed for {comp['id']}, keeping listing: {exc}", file=sys.stderr)
+        comp["enrich_failed"] = True
+        return
     if next_data is None:
         if status == 404:
             comp["active"] = False
@@ -610,12 +679,25 @@ def diff_snapshots(prev, curr):
                 }
             )
 
+    # A listing absent from one run is only a candidate for removal, not a fact:
+    # the search set itself fluctuates run to run. It has to be absent twice in a
+    # row before "removed" is reported, and a listing that reappears in between
+    # produces no event at all -- it was never really gone. This costs one run
+    # (~8h) of latency on genuine removals and buys silence on the false ones.
+    prev_pending = {c["id"]: c for c in prev.get("pending_removal", [])}
     prev_by_id = {c["id"]: c for c in prev.get("comparables", [])}
+    prev_by_id.update(prev_pending)
     curr_by_id = {c["id"]: c for c in curr.get("comparables", [])}
 
+    pending = []
     for cid, old in prev_by_id.items():
-        if cid not in curr_by_id:
+        if cid in curr_by_id:
+            continue
+        if cid in prev_pending:
             changes["newly_inactive"].append({**old, "removed_since": changes["generated_at"]})
+        else:
+            pending.append({**old, "missing_since": changes["generated_at"]})
+    curr["pending_removal"] = pending
 
     for cid, new in curr_by_id.items():
         old = prev_by_id.get(cid)
@@ -1323,8 +1405,22 @@ def main():
     tracked = []
     for t in tracked_config:
         fetched = fetch_tracked(t["url"], t["id"])
-        if not fetched.get("active"):
-            prev_t = prev_tracked_by_id.get(t["id"])
+        prev_t = prev_tracked_by_id.get(t["id"])
+        unreadable = fetched.get("unavailable", False)
+        if unreadable:
+            # We simply could not read the page. Keep showing the last known
+            # state rather than flipping the listing to "no longer listed" --
+            # that would fire a removal alert about an upstream hiccup.
+            print(
+                f"Tracked id={t['id']} unreadable, keeping last known state: {fetched['error']}",
+                file=sys.stderr,
+            )
+            fetched = (
+                {**prev_t, "fetch_error": fetched["error"], "fetch_error_at": fetched["fetched_at"]}
+                if prev_t
+                else {**fetched, "active": False}
+            )
+        elif not fetched.get("active"):
             if prev_t:
                 # Carry forward the last time it was *actually* seen active, even
                 # across multiple consecutive inactive runs (prev_t may itself
@@ -1335,6 +1431,10 @@ def main():
                 fetched = {**prev_t, **fetched}
                 if last_active_at:
                     fetched["last_active_at"] = last_active_at
+        if not unreadable:
+            # A successful read clears any error carried over from a failed run.
+            fetched.pop("fetch_error", None)
+            fetched.pop("fetch_error_at", None)
         tracked.append(fetched)
         print(f"Tracked id={fetched['id']} active={fetched.get('active')} title={fetched.get('title')!r}", file=sys.stderr)
 
@@ -1350,6 +1450,9 @@ def main():
         "generated_at": now_iso(),
         "tracked": tracked,
         "comparables": comparables,
+        # Listings absent this run and awaiting a second confirming absence
+        # before they count as removed; diff_snapshots() fills this in.
+        "pending_removal": [],
     }
 
     changes = diff_snapshots(prev, snapshot)
@@ -1370,7 +1473,8 @@ def main():
     print(
         f"Changes: tracked_price_changes={len(changes['tracked_price_changes'])} "
         f"new={len(changes['new_listings'])} gone={len(changes['newly_inactive'])} "
-        f"price_changes={len(changes['price_changes'])}",
+        f"price_changes={len(changes['price_changes'])} "
+        f"pending_removal={len(snapshot['pending_removal'])}",
         file=sys.stderr,
     )
 
