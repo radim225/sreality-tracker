@@ -4,6 +4,8 @@ listings in the same area, snapshots the result, diffs against the previous
 snapshot, and regenerates a mobile-friendly dashboard with photos and a map."""
 import html
 import json
+import math
+import os
 import re
 import statistics
 import sys
@@ -25,12 +27,66 @@ TRACKED_PATH = ROOT / "tracked.json"
 CHANGES_HISTORY_PATH = ROOT / "changes_history.json"
 
 # Sreality category_sub_cb codes (from /hledani estatesFilterPage)
-DISPOSITION_CODES = {2: "1+kk", 4: "2+kk"}
+DISPOSITION_CODES = {2: "1+kk", 3: "1+1", 4: "2+kk", 5: "2+1", 6: "3+kk", 7: "3+1"}
+# The same set as a "velikost" query param. Sreality accepts it server-side and
+# resolves it to exactly these categorySubCb codes, so the search returns only
+# relevant dispositions instead of every flat in the ward -- roughly halving the
+# number of search pages we have to walk.
+SEARCH_VELIKOST = ",".join(DISPOSITION_CODES.values())
 TRANSACTION_TYPES = ["pronajem", "prodej"]  # rent, sale
-SEARCH_REGION_TEXT = "Vysočany"  # free-text resolved server-side to the ward/locality
+
+# The watched area is a circle, not a ward list: Radim's landmarks straddle
+# ward boundaries (Hrdlořezy sits on the Praha 3/9 line, the Rokytka cycle path
+# runs Vysočany->Libeň->Karlín). So we search every ward the circle touches and
+# then keep only what actually falls inside it.
+#
+# Centre sits between Palmovka and Hrdlořezy, chosen so one radius covers every
+# place he named while still cutting off eastwards. Distances from the centre:
+#   Hrdlořezy (V Třešňovce/Nad Smetánkou) 0.9 · Podvinný mlýn 1.1
+#   Palmovka 1.1 · Pod Harfou 1.5 · Kolbenova east end 2.9 · Karlín 2.9
+#   -- excluded: Hloubětín metro 3.7 · Černý Most 6.9
+AREA_CENTER = (50.0995, 14.4900)
+AREA_RADIUS_KM = 3.0
+# Wards the circle overlaps. Free text, resolved server-side to a ward id;
+# a ward only contributes the listings that pass the radius test.
+SEARCH_WARDS = [
+    "Vysočany", "Hrdlořezy", "Libeň", "Karlín", "Žižkov", "Malešice", "Hloubětín",
+]
+# Radim's landmark streets, shown on the dashboard so the area stays legible.
+AREA_LANDMARKS = "Pod Harfou · Kolbenova · Hrdlořezy · Podvinný mlýn · Palmovka · Karlín"
+
 MAX_IMAGES_PER_LISTING = 5
 MAX_DESCRIPTION_CHARS = 1200
 MAX_HISTORY_EVENTS = 300
+
+# Detail fetches are the expensive part of a run and Sreality throttles the
+# burst. Widening the area took the listing set from ~200 to ~1000, which would
+# make every 8h run a ~1000-request burst for data that almost never changes.
+# So a listing is only re-fetched when something about it changed (see
+# needs_enrichment); the rest carry their enrichment forward from the previous
+# snapshot. This cap bounds the retry of listings that failed or came back
+# without fees, so a permanently fee-less listing can't be refetched forever.
+MAX_REENRICH_PER_RUN = 60
+# Hard ceiling on detail fetches per run. Sreality serves this burst at about
+# 1 s per listing when it is happy, but drops into throttling windows where the
+# retry backoff pushes it to ~7 s -- measured across one full backfill. The cap
+# is set so that even an entirely throttled run finishes in well under an hour
+# instead of hammering for ninety minutes. A backlog bigger than the cap simply
+# converges over the next couple of runs: whatever is left unenriched comes back
+# as a "retry" next time, and those listings are on the dashboard meanwhile --
+# they just carry price and locality until their detail lands.
+MAX_DETAIL_FETCHES_PER_RUN = int(os.environ.get("MAX_DETAIL_FETCHES", "300"))
+# How many clean reads an advert gets before "no fee stated" is accepted as the
+# answer rather than retried. Roughly a third of Sreality rentals never quote a
+# service charge anywhere.
+MAX_FEE_ATTEMPTS = 3
+# Bump whenever the fee parser changes behaviour. Enrichment is cached across
+# runs, so without this a parser fix would only ever apply to listings that
+# happened to appear afterwards -- everything already in the snapshot would keep
+# the value the old code got, indefinitely. Two listings were found carrying
+# exactly that kind of stale mis-parse (an agency commission and a rent, both
+# stored as the monthly fee) before this existed.
+PARSER_VERSION = 2
 
 # Sreality's "estate" payload gives base rent (price) and service fees
 # (params.costOfLiving) separately, but never itemizes electricity -- it's
@@ -118,6 +174,28 @@ THUMB_SUFFIX = "?fl=res,400,400,1|shr,,20|webp,60"
 FULL_SUFFIX = "?fl=res,800,800,1|shr,,20|jpg,80"
 
 
+def haversine_km(lat1, lon1, lat2, lon2):
+    if None in (lat1, lon1, lat2, lon2):
+        return None
+    la1, lo1, la2, lo2 = map(math.radians, (lat1, lon1, lat2, lon2))
+    a = (
+        math.sin((la2 - la1) / 2) ** 2
+        + math.cos(la1) * math.cos(la2) * math.sin((lo2 - lo1) / 2) ** 2
+    )
+    return 2 * 6371 * math.asin(math.sqrt(a))
+
+
+def km_from_center(lat, lon):
+    return haversine_km(lat, lon, AREA_CENTER[0], AREA_CENTER[1])
+
+
+def in_watched_area(lat, lon):
+    """A listing with no GPS at all can't be placed, so it is kept -- dropping
+    it would silently shrink the market. Enrichment usually fills the GPS in."""
+    d = km_from_center(lat, lon)
+    return True if d is None else d <= AREA_RADIUS_KM
+
+
 def cdn_url(url):
     if not url:
         return None
@@ -158,86 +236,186 @@ FEE_KEYWORDS = [
     "poplatky", "poplatek", "služby", "zálohy", "záloha", "měsíční výdaje",
     "provozní náklady", "fond oprav", "svj", "společné prostory", "správa domu",
 ]
-EXCLUDE_KEYWORDS = ["kauce", "provize", "jednorázov", "deposit", "refundable"]
-ELECTRICITY_KEYWORDS = ["energie", "elektřin"]
+# "jistina"/"jistota" are deposit synonyms that agencies on iDNES favour over
+# "kauce" ("Nájem 17.500,- | Poplatky 3.500,- | Jistina 21.000,- | Provize
+# 15.000,-"); without them the deposit gets read as the monthly fee.
+EXCLUDE_KEYWORDS = [
+    "kauce", "kauci", "provize", "provizi", "jistina", "jistinu", "jistota",
+    "jistotu", "jednorázov", "deposit", "refundable",
+    # "odměna RK za zprostředkování 24.000 Kč" -- an agency commission, and one
+    # that only escaped being booked as the monthly fee because it happened to
+    # exceed the plausible range.
+    "odměna", "odmena", "zprostředkování", "zprostredkovani",
+]
+ELECTRICITY_KEYWORDS = ["energie", "energii", "elektřin", "elektrin"]
+# Words that label the rent itself. A price note almost always leads with it
+# ("Nájem 17.500,- | Poplatky 3.500,-"), and on a cheap flat the rent is small
+# enough to pass for a service charge, so a clause that only talks about rent
+# must not donate its number to the fee.
+RENT_KEYWORDS = ["nájem", "najem", "nájemn", "najemn", "činže", "cinze"]
+# The quoted rent is already all-in. Parsing a fee out of these double-counts
+# it, so we record "fees are included" instead of a number. Written as a window
+# rather than fixed phrases because the qualifier between the two halves varies
+# ("včetně poplatků" but also "včetně paušálních poplatků", "vč. veškerých
+# poplatků za služby").
+INCLUSIVE_RE = re.compile(
+    r'(?:v[čc]etn[ěe]|v[čc]\.|v cen[ěe])\s+(?:\w+\s+){0,3}'
+    r'(?:poplat|slu[žz]eb|slu[žz]by|energi|inkas)',
+    re.I,
+)
 
-# Splits on '+', ';', newline, "plus", a sentence comma (not a Czech
-# thousands-separator comma like "3,400"), or a sentence-ending period
-# (not an abbreviation period like "el." before a lowercase word).
-CLAUSE_SPLIT_RE = re.compile(r'\+|;|\n|\bplus\b|,\s+|(?<=[a-zá-ž])\.\s+(?=[A-ZÁ-Ž])', re.I)
+# Splits on '+', ';', '|', newline, a markdown/bullet '*', "plus", a sentence
+# comma (not a Czech thousands-separator comma like "3,400"), or a
+# sentence-ending period (not an abbreviation period like "el." before a
+# lowercase word). '|' and '*' matter because agency descriptions are commonly
+# pipe-separated one-liners or markdown bullet lists, and without them a whole
+# fee list collapses into one clause -- which then gets thrown away entirely as
+# soon as it happens to also mention "kauce".
+CLAUSE_SPLIT_RE = re.compile(
+    r'\+|;|\||\n|\s\*+\s|\bplus\b|,\s+|(?<=[a-zá-ž])\.\s+(?=[A-ZÁ-Ž])', re.I
+)
 # Czech number formats: "3 400", "3.400", "3,400", "3400", with optional Kč/CZK.
 NUMBER_RE = re.compile(r'(\d{1,3}(?:[ .,]\d{3})+|\d{3,6})\s*(?:k[čc]|czk)?', re.I)
+# Plausible monthly service fee. Anything outside this is a rent, a deposit, a
+# floor area or a year -- not a fee.
+FEE_MIN_CZK, FEE_MAX_CZK = 300, 15000
+
+
+def normalize_text(text):
+    """Strip the zero-width joiners and non-breaking spaces portals inject into
+    price markup ("17&zwj;&nbsp;500"), which otherwise break number matching."""
+    if not text:
+        return ""
+    return (
+        text.replace("‍", "").replace("​", "")
+        .replace(" ", " ").replace(" ", " ").replace(" ", " ")
+    )
+
+
+def parse_amounts(clause):
+    """All plausible amounts in a clause, in order. Multi-tier fees ("2.500 Kč
+    pro 1 osobu, 3.500 Kč pro 2 osoby") list the cheapest tier first."""
+    out = []
+    for m in NUMBER_RE.finditer(clause):
+        digits = re.sub(r"[ .,]", "", m.group(1))
+        try:
+            v = int(digits)
+        except ValueError:
+            continue
+        if v > 0:
+            out.append(v)
+    return out
 
 
 def parse_amount(clause):
-    m = NUMBER_RE.search(clause)
-    if not m:
-        return None
-    digits = re.sub(r"[ .,]", "", m.group(1))
-    try:
-        v = int(digits)
-    except ValueError:
-        return None
-    return v if v > 0 else None
+    amounts = parse_amounts(clause)
+    return amounts[0] if amounts else None
 
 
-def parse_cost_of_living_text(text):
+def plausible_fee(v):
+    return v is not None and FEE_MIN_CZK <= v <= FEE_MAX_CZK
+
+
+def is_all_inclusive(text):
+    return bool(INCLUSIVE_RE.search(normalize_text(text)))
+
+
+def _scan_clauses(clauses, require_keyword, rent_czk=None):
+    """Walk clauses once, pulling out a monthly fee and an electricity amount.
+
+    Two things the old single-clause scan got wrong on real listings:
+
+    * The amount often sits in the *next* clause, because the sentence comma
+      splits the keyword away from it -- "zálohu na služby, která činí 2.500
+      Kč". So a keyword clause with no amount of its own looks ahead one clause.
+    * A deposit mention used to void the whole clause. Now the exclusion only
+      applies to the amounts in that clause; a fee already found in an earlier
+      clause survives a later "Kauce ..." on the same line.
+    """
+    fee = electricity = None
+    for i, clause in enumerate(clauses):
+        low = clause.lower()
+        if any(k in low for k in EXCLUDE_KEYWORDS):
+            continue
+        is_elec = any(k in low for k in ELECTRICITY_KEYWORDS)
+        has_fee_kw = any(k in low for k in FEE_KEYWORDS)
+        # "Nájem 17.500,-" is the rent, not a fee, even though 17 500 sits in
+        # the plausible-fee range for a cheaper flat.
+        if any(k in low for k in RENT_KEYWORDS) and not has_fee_kw:
+            continue
+        amounts = parse_amounts(clause)
+        if rent_czk:
+            amounts = [v for v in amounts if v != rent_czk]
+        if not amounts and has_fee_kw and i + 1 < len(clauses):
+            nxt = clauses[i + 1]
+            if not any(k in nxt.lower() for k in EXCLUDE_KEYWORDS):
+                amounts = parse_amounts(nxt)
+        if not amounts:
+            continue
+        if is_elec and not has_fee_kw:
+            if electricity is None:
+                electricity = amounts[0]
+        elif fee is None and (has_fee_kw or not require_keyword):
+            # Cheapest tier of a multi-person fee table, and only if it looks
+            # like a fee at all -- this is what keeps a 19 900 Kč rent or a
+            # 45 000 Kč deposit from being booked as the monthly service charge.
+            candidates = [v for v in amounts if plausible_fee(v)]
+            if candidates:
+                fee = min(candidates)
+    return fee, electricity
+
+
+def parse_cost_of_living_text(text, rent_czk=None):
     """costOfLiving is themed as monthly living costs already, so any amount
     in it that isn't in a deposit/commission clause is the fee -- no keyword
     required (e.g. "4800 Kč plus elektřina")."""
-    fee = electricity = None
-    for clause in CLAUSE_SPLIT_RE.split(text or ""):
-        low = clause.lower()
-        if any(k in low for k in EXCLUDE_KEYWORDS):
-            continue
-        amt = parse_amount(clause)
-        if amt is None:
-            continue
-        if any(k in low for k in ELECTRICITY_KEYWORDS):
-            electricity = electricity if electricity is not None else amt
-        else:
-            fee = fee if fee is not None else amt
-    return fee, electricity
+    return _scan_clauses(
+        CLAUSE_SPLIT_RE.split(normalize_text(text)), require_keyword=False, rent_czk=rent_czk
+    )
 
 
-def parse_fee_from_description(text):
+def parse_fee_from_description(text, rent_czk=None):
     """Free-text description fallback -- here a fee keyword IS required, since
     unanchored numbers in prose are far more likely to be unrelated (m²,
     floor, year built, etc.)."""
-    fee = electricity = None
-    for clause in CLAUSE_SPLIT_RE.split(text or ""):
-        low = clause.lower()
-        if any(k in low for k in EXCLUDE_KEYWORDS):
-            continue
-        if fee is None and any(k in low for k in FEE_KEYWORDS):
-            fee = parse_amount(clause)
-        if electricity is None and any(k in low for k in ELECTRICITY_KEYWORDS):
-            electricity = parse_amount(clause)
-    return fee, electricity
+    return _scan_clauses(
+        CLAUSE_SPLIT_RE.split(normalize_text(text)), require_keyword=True, rent_czk=rent_czk
+    )
 
 
-def extract_fees_and_electricity(cost_of_living_raw, description):
+def extract_fees_and_electricity(cost_of_living_raw, description, rent_czk=None):
     """Returns (fees_czk, fees_source, electricity_explicit_czk).
     fees_source is "field" (clean int or parsed from costOfLiving text),
-    "text" (parsed from the description), or None (not found anywhere)."""
-    raw = (cost_of_living_raw or "").strip()
+    "text" (parsed from the description), "included" (the listing says the rent
+    is already all-in), or None (not found anywhere).
+
+    rent_czk, when known, is used only to veto it as a fee candidate: portals
+    routinely restate the rent inside the very field that also carries the
+    service charge."""
+    raw = normalize_text(cost_of_living_raw).strip()
     try:
         v = int(raw)
         if v > 0:
             return v, "field", None
     except ValueError:
         pass
-    fee, electricity = parse_cost_of_living_text(raw)
+    fee, electricity = parse_cost_of_living_text(raw, rent_czk)
     if fee is not None:
         return fee, "field", electricity
-    fee, electricity_2 = parse_fee_from_description(description)
+    fee, electricity_2 = parse_fee_from_description(description, rent_czk)
     electricity = electricity if electricity is not None else electricity_2
     if fee is not None:
         return fee, "text", electricity
+    # No number anywhere -- but if the listing states the rent already covers
+    # the fees, that is an answer, not a gap, and it must not be presented as
+    # "fee unknown, assumed 0" alongside listings that quote rent net of fees.
+    if is_all_inclusive(raw) or is_all_inclusive(description):
+        return 0, "included", electricity
     return None, None, electricity
 
 
-def cost_breakdown(price_czk, fees_czk, transaction_type, electricity_explicit=None):
+def cost_breakdown(price_czk, fees_czk, transaction_type, electricity_explicit=None,
+                   fees_source=None):
     """Returns (fees_czk, fees_missing, electricity_czk, electricity_estimated,
     total_czk) for a listing. Only rentals (pronajem) get an electricity
     figure and a fees+electricity total; sales just total to the purchase
@@ -246,6 +424,11 @@ def cost_breakdown(price_czk, fees_czk, transaction_type, electricity_explicit=N
     fees_missing = fees_czk is None
     if transaction_type != "pronajem":
         return fees_czk, fees_missing, None, False, price_czk
+    if fees_source == "included":
+        # The quoted rent already covers fees and utilities, so adding the
+        # uniform electricity estimate on top would inflate it above what the
+        # tenant actually pays.
+        return 0, False, 0, False, price_czk
     if electricity_explicit is not None:
         electricity_czk, electricity_estimated = electricity_explicit, False
     else:
@@ -315,10 +498,10 @@ def fetch_tracked(url, listing_id):
     type_code = (data.get("categoryTypeCb") or {}).get("value")
     transaction_type = "pronajem" if type_code == 2 else "prodej"
     fees_czk, fees_source, electricity_explicit = extract_fees_and_electricity(
-        params.get("costOfLiving"), data.get("description")
+        params.get("costOfLiving"), data.get("description"), rent_czk
     )
     fees_czk, fees_missing, electricity_czk, electricity_estimated, total_czk = (
-        cost_breakdown(rent_czk, fees_czk, transaction_type, electricity_explicit)
+        cost_breakdown(rent_czk, fees_czk, transaction_type, electricity_explicit, fees_source)
     )
     garage, parking = garage_parking_from_params(params)
     floor_area_sqm = params.get("floorArea")
@@ -372,65 +555,192 @@ def format_locality(locality):
     return ", ".join(p for p in parts if p)
 
 
-def fetch_comparables():
-    by_id = {}
-    for tx_type in TRANSACTION_TYPES:
-        page = 1
-        seen_total = None
-        seen_offsets = set()
-        # Every page of the search must land. A half-read result set is worse
-        # than no run at all: diff_snapshots would report the unread remainder
-        # of the market as removed, so any early exit aborts instead.
-        complete = False
-        while True:
-            url = f"https://www.sreality.cz/hledani/{tx_type}/byty"
-            # The site's pagination query param is the Czech "strana" (page),
-            # not "page" -- "page" is silently ignored and always returns page 1.
-            next_data, status = fetch_next_data(
-                url, params={"region": SEARCH_REGION_TEXT, "strana": page}
-            )
-            if next_data is None:
-                raise TransientFetchError(
-                    f"search page {page} of {tx_type}: no __NEXT_DATA__ (HTTP {status})"
-                )
-            data, _ = get_query_data(next_data, "estatesSearch")
-            if data is None:
-                raise TransientFetchError(
-                    f"search page {page} of {tx_type}: estatesSearch query missing"
-                )
-            pagination = data.get("pagination") or {}
-            seen_total = pagination.get("total")
-            offset = pagination.get("offset")
-            if offset in seen_offsets:
-                break  # server stopped advancing pages; avoid infinite/duplicate loop
-            seen_offsets.add(offset)
-            page_results = data.get("results") or []
-            if not page_results:
-                break
-            for r in page_results:
-                sub = r.get("categorySubCb") or {}
-                if sub.get("value") not in DISPOSITION_CODES:
-                    continue
-                comp = parse_comparable(r, tx_type)
-                by_id[comp["id"]] = comp  # dedup strictly by listing id
-            limit = pagination.get("limit") or len(page_results) or 22
-            if page * limit >= (seen_total or 0):
-                complete = True
-                break
-            page += 1
-            time.sleep(0.3)
-        if not complete:
-            raise TransientFetchError(
-                f"search pagination for {tx_type} stopped at page {page} of "
-                f"total={seen_total}; aborting rather than writing a truncated snapshot"
-            )
+# street name -> (lat, lon), filled per run from the Sreality sweep.
+STREET_GPS = {}
 
-    comparables = list(by_id.values())
-    print(f"Enriching {len(comparables)} listings with detail (description, photos)...", file=sys.stderr)
-    for i, comp in enumerate(comparables, 1):
+
+def build_street_gps(comparables):
+    """Average position of every street Sreality reports, so a source that
+    names a street but gives no coordinates can still be placed on the map and
+    held to the same radius as everything else."""
+    pts = {}
+    for c in comparables:
+        street, lat, lon = c.get("street"), c.get("lat"), c.get("lon")
+        if street and lat and lon:
+            pts.setdefault(street.strip().lower(), []).append((lat, lon))
+    return {
+        k: (sum(p[0] for p in v) / len(v), sum(p[1] for p in v) / len(v))
+        for k, v in pts.items()
+    }
+
+
+def search_ward(ward, tx_type):
+    """Every listing of the wanted dispositions in one ward, as parsed comps.
+
+    Every page of the search must land. A half-read result set is worse than no
+    run at all: diff_snapshots would report the unread remainder of the market
+    as removed, so any early exit aborts instead."""
+    found = []
+    page = 1
+    seen_total = None
+    seen_offsets = set()
+    complete = False
+    while True:
+        url = f"https://www.sreality.cz/hledani/{tx_type}/byty"
+        # The site's pagination query param is the Czech "strana" (page), not
+        # "page" -- "page" is silently ignored and always returns page 1.
+        next_data, status = fetch_next_data(
+            url,
+            params={"region": ward, "velikost": SEARCH_VELIKOST, "strana": page},
+        )
+        if next_data is None:
+            raise TransientFetchError(
+                f"search page {page} of {tx_type}/{ward}: no __NEXT_DATA__ (HTTP {status})"
+            )
+        data, _ = get_query_data(next_data, "estatesSearch")
+        if data is None:
+            raise TransientFetchError(
+                f"search page {page} of {tx_type}/{ward}: estatesSearch query missing"
+            )
+        pagination = data.get("pagination") or {}
+        seen_total = pagination.get("total")
+        offset = pagination.get("offset")
+        if offset in seen_offsets:
+            break  # server stopped advancing pages; avoid infinite/duplicate loop
+        seen_offsets.add(offset)
+        page_results = data.get("results") or []
+        if not page_results:
+            break
+        for r in page_results:
+            sub = r.get("categorySubCb") or {}
+            # The velikost param already filters server-side; this is the
+            # belt-and-braces check in case the site ignores it.
+            if sub.get("value") not in DISPOSITION_CODES:
+                continue
+            found.append(parse_comparable(r, tx_type))
+        limit = pagination.get("limit") or len(page_results) or 22
+        if page * limit >= (seen_total or 0):
+            complete = True
+            break
+        page += 1
+        time.sleep(0.3)
+    if not complete:
+        raise TransientFetchError(
+            f"search pagination for {tx_type}/{ward} stopped at page {page} of "
+            f"total={seen_total}; aborting rather than writing a truncated snapshot"
+        )
+    return found
+
+
+def needs_enrichment(comp, prev_comp):
+    """Which listings deserve a detail fetch this run.
+
+    Detail data (description, fees, photos, floor) is static for the life of an
+    advert, so re-fetching ~1000 unchanged listings every 8h would be a pointless
+    burst against a host that already throttles us. A listing is re-read only if
+    it is new, if its price moved (agencies revise the service charge along with
+    the rent), or if the previous attempt came back without the fee we care
+    about -- and that last case is rate-limited by the caller."""
+    if prev_comp is None:
+        return True, "new"
+    if prev_comp.get("price_czk") != comp.get("price_czk"):
+        return True, "price"
+    if prev_comp.get("enrich_failed"):
+        return True, "retry"
+    if prev_comp.get("parser_version") != PARSER_VERSION:
+        return True, "retry"
+    # An advert that has been read cleanly a few times and still states no fee
+    # simply doesn't state one. Retrying it every 8h forever is a standing cost
+    # for a fact that already settled, so the attempts are counted and capped.
+    if prev_comp.get("fee_attempts", 0) >= MAX_FEE_ATTEMPTS:
+        return False, "cached"
+    if prev_comp.get("description") is None:
+        return True, "retry"
+    if comp.get("transaction_type") == "pronajem" and prev_comp.get("fees_missing"):
+        return True, "retry"
+    return False, "cached"
+
+
+# Fields the detail fetch supplies. Carried forward verbatim when a listing is
+# unchanged, so a cached listing is indistinguishable from a freshly enriched
+# one downstream.
+ENRICHED_FIELDS = (
+    "description", "seller_name", "images", "thumb", "floor_number", "floors_total",
+    "fees_czk", "fees_missing", "fees_source", "electricity_czk",
+    "electricity_estimated", "total_czk", "garage", "parking",
+    "price_czk_per_sqm", "floor_area_sqm", "lat", "lon", "cost_of_living_raw",
+    "fee_attempts", "parser_version",
+)
+
+
+def carry_enrichment(comp, prev_comp):
+    for k in ENRICHED_FIELDS:
+        if prev_comp.get(k) is not None:
+            comp[k] = prev_comp[k]
+    comp["from_cache"] = True
+
+
+def fetch_comparables(prev_snapshot=None):
+    by_id = {}
+    for ward in SEARCH_WARDS:
+        for tx_type in TRANSACTION_TYPES:
+            for comp in search_ward(ward, tx_type):
+                # Wards overlap the circle's edge and a listing can surface in
+                # more than one search, so dedup strictly by listing id.
+                by_id.setdefault(comp["id"], comp)
+            time.sleep(0.3)
+        print(f"  ward {ward}: running unique={len(by_id)}", file=sys.stderr)
+
+    raw_count = len(by_id)
+    # Built from the FULL ward sweep, before the radius cut, so it knows where
+    # the streets just outside the circle are too. Sources without their own GPS
+    # (iDNES) use it to place their listings; a map built from the filtered set
+    # could only ever confirm "inside" and would wave everything else through.
+    global STREET_GPS
+    STREET_GPS = build_street_gps(by_id.values())
+    comparables = [c for c in by_id.values() if in_watched_area(c.get("lat"), c.get("lon"))]
+    print(
+        f"Area filter: {len(comparables)}/{raw_count} listings within "
+        f"{AREA_RADIUS_KM} km of {AREA_CENTER}",
+        file=sys.stderr,
+    )
+    for c in comparables:
+        c["dist_km"] = round(km_from_center(c.get("lat"), c.get("lon")) or 0, 2)
+
+    prev_by_id = {c["id"]: c for c in (prev_snapshot or {}).get("comparables", [])}
+    queues = {"price": [], "new": [], "retry": []}
+    for comp in comparables:
+        prev_comp = prev_by_id.get(comp["id"])
+        needed, reason = needs_enrichment(comp, prev_comp)
+        if needed:
+            queues[reason].append(comp)
+        else:
+            carry_enrichment(comp, prev_comp)
+
+    # Priority order matters once the budget binds: a repriced listing is what
+    # the change alerts fire on, a new listing is what Radim wants to see, and a
+    # retry is a listing that already has *something* on the dashboard.
+    retries = queues["retry"][:MAX_REENRICH_PER_RUN]
+    to_fetch = (queues["price"] + queues["new"] + retries)[:MAX_DETAIL_FETCHES_PER_RUN]
+    queued = {c["id"] for c in to_fetch}
+    # Anything that wanted a fetch but lost the budget still shows its previous
+    # detail rather than going blank for a run.
+    deferred = [c for c in comparables if c["id"] not in queued
+                and c["id"] in prev_by_id and not c.get("from_cache")]
+    for comp in deferred:
+        carry_enrichment(comp, prev_by_id[comp["id"]])
+
+    backlog = len(queues["price"]) + len(queues["new"]) + len(queues["retry"]) - len(to_fetch)
+    print(
+        f"Enriching {len(to_fetch)} listing(s) with detail "
+        f"(new={len(queues['new'])} repriced={len(queues['price'])} retry={len(queues['retry'])}; "
+        f"{len(comparables) - len(to_fetch)} carried forward, {backlog} deferred to next run)...",
+        file=sys.stderr,
+    )
+    for i, comp in enumerate(to_fetch, 1):
         enrich_comparable(comp)
         if i % 50 == 0:
-            print(f"  ...{i}/{len(comparables)}", file=sys.stderr)
+            print(f"  ...{i}/{len(to_fetch)}", file=sys.stderr)
         time.sleep(0.15)
 
     stale = [c for c in comparables if not c.get("active")]
@@ -442,7 +752,17 @@ def fetch_comparables():
     comparables = [c for c in comparables if c.get("active")]
 
     apply_approx_locations(comparables)
-    return comparables
+    # Enrichment can supply GPS the search payload lacked, so re-test the area
+    # for anything that was only kept because it had no coordinates at all.
+    placed = [
+        c for c in comparables
+        if c.get("approx_location") or in_watched_area(c.get("lat"), c.get("lon"))
+    ]
+    if len(placed) != len(comparables):
+        print(f"Dropping {len(comparables) - len(placed)} listing(s) placed outside the area by detail GPS", file=sys.stderr)
+    for c in placed:
+        c["dist_km"] = round(km_from_center(c.get("lat"), c.get("lon")) or 0, 2)
+    return placed
 
 
 def parse_comparable(r, tx_type):
@@ -458,7 +778,12 @@ def parse_comparable(r, tx_type):
     price_per_sqm = r.get("priceCzkPerSqM") or None
     if not price_per_sqm and price_czk and sqm:
         price_per_sqm = round(price_czk / sqm)
-    disposition = (r.get("categorySubCb") or {}).get("name") or "x"
+    # Take the disposition from the numeric code, never the display name:
+    # Sreality sometimes answers with an English payload where 2+kk comes back
+    # as "2+kt". Trusting the label splits one flat type into two, so the filter
+    # misses those listings and their median group is too small to rank against.
+    sub_code = (r.get("categorySubCb") or {}).get("value")
+    disposition = DISPOSITION_CODES.get(sub_code) or (r.get("categorySubCb") or {}).get("name") or "x"
     slug = urllib.parse.quote(disposition)
     # Sreality redirects /detail/<type>/byt/<any-slug>/<any-locality>/<id> to the
     # canonical URL, so the locality segment doesn't need to be exact.
@@ -468,7 +793,7 @@ def parse_comparable(r, tx_type):
     return {
         "id": r["id"],
         "title": r.get("name"),
-        "disposition": (r.get("categorySubCb") or {}).get("name"),
+        "disposition": disposition,
         "transaction_type": "pronajem" if tx_type == "pronajem" else "prodej",
         "price_czk": price_czk if price_czk else None,
         "floor_area_sqm": sqm,
@@ -481,11 +806,13 @@ def parse_comparable(r, tx_type):
         "active": True,
         "lat": locality.get("latitude"),
         "lon": locality.get("longitude"),
+        "dist_km": None,
         "approx_location": False,
         "images": extract_images(r.get("images")),
         "thumb": extract_thumb(r.get("images")),
         "description": None,
         "seller_name": None,
+        "cost_of_living_raw": None,
         # Fees/electricity/garage need the detail page (not in search payload);
         # filled in by enrich_comparable. price_czk_per_sqm above is rent-only
         # until enrichment recomputes it against the all-in total for rentals.
@@ -537,15 +864,23 @@ def enrich_comparable(comp):
     comp["floor_number"] = params.get("floorNumber")
     comp["floors_total"] = params.get("floors")
 
+    # Kept on the record so a fee that parsed wrong can be diagnosed from the
+    # snapshot alone, without re-fetching the (possibly delisted) advert.
+    comp["cost_of_living_raw"] = params.get("costOfLiving")
     fees_czk, fees_source, electricity_explicit = extract_fees_and_electricity(
-        params.get("costOfLiving"), data.get("description")
+        params.get("costOfLiving"), data.get("description"), comp.get("price_czk")
     )
     fees_czk, fees_missing, electricity_czk, electricity_estimated, total_czk = (
-        cost_breakdown(comp.get("price_czk"), fees_czk, comp.get("transaction_type"), electricity_explicit)
+        cost_breakdown(comp.get("price_czk"), fees_czk, comp.get("transaction_type"),
+                       electricity_explicit, fees_source)
     )
     comp["fees_czk"] = fees_czk
     comp["fees_missing"] = fees_missing
     comp["fees_source"] = fees_source
+    # Counts only reads that came back without a fee; a successful parse resets
+    # it, so a listing that later adds its fee is picked up straight away.
+    comp["fee_attempts"] = 0 if not fees_missing else (comp.get("fee_attempts") or 0) + 1
+    comp["parser_version"] = PARSER_VERSION
     comp["electricity_czk"] = electricity_czk
     comp["electricity_estimated"] = electricity_estimated
     comp["total_czk"] = total_czk
@@ -642,6 +977,80 @@ def update_changes_history(changes):
     return history
 
 
+def listing_is_gone(comp):
+    """Ask the listing's own page whether it still exists.
+
+    Absence from the search is only ever circumstantial. The ward sweep walks
+    ~60 paginated pages sorted by date while the underlying set keeps changing,
+    so listings slip between page boundaries and vanish for a run -- eight of
+    them on the run this was written for, every one still live when asked
+    directly. 404 is the one answer that means delisted (established upstream in
+    fetch_next_data); anything else, including an error, means "don't report".
+
+    Returns True only for a confirmed 404."""
+    url = comp.get("url")
+    if not url:
+        return False
+    try:
+        if comp.get("source") in (None, "sreality"):
+            _data, status = fetch_next_data(url)
+            return status == 404
+        resp = SESSION.get(url, timeout=20, allow_redirects=True)
+        return resp.status_code == 404
+    except (TransientFetchError, requests.RequestException) as exc:
+        print(f"  could not verify {comp.get('id')}, keeping it: {exc}", file=sys.stderr)
+        return False
+
+
+def verify_removals(changes, curr):
+    """Turn the statistical guess into an observation before anything is
+    announced. Listings that answer are put straight back into the snapshot so
+    they don't disappear from the dashboard for a run either."""
+    candidates = changes.get("newly_inactive", [])
+    if not candidates:
+        return
+    print(f"Verifying {len(candidates)} candidate removal(s) against their own pages...", file=sys.stderr)
+    confirmed, resurrected = [], []
+    for comp in candidates:
+        if listing_is_gone(comp):
+            confirmed.append(comp)
+        else:
+            resurrected.append(comp)
+        time.sleep(0.2)
+    changes["newly_inactive"] = confirmed
+    if resurrected:
+        known = {c["id"] for c in curr["comparables"]}
+        for comp in resurrected:
+            if comp["id"] not in known:
+                restored = {k: v for k, v in comp.items()
+                            if k not in ("missing_since", "removed_since")}
+                restored["search_missed"] = True
+                curr["comparables"].append(restored)
+        print(
+            f"  {len(confirmed)} confirmed gone, {len(resurrected)} still live "
+            f"(missed by the search, kept)",
+            file=sys.stderr,
+        )
+
+
+def config_fingerprint():
+    """Identifies the shape of the search: the area, the dispositions, the wards.
+
+    A listing can leave the snapshot for two very different reasons -- it was
+    delisted, or we changed what we look at. Only the first is news. Widening
+    the area from Vysočany to the Hrdlořezy/Karlín circle dropped 148 iDNES
+    listings that were still perfectly live, and without this the next run would
+    have reported every one of them as gone, which is precisely the kind of
+    false "❌ zmizelo" alert this scraper already learned to avoid upstream."""
+    return {
+        "center": list(AREA_CENTER),
+        "radius_km": AREA_RADIUS_KM,
+        "dispositions": sorted(DISPOSITION_CODES.values()),
+        "wards": sorted(SEARCH_WARDS),
+        "idnes_wards": sorted(sources.IDNES_WARDS),
+    }
+
+
 def diff_snapshots(prev, curr):
     changes = {
         "generated_at": now_iso(),
@@ -689,26 +1098,48 @@ def diff_snapshots(prev, curr):
     prev_by_id.update(prev_pending)
     curr_by_id = {c["id"]: c for c in curr.get("comparables", [])}
 
-    pending = []
-    for cid, old in prev_by_id.items():
-        if cid in curr_by_id:
-            continue
-        if cid in prev_pending:
-            changes["newly_inactive"].append({**old, "removed_since": changes["generated_at"]})
-        else:
-            pending.append({**old, "missing_since": changes["generated_at"]})
-    curr["pending_removal"] = pending
+    # The search itself changed shape this run, so an absence says nothing about
+    # the listing. Re-baseline silently instead of announcing a mass removal.
+    # A snapshot predating this field (config is None) also counts as "changed":
+    # it is exactly the snapshot taken before the area was widened.
+    if prev.get("config") != curr.get("config"):
+        print(
+            "Search config changed since the last snapshot -- suppressing removal "
+            "detection for this run and re-baselining.",
+            file=sys.stderr,
+        )
+        curr["pending_removal"] = []
+        changes["config_changed"] = True
+    else:
+        pending = []
+        for cid, old in prev_by_id.items():
+            if cid in curr_by_id:
+                continue
+            if cid in prev_pending:
+                changes["newly_inactive"].append({**old, "removed_since": changes["generated_at"]})
+            else:
+                pending.append({**old, "missing_since": changes["generated_at"]})
+        curr["pending_removal"] = pending
 
     for cid, new in curr_by_id.items():
         old = prev_by_id.get(cid)
         if old is None:
-            changes["new_listings"].append({**new, "first_seen": changes["generated_at"]})
+            # Same reasoning as removals, mirrored: widening the area surfaces
+            # hundreds of listings that have been on the market for months.
+            # Calling them "new" would bury the handful that really are.
+            if not changes.get("config_changed"):
+                changes["new_listings"].append({**new, "first_seen": changes["generated_at"]})
         else:
             # Compare on total cost (rent+fees+electricity for rentals), not
             # just base price, so a fee change shows up as a price change too.
             old_cmp = cmp_value(old)
             new_cmp = cmp_value(new)
-            if old_cmp != new_cmp:
+            # On a re-baseline the totals move for reasons that have nothing to
+            # do with the market: merging two portals' copies donates a fee that
+            # was only ever stated on one of them, so the all-in total changes
+            # while the rent sits exactly where it was. Measured at 50 of 50 on
+            # the dedup run -- every one with an unchanged base rent.
+            if old_cmp != new_cmp and not changes.get("config_changed"):
                 changes["price_changes"].append(
                     {
                         **new,
@@ -719,6 +1150,136 @@ def diff_snapshots(prev, curr):
                     }
                 )
     return changes
+
+
+# A listing is only worth calling a deal if it is meaningfully below what the
+# same disposition costs in the same area -- 8 % is roughly where the difference
+# stops being noise between two comparable flats.
+DEAL_THRESHOLD_PCT = 8
+# Below this, it stops being a bargain and starts being a different product.
+# Measured on the first full run: everything past -45 % was a co-ownership share
+# (podíl), an auction (dražba), a co-op flat quoted without its anuita, or a
+# mis-typed floor area -- an 82 m² flat "for 424 000 Kč", a "3+kk" of 225 m².
+# None of them are things Radim could actually buy or rent at the quoted price,
+# and left in they occupy the whole top of the list.
+DEAL_FLOOR_PCT = -45
+
+# Two portals listing the same flat is the norm, not the exception: on the first
+# full run 736 of 1573 records (47 %) were cross-listings. Identical transaction,
+# disposition, floor area, price AND street is the same flat -- validated across
+# the run at 333 groups with no group spanning two streets. Dropping the street
+# from the key over-merges (21 groups collapsed genuinely different flats that
+# happened to share an area and a price), so street is required and the ~68
+# listings without one simply never merge; under-merging is the safe failure.
+def dedup_key(c):
+    street = (c.get("street") or "").strip().lower()
+    if not (street and c.get("floor_area_sqm") and c.get("price_czk")):
+        return None
+    return (c["transaction_type"], c.get("disposition"),
+            c.get("floor_area_sqm"), c.get("price_czk"), street)
+
+
+# Which portal's copy to keep when the same flat is on several. Sreality first:
+# it is the only source with a real fee field, exact GPS and full photos.
+SOURCE_PRIORITY = {"sreality": 0, "bezrealitky": 1, "idnes": 2}
+
+
+def merge_cross_portal(comparables):
+    """Collapse the same flat advertised on several portals into one row.
+
+    The duplicates are not dropped silently -- the surviving record keeps every
+    other portal's link in `also_on`, so the dashboard can still offer them and
+    nothing disappears without a trace."""
+    groups, singles = {}, []
+    for c in comparables:
+        k = dedup_key(c)
+        if k is None:
+            singles.append(c)
+        else:
+            groups.setdefault(k, []).append(c)
+
+    merged = []
+    for dupes in groups.values():
+        if len(dupes) == 1:
+            merged.append(dupes[0])
+            continue
+        dupes.sort(key=lambda c: (
+            SOURCE_PRIORITY.get(c.get("source"), 9),
+            # within a portal, prefer the copy that actually has fee data
+            0 if not c.get("fees_missing") else 1,
+            0 if c.get("description") else 1,
+            # Final tiebreak so the surviving id is stable run to run: an
+            # unstable winner would read downstream as one listing removed and
+            # another appearing, every single run.
+            str(c.get("id")),
+        ))
+        keep, rest = dupes[0], dupes[1:]
+        # A fee stated on one portal but not the other is still a fact about
+        # the flat, so take it rather than reporting "neuvedeno".
+        if keep.get("fees_missing"):
+            donor = next((d for d in rest if not d.get("fees_missing")), None)
+            if donor:
+                for f in ("fees_czk", "fees_missing", "fees_source", "electricity_czk",
+                          "electricity_estimated", "total_czk", "price_czk_per_sqm"):
+                    keep[f] = donor.get(f)
+        if not keep.get("description"):
+            keep["description"] = next((d.get("description") for d in rest if d.get("description")), None)
+        keep["also_on"] = [
+            {"source": d.get("source"), "url": d.get("url")} for d in rest if d.get("url")
+        ]
+        merged.append(keep)
+
+    result = merged + singles
+    print(
+        f"Cross-portal dedup: {len(comparables)} -> {len(result)} listings "
+        f"({len(comparables) - len(result)} duplicate copies folded in)",
+        file=sys.stderr,
+    )
+    return result
+
+
+def rank_deals(comparables):
+    """Score every listing against the median Kč/m² of its own disposition and
+    transaction type, so "cheap" means cheap for what it is rather than just
+    small.
+
+    Rentals whose fee is unknown are scored but never surfaced as deals: their
+    all-in total is missing a real cost, so they look cheaper than they are.
+    Left in, they would crowd out the genuine bargains -- the "best deals" list
+    would mostly be a list of adverts that didn't disclose their fees."""
+    def comparable_basis(c):
+        """A rental's Kč/m² is only on the same footing as its neighbours once
+        the fee is known -- until then it is rent-only and looks too cheap. Such
+        rows are kept off the median as well as out of the deal list, or a run
+        with many un-enriched listings would drag the baseline down and make
+        everything else look expensive."""
+        return not (c.get("transaction_type") == "pronajem" and c.get("fees_missing"))
+
+    groups = {}
+    for c in comparables:
+        v = c.get("price_czk_per_sqm")
+        if v and comparable_basis(c):
+            groups.setdefault((c.get("transaction_type"), c.get("disposition")), []).append(v)
+    medians = {k: statistics.median(v) for k, v in groups.items() if len(v) >= 4}
+
+    for c in comparables:
+        c["deal_pct"] = None
+        c["deal_ok"] = False
+        med = medians.get((c.get("transaction_type"), c.get("disposition")))
+        v = c.get("price_czk_per_sqm")
+        if not med or not v:
+            continue
+        c["deal_pct"] = round((v - med) / med * 100)
+        c["deal_ok"] = (
+            comparable_basis(c)
+            and DEAL_FLOOR_PCT <= c["deal_pct"] <= -DEAL_THRESHOLD_PCT
+        )
+        # Too far below the market to be a price -- surfaced as a caveat on the
+        # row rather than hidden, since it may still be something Radim wants
+        # to look at (an auction can be a real opportunity, just not a listing
+        # you can compare on Kč/m²).
+        c["deal_outlier"] = c["deal_pct"] < DEAL_FLOOR_PCT
+    return comparables
 
 
 def compute_stats(comparables):
@@ -840,6 +1401,19 @@ def render_tracked_card(tracked):
 </div>"""
 
 
+# Bookkeeping the scraper needs across runs but the page never reads. The whole
+# comparable set is inlined into the HTML, so at ~1000 listings every unused
+# field is dead weight on a phone.
+DASHBOARD_OMIT_FIELDS = (
+    "cost_of_living_raw", "from_cache", "enrich_failed", "active",
+    "missing_since", "removed_since", "first_seen",
+)
+
+
+def slim_for_dashboard(comp):
+    return {k: v for k, v in comp.items() if k not in DASHBOARD_OMIT_FIELDS}
+
+
 def render_dashboard(snapshot, changes, stats, history):
     tracked_list = snapshot["tracked"]
     comparables = snapshot["comparables"]
@@ -848,7 +1422,7 @@ def render_dashboard(snapshot, changes, stats, history):
         c["change_note"] = build_change_note(c["id"], changes)
     tracked_items = [build_tracked_item(t, changes) for t in tracked_list]
 
-    data_json = json.dumps(comparables, ensure_ascii=False)
+    data_json = json.dumps([slim_for_dashboard(c) for c in comparables], ensure_ascii=False)
     tracked_json = json.dumps(tracked_items, ensure_ascii=False)
     history_json = json.dumps(history, ensure_ascii=False)
     changed_ids = {c["id"] for c in changes.get("price_changes", [])}
@@ -861,7 +1435,7 @@ def render_dashboard(snapshot, changes, stats, history):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sreality Tracker – Vysočany</title>
+<title>Sreality Tracker – Vysočany, Hrdlořezy, Libeň, Karlín</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
   :root {{ color-scheme: light dark; }}
@@ -935,15 +1509,56 @@ def render_dashboard(snapshot, changes, stats, history):
   .history-item .hat {{ font-size: 0.68rem; color: #888; }}
   .history-list {{ max-height: 420px; overflow-y: auto; }}
   .hkind {{ font-size: 0.95rem; }}
+  .src.dupe {{ opacity: 0.45; }}
+  .fee-na {{ color: #b9975b; font-style: italic; }}
+  .fee-inc {{ color: #6fd08c; }}
+  .fee-src {{ color: #888; font-size: 0.7rem; }}
+  .deal-good {{ color: #7CFFB2; font-weight: 600; }}
+  .deal-bad {{ color: #b98b8b; }}
+  .deal {{ display: flex; align-items: center; gap: 10px; padding: 8px 0;
+           border-bottom: 1px solid #262a33; cursor: pointer; }}
+  .deal:last-child {{ border-bottom: none; }}
+  .deal:hover {{ background: #20242f; }}
+  .deal .dtxt {{ flex: 1; min-width: 0; }}
+  .deal .dtitle {{ font-size: 0.84rem; font-weight: 600; }}
+  .deal .dmeta {{ font-size: 0.7rem; color: #99a; margin-top: 2px; }}
+  .deal .dpct {{ font-size: 1rem; font-weight: 700; color: #7CFFB2; flex-shrink: 0; }}
+  .deals-list {{ max-height: 460px; overflow-y: auto; }}
+  .hint {{ font-size: 0.7rem; color: #888; margin: 6px 0 0; }}
 </style>
 </head>
 <body>
 <header>
-  <h1>Sreality Tracker · Vysočany / Pod Harfou</h1>
-  <div class="updated">Last updated: {snapshot['generated_at']}</div>
+  <h1>Sreality Tracker · Vysočany → Hrdlořezy → Karlín</h1>
+  <div class="updated">Last updated: {snapshot['generated_at']} · {AREA_RADIUS_KM} km kolem {AREA_LANDMARKS}</div>
 </header>
 
 {tracked_cards_html}
+
+<div class="card" id="dealsCard">
+  <h2 style="margin-top:0;font-size:1rem;">🔥 Nejlepší nabídky</h2>
+  <div class="controls" style="margin:0 0 8px;">
+    <select id="dealTx">
+      <option value="pronajem">Pronájem</option>
+      <option value="prodej">Prodej</option>
+      <option value="">Vše</option>
+    </select>
+    <select id="dealDisp">
+      <option value="">Všechny dispozice</option>
+      <option value="1+kk">1+kk</option>
+      <option value="1+1">1+1</option>
+      <option value="2+kk">2+kk</option>
+      <option value="2+1">2+1</option>
+      <option value="3+kk">3+kk</option>
+      <option value="3+1">3+1</option>
+    </select>
+  </div>
+  <div class="deals-list" id="dealsList"></div>
+  <p class="hint">Řazeno podle odchylky Kč/m² od mediánu <b>stejné dispozice</b> v oblasti — ne podle absolutní ceny,
+     aby malý 1+kk a velký 3+kk šly porovnat. U pronájmů se počítá celková cena (nájem + poplatky + elektřina).
+     Inzeráty bez uvedených poplatků se sem záměrně nedostanou: jejich celková cena je podhodnocená, takže by
+     vypadaly levněji, než jsou.</p>
+</div>
 
 <div class="card" id="manageCard">
   <h2 style="margin-top:0;font-size:1rem;">⚙️ Sledované inzeráty</h2>
@@ -965,7 +1580,7 @@ def render_dashboard(snapshot, changes, stats, history):
 </div>
 
 <div class="card">
-  <h2 style="margin-top:0;font-size:1rem;">Area stats (1+kk &amp; 2+kk, Vysočany)</h2>
+  <h2 style="margin-top:0;font-size:1rem;">Statistika oblasti ({", ".join(DISPOSITION_CODES.values())} · {AREA_RADIUS_KM} km)</h2>
   <div class="stats">
     <div class="stat"><div class="num">{fmt_czk(stats['rent_median_czk_per_sqm'])}</div><div class="lbl">rent median Kč/m² total* ({stats['rent_count']})</div></div>
     <div class="stat"><div class="num">{fmt_czk(stats['rent_avg_czk_per_sqm'])}</div><div class="lbl">rent avg Kč/m² total*</div></div>
@@ -992,7 +1607,7 @@ def render_dashboard(snapshot, changes, stats, history):
   <table id="tblPod">
     <thead>
       <tr>
-        <th></th><th>Title</th><th>Type</th><th>Disp.</th><th>Nájem</th><th>Celkem</th><th>m²</th><th>Kč/m²</th><th>Odkaz</th>
+        <th></th><th>Title</th><th>Type</th><th>Disp.</th><th>Nájem</th><th>Poplatky</th><th>Celkem</th><th>m²</th><th>Kč/m²</th><th>Odkaz</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -1009,7 +1624,11 @@ def render_dashboard(snapshot, changes, stats, history):
   <select id="filterDisp">
     <option value="">All dispositions</option>
     <option value="1+kk">1+kk</option>
+    <option value="1+1">1+1</option>
     <option value="2+kk">2+kk</option>
+    <option value="2+1">2+1</option>
+    <option value="3+kk">3+kk</option>
+    <option value="3+1">3+1</option>
   </select>
   <select id="filterSource">
     <option value="">All sources</option>
@@ -1020,7 +1639,10 @@ def render_dashboard(snapshot, changes, stats, history):
   <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;">
     <input type="checkbox" id="filterPodHarfou" style="width:auto;"> Pod Harfou only
   </label>
-  <input id="search" type="text" placeholder="Search title / locality…">
+  <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;">
+    <input type="checkbox" id="filterFees" style="width:auto;"> Jen se známými poplatky
+  </label>
+  <input id="search" type="text" placeholder="Hledat název / ulici / lokalitu…">
 </div>
 
 <div class="scroll">
@@ -1032,9 +1654,12 @@ def render_dashboard(snapshot, changes, stats, history):
       <th data-k="transaction_type">Type</th>
       <th data-k="disposition">Disp.</th>
       <th data-k="price_czk" title="Base rent (sale: purchase price)">Nájem</th>
+      <th data-k="fees_czk" title="Měsíční poplatky za služby, jak je uvádí inzerát. „—“ znamená, že je inzerát neuvádí — celková cena je pak podhodnocená.">Poplatky</th>
       <th data-k="total_czk" title="Rent: nájem + poplatky + elektřina (real or estimated). Sale: purchase price.">Celkem</th>
       <th data-k="floor_area_sqm">m²</th>
       <th data-k="price_czk_per_sqm">Kč/m²</th>
+      <th data-k="deal_pct" title="Odchylka Kč/m² od mediánu stejné dispozice v oblasti. Záporné = levnější.">vs. medián</th>
+      <th data-k="dist_km" title="Vzdušná vzdálenost od středu sledované oblasti">km</th>
       <th data-k="city_part">Locality</th>
       <th>Odkaz</th>
     </tr>
@@ -1060,6 +1685,7 @@ const HISTORY = __HISTORY_JSON__;
 const ALL = [...TRACKED, ...DATA];
 const CHANGED_IDS = new Set(__CHANGED_IDS_JSON__);
 const ELECTRICITY_ESTIMATE_CZK = __ELECTRICITY_CZK__;
+const DEAL_THRESHOLD = __DEAL_THRESHOLD__;
 let sortKey = "price_czk_per_sqm", sortDir = 1;
 
 const PLACEHOLDER = "data:image/svg+xml;utf8," + encodeURIComponent(
@@ -1079,6 +1705,29 @@ function fmtTotal(r) {
   return r.transaction_type === "pronajem" ? txt + (r.fees_missing ? "*" : "") : txt;
 }
 
+// Fees are the number Radim reads first, so the cell has to distinguish three
+// genuinely different states rather than showing a bare dash for all of them:
+// a stated fee, "the rent already includes it", and "the advert never says".
+function fmtFees(r) {
+  if (r.transaction_type !== "pronajem") return "—";
+  if (r.fees_source === "included") return `<span class="fee-inc" title="Inzerát uvádí, že nájem je včetně poplatků">v ceně</span>`;
+  if (r.fees_missing) return `<span class="fee-na" title="Inzerát poplatky neuvádí — celková cena je proto podhodnocená">neuvedeno</span>`;
+  const fromText = r.fees_source === "text";
+  return `<span title="${fromText ? "Vyčteno z popisu inzerátu" : "Z pole inzerátu"}">${fmtCzk(r.fees_czk)}${fromText ? ' <i class="fee-src">*</i>' : ""}</span>`;
+}
+
+function fmtDeal(r) {
+  if (r.deal_pct === null || r.deal_pct === undefined) return "—";
+  const cls = r.deal_ok ? "deal-good" : (r.deal_pct > 0 ? "deal-bad" : "");
+  let warn = "";
+  if (r.deal_outlier) {
+    warn = ' <span class="fee-na" title="Tak hluboko pod trhem, že to obvykle není běžný prodej — podíl, dražba, družstevní byt bez anuity nebo špatně uvedená výměra. Ověř v inzerátu.">⚠</span>';
+  } else if (r.transaction_type === "pronajem" && r.fees_missing) {
+    warn = ' <span class="fee-na" title="Bez poplatků — srovnání není spolehlivé">?</span>';
+  }
+  return `<span class="${cls}">${r.deal_pct > 0 ? "+" : ""}${r.deal_pct}%</span>${warn}`;
+}
+
 function escapeHtml(s) {
   return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
@@ -1088,6 +1737,13 @@ function srcBadge(s) {
   if (!s || !map[s]) return "";
   const [lbl, col] = map[s];
   return ` <span class="src" style="color:${col};border-color:${col}66;">${lbl}</span>`;
+}
+
+// The same flat is usually advertised on more than one portal. We keep one row
+// but never hide the others -- they show as dimmed badges next to the source.
+function alsoBadges(r) {
+  if (!r.also_on || !r.also_on.length) return "";
+  return r.also_on.map(a => srcBadge(a.source).replace('class="src"', 'class="src dupe"')).join("");
 }
 
 function portalName(s) {
@@ -1165,6 +1821,15 @@ function costBreakdownHtml(item) {
   if (item.transaction_type !== "pronajem") {
     return `<div class="cost-box"><div class="cost-row total"><span>💰 Cena</span><span>${fmtCzk(item.price_czk)}</span></div>${adminRow}</div>`;
   }
+  if (item.fees_source === "included") {
+    return `<div class="cost-box">
+      <div class="cost-row"><span>🏠 Nájem</span><span>${fmtCzk(item.price_czk)}</span></div>
+      <div class="cost-row total"><span>💰 Celkem</span><span>${fmtCzk(item.total_czk)}</span></div>
+      ${adminRow}
+      <div class="cost-note">Inzerát uvádí, že nájem je už včetně poplatků a energií — nic se nepřičítá.</div>
+      ${item.price_note ? `<div class="cost-note">Poznámka k ceně: ${escapeHtml(item.price_note)}</div>` : ""}
+    </div>`;
+  }
   const feesHtml = item.fees_missing
     ? `<span style="color:#998;">neuvedeno listingem</span>`
     : fmtCzk(item.fees_czk) + (item.fees_source === "text" ? ' <i style="color:#888;font-size:0.7rem;">(z popisu)</i>' : '');
@@ -1179,6 +1844,7 @@ function costBreakdownHtml(item) {
     ${adminRow}
     ${item.fees_missing ? '<div class="cost-note">Poplatky/služby nejsou u tohoto inzerátu uvedeny -- do celkové ceny započteny jako 0 navíc k odhadu elektřiny.</div>' : ''}
     ${elecNote}
+    ${item.price_note ? `<div class="cost-note">Poznámka k ceně (z inzerátu): ${escapeHtml(item.price_note)}</div>` : ""}
   </div>`;
 }
 
@@ -1212,6 +1878,8 @@ function buildModalHtml(item) {
     </div>
     <div class="modal-desc">${escapeHtml(item.description || "No description available.")}</div>
     <a class="modal-link" href="${escapeHtml(item.url)}" target="_blank" rel="noopener">Otevřít na ${portalName(item.source)} →</a>
+    ${(item.also_on || []).map(a => `<a class="modal-link" style="background:#334155;" href="${escapeHtml(a.url)}" target="_blank" rel="noopener">Také na ${portalName(a.source)} →</a>`).join(" ")}
+    ${item.also_on && item.also_on.length ? '<div class="cost-note">Stejný byt inzerovaný na více portálech — sloučeno do jednoho řádku, odkazy na ostatní výše.</div>' : ""}
   `;
 }
 
@@ -1276,11 +1944,54 @@ function renderPodHarfou() {
       <td>${r.transaction_type === 'pronajem' ? 'rent' : 'sale'}</td>
       <td>${r.disposition || '—'}</td>
       <td>${fmtCzk(r.price_czk)}</td>
+      <td>${fmtFees(r)}</td>
       <td>${fmtTotal(r)}</td>
       <td>${r.floor_area_sqm ?? '—'}</td>
       <td>${fmtCzk(r.price_czk_per_sqm)}</td>
       <td>${r.url ? `<a href="${escapeHtml(r.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Otevřít ↗</a>` : '—'}</td>
-    </tr>`).join("") : `<tr><td colspan="9" style="color:#888;">No other Pod Harfou listings currently found.</td></tr>`;
+    </tr>`).join("") : `<tr><td colspan="10" style="color:#888;">No other Pod Harfou listings currently found.</td></tr>`;
+}
+
+// Deals: cheapest-for-what-it-is, not merely cheapest. Ranked by how far a
+// listing's Kč/m² sits below the median for its own disposition, so a small
+// 1+kk and a large 3+kk can appear in the same list on equal terms.
+function renderDeals() {
+  const tx = document.getElementById("dealTx").value;
+  const disp = document.getElementById("dealDisp").value;
+  // Two agencies advertising the same flat under different street labels
+  // ("Pod Pekárnami" vs "Kolbenova") are too risky to merge in the main table —
+  // in a dense area two genuinely different 2+kk can share an area and a price,
+  // and hiding a real listing is worse than showing one twice. In a curated
+  // top-12 the trade-off flips: a repeat wastes a slot, so identical
+  // disposition+area+price collapses here and here only.
+  const seen = new Set();
+  const rows = DATA
+    .filter(r => r.deal_ok && (!tx || r.transaction_type === tx) && (!disp || r.disposition === disp))
+    .sort((a, b) => a.deal_pct - b.deal_pct)
+    .filter(r => {
+      const k = [r.transaction_type, r.disposition, r.floor_area_sqm, r.price_czk].join("|");
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    })
+    .slice(0, 12);
+  const el = document.getElementById("dealsList");
+  if (!rows.length) {
+    el.innerHTML = `<div style="color:#888;font-size:0.8rem;">Žádná nabídka teď není aspoň ${DEAL_THRESHOLD} % pod mediánem své dispozice.</div>`;
+    return;
+  }
+  el.innerHTML = rows.map(r => `
+    <div class="deal" onclick="openModal(${escapeHtml(JSON.stringify(r.id))})">
+      <img class="thumb" src="${escapeHtml(r.thumb || PLACEHOLDER)}" loading="lazy" onerror="this.src=PLACEHOLDER">
+      <div class="dtxt">
+        <div class="dtitle">${escapeHtml(r.title || String(r.id))}</div>
+        <div class="dmeta">${escapeHtml(r.locality || r.city_part || "")} · ${r.disposition || "—"}
+          · ${r.transaction_type === "pronajem" ? "pronájem" : "prodej"}${srcBadge(r.source)}${alsoBadges(r)}</div>
+        <div class="dmeta">${fmtTotal(r)}${r.transaction_type === "pronajem" ? "/měs. vč. poplatků" : ""}
+          · ${fmtCzk(r.price_czk_per_sqm)}/m²${r.old_price_czk ? ` · <span style="color:#7CFFB2;">zlevněno z ${fmtCzk(r.old_price_czk)}</span>` : ""}</div>
+      </div>
+      <div class="dpct">${r.deal_pct}%</div>
+    </div>`).join("");
 }
 
 function render() {
@@ -1288,13 +1999,16 @@ function render() {
   const disp = document.getElementById("filterDisp").value;
   const source = document.getElementById("filterSource").value;
   const podOnly = document.getElementById("filterPodHarfou").checked;
+  const feesOnly = document.getElementById("filterFees").checked;
   const q = document.getElementById("search").value.toLowerCase();
   let rows = DATA.filter(r => {
     if (tx && r.transaction_type !== tx) return false;
     if (disp && r.disposition !== disp) return false;
     if (source && r.source !== source) return false;
     if (podOnly && !r.pod_harfou) return false;
-    if (q && !((r.title||"").toLowerCase().includes(q) || (r.city_part||"").toLowerCase().includes(q) || (r.locality||"").toLowerCase().includes(q))) return false;
+    // Only meaningful for rentals — a sale has no monthly fee to be missing.
+    if (feesOnly && r.transaction_type === "pronajem" && r.fees_missing) return false;
+    if (q && !((r.title||"").toLowerCase().includes(q) || (r.city_part||"").toLowerCase().includes(q) || (r.street||"").toLowerCase().includes(q) || (r.locality||"").toLowerCase().includes(q))) return false;
     return true;
   });
   rows.sort((a, b) => {
@@ -1313,10 +2027,13 @@ function render() {
       <td>${r.transaction_type === 'pronajem' ? 'rent' : 'sale'}</td>
       <td>${r.disposition || '—'}</td>
       <td>${fmtCzk(r.price_czk)}</td>
+      <td>${fmtFees(r)}</td>
       <td>${fmtTotal(r)}</td>
       <td>${r.floor_area_sqm ?? '—'}</td>
       <td>${fmtCzk(r.price_czk_per_sqm)}${CHANGED_IDS.has(r.id) ? ' ⚡' : ''}</td>
-      <td>${escapeHtml(r.locality || r.city_part || '—')}${srcBadge(r.source)}</td>
+      <td>${fmtDeal(r)}</td>
+      <td>${r.dist_km != null ? r.dist_km.toFixed(1) : '—'}</td>
+      <td>${escapeHtml(r.locality || r.city_part || '—')}${srcBadge(r.source)}${alsoBadges(r)}</td>
       <td>${r.url ? `<a href="${escapeHtml(r.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Otevřít ↗</a>` : '—'}</td>
     </tr>`).join("");
 }
@@ -1375,8 +2092,12 @@ document.getElementById("filterTx").addEventListener("change", render);
 document.getElementById("filterDisp").addEventListener("change", render);
 document.getElementById("filterSource").addEventListener("change", render);
 document.getElementById("filterPodHarfou").addEventListener("change", render);
+document.getElementById("filterFees").addEventListener("change", render);
 document.getElementById("search").addEventListener("input", render);
+document.getElementById("dealTx").addEventListener("change", renderDeals);
+document.getElementById("dealDisp").addEventListener("change", renderDeals);
 render();
+renderDeals();
 renderPodHarfou();
 renderHistory();
 renderTrackedList();
@@ -1387,12 +2108,15 @@ initMap();
         js_template.replace("__TRACKED_JSON__", tracked_json)
         .replace("__HISTORY_JSON__", history_json)
         .replace("__ELECTRICITY_CZK__", str(ELECTRICITY_ESTIMATE_CZK))
+        .replace("__DEAL_THRESHOLD__", str(DEAL_THRESHOLD_PCT))
         .replace("__DATA_JSON__", data_json)
         .replace("__CHANGED_IDS_JSON__", changed_ids_json)
     )
 
-    html = head_and_body + js + "</script>\n</body>\n</html>\n"
-    DASHBOARD_PATH.write_text(html, encoding="utf-8")
+    # Not named `html`: that would shadow the stdlib module of the same name,
+    # which this function's f-strings call for escaping.
+    document = head_and_body + js + "</script>\n</body>\n</html>\n"
+    DASHBOARD_PATH.write_text(document, encoding="utf-8")
 
 
 def main():
@@ -1439,15 +2163,27 @@ def main():
         print(f"Tracked id={fetched['id']} active={fetched.get('active')} title={fetched.get('title')!r}", file=sys.stderr)
 
     print("Fetching comparables...", file=sys.stderr)
-    comparables = fetch_comparables()
+    comparables = fetch_comparables(prev)
     for c in comparables:
         c.setdefault("source", "sreality")
     print("Fetching extra sources (Bezrealitky, iDNES)...", file=sys.stderr)
+    sources.configure(
+        AREA_CENTER, AREA_RADIUS_KM, DISPOSITION_CODES.values(),
+        extract_fees_and_electricity, cost_breakdown,
+        street_gps=STREET_GPS,
+        prev_comparables=(prev or {}).get("comparables", []),
+    )
     comparables += sources.fetch_extra_comparables()
+    comparables = merge_cross_portal(comparables)
+    rank_deals(comparables)
     print(f"Found {len(comparables)} unique comparable listings", file=sys.stderr)
 
     snapshot = {
         "generated_at": now_iso(),
+        # What the search looked at this run. diff_snapshots compares it against
+        # the previous snapshot's so a change of area/filters can't masquerade
+        # as the market moving.
+        "config": config_fingerprint(),
         "tracked": tracked,
         "comparables": comparables,
         # Listings absent this run and awaiting a second confirming absence
@@ -1456,6 +2192,10 @@ def main():
     }
 
     changes = diff_snapshots(prev, snapshot)
+    verify_removals(changes, snapshot)
+    # Restored listings rejoin the set, so the medians and deal ranking are
+    # recomputed over the final population rather than the pre-verification one.
+    comparables = rank_deals(snapshot["comparables"])
     stats = compute_stats(comparables)
     snapshot["stats"] = stats
     history = update_changes_history(changes)
