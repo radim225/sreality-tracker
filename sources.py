@@ -40,6 +40,7 @@ _FEE_PARSER = None   # (cost_of_living_raw, description, rent) -> (fee, source, 
 _COST_FN = None      # (price, fee, tx, electricity, fee_source) -> cost tuple
 _STREET_GPS = {}     # lowercased street name -> (lat, lon), from the Sreality sweep
 _PREV_BY_ID = {}     # last run's comparables, so unchanged adverts skip their detail fetch
+_PARSER_VERSION = None  # scrape.PARSER_VERSION; a bump invalidates cached fee data
 MAX_DETAIL_FETCHES = int(os.environ.get("MAX_SOURCE_DETAIL_FETCHES", "200"))  # per source, per run
 
 # iDNES has no per-listing GPS anywhere on the card or the detail page, so it is
@@ -56,22 +57,28 @@ IDNES_DISTRICTS = ("praha-9", "praha-8", "praha-3")
 
 
 def configure(center, radius_km, dispositions, fee_parser, cost_fn,
-              street_gps=None, prev_comparables=None):
+              street_gps=None, prev_comparables=None, prev_fold_cache=None,
+              parser_version=None):
     global AREA_CENTER, AREA_RADIUS_KM, TARGET_DISPOSITIONS, _FEE_PARSER, _COST_FN
-    global _STREET_GPS, _PREV_BY_ID
+    global _STREET_GPS, _PREV_BY_ID, _PARSER_VERSION
     AREA_CENTER = center
     AREA_RADIUS_KM = radius_km
     TARGET_DISPOSITIONS = set(dispositions)
     _FEE_PARSER, _COST_FN = fee_parser, cost_fn
     _STREET_GPS = street_gps or {}
-    _PREV_BY_ID = {c["id"]: c for c in (prev_comparables or [])}
+    _PARSER_VERSION = parser_version
+    # Most iDNES adverts are the same flat as a Sreality one and get folded away
+    # by cross-portal dedup, so they never reach the snapshot's comparables. The
+    # fold cache is the only record that they were ever read.
+    _PREV_BY_ID = dict(prev_fold_cache or {})
+    _PREV_BY_ID.update({c["id"]: c for c in (prev_comparables or [])})
 
 
 # Fields the detail fetch fills in. Carried forward when an advert is unchanged.
 _DETAIL_FIELDS = (
     "description", "price_note", "admin_fee_czk", "old_price_czk", "fees_czk",
     "fees_missing", "fees_source", "electricity_czk", "electricity_estimated",
-    "total_czk", "price_czk_per_sqm",
+    "total_czk", "price_czk_per_sqm", "parser_version",
 )
 
 
@@ -88,7 +95,13 @@ def _plan_detail_fetches(comps, label):
         stale = (
             prev is None
             or prev.get("price_czk") != comp.get("price_czk")
-            or prev.get("description") is None
+            # A fee parsed by an older version of the parser is exactly the stale
+            # value PARSER_VERSION exists to flush. This check used to live only
+            # on the Sreality path, so a fee fix never reached these two sources.
+            or prev.get("parser_version") != _PARSER_VERSION
+            # A fold-cache record has no description by design; only a genuine
+            # advert record missing one means the last read failed.
+            or (prev.get("description") is None and not prev.get("cached_only"))
         )
         (fetch if stale else cached).append((comp, prev))
     for comp, prev in cached:
@@ -139,6 +152,9 @@ def _apply_fees(comp, cost_of_living_raw, description):
     comp.update({
         "fees_czk": fees, "fees_missing": missing, "fees_source": source,
         "electricity_czk": elec, "electricity_estimated": elec_est, "total_czk": total,
+        # Records which parser produced the fee above, so a later fix can tell
+        # this value apart from one it has already corrected.
+        "parser_version": _PARSER_VERSION,
     })
     sqm = comp.get("floor_area_sqm")
     if comp.get("transaction_type") == "pronajem" and total and sqm:

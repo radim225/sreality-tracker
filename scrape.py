@@ -654,7 +654,9 @@ def needs_enrichment(comp, prev_comp):
     # for a fact that already settled, so the attempts are counted and capped.
     if prev_comp.get("fee_attempts", 0) >= MAX_FEE_ATTEMPTS:
         return False, "cached"
-    if prev_comp.get("description") is None:
+    # A fold-cache record deliberately carries no description (see
+    # build_enrichment_cache), so its absence is not evidence of a failed read.
+    if prev_comp.get("description") is None and not prev_comp.get("cached_only"):
         return True, "retry"
     if comp.get("transaction_type") == "pronajem" and prev_comp.get("fees_missing"):
         return True, "retry"
@@ -707,7 +709,11 @@ def fetch_comparables(prev_snapshot=None):
     for c in comparables:
         c["dist_km"] = round(km_from_center(c.get("lat"), c.get("lon")) or 0, 2)
 
-    prev_by_id = {c["id"]: c for c in (prev_snapshot or {}).get("comparables", [])}
+    # Adverts that dedup folded away last run are not in `comparables`, but they
+    # were read, and their enrichment is remembered separately. Without this the
+    # planner sees them as new every single run.
+    prev_by_id = fold_cache_records((prev_snapshot or {}).get("enrichment_cache"))
+    prev_by_id.update({c["id"]: c for c in (prev_snapshot or {}).get("comparables", [])})
     queues = {"price": [], "new": [], "retry": []}
     for comp in comparables:
         prev_comp = prev_by_id.get(comp["id"])
@@ -1189,7 +1195,12 @@ def merge_cross_portal(comparables):
 
     The duplicates are not dropped silently -- the surviving record keeps every
     other portal's link in `also_on`, so the dashboard can still offer them and
-    nothing disappears without a trace."""
+    nothing disappears without a trace.
+
+    Returns (survivors, folded_copies). The folded copies are handed back rather
+    than discarded because they still cost a detail fetch each: they leave the
+    snapshot, so without them the next run cannot tell they were ever read (see
+    build_enrichment_cache)."""
     groups, singles = {}, []
     for c in comparables:
         k = dedup_key(c)
@@ -1198,7 +1209,7 @@ def merge_cross_portal(comparables):
         else:
             groups.setdefault(k, []).append(c)
 
-    merged = []
+    merged, folded = [], []
     for dupes in groups.values():
         if len(dupes) == 1:
             merged.append(dupes[0])
@@ -1228,6 +1239,7 @@ def merge_cross_portal(comparables):
             {"source": d.get("source"), "url": d.get("url")} for d in rest if d.get("url")
         ]
         merged.append(keep)
+        folded.extend(rest)
 
     result = merged + singles
     print(
@@ -1235,7 +1247,56 @@ def merge_cross_portal(comparables):
         f"({len(comparables) - len(result)} duplicate copies folded in)",
         file=sys.stderr,
     )
-    return result
+    return result, folded
+
+
+# The fields worth remembering about an advert that got folded into another
+# portal's copy. Deliberately no description or images: they are the bulk of the
+# record, and anything the folded copy had to contribute was already donated to
+# the survivor and is stored there. What is left is only what decides whether
+# the advert needs another detail fetch.
+FOLD_CACHE_FIELDS = (
+    "price_czk", "fees_czk", "fees_missing", "fees_source", "electricity_czk",
+    "electricity_estimated", "total_czk", "price_czk_per_sqm", "fee_attempts",
+    "parser_version",
+)
+
+
+def build_enrichment_cache(folded):
+    """Remember the enrichment of adverts that dedup removed from the snapshot.
+
+    Cross-portal duplicates are folded into one row, so ~300 iDNES ids vanish
+    from `comparables` every run. The next run has no record of them, reads them
+    as brand new, and spends its whole detail budget re-fetching adverts it has
+    already read -- measured at exactly the 200/run cap on three consecutive
+    runs, with another ~117 deferred that were therefore never read at all.
+
+    Keeping a compact record of them costs a few hundred bytes each and makes
+    the cache converge. `cached_only` marks the record as having no description
+    on purpose, so the staleness checks don't mistake that for a failed read.
+
+    Rebuilt from scratch every run rather than accumulated: a live duplicate is
+    folded again on every run, so this run's folded set is already the complete
+    list, and an advert that has gone away simply drops out."""
+    cache = {}
+    for comp in folded:
+        entry = {k: comp[k] for k in FOLD_CACHE_FIELDS if comp.get(k) is not None}
+        entry["cached_only"] = True
+        cache[str(comp["id"])] = entry
+    return cache
+
+
+def fold_cache_records(cache):
+    """Fold-cache entries in the shape the enrichment planners expect."""
+    out = {}
+    for cid, entry in (cache or {}).items():
+        rec = dict(entry)
+        # Ids are ints on Sreality and strings elsewhere; JSON keys are always
+        # strings, so both spellings have to resolve.
+        out[cid] = rec
+        if cid.isdigit():
+            out[int(cid)] = rec
+    return out
 
 
 def rank_deals(comparables):
@@ -2172,9 +2233,11 @@ def main():
         extract_fees_and_electricity, cost_breakdown,
         street_gps=STREET_GPS,
         prev_comparables=(prev or {}).get("comparables", []),
+        prev_fold_cache=fold_cache_records((prev or {}).get("enrichment_cache")),
+        parser_version=PARSER_VERSION,
     )
     comparables += sources.fetch_extra_comparables()
-    comparables = merge_cross_portal(comparables)
+    comparables, folded = merge_cross_portal(comparables)
     rank_deals(comparables)
     print(f"Found {len(comparables)} unique comparable listings", file=sys.stderr)
 
@@ -2189,6 +2252,9 @@ def main():
         # Listings absent this run and awaiting a second confirming absence
         # before they count as removed; diff_snapshots() fills this in.
         "pending_removal": [],
+        # Enrichment of the cross-portal duplicates that dedup removed above, so
+        # the next run knows it has already read them.
+        "enrichment_cache": build_enrichment_cache(folded),
     }
 
     changes = diff_snapshots(prev, snapshot)

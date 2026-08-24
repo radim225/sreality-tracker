@@ -53,6 +53,13 @@ jobs:
         if: github.event.inputs.remove_url != ''
         run: python remove_tracked.py "${{ github.event.inputs.remove_url }}"
 
+      # Offline and fast. Run before the scrape so a broken parser or cache
+      # stops the run instead of writing a snapshot full of wrong fees.
+      - name: Run tests
+        run: |
+          python test_fees.py
+          python test_cache.py
+
       - name: Run scraper
         run: python scrape.py
 
