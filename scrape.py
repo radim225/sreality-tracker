@@ -1343,6 +1343,74 @@ def rank_deals(comparables):
     return comparables
 
 
+# The flat the area's asking prices are read against on the dashboard. The price
+# is the flat alone: the garage and the storage unit are separate units on the
+# contract and no advert here quotes either, so folding them in would inflate
+# its Kč/m² against listings that don't include them. Deliberately no unit
+# number or project name -- this repo and its Pages site are public, and the
+# comparison works without naming which flat it is.
+OWN_PROPERTY = {
+    "disposition": "1+kk",
+    "floor_area_sqm": 29.6,
+    "price_czk": 6_556_088,
+    "caveat": "novostavba, dokončení ~léto 2027 — okolní inzeráty jsou převážně starší byty z druhé ruky",
+}
+# Comparables are drawn from a size band, not just the disposition, because
+# Kč/m² falls with size even inside 1+kk: the bathroom, the kitchenette and the
+# entrance cost roughly the same in 25 m² as in 40 m². Ranking his 29,6 m² flat
+# against every 1+kk in the circle would flatter it for a reason that has
+# nothing to do with the price.
+OWN_SIZE_BAND_SQM = (25.0, 35.0)
+
+
+def own_property_stats(comparables):
+    """Where Radim's own price per m² sits in the area's asking prices.
+
+    Returns None rather than a half-answer if too few comparables survive the
+    filters -- a "percentile" out of three listings would read as a fact."""
+    own_per_sqm = round(OWN_PROPERTY["price_czk"] / OWN_PROPERTY["floor_area_sqm"])
+    lo, hi = OWN_SIZE_BAND_SQM
+
+    def eligible(c, size_band):
+        if c.get("transaction_type") != "prodej":
+            return False
+        if c.get("disposition") != OWN_PROPERTY["disposition"]:
+            return False
+        if not c.get("price_czk_per_sqm"):
+            return False
+        # Co-ownership shares, auctions and mistyped areas -- already identified
+        # as not-a-price by rank_deals. They belong nowhere near a median.
+        if c.get("deal_outlier"):
+            return False
+        sqm = c.get("floor_area_sqm")
+        if size_band:
+            return sqm is not None and lo <= sqm <= hi
+        return True
+
+    band = sorted(c["price_czk_per_sqm"] for c in comparables if eligible(c, True))
+    everything = sorted(c["price_czk_per_sqm"] for c in comparables if eligible(c, False))
+    if len(band) < 8:
+        return None
+
+    def pct(vals, q):
+        return vals[min(int(len(vals) * q), len(vals) - 1)]
+
+    cheaper = sum(1 for v in band if v < own_per_sqm)
+    return {
+        "own_czk_per_sqm": own_per_sqm,
+        "band_median": round(statistics.median(band)),
+        "band_count": len(band),
+        "disposition_median": round(statistics.median(everything)) if everything else None,
+        "disposition_count": len(everything),
+        "p10": pct(band, 0.10),
+        "p90": pct(band, 0.90),
+        "low": band[0],
+        "high": band[-1],
+        # Share of comparable adverts asking less per m² than he paid.
+        "cheaper_pct": round(cheaper / len(band) * 100),
+    }
+
+
 def compute_stats(comparables):
     def per_sqm(tx, disp_filter=None):
         vals = [
@@ -1430,6 +1498,66 @@ def build_tracked_item(tracked, changes):
     }
 
 
+def render_own_property_card(own):
+    """Radim's own Kč/m² drawn as a line across the asking prices around it.
+
+    A single number ("you paid X") says nothing without the spread it sits in,
+    and a bare median hides how wide that spread is -- comparable 1+kk adverts
+    in this circle run from about 149k to 328k per m². So the card draws the
+    p10-p90 band and puts his price on it as a line."""
+    if not own:
+        return ""
+    lo, hi = own["p10"], own["p90"]
+    span = max(hi - lo, 1)
+
+    def at(v):
+        return max(0.0, min(100.0, (v - lo) / span * 100))
+
+    def lab_at(v):
+        """Label position, held off the ends so a centred caption can't be
+        clipped by the card edge when a value sits at or outside the band."""
+        return max(15.0, min(85.0, at(v)))
+
+    def cz(x, places=1):
+        return f"{x:.{places}f}".replace(".", ",")
+
+    med, mine = own["band_median"], own["own_czk_per_sqm"]
+    delta = (mine - med) / med * 100
+    verdict = (
+        f"o {cz(abs(delta))} % {'dráž' if delta > 0 else 'levněji'} než medián"
+        if abs(delta) >= 0.5 else "prakticky na mediánu"
+    )
+    band_lo, band_hi = OWN_SIZE_BAND_SQM
+    return f"""<div class="card" id="ownCard">
+  <h2 style="margin-top:0;font-size:1rem;">🏠 Tvůj byt — {OWN_PROPERTY["disposition"]} {cz(OWN_PROPERTY["floor_area_sqm"])} m²</h2>
+  <div class="own-head">
+    <div class="own-big">{fmt_czk(mine)}<span>/m²</span></div>
+    <div class="own-sub">{fmt_czk(OWN_PROPERTY["price_czk"])} za byt samotný<br>
+      <span class="own-note">bez garáže a komory — jsou to samostatné jednotky a žádný inzerát je neobsahuje</span>
+    </div>
+  </div>
+  <div class="own-scale">
+    <div class="track"></div>
+    <div class="tick med" style="left:{at(med):.1f}%"></div>
+    <div class="tick own" style="left:{at(mine):.1f}%"></div>
+    <div class="lab lab-top" style="left:{lab_at(mine):.1f}%">ty · {fmt_czk(mine)}/m²</div>
+    <div class="lab lab-bot" style="left:{lab_at(med):.1f}%">medián · {fmt_czk(med)}/m²</div>
+    <div class="lab lab-end" style="left:0;transform:none">{fmt_czk(lo)}/m²</div>
+    <div class="lab lab-end" style="right:0;transform:none">{fmt_czk(hi)}/m²</div>
+  </div>
+  <p class="hint" style="margin-bottom:6px;">
+    Srovnáno s <b>{own["band_count"]} prodeji {OWN_PROPERTY["disposition"]} o {band_lo:.0f}–{band_hi:.0f} m²</b>
+    v oblasti — {verdict}, levněji za m² nabízí <b>{own["cheaper_pct"]} %</b> z nich.
+    Pás výše je rozpětí p10–p90; celý vzorek jde od {fmt_czk(own["low"])}/m² do {fmt_czk(own["high"])}/m².
+    Všechny {OWN_PROPERTY["disposition"]} v oblasti bez ohledu na výměru mají medián
+    {fmt_czk(own["disposition_median"])}/m² ({own["disposition_count"]} inzerátů) — níž proto, že
+    Kč/m² s výměrou klesá, ne proto, že by tam byly levnější nabídky.
+  </p>
+  <p class="hint" style="margin:0;color:#d9a3c0;">⚠ {OWN_PROPERTY["caveat"]}. A inzerát je nabídková cena,
+    ne realizovaná — obojí posouvá srovnání v tvůj neprospěch a z těchhle dat se to odečíst nedá.</p>
+</div>"""
+
+
 def render_tracked_card(tracked):
     active_badge = (
         '<span class="badge ok">active</span>'
@@ -1490,6 +1618,7 @@ def render_dashboard(snapshot, changes, stats, history):
     changed_ids_json = json.dumps(list(changed_ids))
 
     tracked_cards_html = "\n".join(render_tracked_card(t) for t in tracked_list)
+    own_card_html = render_own_property_card(own_property_stats(comparables))
 
     head_and_body = f"""<!DOCTYPE html>
 <html lang="cs">
@@ -1521,6 +1650,24 @@ def render_dashboard(snapshot, changes, stats, history):
   .stat {{ flex: 1; min-width: 130px; text-align: center; padding: 8px; background: #11141b; border-radius: 8px; }}
   .stat .num {{ font-size: 1.2rem; font-weight: 600; }}
   .stat .lbl {{ font-size: 0.65rem; color: #999; }}
+  .own-head {{ display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; }}
+  .own-big {{ font-size: 1.7rem; font-weight: 700; color: #fc6; line-height: 1.1; }}
+  .own-big span {{ font-size: 0.9rem; font-weight: 500; color: #997; }}
+  .own-sub {{ font-size: 0.8rem; color: #bbb; }}
+  .own-note {{ font-size: 0.7rem; color: #888; }}
+  /* p10-p90 band with his price drawn on it. Absolute positioning inside a
+     fixed-height box, so the labels can sit above and below the same line
+     without pushing the layout around. */
+  .own-scale {{ position: relative; height: 62px; margin: 16px 4px 4px; }}
+  .own-scale .track {{ position: absolute; left: 0; right: 0; top: 26px; height: 8px;
+                      border-radius: 4px; background: linear-gradient(90deg,#1e4620,#3f4415,#4a1c1c); }}
+  .own-scale .tick {{ position: absolute; width: 2px; background: #7ab8ff; top: 18px; height: 24px; }}
+  .own-scale .tick.own {{ width: 3px; background: #fc6; top: 12px; height: 36px; }}
+  .own-scale .lab {{ position: absolute; font-size: 0.65rem; white-space: nowrap;
+                    transform: translateX(-50%); }}
+  .own-scale .lab-top {{ top: 0; color: #fc6; font-weight: 600; }}
+  .own-scale .lab-bot {{ bottom: 0; color: #7ab8ff; }}
+  .own-scale .lab-end {{ top: 44px; color: #777; }}
   .controls {{ display: flex; gap: 8px; flex-wrap: wrap; margin: 12px; }}
   select, input {{ background: #1b1f29; color: #eee; border: 1px solid #333; border-radius: 6px;
                     padding: 6px 8px; font-size: 0.85rem; }}
@@ -1639,6 +1786,8 @@ def render_dashboard(snapshot, changes, stats, history):
     <button class="linklike" style="font-size:0.72rem;" onclick="localStorage.removeItem('gh_pat');document.getElementById('manageStatus').textContent='Token zapomenut.'">zapomenout token</button>
   </div>
 </div>
+
+{own_card_html}
 
 <div class="card">
   <h2 style="margin-top:0;font-size:1rem;">Statistika oblasti ({", ".join(DISPOSITION_CODES.values())} · {AREA_RADIUS_KM} km)</h2>
