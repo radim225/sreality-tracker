@@ -41,7 +41,13 @@ _COST_FN = None      # (price, fee, tx, electricity, fee_source) -> cost tuple
 _STREET_GPS = {}     # lowercased street name -> (lat, lon), from the Sreality sweep
 _PREV_BY_ID = {}     # last run's comparables, so unchanged adverts skip their detail fetch
 _PARSER_VERSION = None  # scrape.PARSER_VERSION; a bump invalidates cached fee data
-MAX_DETAIL_FETCHES = int(os.environ.get("MAX_SOURCE_DETAIL_FETCHES", "200"))  # per source, per run
+def _env_int(name, default):
+    """See scrape.env_int -- a blank workflow input is "" rather than absent."""
+    raw = (os.environ.get(name) or "").strip()
+    return int(raw) if raw else default
+
+
+MAX_DETAIL_FETCHES = _env_int("MAX_SOURCE_DETAIL_FETCHES", 200)  # per source, per run
 
 # iDNES has no per-listing GPS anywhere on the card or the detail page, so it is
 # filtered by the ward label its cards carry ("Kolmá, Praha 9 - Vysočany").

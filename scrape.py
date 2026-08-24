@@ -16,6 +16,10 @@ from pathlib import Path
 
 import requests
 
+import market
+import notify
+import pool
+import report
 import sources
 
 ROOT = Path(__file__).parent
@@ -25,6 +29,12 @@ CHANGES_PATH = ROOT / "last_changes.json"
 LATEST_SNAPSHOT_PATH = ROOT / "latest_snapshot.json"
 TRACKED_PATH = ROOT / "tracked.json"
 CHANGES_HISTORY_PATH = ROOT / "changes_history.json"
+# The same events, uncapped and append-only. changes_history.json is what the
+# dashboard inlines into the page, so it has to stay small -- but at ~150 events
+# a day its 300-event cap spans about two days, and a weekly write-up asking
+# "what happened this week" would silently see a third of it. The log is the
+# record; the JSON file is a view of the most recent slice of it.
+CHANGES_LOG_PATH = ROOT / "changes_log.jsonl"
 
 # Sreality category_sub_cb codes (from /hledani estatesFilterPage)
 DISPOSITION_CODES = {2: "1+kk", 3: "1+1", 4: "2+kk", 5: "2+1", 6: "3+kk", 7: "3+1"}
@@ -55,6 +65,15 @@ SEARCH_WARDS = [
 # Radim's landmark streets, shown on the dashboard so the area stays legible.
 AREA_LANDMARKS = "Pod Harfou · Kolbenova · Hrdlořezy · Podvinný mlýn · Palmovka · Karlín"
 
+
+def env_int(name, default):
+    """A workflow_dispatch input that was left blank arrives as an empty
+    string, not as an absent variable, so the scheduled runs would crash on
+    int("") the moment the one-off override existed."""
+    raw = (os.environ.get(name) or "").strip()
+    return int(raw) if raw else default
+
+
 MAX_IMAGES_PER_LISTING = 5
 MAX_DESCRIPTION_CHARS = 1200
 MAX_HISTORY_EVENTS = 300
@@ -66,7 +85,12 @@ MAX_HISTORY_EVENTS = 300
 # needs_enrichment); the rest carry their enrichment forward from the previous
 # snapshot. This cap bounds the retry of listings that failed or came back
 # without fees, so a permanently fee-less listing can't be refetched forever.
-MAX_REENRICH_PER_RUN = 60
+# A PARSER_VERSION bump puts every cached listing into this queue at once, and
+# at 60 a run that would take ~1000 re-reads converges over a week instead of an
+# afternoon -- with the estimate running on half-populated attributes the whole
+# time. So the ceiling is overridable for the one backfill run that follows a
+# bump (workflow input `max_reenrich`), and back to 60 for steady state.
+MAX_REENRICH_PER_RUN = env_int("MAX_REENRICH", 60)
 # Hard ceiling on detail fetches per run. Sreality serves this burst at about
 # 1 s per listing when it is happy, but drops into throttling windows where the
 # retry backoff pushes it to ~7 s -- measured across one full backfill. The cap
@@ -75,18 +99,25 @@ MAX_REENRICH_PER_RUN = 60
 # converges over the next couple of runs: whatever is left unenriched comes back
 # as a "retry" next time, and those listings are on the dashboard meanwhile --
 # they just carry price and locality until their detail lands.
-MAX_DETAIL_FETCHES_PER_RUN = int(os.environ.get("MAX_DETAIL_FETCHES", "300"))
+MAX_DETAIL_FETCHES_PER_RUN = env_int("MAX_DETAIL_FETCHES", 300)
 # How many clean reads an advert gets before "no fee stated" is accepted as the
 # answer rather than retried. Roughly a third of Sreality rentals never quote a
 # service charge anywhere.
 MAX_FEE_ATTEMPTS = 3
-# Bump whenever the fee parser changes behaviour. Enrichment is cached across
-# runs, so without this a parser fix would only ever apply to listings that
-# happened to appear afterwards -- everything already in the snapshot would keep
-# the value the old code got, indefinitely. Two listings were found carrying
-# exactly that kind of stale mis-parse (an agency commission and a rent, both
-# stored as the monthly fee) before this existed.
-PARSER_VERSION = 2
+# Bump whenever the fee parser changes behaviour OR the set of fields read out
+# of a detail page grows. Enrichment is cached across runs, so without this a
+# parser fix would only ever apply to listings that happened to appear
+# afterwards -- everything already in the snapshot would keep the value the old
+# code got, indefinitely. Two listings were found carrying exactly that kind of
+# stale mis-parse (an agency commission and a rent, both stored as the monthly
+# fee) before this existed.
+#
+# 3: reads the attribute block (building condition, furnishing, commission,
+#    cellar/balcony/garage, `since`, views, struck-through price) that the rent
+#    estimate and the weekly report are built on, and adds `priceNote` to the
+#    fee chain. Every cached listing has to be read again for those, which is
+#    one backfill run with the fetch caps raised.
+PARSER_VERSION = 3
 
 # Sreality's "estate" payload gives base rent (price) and service fees
 # (params.costOfLiving) separately, but never itemizes electricity -- it's
@@ -383,11 +414,19 @@ def parse_fee_from_description(text, rent_czk=None):
     )
 
 
-def extract_fees_and_electricity(cost_of_living_raw, description, rent_czk=None):
+def extract_fees_and_electricity(cost_of_living_raw, description, rent_czk=None,
+                                 price_note=None):
     """Returns (fees_czk, fees_source, electricity_explicit_czk).
     fees_source is "field" (clean int or parsed from costOfLiving text),
-    "text" (parsed from the description), "included" (the listing says the rent
-    is already all-in), or None (not found anywhere).
+    "note" (parsed from Sreality's priceNote), "text" (parsed from the
+    description), "included" (the listing says the rent is already all-in), or
+    None (not found anywhere).
+
+    `priceNote` is tried before the description because it is a short structured
+    line ("poplatky 6109 Kč/měs.") rather than sales prose, so a hit there is
+    more trustworthy. On the sample it added a fee to 7 of 19 adverts with an
+    empty costOfLiving -- but the description already caught every one of them,
+    so expect no jump in coverage, only fewer chances to mis-read.
 
     rent_czk, when known, is used only to veto it as a fee candidate: portals
     routinely restate the rent inside the very field that also carries the
@@ -402,6 +441,10 @@ def extract_fees_and_electricity(cost_of_living_raw, description, rent_czk=None)
     fee, electricity = parse_cost_of_living_text(raw, rent_czk)
     if fee is not None:
         return fee, "field", electricity
+    fee, electricity_note = parse_fee_from_description(price_note, rent_czk)
+    electricity = electricity if electricity is not None else electricity_note
+    if fee is not None:
+        return fee, "note", electricity
     fee, electricity_2 = parse_fee_from_description(description, rent_czk)
     electricity = electricity if electricity is not None else electricity_2
     if fee is not None:
@@ -409,7 +452,7 @@ def extract_fees_and_electricity(cost_of_living_raw, description, rent_czk=None)
     # No number anywhere -- but if the listing states the rent already covers
     # the fees, that is an answer, not a gap, and it must not be presented as
     # "fee unknown, assumed 0" alongside listings that quote rent net of fees.
-    if is_all_inclusive(raw) or is_all_inclusive(description):
+    if is_all_inclusive(raw) or is_all_inclusive(description) or is_all_inclusive(price_note):
         return 0, "included", electricity
     return None, None, electricity
 
@@ -447,6 +490,99 @@ def garage_parking_from_params(params):
         parking = params.get("parking")
     parking = bool(parking) if parking is not None else None
     return garage, parking
+
+
+# Sreality states enumerated attributes as {"name": ..., "value": <code>} and
+# uses value 0 for "not filled in" -- consistently across buildingCondition,
+# furnished, elevator and energyEfficiencyRating. Reading the label instead of
+# the code is a trap this scraper already paid for once: under load Sreality
+# answers in English, and a name-keyed map silently splits one category in two.
+# So every enum is decoded from its numeric code and the label is kept only to
+# show a human.
+NEW_BUILDING_CODE = 6            # "Novostavba"
+FURNISHED_CODES = {1: "ano", 2: "ne", 3: "castecne"}
+ENERGY_CODES = {1: "A", 2: "B", 3: "C", 4: "D", 5: "E", 6: "F", 7: "G"}
+
+
+def enum_param(params, key):
+    """(code, label) for one of Sreality's enumerated params, with the
+    "not filled in" sentinel normalised away. Roughly a third of adverts leave
+    furnishing and energy class empty, and counting those as a category would
+    invent a group that isn't one."""
+    raw = params.get(key)
+    if not isinstance(raw, dict):
+        return None, None
+    code = raw.get("value")
+    if code in (None, 0):
+        return None, None
+    return code, raw.get("name")
+
+
+def _opt_bool(value):
+    return bool(value) if value is not None else None
+
+
+def attributes_from_params(params, data):
+    """The attribute block the rent estimate and the weekly report read (§3.7).
+
+    Only two of these are ever allowed to move a number: furnishing and
+    building condition. The rest are stored because the report has to be able
+    to *say* the sample cannot separate them -- and because a stored attribute
+    costs ~30 bytes, while re-fetching a delisted advert to get it costs the
+    advert."""
+    condition_code, condition_name = enum_param(params, "buildingCondition")
+    type_code, type_name = enum_param(params, "buildingType")
+    energy_code, _energy_name = enum_param(params, "energyEfficiencyRating")
+    furnished_code, _furnished_name = enum_param(params, "furnished")
+    elevator_code, _elevator_name = enum_param(params, "elevator")
+    ownership_code, ownership_name = enum_param(params, "ownership")
+
+    commission = params.get("commission")
+    tenant_not_pay = params.get("tenantNotPayCommission")
+    if commission is not None:
+        no_commission = commission == 0
+    elif tenant_not_pay is True:
+        no_commission = True
+    else:
+        no_commission = None
+
+    return {
+        "building_condition": condition_code,
+        "building_condition_name": condition_name,
+        # buildingType is deliberately NOT used for this: brick is the most
+        # common type in the area and includes new builds, so "cihlová = older"
+        # is simply false. The direct field is the answer (N-6).
+        "is_new_building": None if condition_code is None else condition_code == NEW_BUILDING_CODE,
+        "building_type": type_code,
+        "building_type_name": type_name,
+        "energy_rating": ENERGY_CODES.get(energy_code),
+        "furnished": FURNISHED_CODES.get(furnished_code),
+        "commission_czk": commission,
+        "tenant_not_pay_commission": tenant_not_pay,
+        "no_commission": no_commission,
+        "cellar": _opt_bool(params.get("cellar")),
+        "cellar_area_sqm": params.get("cellarArea"),
+        "garage_count": params.get("garageCount"),
+        "parking_lots": params.get("parkingLots"),
+        "balcony": _opt_bool(params.get("balcony")),
+        "balcony_area_sqm": params.get("balconyArea"),
+        "loggia": _opt_bool(params.get("loggia")),
+        "loggia_area_sqm": params.get("loggiaArea"),
+        "terrace": _opt_bool(params.get("terrace")),
+        "terrace_area_sqm": params.get("terraceArea"),
+        "elevator": None if elevator_code is None else elevator_code == 1,
+        "ownership": ownership_code,
+        "ownership_name": ownership_name,
+        # `since` is the insertion date, present on 100 % of adverts. Days on
+        # market are computed from it and nothing else: our own first sighting
+        # puts the median at 4 days, which is an artefact of unstable search
+        # pagination rather than anything about the market (§3.7).
+        "since": params.get("since"),
+        "edited": params.get("edited"),
+        "views": params.get("stats") if isinstance(params.get("stats"), int) else None,
+        # Struck-through price: the advert's own record of having come down.
+        "price_old_czk": data.get("priceSummaryOldCzk") or None,
+    }
 
 
 def load_tracked_config():
@@ -672,6 +808,17 @@ ENRICHED_FIELDS = (
     "electricity_estimated", "total_czk", "garage", "parking",
     "price_czk_per_sqm", "floor_area_sqm", "lat", "lon", "cost_of_living_raw",
     "fee_attempts", "parser_version",
+    # The attribute block (attributes_from_params). Carried forward like the
+    # rest: these are static for the life of an advert, so a cached listing must
+    # keep them or the 30-day pool would only ever know about this week's
+    # listings' furnishing.
+    "building_condition", "building_condition_name", "is_new_building",
+    "building_type", "building_type_name", "energy_rating", "furnished",
+    "commission_czk", "tenant_not_pay_commission", "no_commission",
+    "cellar", "cellar_area_sqm", "garage_count", "parking_lots",
+    "balcony", "balcony_area_sqm", "loggia", "loggia_area_sqm",
+    "terrace", "terrace_area_sqm", "elevator", "ownership", "ownership_name",
+    "since", "edited", "views", "price_old_czk",
 )
 
 
@@ -873,8 +1020,10 @@ def enrich_comparable(comp):
     # Kept on the record so a fee that parsed wrong can be diagnosed from the
     # snapshot alone, without re-fetching the (possibly delisted) advert.
     comp["cost_of_living_raw"] = params.get("costOfLiving")
+    comp.update(attributes_from_params(params, data))
     fees_czk, fees_source, electricity_explicit = extract_fees_and_electricity(
-        params.get("costOfLiving"), data.get("description"), comp.get("price_czk")
+        params.get("costOfLiving"), data.get("description"), comp.get("price_czk"),
+        params.get("priceNote"),
     )
     fees_czk, fees_missing, electricity_czk, electricity_estimated, total_czk = (
         cost_breakdown(comp.get("price_czk"), fees_czk, comp.get("transaction_type"),
@@ -978,9 +1127,41 @@ def update_changes_history(changes):
     for c in changes.get("newly_inactive", []):
         new_events.append({"at": at, "kind": "removed", "id": c["id"], "item": c})
 
+    append_changes_log(new_events)
     history = (new_events + history)[:MAX_HISTORY_EVENTS]
     CHANGES_HISTORY_PATH.write_text(json.dumps(history, ensure_ascii=False, indent=2))
     return history
+
+
+# Fields worth keeping in the permanent log. The full `item` is the whole
+# listing record including photos and description -- fine for a 300-event view
+# inlined into a page, ruinous for a file that only ever grows.
+LOG_ITEM_FIELDS = (
+    "id", "url", "source", "title", "transaction_type", "disposition",
+    "floor_area_sqm", "street", "locality", "price_czk", "total_czk",
+    "price_czk_per_sqm", "fees_missing", "since", "is_new_building",
+    "furnished", "no_commission",
+)
+
+
+def append_changes_log(new_events):
+    """Append-only, one JSON object per line, never truncated (R-7.4 needs a
+    week of history and the capped file holds two days). Slimmed on the way in
+    so a year of events stays a few MB rather than a few hundred.
+
+    Nothing in this repo reads it back: the weekly write-up derives arrivals and
+    departures from the pool, which knows when each advert was first and last
+    seen. The log is the raw record for anything asked of it later -- one JSON
+    object per line, so `jq` is enough."""
+    if not new_events:
+        return
+    lines = []
+    for event in new_events:
+        item = event.get("item") or {}
+        slim = {k: item[k] for k in LOG_ITEM_FIELDS if item.get(k) is not None}
+        lines.append(json.dumps({**event, "item": slim or None}, ensure_ascii=False))
+    with CHANGES_LOG_PATH.open("a", encoding="utf-8") as fh:
+        fh.write("\n".join(lines) + "\n")
 
 
 def listing_is_gone(comp):
@@ -1145,7 +1326,16 @@ def diff_snapshots(prev, curr):
             # was only ever stated on one of them, so the all-in total changes
             # while the rent sits exactly where it was. Measured at 50 of 50 on
             # the dedup run -- every one with an unchanged base rent.
-            if old_cmp != new_cmp and not changes.get("config_changed"):
+            # Same class of problem, second source: a PARSER_VERSION bump makes
+            # us read the advert differently, so the fee -- and with it the
+            # all-in total -- moves while the advertised rent has not budged.
+            # Spread over the runs it takes to re-read everything, so a one-off
+            # re-baseline cannot catch it; the base price is the tell.
+            reparsed = (
+                old.get("parser_version") != new.get("parser_version")
+                and old.get("price_czk") == new.get("price_czk")
+            )
+            if old_cmp != new_cmp and not changes.get("config_changed") and not reparsed:
                 changes["price_changes"].append(
                     {
                         **new,
@@ -1558,6 +1748,131 @@ def render_own_property_card(own):
 </div>"""
 
 
+def render_estimate_card(estimate):
+    """The rent estimate, drawn where it can be checked against the adverts
+    right below it (§12 step 3).
+
+    Deliberately without the mortgage: this page is public, and the payment,
+    the purchase price and which flat it is belong in the notification
+    (R-5.6, R-10.1)."""
+    if not estimate:
+        return ""
+    ref = estimate["reference"]
+    base = estimate["base_total_per_sqm"]
+    lo, hi = ref["size_band_sqm"]
+
+    def cz(x, places=1):
+        return f"{x:.{places}f}".replace(".", ",")
+
+    def block(profile):
+        rent, total = profile["rent"], profile["total"]
+        return f"""<div class="est-profile">
+      <div class="est-name">{html.escape(profile["name"])}</div>
+      <div class="est-big">{fmt_czk(rent["median"])}<span>holý nájem / měs</span></div>
+      <div class="est-range">p25–p75 {fmt_czk(rent["p25"])} – {fmt_czk(rent["p75"])}</div>
+      <div class="est-second">{fmt_czk(total["median"])} <span>celkem, to platí nájemník</span></div>
+      <div class="est-range">p25–p75 {fmt_czk(total["p25"])} – {fmt_czk(total["p75"])}</div>
+      <div class="est-basis">{html.escape(profile["basis"])}</div>
+    </div>"""
+
+    if base["too_small"]:
+        body = (
+            f'<p class="hint" style="color:#d9a3c0;">⚠ Vzorek má jen {base["n"]} inzerátů. '
+            "Pod osmi se medián nepublikuje — z tolika bytů se percentil čte jako fakt, "
+            "a není.</p>"
+        )
+    else:
+        # When no furnishing factor held, the two profiles are the same number
+        # printed twice. Saying so beats letting the card imply the market does
+        # not pay for furniture -- it is a gap in the data, not a finding.
+        separated = estimate["mode"] == "hard_filters" or any(
+            estimate["factors"].get(k, {}).get("usable") for k in ("zarizeny", "nezarizeny")
+        )
+        warning = "" if separated else (
+            '<p class="hint" style="color:#d9a3c0;margin-top:10px;">⚠ Oba profily zatím vyšly '
+            "stejně — v poolu není dost inzerátů s vyplněnou zařízeností, aby se daly oddělit. "
+            "Mezera v datech, ne zjištění o trhu.</p>"
+        )
+        body = f"""<div class="est-grid">
+    {block(estimate["profiles"]["nezarizeny"])}
+    {block(estimate["profiles"]["zarizeny"])}
+  </div>{warning}"""
+
+    rows = ""
+    for key in ("novostavba", "zarizeny", "nezarizeny"):
+        f = estimate["factors"].get(key)
+        if not f:
+            continue
+        factor = f"×{cz(f['factor'], 3)}" if f["usable"] else "nepoužit"
+        contrast = f"{'+' if (f['contrast_pct'] or 0) > 0 else ''}{cz(f['contrast_pct'])} %" \
+            if f["contrast_pct"] is not None else "—"
+        rows += (
+            f"<tr><td>{html.escape(f['label'])}</td><td>{f['n']}</td>"
+            f"<td>{fmt_czk(f['median'])}</td><td>{factor}</td><td>{contrast}</td></tr>"
+        )
+    factors_html = (
+        f"""<div class="est-scroll"><table class="est-table">
+    <thead><tr><th>atribut</th><th>n</th><th>medián Kč/m²</th><th>faktor</th><th>vs. zbytek</th></tr></thead>
+    <tbody>{rows}</tbody>
+  </table></div>"""
+        if rows else ""
+    )
+    # The same cross-check the weekly write-up prints: each factor is measured
+    # against the whole base and then multiplied, so what the two attributes
+    # share is counted twice. The subgroup's own median says by how much.
+    checks = []
+    # Only meaningful while factors are in play. Under hard filters the profile
+    # IS the subgroup median, so the "cross-check" would compare a number with
+    # itself and print a solemn 0 %.
+    for key in (() if estimate["mode"] == "hard_filters" else ("nezarizeny", "zarizeny")):
+        prof = estimate["profiles"][key]
+        direct = prof.get("direct") or {}
+        if not direct.get("available"):
+            continue
+        measured = direct["rent"]["median"]
+        modelled = prof["rent"]["median"]
+        gap = ""
+        if measured and modelled:
+            delta = (modelled - measured) / measured * 100
+            gap = f", model o {'+' if delta > 0 else ''}{cz(delta)} % jinde"
+        checks.append(
+            f"{html.escape(prof['name'])}: přímý medián podskupiny "
+            f"(n={direct['n']}) {fmt_czk(measured)} holého nájmu{gap}"
+        )
+    check_html = (
+        f'<p class="hint">Kontrola proti datům — {" · ".join(checks)}. '
+        "Faktory se měří každý zvlášť proti základu a pak násobí, takže co mají atributy "
+        "společného, se počítá dvakrát. Rozdíl mezi modelem a podskupinou je šířka odpovědi, "
+        "ne chyba jednoho z nich.</p>"
+        if checks else ""
+    )
+    mode_note = (
+        f"Režim <b>tvrdé filtry</b> (novostavba + bez provize) od {html.escape(str(estimate['hard_filters']['since']))}."
+        if estimate["mode"] == "hard_filters" else
+        f"Režim <b>široký základ + přirážky</b>. Filtrovaný pool má "
+        f"{estimate['hard_filters']['n_this_week']} inzerátů; přepne se při "
+        f"≥ {estimate['hard_filters']['min_n']} po {estimate['hard_filters']['weeks_required']} "
+        "týdny v řadě."
+    )
+    return f"""<div class="card" id="estimateCard">
+  <h2 style="margin-top:0;font-size:1rem;">💰 Odhad nájmu — {ref["disposition"]} {cz(ref["floor_area_sqm"])} m², novostavba</h2>
+  {body}
+  <p class="hint">Základ: <b>{base["n"]} inzerátů</b> {ref["disposition"]} o {lo:.0f}–{hi:.0f} m²
+     s uvedenými poplatky, viděných za posledních {estimate["window_days"]} dní
+     (medián {fmt_czk(base["median"])}/m² celkem).
+     Živá nabídka by dala kolem šedesáti, třicetidenní okno skoro tři sta.</p>
+  {factors_html}
+  {check_html}
+  <p class="hint">{mode_note}</p>
+  <p class="hint">Přirážka se zavádí <b>jen</b> za zařízenost a stav budovy. Pro
+     {html.escape(", ".join(estimate["not_separable"]))} vzorek rozdíl neoddělí — balkon v něm vyšel
+     dokonce záporně, protože byty s balkonem jsou tady systematicky větší a větší byt má nižší
+     Kč/m². To je vlastnost vzorku, ne trhu.</p>
+  <p class="hint"><a href="{html.escape(report.REPO_URL, quote=True)}/tree/main/reports"
+     target="_blank" rel="noopener" style="color:#7ab8ff;">📄 Týdenní zápisy a měsíční souhrny →</a></p>
+</div>"""
+
+
 def render_tracked_card(tracked):
     active_badge = (
         '<span class="badge ok">active</span>'
@@ -1603,7 +1918,7 @@ def slim_for_dashboard(comp):
     return {k: v for k, v in comp.items() if k not in DASHBOARD_OMIT_FIELDS}
 
 
-def render_dashboard(snapshot, changes, stats, history):
+def render_dashboard(snapshot, changes, stats, history, estimate=None):
     tracked_list = snapshot["tracked"]
     comparables = snapshot["comparables"]
 
@@ -1619,6 +1934,7 @@ def render_dashboard(snapshot, changes, stats, history):
 
     tracked_cards_html = "\n".join(render_tracked_card(t) for t in tracked_list)
     own_card_html = render_own_property_card(own_property_stats(comparables))
+    estimate_card_html = render_estimate_card(estimate)
 
     head_and_body = f"""<!DOCTYPE html>
 <html lang="cs">
@@ -1650,6 +1966,20 @@ def render_dashboard(snapshot, changes, stats, history):
   .stat {{ flex: 1; min-width: 130px; text-align: center; padding: 8px; background: #11141b; border-radius: 8px; }}
   .stat .num {{ font-size: 1.2rem; font-weight: 600; }}
   .stat .lbl {{ font-size: 0.65rem; color: #999; }}
+  .est-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }}
+  .est-profile {{ background: #11141b; border-radius: 8px; padding: 10px 12px; }}
+  .est-name {{ font-size: 0.7rem; color: #9aa; text-transform: uppercase; letter-spacing: .04em; }}
+  .est-big {{ font-size: 1.5rem; font-weight: 700; color: #7CFFB2; line-height: 1.15; margin-top: 2px; }}
+  .est-big span {{ display: block; font-size: 0.68rem; font-weight: 500; color: #8a9; letter-spacing: 0; }}
+  .est-second {{ font-size: 1rem; font-weight: 600; color: #e6e6e6; margin-top: 8px; }}
+  .est-second span {{ font-size: 0.68rem; font-weight: 400; color: #99a; }}
+  .est-range {{ font-size: 0.7rem; color: #889; margin-top: 2px; }}
+  .est-basis {{ font-size: 0.66rem; color: #777; margin-top: 8px; }}
+  .est-scroll {{ overflow-x: auto; }}
+  .est-table {{ width: 100%; border-collapse: collapse; font-size: 0.75rem; margin-top: 8px; }}
+  .est-table th {{ text-align: left; color: #9aa; font-weight: 500; font-size: 0.68rem;
+                   border-bottom: 1px solid #2a2f3a; padding: 4px 8px 4px 0; white-space: nowrap; }}
+  .est-table td {{ padding: 4px 8px 4px 0; border-bottom: 1px solid #20242f; white-space: nowrap; }}
   .own-head {{ display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; }}
   .own-big {{ font-size: 1.7rem; font-weight: 700; color: #fc6; line-height: 1.1; }}
   .own-big span {{ font-size: 0.9rem; font-weight: 500; color: #997; }}
@@ -1786,6 +2116,8 @@ def render_dashboard(snapshot, changes, stats, history):
     <button class="linklike" style="font-size:0.72rem;" onclick="localStorage.removeItem('gh_pat');document.getElementById('manageStatus').textContent='Token zapomenut.'">zapomenout token</button>
   </div>
 </div>
+
+{estimate_card_html}
 
 {own_card_html}
 
@@ -2329,6 +2661,108 @@ initMap();
     DASHBOARD_PATH.write_text(document, encoding="utf-8")
 
 
+def due_weekly_report(now):
+    """The week that has just ended, if it hasn't been written up yet.
+
+    File existence is the whole guard: the scraper runs every 8 h, so the first
+    run of a new ISO week writes the report and the next two find it already
+    there. No extra cron, no state to get out of sync, and a re-run of a failed
+    job simply picks up where it left off."""
+    target = market.previous_week_key(market.iso_week_key(now))
+    return None if report.report_path(target).exists() else target
+
+
+def due_monthly_report(now):
+    target = market.previous_month_key(market.month_key(now))
+    return None if report.month_report_path(target).exists() else target
+
+
+def has_data_for(all_pool, start, end):
+    """Don't write up a period the pool cannot describe -- the first run after
+    deployment would otherwise emit a confident report about a week it never
+    observed."""
+    for rec in all_pool.values():
+        seen = pool.parse_ts(rec.get("last_seen"))
+        if seen and start <= seen <= end:
+            return True
+    return False
+
+
+def update_pool_and_reports(snapshot, changes):
+    """Fold the run into the pool, then write up anything that is due.
+
+    Returns (estimate_for_dashboard, notes). Raises on a genuine failure: a
+    broken report has to turn the run red rather than leave a week silently
+    missing from the archive (R-8.5)."""
+    now = snapshot["generated_at"]
+    all_pool = pool.load_pool()
+    state = pool.load_state()
+    config_changed = pool.note_config(state, snapshot["config"], now)
+    counts = pool.update_from_snapshot(all_pool, snapshot, changes, at=now)
+    shards = pool.save_pool(all_pool)
+    notes = [
+        f"Pool: {len(all_pool)} inzerátů celkem, +{counts['new']} nových, "
+        f"{counts['repriced']} změn ceny, {counts['gone']} potvrzeně pryč, "
+        f"{counts['resurrected']} se vrátilo · shardy {', '.join(shards)}"
+    ]
+    if config_changed:
+        notes.append("Konfigurace hledání se změnila — zapsáno do pool/state.json (R-6.5).")
+
+    weekly_meta = None
+    week = due_weekly_report(now)
+    if week:
+        start, end = market.week_bounds(week)
+        if has_data_for(all_pool, start, end):
+            weekly_meta = report.build_weekly(all_pool, state, week)
+            path = report.write_weekly(weekly_meta)
+            report.remember(state, weekly_meta)
+            notes.append(f"Týdenní zápis {week}: {weekly_meta['verdict']} → {path.name}")
+        else:
+            notes.append(f"Týdenní zápis {week} přeskočen — pool z toho týdne nemá data.")
+    else:
+        # The report for the last finished week exists, so the file guard says
+        # "done" -- but the message may never have gone out (Telegram was down,
+        # the secret was missing). Rebuild and try again, because a week without
+        # a notification looks exactly like a quiet week, and that confusion is
+        # the one thing R-8.4 exists to prevent.
+        # Only the week that just ended is worth resending. Without this, a
+        # channel configured in October would open with an August write-up.
+        pending = (state.get("last_report") or {}).get("week")
+        latest = market.previous_week_key(market.iso_week_key(now))
+        if pending == latest and state.get("notified_week") != pending:
+            weekly_meta = report.build_weekly(all_pool, state, pending)
+            notes.append(f"Týdenní zápis {pending} byl zapsán dřív, ale neodeslal se — zkouším znovu.")
+
+    month = due_monthly_report(now)
+    if month:
+        start, end = market.month_bounds(month)
+        if has_data_for(all_pool, start, end):
+            meta = report.build_monthly(all_pool, state, month)
+            path = report.write_monthly(meta)
+            notes.append(f"Měsíční souhrn {month} → {path.name}")
+        else:
+            notes.append(f"Měsíční souhrn {month} přeskočen — pool z toho měsíce nemá data.")
+
+    # State is durable before anything can raise: a notification that fails must
+    # cost a retry, not the record of the week.
+    pool.save_state(state)
+
+    if weekly_meta is not None:
+        channel = notify.notify(weekly_meta)
+        notes.append(f"Notifikace: {channel or 'žádný kanál nenastaven'}")
+        if channel:
+            state["notified_week"] = weekly_meta["week"]
+            pool.save_state(state)
+
+    # Read-only with respect to the mode: a switch to hard filters is a thing
+    # the report announces, not something a dashboard render does quietly.
+    estimate = market.rent_estimate(
+        pool.window(all_pool), as_of=now, state=json.loads(json.dumps(state)),
+        week_key=market.iso_week_key(now), allow_switch=False,
+    )
+    return estimate, notes
+
+
 def main():
     SNAPSHOTS_DIR.mkdir(exist_ok=True)
     prev = load_latest_snapshot()
@@ -2421,7 +2855,18 @@ def main():
     LATEST_SNAPSHOT_PATH.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2))
     CHANGES_PATH.write_text(json.dumps(changes, ensure_ascii=False, indent=2))
 
-    render_dashboard(snapshot, changes, stats, history)
+    # The snapshot is on disk before anything downstream runs, so a bug in the
+    # pool or the write-up costs a report, never a run's worth of scraping.
+    estimate, pool_error = None, None
+    try:
+        estimate, notes = update_pool_and_reports(snapshot, changes)
+        for note in notes:
+            print(note, file=sys.stderr)
+    except Exception as exc:  # noqa: BLE001 -- re-raised below, after the render
+        pool_error = exc
+        print(f"::error::Pool nebo týdenní zápis selhal: {exc}", file=sys.stderr)
+
+    render_dashboard(snapshot, changes, stats, history, estimate)
 
     print(f"Snapshot saved: {snapshot_path}", file=sys.stderr)
     print(f"Stats: {stats}", file=sys.stderr)
@@ -2432,6 +2877,11 @@ def main():
         f"pending_removal={len(snapshot['pending_removal'])}",
         file=sys.stderr,
     )
+    if pool_error is not None:
+        # Everything that could be saved has been saved; now make the run red.
+        # A week missing from the archive must never be something you find out
+        # about a month later (R-8.5).
+        raise pool_error
 
 
 if __name__ == "__main__":
