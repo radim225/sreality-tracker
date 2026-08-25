@@ -21,9 +21,8 @@ Two rules the channel has to respect:
 import os
 import re
 import sys
-import urllib.error
-import urllib.parse
-import urllib.request
+
+import requests
 
 import market
 import report
@@ -136,16 +135,16 @@ def build_message(meta, payment_czk=None):
 
 
 def _post(url, data, headers=None):
-    request = urllib.request.Request(
-        url, data=data, headers=headers or {}, method="POST"
-    )
+    """`requests` rather than urllib, for the same reason the scraper uses it:
+    it carries its own CA bundle. On a machine behind a TLS-inspecting proxy
+    urllib validates against the system store and dies with
+    CERTIFICATE_VERIFY_FAILED, so the notification would be the one part of the
+    pipeline that could not be tested locally. requests is already a dependency."""
     try:
-        with urllib.request.urlopen(request, timeout=30) as response:
-            return response.status, response.read().decode("utf-8", "replace")
-    except urllib.error.HTTPError as exc:
-        return exc.code, exc.read().decode("utf-8", "replace")
-    except OSError as exc:
+        response = requests.post(url, data=data, headers=headers or {}, timeout=30)
+    except requests.RequestException as exc:
         raise NotifyError(f"{url}: {exc}") from exc
+    return response.status_code, response.text
 
 
 def send_telegram(text):
@@ -153,15 +152,14 @@ def send_telegram(text):
     chat_id = os.environ.get("TELEGRAM_CHAT_ID")
     if not (token and chat_id):
         return False
-    payload = urllib.parse.urlencode({
-        "chat_id": chat_id,
-        "text": text,
-        "parse_mode": "HTML",
-        "disable_web_page_preview": "true",
-    }).encode()
     status, body = _post(
-        f"{TELEGRAM_API}/bot{token}/sendMessage", payload,
-        {"Content-Type": "application/x-www-form-urlencoded"},
+        f"{TELEGRAM_API}/bot{token}/sendMessage",
+        {
+            "chat_id": chat_id,
+            "text": text,
+            "parse_mode": "HTML",
+            "disable_web_page_preview": "true",
+        },
     )
     if status != 200:
         raise NotifyError(f"Telegram odmítl zprávu ({status}): {body[:300]}")
