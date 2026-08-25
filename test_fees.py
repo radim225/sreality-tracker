@@ -61,6 +61,39 @@ CASES = [
     ("all-inclusive", None,
      "Celková cena za užívaní včetně paušálních poplatků, energií a internetu "
      "je 35.000,- Kč/měsíc.", 0, None),
+
+    # --- optional extras are not the service charge ---------------------- #
+    # A garage/parking space offered "za příplatek" is a separate thing the
+    # tenant may or may not take. Booking it as the monthly fee understates the
+    # real fee and, worse, lands in the all-in total the estimate compares on.
+    # The description path already ignored these (no fee keyword, and it
+    # requires one); costOfLiving does not require a keyword, so that is where
+    # they got in.
+    ("garage alone in field", "Garážové stání za příplatek 2.500 Kč", None, None, None),
+    # Order is what made this bite: the garage clause comes first, claims the
+    # fee slot, and the real fee two clauses later can no longer overwrite it.
+    ("garage before the fee", "Garážové stání 2.500 Kč, poplatky 3.500 Kč", None, 3500, None),
+    ("parking before the fee", "Parkovací stání 1.800 Kč, zálohy 4.000 Kč", None, 4000, None),
+    ("cellar before the fee", "Sklep 500 Kč, poplatky 3.200 Kč", None, 3200, None),
+    # The keyword clause has no amount of its own and looks ahead one clause --
+    # which must not be allowed to land on an extra either.
+    ("lookahead onto a garage", "Poplatky za služby, garážové stání 2.500 Kč",
+     None, None, None),
+    ("garage in description", None,
+     "Možnost pronájmu garážového stání za 2.500 Kč měsíčně.", None, None),
+    # The mirror image, and the reason the rule is confined to costOfLiving: in
+    # a description these words describe the flat, and the amount next to them
+    # is the real fee. Measured on live adverts, this shape is far commoner
+    # than a priced extra written into prose.
+    ("cellar named in a fee lookahead", None,
+     "Poplatky za služby, sklep a úklid činí 4.700 Kč", 4700, None),
+    ("cellar as an amenity, fee elsewhere", None,
+     "K bytu náleží také sklep o velikosti 2 m². Poplatky za služby 3.900 Kč", 3900, None),
+    # Must NOT regress: the extra is named INSIDE a real fee clause, so the
+    # clause still carries the fee. Skipping it here would lose a good answer.
+    ("cellar inside the fee clause", None,
+     "Poplatky za služby včetně sklepa 3.500 Kč", 3500, None),
+    ("garage included in the fee", "Poplatky včetně garážového stání 4.200 Kč", None, 4200, None),
 ]
 
 

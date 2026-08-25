@@ -109,6 +109,13 @@ MAX_FEE_ATTEMPTS = 3
 #    estimate and the weekly report are built on, and adds `priceNote` to the
 #    fee chain. Every cached listing has to be read again for those, which is
 #    one backfill run with the fetch caps raised.
+#
+# NOT bumped for the extras guard (garage/parking/cellar priced by the month):
+# it only touches the costOfLiving path, and replaying all 497 live rentals
+# through both the old and the new parser on identical inputs produced ZERO
+# differing fees. Nothing cached is wrong, so there is nothing to flush, and a
+# bump would have bought a 40-70 minute re-enrich for no change at all. Bump it
+# the moment that guard starts changing an answer.
 PARSER_VERSION = 3
 
 # Sreality's "estate" payload gives base rent (price) and service fees
@@ -276,6 +283,23 @@ ELECTRICITY_KEYWORDS = ["energie", "energii", "elektřin", "elektrin"]
 # enough to pass for a service charge, so a clause that only talks about rent
 # must not donate its number to the fee.
 RENT_KEYWORDS = ["nájem", "najem", "nájemn", "najemn", "činže", "cinze"]
+# Optional extras the tenant may or may not take: "Garážové stání 2.500 Kč",
+# "možnost pronájmu garáže za 2.500 Kč/měs", "Sklep 500 Kč". They are priced per
+# month like the service charge and sit in the same plausible range, so they
+# pass every other filter. Booking one as the fee understates the real fee and
+# then lands in the all-in total the whole estimate compares on.
+#
+# Like RENT_KEYWORDS, this only disqualifies a clause that has NO fee keyword of
+# its own -- "Poplatky za služby včetně sklepa 3.500 Kč" is a real fee clause
+# that happens to name an extra, and dropping it would lose a good answer.
+# Written with diacritics on purpose: normalize_text does not strip them, and
+# the bare ASCII "stani" matches "stanice metra", which is in half the adverts
+# in this area. Measured: that one substring alone reached into 229 of 496
+# listings before it was caught.
+EXTRA_KEYWORDS = [
+    "garáž", "garaz", "parkovac", "stání",
+    "sklep", "sklípek", "komora", "komoru", "komory", "kolárna",
+]
 # The quoted rent is already all-in. Parsing a fee out of these double-counts
 # it, so we record "fees are included" instead of a number. Written as a window
 # rather than fixed phrases because the qualifier between the two halves varies
@@ -366,13 +390,33 @@ def _scan_clauses(clauses, require_keyword, rent_czk=None):
         # the plausible-fee range for a cheaper flat.
         if any(k in low for k in RENT_KEYWORDS) and not has_fee_kw:
             continue
+        # An optional extra priced by the month is not the service charge --
+        # but ONLY in costOfLiving, the short structured cost field, where a
+        # line naming a garage really is a price for it. In the free-text
+        # description the same words are almost always describing the flat
+        # ("K bytu náleží také sklep o velikosti 2 m²"), and treating those as
+        # priced extras cost 50 of 260 adverts their fee when it was measured.
+        # The description path is safe without this: it requires a fee keyword
+        # before a clause may donate an amount at all.
+        if not require_keyword and any(k in low for k in EXTRA_KEYWORDS) and not has_fee_kw:
+            continue
         amounts = parse_amounts(clause)
         if rent_czk:
             amounts = [v for v in amounts if v != rent_czk]
         if not amounts and has_fee_kw and i + 1 < len(clauses):
-            nxt = clauses[i + 1]
-            if not any(k in nxt.lower() for k in EXCLUDE_KEYWORDS):
-                amounts = parse_amounts(nxt)
+            nxt = clauses[i + 1].lower()
+            # The look-ahead has to apply the same exclusions, or a bare
+            # "Poplatky za služby," lands on the garage price behind it. The
+            # extras test carries its own fee-keyword escape, exactly like the
+            # one above: "...,  poplatky včetně sklepa 3.500 Kč" is still the
+            # fee, so the look-ahead must be allowed to reach it.
+            blocked = any(k in nxt for k in EXCLUDE_KEYWORDS) or (
+                not require_keyword
+                and any(k in nxt for k in EXTRA_KEYWORDS)
+                and not any(k in nxt for k in FEE_KEYWORDS)
+            )
+            if not blocked:
+                amounts = parse_amounts(clauses[i + 1])
         if not amounts:
             continue
         if is_elec and not has_fee_kw:
@@ -2745,15 +2789,31 @@ def update_pool_and_reports(snapshot, changes):
             weekly_meta = report.build_weekly(all_pool, state, pending)
             notes.append(f"Týdenní zápis {pending} byl zapsán dřív, ale neodeslal se — zkouším znovu.")
 
+    monthly_meta = None
     month = due_monthly_report(now)
     if month:
         start, end = market.month_bounds(month)
         if has_data_for(all_pool, start, end):
-            meta = report.build_monthly(all_pool, state, month)
-            path = report.write_monthly(meta)
+            monthly_meta = report.build_monthly(all_pool, state, month)
+            path = report.write_monthly(monthly_meta)
             notes.append(f"Měsíční souhrn {month} → {path.name}")
         else:
             notes.append(f"Měsíční souhrn {month} přeskočen — pool z toho měsíce nemá data.")
+    else:
+        # Same self-healing shape as the weekly retry above, and for the same
+        # reason: due_monthly_report is guarded by the file existing, so once
+        # the summary is written a failed send would never be retried and the
+        # month would silently never arrive. Only the month that just ended is
+        # worth resending -- a channel configured in December must not open
+        # with a July summary.
+        pending = market.previous_month_key(market.month_key(now))
+        if report.month_report_path(pending).exists() and state.get("notified_month") != pending:
+            start, end = market.month_bounds(pending)
+            if has_data_for(all_pool, start, end):
+                monthly_meta = report.build_monthly(all_pool, state, pending)
+                notes.append(
+                    f"Měsíční souhrn {pending} byl zapsán dřív, ale neodeslal se — zkouším znovu."
+                )
 
     # State is durable before anything can raise: a notification that fails must
     # cost a retry, not the record of the week.
@@ -2764,6 +2824,16 @@ def update_pool_and_reports(snapshot, changes):
         notes.append(f"Notifikace: {channel or 'žádný kanál nenastaven'}")
         if channel:
             state["notified_week"] = weekly_meta["week"]
+            pool.save_state(state)
+
+    # After the weekly one, and separately: on the first run of a new month both
+    # are due, and two short messages read better on a phone than one merged
+    # wall. A failure here must not cost the weekly send that already succeeded.
+    if monthly_meta is not None:
+        channel = notify.notify(monthly_meta, kind="monthly")
+        notes.append(f"Notifikace měsíčního souhrnu: {channel or 'žádný kanál nenastaven'}")
+        if channel:
+            state["notified_month"] = monthly_meta["month"]
             pool.save_state(state)
 
     # Read-only with respect to the mode: a switch to hard filters is a thing

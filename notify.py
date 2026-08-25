@@ -134,6 +134,67 @@ def build_message(meta, payment_czk=None):
     return "\n".join(lines)
 
 
+def build_monthly_message(meta):
+    """R-7.5 on the phone. The monthly summary exists so that missed weekly
+    notifications don't cost the month -- which it cannot do while it is only
+    written to a file nobody opens. Deliberately coarser than the weekly one:
+    where the month landed, how much moved, and a way into the full write-up.
+    """
+    est = meta["estimate"]
+    lines = [f"<b>📅 Měsíční souhrn · {meta['month']}</b>",
+             f"{meta['period'][0]} – {meta['period'][1]}", ""]
+
+    # N-5 applies here exactly as it does weekly: a move we caused ourselves, or
+    # one measured across two samples of different sizes, is not market movement
+    # and must not be printed as a bare percentage.
+    unusable = meta.get("config_changed") or meta.get("sample_shifted")
+    for label, block_start, block_end, move in (
+        ("Nájem", meta["rent_start"], meta["rent_end"], meta["rent_move"]),
+        ("Prodej", meta["sale_start"], meta["sale_end"], meta["sale_move"]),
+    ):
+        if block_end["median"] is None:
+            continue
+        line = f"<b>{label}</b>: {report.czk(block_end['median'])}/m² (n={block_end['n']})"
+        if move is not None and not unusable:
+            line += f" · {report.pct(move)} za měsíc"
+        lines.append(line)
+
+    lines.append("")
+    for key in ("zarizeny", "nezarizeny"):
+        prof = est["profiles"][key]
+        lines.append(f"<b>{prof['name']}</b>: {report.czk(prof['rent']['median'])} holý nájem "
+                     f"· {report.czk(prof['total']['median'])} celkem")
+    # Same disclosure the weekly message makes. Two identical profiles printed
+    # without it read as "furnishing does not matter here", which is a claim
+    # about the market; it is a gap in the data.
+    separated = est["mode"] == "hard_filters" or any(
+        est["factors"].get(k, {}).get("usable") for k in ("zarizeny", "nezarizeny")
+    )
+    if not separated:
+        lines.append("   ⚠️ oba profily zatím stejné — chybí data o zařízenosti")
+
+    dyn = meta["sale_dynamics"]
+    lines += [
+        "",
+        f"Přibylo {meta['arrived_n']} inzerátů ({meta['arrived_similar_n']} podobných tvému), "
+        f"odešlo {meta['left_n']} ({meta['left_similar_n']} podobných)",
+        f"Prodeje: medián {dyn['days_on_market']['median'] or '—'} dní na trhu, "
+        f"{dyn['repriced_share_pct']} % aspoň jednou zlevnilo",
+    ]
+    if meta.get("config_changed"):
+        lines.append("⚠️ V průběhu měsíce se měnila naše konfigurace hledání — "
+                     "část pohybu je naše, ne trhu.")
+    if meta.get("sample_shifted"):
+        lines.append("⚠️ Vzorek na začátku a na konci měsíce není srovnatelný — "
+                     "změna míchá pohyb trhu s tím, kolik toho systém viděl.")
+    lines += [
+        "",
+        f'<a href="{report.REPO_URL}/blob/main/reports/{meta["month"]}-souhrn.md">Celý souhrn</a>'
+        f' · <a href="{report.PAGES_URL}">dashboard</a>',
+    ]
+    return "\n".join(lines)
+
+
 def _post(url, data, headers=None):
     """`requests` rather than urllib, for the same reason the scraper uses it:
     it carries its own CA bundle. On a machine behind a TLS-inspecting proxy
@@ -210,9 +271,18 @@ def send_ntfy(text):
     return True
 
 
-def notify(meta, dry_run=False):
-    """Returns the channel used, or None when nothing is configured."""
-    text = build_message(meta, mortgage_payment())
+def notify(meta, dry_run=False, kind="weekly"):
+    """Returns the channel used, or None when nothing is configured.
+
+    `kind` picks the message. It is passed explicitly rather than sniffed from
+    the meta's keys, so that a monthly summary can never be silently rendered
+    as a weekly one when a field gets renamed."""
+    if kind == "monthly":
+        text = build_monthly_message(meta)
+    elif kind == "weekly":
+        text = build_message(meta, mortgage_payment())
+    else:
+        raise NotifyError(f"neznámý druh notifikace: {kind!r}")
     if dry_run:
         print(text)
         print("\n--- jako plain text (ntfy) ---")
@@ -225,10 +295,11 @@ def notify(meta, dry_run=False):
     # Not a crash: the pipeline is useful before the secrets exist, and failing
     # here would take the snapshot down with it. But it must not be quiet --
     # a notification nobody receives is indistinguishable from a quiet market.
+    what = "Měsíční souhrn" if kind == "monthly" else "Týdenní zápis"
     print(
         "::warning::Žádný notifikační kanál není nastavený "
         "(TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID, nebo NTFY_TOPIC + NTFY_TOKEN). "
-        "Týdenní zápis se vygeneroval, ale nikam se neodeslal.",
+        f"{what} se vygeneroval, ale nikam se neodeslal.",
         file=sys.stderr,
     )
     return None
