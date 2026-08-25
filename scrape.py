@@ -1539,10 +1539,21 @@ def rank_deals(comparables):
 # its Kč/m² against listings that don't include them. Deliberately no unit
 # number or project name -- this repo and its Pages site are public, and the
 # comparison works without naming which flat it is.
+#
+# The purchase price comes from the environment rather than sitting here: it is
+# a personal figure and this file is public (R-10.1). Without OWN_PRICE_CZK the
+# card simply does not render -- there is nothing to compare against, and a
+# card that quietly drops its own reference point would be worse than no card.
+#
+# NOTE, and it matters: keeping the number out of the source does NOT keep it
+# off the published page. The card prints it into dashboard.html, which is
+# committed to this public repo and served by Pages. Only removing the personal
+# marker from the card would do that; the secret alone moves the number from
+# the source into a build artefact.
 OWN_PROPERTY = {
     "disposition": "1+kk",
     "floor_area_sqm": 29.6,
-    "price_czk": 6_556_088,
+    "price_czk": env_int("OWN_PRICE_CZK", None),
     "caveat": "novostavba, dokončení ~léto 2027 — okolní inzeráty jsou převážně starší byty z druhé ruky",
 }
 # Comparables are drawn from a size band, not just the disposition, because
@@ -1558,6 +1569,15 @@ def own_property_stats(comparables):
 
     Returns None rather than a half-answer if too few comparables survive the
     filters -- a "percentile" out of three listings would read as a fact."""
+    if not OWN_PROPERTY["price_czk"]:
+        # Loud rather than a missing card nobody notices: the reference flat is
+        # the reason half this dashboard exists.
+        print(
+            "::warning::OWN_PRICE_CZK není nastavené — karta „Tvůj byt\" se nevykreslí. "
+            "Nastav ho jako secret repa.",
+            file=sys.stderr,
+        )
+        return None
     own_per_sqm = round(OWN_PROPERTY["price_czk"] / OWN_PROPERTY["floor_area_sqm"])
     lo, hi = OWN_SIZE_BAND_SQM
 

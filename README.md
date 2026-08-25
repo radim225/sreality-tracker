@@ -109,6 +109,7 @@ o tom napíše warning):
 | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | Primární kanál. |
 | `NTFY_TOPIC`, `NTFY_TOKEN` | Náhrada. Token je povinný — veřejné téma by si mohl přečíst kdokoli. |
 | `MORTGAGE_PAYMENT_CZK` | Měsíční splátka pro výpočet pokrytí. **Jde jen do notifikace**, nikdy na dashboard ani do archivu. |
+| `OWN_PRICE_CZK` | Kupní cena referenčního bytu. Bez ní se karta „Tvůj byt" nevykreslí. ⚠️ Drží číslo mimo zdroják, **ne mimo publikovanou stránku** — karta ho vypisuje do `dashboard.html`, který je v tomhle veřejném repu. |
 
 Náhled zprávy bez odeslání: `python3 notify.py --dry-run --week 2026-W34`.
 

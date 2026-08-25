@@ -96,6 +96,10 @@ jobs:
           # only the notification (R-5.6, R-10.1). Hence a secret rather than a
           # constant in this public repo.
           MORTGAGE_PAYMENT_CZK: ${{ secrets.MORTGAGE_PAYMENT_CZK }}
+          # Purchase price of the reference flat. Without it the "Tvůj byt"
+          # card does not render. See the note by OWN_PROPERTY: this keeps the
+          # figure out of the source, not off the published page.
+          OWN_PRICE_CZK: ${{ secrets.OWN_PRICE_CZK }}
           MAX_DETAIL_FETCHES: ${{ github.event.inputs.max_detail_fetches }}
           MAX_SOURCE_DETAIL_FETCHES: ${{ github.event.inputs.max_source_detail_fetches }}
           MAX_REENRICH: ${{ github.event.inputs.max_reenrich }}
