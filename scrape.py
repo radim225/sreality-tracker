@@ -116,7 +116,10 @@ MAX_FEE_ATTEMPTS = 3
 # differing fees. Nothing cached is wrong, so there is nothing to flush, and a
 # bump would have bought a 40-70 minute re-enrich for no change at all. Bump it
 # the moment that guard starts changing an answer.
-PARSER_VERSION = 3
+# 4: the clause splitter now breaks a sentence that ends in a bracket or a
+#    digit. That moment arrived -- 11 cached rentals hold the parking price
+#    where the service charge belongs, so they have to be read again.
+PARSER_VERSION = 4
 
 # Sreality's "estate" payload gives base rent (price) and service fees
 # (params.costOfLiving) separately, but never itemizes electricity -- it's
@@ -318,8 +321,17 @@ INCLUSIVE_RE = re.compile(
 # pipe-separated one-liners or markdown bullet lists, and without them a whole
 # fee list collapses into one clause -- which then gets thrown away entirely as
 # soon as it happens to also mention "kauce".
+#
+# The lookbehind accepts a digit or a closing bracket as well as a letter. It
+# used to be letters only, which meant a sentence ending in a parenthesised
+# amount never split: "...parkovací stání v podzemní garáži (2 500 Kč).
+# Poplatky cca 3 500 Kč měsíčně" stayed one clause, carried a fee keyword and
+# two plausible amounts, and the multi-tier rule below then picked the cheaper
+# one -- the PARKING price, not the fee. Eleven live adverts, eight of them the
+# same agency template across one building, were understating their all-in
+# total by 1 000 Kč each. 96 adverts contain the "). " shape overall.
 CLAUSE_SPLIT_RE = re.compile(
-    r'\+|;|\||\n|\s\*+\s|\bplus\b|,\s+|(?<=[a-zá-ž])\.\s+(?=[A-ZÁ-Ž])', re.I
+    r'\+|;|\||\n|\s\*+\s|\bplus\b|,\s+|(?<=[a-zá-ž0-9\)])\.\s+(?=[A-ZÁ-Ž])', re.I
 )
 # Czech number formats: "3 400", "3.400", "3,400", "3400", with optional Kč/CZK.
 NUMBER_RE = re.compile(r'(\d{1,3}(?:[ .,]\d{3})+|\d{3,6})\s*(?:k[čc]|czk)?', re.I)

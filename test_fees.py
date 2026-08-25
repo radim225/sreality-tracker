@@ -94,6 +94,20 @@ CASES = [
     ("cellar inside the fee clause", None,
      "Poplatky za služby včetně sklepa 3.500 Kč", 3500, None),
     ("garage included in the fee", "Poplatky včetně garážového stání 4.200 Kč", None, 4200, None),
+    # Live shape, eight adverts of one agency template. The sentence ends in a
+    # parenthesised amount, so the old letters-only lookbehind never split it;
+    # the clause then carried a fee keyword and two amounts, and the multi-tier
+    # rule picked the cheaper one -- which was the parking, not the fee.
+    ("parenthesised parking price, then the fee", None,
+     "K bytu náleží sklep a parkovací stání v podzemní garáži (2 500 Kč). "
+     "Poplatky cca 3 500 Kč měsíčně, elektřina se převádí na nájemce.", 3500, None),
+    # The same split must not fire on an abbreviation, which is what the
+    # letters-only lookbehind was protecting.
+    ("abbreviation is still not a sentence end", None,
+     "Poplatky 3.500 Kč vč. vody a tepla", 3500, None),
+    # A digit ending a sentence splits too -- previously it did not.
+    ("sentence ending in a bare number", None,
+     "Parkovací stání stojí 2.000. Poplatky za služby činí 4.100 Kč.", 4100, None),
 ]
 
 
