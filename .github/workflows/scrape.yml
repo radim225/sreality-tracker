@@ -13,6 +13,18 @@ on:
         description: "Sreality listing URL (or numeric id) to remove from tracked.json before scraping"
         required: false
         default: ""
+      max_detail_fetches:
+        description: "One-off ceiling on Sreality detail fetches (blank = default 300). Raise for a backfill after a PARSER_VERSION bump."
+        required: false
+        default: ""
+      max_source_detail_fetches:
+        description: "One-off ceiling per extra source (blank = default 200)."
+        required: false
+        default: ""
+      max_reenrich:
+        description: "One-off ceiling on re-reads of already-cached listings (blank = default 60). A PARSER_VERSION bump needs this raised too, or the backfill trickles at 60/run."
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -26,7 +38,13 @@ concurrency:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # A steady run is ~6 min. The ceiling is generous because a backfill run
+    # after a PARSER_VERSION bump re-reads every cached listing, and Sreality
+    # serves that burst at ~1 s each when it is happy and ~7 s inside a
+    # throttling window -- one such run was measured locally at well over an
+    # hour. Cron is every 8 h and the concurrency group prevents overlap, so a
+    # two-hour ceiling costs nothing and stops a backfill being killed halfway.
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -59,8 +77,32 @@ jobs:
         run: |
           python test_fees.py
           python test_cache.py
+          python test_pool.py
+          python test_market.py
+          python test_report.py
+          python test_notify.py
 
       - name: Run scraper
+        env:
+          # The weekly write-up and the notification run at the end of the
+          # scrape, so their configuration lives on this step. Every one of
+          # these is optional: without them the scrape and the report still
+          # run, the notification just warns that it has nowhere to go.
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          NTFY_TOKEN: ${{ secrets.NTFY_TOKEN }}
+          # Private: the payment never reaches the dashboard or the archive,
+          # only the notification (R-5.6, R-10.1). Hence a secret rather than a
+          # constant in this public repo.
+          MORTGAGE_PAYMENT_CZK: ${{ secrets.MORTGAGE_PAYMENT_CZK }}
+          # Purchase price of the reference flat. Without it the "Tvůj byt"
+          # card does not render. See the note by OWN_PROPERTY: this keeps the
+          # figure out of the source, not off the published page.
+          OWN_PRICE_CZK: ${{ secrets.OWN_PRICE_CZK }}
+          MAX_DETAIL_FETCHES: ${{ github.event.inputs.max_detail_fetches }}
+          MAX_SOURCE_DETAIL_FETCHES: ${{ github.event.inputs.max_source_detail_fetches }}
+          MAX_REENRICH: ${{ github.event.inputs.max_reenrich }}
         run: python scrape.py
 
       - name: Mirror dashboard as Pages index
@@ -71,6 +113,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add snapshots latest_snapshot.json last_changes.json changes_history.json dashboard.html index.html tracked.json
+          git add changes_log.jsonl pool reports
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else

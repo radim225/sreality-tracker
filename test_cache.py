@@ -135,6 +135,37 @@ def case_unknown_advert_is_read():
     assert needed and reason == "new", (needed, reason)
 
 
+def case_reparse_is_not_a_price_change():
+    """A PARSER_VERSION bump must not announce itself as market movement.
+
+    Re-reading an advert with a fixed fee parser moves its all-in total while
+    the advertised rent has not budged, and the total is what change detection
+    compares. Unlike a search-config change, this arrives spread over however
+    many runs the re-read takes, so the one-off re-baseline cannot cover it --
+    the unchanged base price is the tell."""
+    def advert(price, total, version):
+        return dict(id=7, source="sreality", transaction_type="pronajem",
+                    disposition="1+kk", floor_area_sqm=30.0, price_czk=price,
+                    total_czk=total, electricity_estimated=True,
+                    parser_version=version, url="https://sreality/7")
+
+    def snapshot(advert_, at):
+        return {"generated_at": at, "config": {"radius_km": 3.0}, "tracked": [],
+                "comparables": [advert_], "pending_removal": []}
+
+    prev = snapshot(advert(20000, 23000, 2), "2026-08-23T00:00:00Z")
+    same_rent = scrape.diff_snapshots(prev, snapshot(advert(20000, 24500, 3),
+                                                    "2026-08-24T00:00:00Z"))
+    assert same_rent["price_changes"] == [], (
+        f"re-parse reported as a price change: {same_rent['price_changes']}"
+    )
+    moved = scrape.diff_snapshots(prev, snapshot(advert(19000, 22000, 3),
+                                                 "2026-08-24T00:00:00Z"))
+    assert [c["new_price_czk"] for c in moved["price_changes"]] == [19000], (
+        "a rent that really moved was suppressed"
+    )
+
+
 def main():
     # The cases build on each other: dedup produces the folded copies, which
     # produce the cache, which the planners are then asked about.
@@ -150,6 +181,7 @@ def main():
         ("parser bump flushes source cache", case_parser_bump_flushes_source_cache),
         ("int ids survive the JSON round-trip", case_int_ids_survive_json),
         ("unknown advert is still read", case_unknown_advert_is_read),
+        ("re-parse is not a price change", case_reparse_is_not_a_price_change),
     ]
     failures = []
     for label, fn in checks:

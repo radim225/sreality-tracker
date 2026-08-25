@@ -41,7 +41,18 @@ _COST_FN = None      # (price, fee, tx, electricity, fee_source) -> cost tuple
 _STREET_GPS = {}     # lowercased street name -> (lat, lon), from the Sreality sweep
 _PREV_BY_ID = {}     # last run's comparables, so unchanged adverts skip their detail fetch
 _PARSER_VERSION = None  # scrape.PARSER_VERSION; a bump invalidates cached fee data
-MAX_DETAIL_FETCHES = int(os.environ.get("MAX_SOURCE_DETAIL_FETCHES", "200"))  # per source, per run
+def env_int(name, default):
+    """An integer knob from the environment, tolerant of a blank value.
+
+    A workflow_dispatch input left empty arrives as "" rather than absent, so
+    int(os.environ[...]) would crash every scheduled run the moment a one-off
+    override existed. Lives here rather than in scrape.py because scrape
+    imports this module, not the other way round."""
+    raw = (os.environ.get(name) or "").strip()
+    return int(raw) if raw else default
+
+
+MAX_DETAIL_FETCHES = env_int("MAX_SOURCE_DETAIL_FETCHES", 200)  # per source, per run
 
 # iDNES has no per-listing GPS anywhere on the card or the detail page, so it is
 # filtered by the ward label its cards carry ("Kolmá, Praha 9 - Vysočany").
