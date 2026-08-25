@@ -136,6 +136,40 @@ check("and the report can find it in a period",
 check("...but not outside it",
       pool.config_changed_between(state, "2026-08-05T00:00:00Z", "2026-08-06T00:00:00Z"), False)
 
+# --- replaying an out-of-order snapshot ---------------------------------- #
+# Re-running the backfill after production has moved on is the obvious way to
+# fold in snapshots the pool missed, and it replays OLDER ones. That must not
+# rewrite the present: D4 says the record carries the last seen price, and
+# price_at() walks the path assuming it is sorted.
+p4 = {}
+pool.update_from_snapshot(p4, snap("2026-08-01T00:00:00Z", [listing(20, 20000)]))
+pool.update_from_snapshot(p4, snap("2026-08-20T00:00:00Z", [listing(20, 18000)]))
+pool.update_from_snapshot(p4, snap("2026-08-10T00:00:00Z", [listing(20, 19000)]))
+rec4 = p4["20"]
+check("an older snapshot does not overwrite the last seen price (D4)",
+      rec4["price_czk"], 18000)
+check("...nor moves last_seen backwards", rec4["last_seen"], "2026-08-20T00:00:00Z")
+check("...and the path stays chronological",
+      [e["at"] for e in rec4["price_history"]],
+      ["2026-08-01", "2026-08-10", "2026-08-20"])
+check("...so the price on a past date is still right",
+      pool.price_at(rec4, "2026-08-12")[0], 19000)
+check("...and the drops still count", pool.price_drops(rec4)[0], 2)
+
+# The same replay must not resurrect a listing that is genuinely gone.
+pool.update_from_snapshot(p4, snap("2026-08-21T00:00:00Z", []),
+                          changes={"newly_inactive": [{"id": 20}]})
+pool.update_from_snapshot(p4, snap("2026-08-05T00:00:00Z", [listing(20, 20000)]))
+check("an older sighting does not undo a confirmed removal",
+      p4["20"]["gone_at"], "2026-08-21T00:00:00Z")
+
+# Repeats collapse, so the path stays the points where the price actually moved.
+p5 = {}
+for day in ("01", "02", "03"):
+    pool.update_from_snapshot(p5, snap(f"2026-08-{day}T00:00:00Z", [listing(21, 20000)]))
+check("an unchanged price does not lengthen the path",
+      len(p5["21"]["price_history"]), 1)
+
 print()
 if FAILURES:
     print(f"{len(FAILURES)} case(s) failed: {', '.join(FAILURES)}")

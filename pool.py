@@ -141,9 +141,35 @@ def _snapshot_view(comp):
     return rec
 
 
+def record_price(rec, at_day, price_czk, total_czk):
+    """Put one price sighting into the advert's path.
+
+    Sorted rather than appended, because snapshots do not always arrive in
+    order: re-running the backfill after production has moved on -- the obvious
+    way to fold in snapshots the pool missed -- replays older ones. An
+    out-of-order path breaks `price_at`, which walks the list assuming it is
+    sorted, and `price_drops`, which reads its ends.
+
+    Repeats collapse, so the path stays what it claims to be: the points where
+    the price actually moved. Returns True when the path gained a point."""
+    if price_czk is None or not at_day:
+        return False
+    history = rec.setdefault("price_history", [])
+    before = len(history)
+    history.append({"at": at_day, "price_czk": price_czk, "total_czk": total_czk})
+    history.sort(key=lambda entry: entry.get("at") or "")
+    collapsed = []
+    for entry in history:
+        if collapsed and collapsed[-1].get("price_czk") == entry.get("price_czk"):
+            continue
+        collapsed.append(entry)
+    rec["price_history"] = collapsed
+    return len(collapsed) > before
+
+
 def update_from_snapshot(pool, snapshot, changes=None, at=None):
-    """Fold one snapshot into the pool. Idempotent for a given `at`, so the
-    backfill can replay the whole archive and a re-run cannot double-count.
+    """Fold one snapshot into the pool. Safe to replay in any order, so the
+    backfill can be re-run over an archive the pool has partly seen.
 
     `changes["newly_inactive"]` is the only thing that sets `gone_at`. Absence
     from a snapshot means nothing on its own -- the ward sweep walks ~60
@@ -168,38 +194,36 @@ def update_from_snapshot(pool, snapshot, changes=None, at=None):
                 "price_history": [],
                 **view,
             }
-            if rec.get("price_czk") is not None:
-                rec["price_history"] = [{
-                    "at": at_day,
-                    "price_czk": rec.get("price_czk"),
-                    "total_czk": rec.get("total_czk"),
-                }]
+            record_price(rec, at_day, rec.get("price_czk"), rec.get("total_czk"))
             pool[rec_id] = rec
             counts["new"] += 1
             continue
 
-        old_price = rec.get("price_czk")
-        # D4: the record always carries the last seen price. The path is kept
-        # separately, so "how many times did it come down" stays answerable
-        # without the current statistics ever reading a stale number.
-        rec.update(view)
-        if at and (rec.get("last_seen") or "") <= at:
+        # D4: the record carries the LAST seen price, so a snapshot older than
+        # the one already folded in must not overwrite it. It may still fill a
+        # gap -- an attribute nobody had read yet -- but never replace an answer
+        # a newer snapshot already gave.
+        newer = not rec.get("last_seen") or at >= rec["last_seen"]
+        if newer:
+            rec.update(view)
             rec["last_seen"] = at
-        new_price = rec.get("price_czk")
-        if new_price is not None and new_price != old_price:
-            history = rec.setdefault("price_history", [])
-            if not (history and history[-1].get("at") == at_day
-                    and history[-1].get("price_czk") == new_price):
-                history.append({
-                    "at": at_day,
-                    "price_czk": new_price,
-                    "total_czk": rec.get("total_czk"),
-                })
-                counts["repriced"] += 1
-        if rec.get("gone_at"):
+            if at < (rec.get("first_seen") or at):
+                rec["first_seen"] = at
+        else:
+            for key, value in view.items():
+                if rec.get(key) is None:
+                    rec[key] = value
+            if at < (rec.get("first_seen") or at):
+                rec["first_seen"] = at
+
+        if record_price(rec, at_day, view.get("price_czk"), view.get("total_czk")):
+            counts["repriced"] += 1
+
+        if rec.get("gone_at") and newer:
             # It answered again, so the earlier removal was wrong or the advert
             # was re-posted. Say so on the record rather than quietly dropping
-            # the fact that we once called it gone.
+            # the fact that we once called it gone. Only a NEWER sighting counts
+            # -- an older snapshot showing it alive says nothing about now.
             rec["resurrected_at"] = at
             rec["gone_at"] = None
             counts["resurrected"] += 1

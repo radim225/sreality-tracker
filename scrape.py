@@ -66,14 +66,6 @@ SEARCH_WARDS = [
 AREA_LANDMARKS = "Pod Harfou · Kolbenova · Hrdlořezy · Podvinný mlýn · Palmovka · Karlín"
 
 
-def env_int(name, default):
-    """A workflow_dispatch input that was left blank arrives as an empty
-    string, not as an absent variable, so the scheduled runs would crash on
-    int("") the moment the one-off override existed."""
-    raw = (os.environ.get(name) or "").strip()
-    return int(raw) if raw else default
-
-
 MAX_IMAGES_PER_LISTING = 5
 MAX_DESCRIPTION_CHARS = 1200
 MAX_HISTORY_EVENTS = 300
@@ -90,7 +82,7 @@ MAX_HISTORY_EVENTS = 300
 # afternoon -- with the estimate running on half-populated attributes the whole
 # time. So the ceiling is overridable for the one backfill run that follows a
 # bump (workflow input `max_reenrich`), and back to 60 for steady state.
-MAX_REENRICH_PER_RUN = env_int("MAX_REENRICH", 60)
+MAX_REENRICH_PER_RUN = sources.env_int("MAX_REENRICH", 60)
 # Hard ceiling on detail fetches per run. Sreality serves this burst at about
 # 1 s per listing when it is happy, but drops into throttling windows where the
 # retry backoff pushes it to ~7 s -- measured across one full backfill. The cap
@@ -99,7 +91,7 @@ MAX_REENRICH_PER_RUN = env_int("MAX_REENRICH", 60)
 # converges over the next couple of runs: whatever is left unenriched comes back
 # as a "retry" next time, and those listings are on the dashboard meanwhile --
 # they just carry price and locality until their detail lands.
-MAX_DETAIL_FETCHES_PER_RUN = env_int("MAX_DETAIL_FETCHES", 300)
+MAX_DETAIL_FETCHES_PER_RUN = sources.env_int("MAX_DETAIL_FETCHES", 300)
 # How many clean reads an advert gets before "no fee stated" is accepted as the
 # answer rather than retried. Roughly a third of Sreality rentals never quote a
 # service charge anywhere.
@@ -1553,7 +1545,7 @@ def rank_deals(comparables):
 OWN_PROPERTY = {
     "disposition": "1+kk",
     "floor_area_sqm": 29.6,
-    "price_czk": env_int("OWN_PRICE_CZK", None),
+    "price_czk": sources.env_int("OWN_PRICE_CZK", None),
     "caveat": "novostavba, dokončení ~léto 2027 — okolní inzeráty jsou převážně starší byty z druhé ruky",
 }
 # Comparables are drawn from a size band, not just the disposition, because

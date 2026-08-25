@@ -191,6 +191,20 @@ check("a steady sample is not", market.trend(series, 4)["sample_shifted"], False
 check("both ends are reported so the reader can see it",
       (market.trend(ramp, 4)["from_n"], market.trend(ramp, 4)["to_n"]), (40, 460))
 
+# A horizon of N weeks compares two endpoints, so the series needs N+1 points.
+# Requesting exactly max(TREND_HORIZONS) left the 12-week trend one week short
+# and it returned None every time -- reported as "the series is still shorter",
+# which reads as a fact about the data rather than an off-by-one.
+full = [{"week": f"2026-W{20 + i:02d}", "median": 500 + i, "n": 50}
+        for i in range(market.SERIES_WEEKS)]
+check("the series is long enough for the longest horizon",
+      market.SERIES_WEEKS, max(market.TREND_HORIZONS) + 1)
+for horizon in market.TREND_HORIZONS:
+    check(f"a {horizon}-week trend is computable from a full series",
+          market.trend(full, horizon) is not None, True)
+check("the longest horizon reaches the oldest point",
+      market.trend(full, max(market.TREND_HORIZONS))["from_week"], full[0]["week"])
+
 # --- noise band ---------------------------------------------------------- #
 # Under six week-on-week deltas the threshold is not derivable, and R-6.2 says
 # it must be derived rather than chosen -- so it comes back as "unknown" and the

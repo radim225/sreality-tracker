@@ -146,8 +146,10 @@ def build_weekly(all_pool, state, week_key, as_of=None):
 
     estimate = market.rent_estimate(window, as_of=as_of, state=state, week_key=week_key)
 
-    series = market.weekly_series(all_pool, weeks=12, as_of=as_of, tx="pronajem")
-    sale_series = market.weekly_series(all_pool, weeks=12, as_of=as_of, tx="prodej")
+    series = market.weekly_series(
+        all_pool, weeks=market.SERIES_WEEKS, as_of=as_of, tx="pronajem")
+    sale_series = market.weekly_series(
+        all_pool, weeks=market.SERIES_WEEKS, as_of=as_of, tx="prodej")
     band = market.noise_band(series)
 
     arrived, left = market.period_movement(all_pool, start, end)

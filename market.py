@@ -45,6 +45,16 @@ HARD_FILTER_WEEKS = 4
 # purpose: "we don't adjust for a balcony" is a finding, not an omission.
 NOT_SEPARABLE = ("balkon", "sklep", "garáž/stání", "patro", "orientace")
 
+# Horizons the report leads with (R-6.1). Week-on-week is deliberately absent:
+# with a 30-day window two neighbouring weeks share ~75 % of their sample, so
+# the delta is small before the market gets a say.
+TREND_HORIZONS = (4, 12)
+# A horizon of N weeks compares two endpoints, so it needs N+1 points in the
+# series. Asking for exactly max(TREND_HORIZONS) gave a series whose oldest
+# week was one short, and the 12-week trend then came back None every single
+# time -- silently, as "série je zatím kratší".
+SERIES_WEEKS = max(TREND_HORIZONS) + 1
+
 
 def iso_week_key(when):
     dt = parse_ts(when) or datetime.now(timezone.utc)
