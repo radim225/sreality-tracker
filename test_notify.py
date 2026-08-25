@@ -104,6 +104,53 @@ for key in ("MORTGAGE_PAYMENT_CZK", "MORTGAGE_PRINCIPAL_CZK", "MORTGAGE_RATE_PCT
     os.environ.pop(key, None)
 check("nothing configured means no payment", notify.mortgage_payment(), None)
 
+# --- the monthly summary has to reach the phone too ---------------------- #
+# Until this existed the summary was written to reports/ and nothing sent it,
+# so the one artefact whose whole job is to stop a missed week costing the
+# month was the one Radim never saw.
+MONTHLY = {
+    "month": "2026-07",
+    "period": ("01. 07. 2026", "31. 07. 2026"),
+    "estimate": estimate,
+    "rent_start": {"median": 500, "n": 40}, "rent_end": {"median": 515, "n": 44},
+    "rent_move": 3.0,
+    "sale_start": {"median": 210000, "n": 30}, "sale_end": {"median": 212000, "n": 31},
+    "sale_move": 1.0,
+    "sample_shifted": False,
+    "arrived_n": 120, "left_n": 90,
+    "arrived_similar_n": 7, "left_similar_n": 4,
+    "sale_dynamics": {"days_on_market": {"median": 41}, "repriced_share_pct": 18.0},
+    "config_changed": False,
+}
+monthly = notify.build_monthly_message(MONTHLY)
+check("the monthly summary names the month on the first line",
+      "2026-07" in monthly.splitlines()[0], True)
+mplain = notify.to_plain(monthly)
+check("the monthly link points at the summary, not a week",
+      "reports/2026-07-souhrn.md" in mplain, True)
+check("no markup leaks out of the monthly message",
+      "<b>" in mplain or "<a " in mplain, False)
+check("the monthly message carries the movement counts",
+      "120" in mplain and "90" in mplain, True)
+
+# N-5: a move we caused ourselves is not a market move, monthly or weekly.
+contaminated = notify.to_plain(
+    notify.build_monthly_message({**MONTHLY, "config_changed": True}))
+check("a config change suppresses the monthly percentage",
+      "3,0 %" in contaminated or "+3.0" in contaminated, False)
+check("...and says why instead", "konfigurace" in contaminated, True)
+shifted = notify.to_plain(
+    notify.build_monthly_message({**MONTHLY, "sample_shifted": True}))
+check("a shifted sample suppresses it too", "srovnatelný" in shifted, True)
+
+# The two messages must not be interchangeable -- a renamed field must fail
+# loudly rather than render a monthly summary as a week.
+try:
+    notify.notify(MONTHLY, dry_run=True, kind="ctvrtletni")
+    check("an unknown notification kind is refused", "no error", "NotifyError")
+except notify.NotifyError:
+    check("an unknown notification kind is refused", True, True)
+
 # --- an unconfigured channel warns, it does not crash the run ------------ #
 for key in ("TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID", "NTFY_TOPIC", "NTFY_TOKEN"):
     os.environ.pop(key, None)
