@@ -389,8 +389,23 @@ INCLUSIVE_RE = re.compile(
 # one -- the PARKING price, not the fee. Eleven live adverts, eight of them the
 # same agency template across one building, were understating their all-in
 # total by 1 000 Kč each. 96 adverts contain the "). " shape overall.
+# NOT re.I. The flag used to be here and it quietly cancelled this pattern's
+# own rule: with it, [a-zá-ž] and [A-ZÁ-Ž] both match either case, so the
+# "don't split on an abbreviation followed by a lowercase word" guard did
+# nothing and "vč. TV a internetu" broke into two clauses. That never changed a
+# fee -- measured, 0 of 502 -- but it made the fee look like it came from the
+# next clause, which sent 3 correctly-parsed adverts to the review queue. Only
+# `\bplus\b` ever needed case-insensitivity, and it gets it locally.
+# Abbreviations a Czech sentence never ends on. The uppercase guard below is
+# not enough for these: "vč. TV a internetu" has a capital after the dot and
+# splits legitimately by that rule, which severed the fee keyword from its
+# amount and made a perfectly clear clause look like a lookahead.
+# Each lookbehind is fixed-width on purpose -- Python allows several in a row
+# but not one alternation of differing lengths.
+_ABBREV_GUARD = r'(?<!\bvč)(?<!\bč)(?<!\bel)(?<!\btj)(?<!\batd)(?<!\bcca)(?<!\bnapř)(?<!\bmin)(?<!\bmax)'
 CLAUSE_SPLIT_RE = re.compile(
-    r'\+|;|\||\n|\s\*+\s|\bplus\b|,\s+|(?<=[a-zá-ž0-9\)])\.\s+(?=[A-ZÁ-Ž])', re.I
+    r'\+|;|\||\n|\s\*+\s|(?i:\bplus\b)|,\s+|'
+    + _ABBREV_GUARD + r'(?<=[a-zá-ž0-9\)])\.\s+(?=[A-ZÁ-Ž])'
 )
 # Czech number formats: "3 400", "3.400", "3,400", "3400", with optional Kč/CZK.
 NUMBER_RE = re.compile(r'(\d{1,3}(?:[ .,]\d{3})+|\d{3,6})\s*(?:k[čc]|czk)?', re.I)

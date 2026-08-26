@@ -46,6 +46,12 @@ CASES = [
     ("no fee anywhere", None, "Krásný byt v cihlovém domě.", None, set()),
     # The all-in total that is NOT the rent is already correctly rejected, and
     # rejection is an answer -- it must not also queue.
+    # Same advert as the new case in test_fees.py, from the other side: it must
+    # not be queued either. The fee is right there in the same clause; only the
+    # re.I bug made it look like a lookahead.
+    ("abbreviation is not a lookahead", None,
+     "Poplatky za společné služby vč. TV a internetu a záloh na energie 6.500 Kč/měs.",
+     None, set()),
     ("all-in total that is not the rent", None,
      "Celková cena včetně paušálních poplatků je 48 000 Kč", 34000, set()),
 ]

@@ -37,6 +37,14 @@ CASES = [
      "při jedné osobě, 3.500 Kč při dvou osobách", 2500, None),
 
     # --- formats that already worked, kept so they keep working ---------- #
+    # The clause splitter must NOT break on an abbreviation followed by a
+    # lowercase word. Its own pattern says so, but re.I used to cancel that
+    # rule -- with the flag on, [a-zá-ž] and [A-ZÁ-Ž] both match either case.
+    # "vč. TV a internetu" split in two, which never changed this fee but made
+    # it look like it came from the next clause.
+    ("abbreviation inside a fee clause", None,
+     "Poplatky za společné služby vč. TV a internetu a záloh na energie 6.500 Kč/měs.",
+     6500, None),
     ("clean int field", "3400", None, 3400, None),
     ("field phrase", "+ poplatky 3.400 Kč + el. energie + vratná kauce + provize RK",
      None, 3400, None),
