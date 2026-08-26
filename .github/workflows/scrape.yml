@@ -115,7 +115,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add snapshots latest_snapshot.json last_changes.json changes_history.json dashboard.html index.html tracked.json
-          git add changes_log.jsonl pool reports
+          git add changes_log.jsonl pool reports fee_review_queue.json
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
