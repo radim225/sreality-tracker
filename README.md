@@ -65,7 +65,8 @@ Symetricky k přidání:
 | `reports/` | Archiv zápisů: `YYYY-Www.md` a `YYYY-MM-souhrn.md`. |
 | `notify.py` | Odeslání týdenního verdiktu na mobil (Telegram, ntfy jako náhrada). |
 | `backfill_pool.py` | Jednorázové přehrání archivu snapshotů do poolu. |
-| `test_fees.py`, `test_cache.py`, `test_pool.py`, `test_market.py`, `test_report.py`, `test_notify.py` | Testy, běží v CI před scrapem. |
+| `fee_review_queue.json` | Pronájmy, u kterých parser odmítl hádat poplatek — k ručnímu projití. |
+| `test_fees.py`, `test_fee_queue.py`, `test_parking.py`, `test_cache.py`, `test_pool.py`, `test_market.py`, `test_report.py`, `test_notify.py` | Testy, běží v CI před scrapem. |
 | `dashboard.html` / `index.html` | Statický dashboard (GitHub Pages servíruje `index.html`). |
 | `snapshots/` | Historické snapshoty jednotlivých běhů. |
 | `.github/workflows/scrape.yml` | Naplánovaná automatizace. |
@@ -125,6 +126,38 @@ stropy: workflow *Scrape Sreality* má na to vstupy `max_detail_fetches`,
 nakešovaných inzerátů a bump pošle do téhle fronty všechny najednou — při
 výchozích 60 za běh by se atributy doplňovaly týden a odhad by mezitím počítal
 z poloprázdných dat.
+
+
+## Fronta neznámých poplatků
+
+`fee_review_queue.json` drží pronájmy, u kterých parser **odmítl hádat**. Čtyři
+důvody, každý s vlastním jménem v `FEE_AMBIGUITY_REASONS`:
+
+| důvod | co znamená |
+|---|---|
+| `lookahead` | částka přišla z **následující** věty, ne z té s klíčovým slovem |
+| `multiple_candidates` | dvě a víc věrohodných částek v jedné větě, nic neříká která |
+| `person_tier` | zafungovalo pravidlo „ber nižší" u sazby podle počtu osob |
+| `included_without_amount` | „v ceně" bez jakékoli částky, která by to potvrdila |
+
+U každého záznamu je doslovný text, ze kterého se rozhodovalo, a `would_have_said`
+— co by parser býval odpověděl. **Smyslem je opravit pravidlo, ne řádek.** Důvod,
+který se opakovaně ukáže jako neškodný, se má zrušit.
+
+Prodeje se do fronty nedostanou nikdy: nemají měsíční poplatky, o kterých by se
+dalo pochybovat.
+
+## Garáže a parkování
+
+Dvě různé věci, nepleteme je:
+
+- **`parking_state` na bytu** — tři stavy: `none` / `unpriced` / `priced`.
+  `unpriced` **není nula**. Inzerát stání má, cenu neuvádí, takže ji nájem
+  nejspíš už zahrnuje — a do mediánu cen stání takový inzerát nevstupuje.
+- **`snapshot["garages"]`** — samostatně inzerované garáže a stání, vlastní
+  kategorie Sreality (34 garáž, 52 garážové stání) pod „Ostatní". Drží se
+  **odděleně od `comparables` end-to-end**: `compute_stats` počítá medián Kč/m²
+  bez filtru na dispozici, takže garáž mezi byty by tiše rozbila statistiku.
 
 ## Zdroje comparables
 
