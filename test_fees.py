@@ -108,6 +108,34 @@ CASES = [
     # A digit ending a sentence splits too -- previously it did not.
     ("sentence ending in a bare number", None,
      "Parkovací stání stojí 2.000. Poplatky za služby činí 4.100 Kč.", 4100, None),
+
+    # --- found by measuring against labelled adverts, not by reading code --- #
+    # "záloha" says a payment is an advance, not what for. A clause whose only
+    # fee word is that generic one, next to an explicit "energie", is about
+    # electricity and must not claim the fee slot.
+    ("generic záloha next to energie is electricity", None,
+     "Nájem 18.000 Kč, poplatky 3.200 Kč, záloha na energie 1.500 Kč", 3200, None),
+    # Both costs in ONE clause, no persons mentioned: the cheapest-wins rule was
+    # written for tier tables and has no business here. The amount nearest a
+    # specific fee word wins instead.
+    ("two different costs, one clause", None,
+     "Poplatky jsou 4750 Kč a zálohy na energie 1150 kč.", 4750, None),
+    # ...but a real tier table must still resolve to the single occupant.
+    ("tier table still takes the cheapest", None,
+     "Záloha na služby 2.500 Kč pro 1 osobu, 3.500 Kč pro 2 osoby", 2500, None),
+    # "paušál" is how a third of agencies write the service charge.
+    ("paušál is a fee word", None,
+     "Celková cena: 22.000,-Kč + 3.500,-Kč (paušál) + 2.200,-Kč (záloha na energie)",
+     3500, 22000),
+    # An all-in total that is NOT the advertised rent says nothing about the
+    # advertised rent. Reading it as "fees included" made the services free.
+    ("all-in total that is not the rent", None,
+     "Celková cena včetně paušálních poplatků a internetu je 48.000 Kč.", None, 34000),
+    ("all-in total that IS the rent", None,
+     "Celková cena včetně paušálních poplatků a internetu je 34.000 Kč.", 0, 34000),
+    # Unchanged when the rent is unknown -- there is nothing to compare against.
+    ("all-inclusive without a known rent", None,
+     "Celková cena za užívání včetně poplatků je 35.000,- Kč/měsíc.", 0, None),
 ]
 
 

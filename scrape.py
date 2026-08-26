@@ -119,7 +119,12 @@ MAX_FEE_ATTEMPTS = 3
 # 4: the clause splitter now breaks a sentence that ends in a bracket or a
 #    digit. That moment arrived -- 11 cached rentals hold the parking price
 #    where the service charge belongs, so they have to be read again.
-PARSER_VERSION = 4
+# 5: three fixes found by measuring against 250 hand-labelled adverts rather
+#    than by reading code -- a generic "záloha" next to "energie" no longer
+#    claims the fee slot, the cheapest-wins rule is confined to actual
+#    multi-person tier tables, and an all-in total that is not the advertised
+#    rent no longer reads as "fees included". Ten cached rentals change.
+PARSER_VERSION = 5
 
 # Sreality's "estate" payload gives base rent (price) and service fees
 # (params.costOfLiving) separately, but never itemizes electricity -- it's
@@ -268,7 +273,17 @@ def extract_thumb(images_field):
 FEE_KEYWORDS = [
     "poplatky", "poplatek", "služby", "zálohy", "záloha", "měsíční výdaje",
     "provozní náklady", "fond oprav", "svj", "společné prostory", "správa domu",
+    # "paušál" is how a good third of agencies write the service charge
+    # ("+ 3.500,-Kč (paušál)"), and without it that clause carried no fee
+    # keyword at all, so the electricity clause next to it won the fee slot.
+    "paušál", "pausal",
 ]
+# "záloha"/"zálohy" pairs with anything -- "záloha na služby" but equally
+# "záloha na energie". On its own it says a payment is an advance, not what the
+# advance is FOR, so a clause whose only fee word is this one cannot outrank an
+# explicit mention of electricity. Measured: "Poplatky jsou 4750 Kč a zálohy na
+# energie 1150 kč" booked 1150 as the service charge.
+GENERIC_FEE_KEYWORDS = {"zálohy", "záloha"}
 # "jistina"/"jistota" are deposit synonyms that agencies on iDNES favour over
 # "kauce" ("Nájem 17.500,- | Poplatky 3.500,- | Jistina 21.000,- | Provize
 # 15.000,-"); without them the deposit gets read as the monthly fee.
@@ -375,8 +390,71 @@ def plausible_fee(v):
     return v is not None and FEE_MIN_CZK <= v <= FEE_MAX_CZK
 
 
-def is_all_inclusive(text):
-    return bool(INCLUSIVE_RE.search(normalize_text(text)))
+def is_all_inclusive(text, rent_czk=None):
+    """Does the listing say the ADVERTISED rent already covers the fees.
+
+    The qualifier matters. "Celková cena včetně paušálních poplatků a internetu
+    je 48 000 Kč" on a flat advertised at 34 000 is not a claim about the
+    advertised rent at all -- it quotes a different, all-in total, and the fee
+    is the 14 000 difference, not zero. Reading it as zero put the flat in the
+    rankings as if its services were free.
+
+    So when the inclusive phrase sits next to an amount and we know the rent,
+    the amount has to BE the rent. Without a known rent nothing changes.
+    """
+    norm = normalize_text(text)
+    m = INCLUSIVE_RE.search(norm)
+    if not m:
+        return False
+    if not rent_czk:
+        return True
+    # A window around the claim, not a "sentence": Czech writes thousands with
+    # a period ("48.000 Kč."), so splitting on periods cuts the very number
+    # this has to read -- which is how the first attempt at this silently kept
+    # returning zero.
+    window = norm[max(0, m.start() - 100):m.end() + 150]
+    amounts = [v for v in parse_amounts(window) if v >= FEE_MIN_CZK]
+    if not amounts:
+        return True
+    return any(abs(v - rent_czk) <= max(100, rent_czk * 0.02) for v in amounts)
+
+
+PERSON_RE = re.compile(r"\bosob\w*\b", re.I)
+
+
+def pick_fee(clause, candidates):
+    """Which plausible amount in this clause is the service charge.
+
+    Taking the cheapest was right for the case it was written for -- a
+    multi-person tier table, "2 500 Kč pro 1 osobu, 3 500 Kč pro 2 osoby",
+    where the single occupant's figure is the one we want. It is wrong
+    everywhere else, and it silently picked the smaller of two DIFFERENT costs:
+    "Poplatky jsou 4750 Kč a zálohy na energie 1150 kč" booked 1150.
+
+    So the tier rule now applies only where a tier actually is -- the clause
+    has to talk about people. Otherwise the amount standing nearest a specific
+    fee word wins, which is how the sentence reads to a human.
+    """
+    if len(candidates) == 1:
+        return candidates[0]
+    if PERSON_RE.search(clause):
+        return min(candidates)
+    low = clause.lower()
+    anchors = [low.find(k) for k in FEE_KEYWORDS
+               if k not in GENERIC_FEE_KEYWORDS and low.find(k) >= 0]
+    if not anchors:
+        return min(candidates)
+
+    def distance(value):
+        best = None
+        for m in re.finditer(r"\d[\d\s.,]*", clause):
+            digits = re.sub(r"\D", "", m.group(0))
+            if digits and int(digits) == value:
+                d = min(abs(m.start() - a) for a in anchors)
+                best = d if best is None else min(best, d)
+        return best if best is not None else 10**6
+
+    return min(candidates, key=distance)
 
 
 def _scan_clauses(clauses, require_keyword, rent_czk=None):
@@ -431,16 +509,20 @@ def _scan_clauses(clauses, require_keyword, rent_czk=None):
                 amounts = parse_amounts(clauses[i + 1])
         if not amounts:
             continue
-        if is_elec and not has_fee_kw:
+        # A clause that names electricity and whose only fee word is a generic
+        # "záloha" is about electricity, not the service charge.
+        only_generic = has_fee_kw and not any(
+            k in low for k in FEE_KEYWORDS if k not in GENERIC_FEE_KEYWORDS
+        )
+        if is_elec and (not has_fee_kw or only_generic):
             if electricity is None:
                 electricity = amounts[0]
         elif fee is None and (has_fee_kw or not require_keyword):
-            # Cheapest tier of a multi-person fee table, and only if it looks
-            # like a fee at all -- this is what keeps a 19 900 Kč rent or a
+            # Only plausible amounts -- this is what keeps a 19 900 Kč rent or a
             # 45 000 Kč deposit from being booked as the monthly service charge.
             candidates = [v for v in amounts if plausible_fee(v)]
             if candidates:
-                fee = min(candidates)
+                fee = pick_fee(clause, candidates)
     return fee, electricity
 
 
@@ -500,7 +582,8 @@ def extract_fees_and_electricity(cost_of_living_raw, description, rent_czk=None,
     # No number anywhere -- but if the listing states the rent already covers
     # the fees, that is an answer, not a gap, and it must not be presented as
     # "fee unknown, assumed 0" alongside listings that quote rent net of fees.
-    if is_all_inclusive(raw) or is_all_inclusive(description) or is_all_inclusive(price_note):
+    if (is_all_inclusive(raw, rent_czk) or is_all_inclusive(description, rent_czk)
+            or is_all_inclusive(price_note, rent_czk)):
         return 0, "included", electricity
     return None, None, electricity
 
