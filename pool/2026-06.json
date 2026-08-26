@@ -2,7 +2,7 @@
  "1022903116": {
   "id": "1022903116",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -70,7 +70,9 @@
   "ownership_name": "Osobní",
   "views": 14061,
   "edited": "2026-08-25",
-  "since": "2026-03-21"
+  "since": "2026-03-21",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "1025998924": {
   "id": "1025998924",
@@ -226,7 +228,7 @@
  "1080886092": {
   "id": "1080886092",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -266,7 +268,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 1.39,
-  "deal_pct": 2,
+  "deal_pct": 1,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -294,7 +296,9 @@
   "ownership_name": "Družstevní",
   "views": 29050,
   "edited": "2026-08-26",
-  "since": "2026-01-10"
+  "since": "2026-01-10",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "1101496396": {
   "id": "1101496396",
@@ -337,7 +341,7 @@
  "1146466380": {
   "id": "1146466380",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -372,7 +376,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 0.62,
-  "deal_pct": -6,
+  "deal_pct": -7,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 4,
@@ -400,12 +404,14 @@
   "ownership_name": "Osobní",
   "views": 14318,
   "edited": "2026-08-26",
-  "since": "2026-04-20"
+  "since": "2026-04-20",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "1154478156": {
   "id": "1154478156",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -473,7 +479,9 @@
   "ownership_name": "Osobní",
   "views": 3939,
   "edited": "2026-07-31",
-  "since": "2026-06-17"
+  "since": "2026-06-17",
+  "parking_state": "priced",
+  "parking_price_czk": 1900
  },
  "1180168268": {
   "id": "1180168268",
@@ -515,7 +523,7 @@
  "1189876556": {
   "id": "1189876556",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -550,7 +558,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 2.78,
-  "deal_pct": -9,
+  "deal_pct": -10,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -578,12 +586,14 @@
   "ownership_name": "Osobní",
   "views": 26427,
   "edited": "2026-08-26",
-  "since": "2025-12-12"
+  "since": "2025-12-12",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "120275788": {
   "id": "120275788",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -646,7 +656,9 @@
   "ownership_name": "Osobní",
   "views": 12612,
   "edited": "2026-08-20",
-  "since": "2026-03-18"
+  "since": "2026-03-18",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "1218420812": {
   "id": "1218420812",
@@ -808,7 +820,7 @@
  "1236435020": {
   "id": "1236435020",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -876,7 +888,9 @@
   "ownership_name": "Osobní",
   "views": 4472,
   "edited": "2026-08-07",
-  "since": "2026-06-05"
+  "since": "2026-06-05",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "123814732": {
   "id": "123814732",
@@ -919,7 +933,7 @@
  "1254835020": {
   "id": "1254835020",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -982,12 +996,14 @@
   "ownership_name": "Osobní",
   "views": 12769,
   "edited": "2026-08-20",
-  "since": "2026-03-18"
+  "since": "2026-03-18",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "1255371340": {
   "id": "1255371340",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1050,7 +1066,9 @@
   "ownership_name": "Osobní",
   "views": 78823,
   "edited": "2026-07-16",
-  "since": "2025-03-22"
+  "since": "2025-03-22",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "1255600204": {
   "id": "1255600204",
@@ -1130,7 +1148,7 @@
  "1301319756": {
   "id": "1301319756",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1198,7 +1216,9 @@
   "ownership_name": "Osobní",
   "views": 13355,
   "edited": "2026-08-25",
-  "since": "2026-05-21"
+  "since": "2026-05-21",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "1316876364": {
   "id": "1316876364",
@@ -1246,7 +1266,7 @@
  "1328894796": {
   "id": "1328894796",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1281,7 +1301,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 2.17,
-  "deal_pct": -14,
+  "deal_pct": -13,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -1309,7 +1329,9 @@
   "ownership_name": "Osobní",
   "views": 17931,
   "edited": "2026-03-16",
-  "since": "2026-03-16"
+  "since": "2026-03-16",
+  "parking_state": "priced",
+  "parking_price_czk": 2500
  },
  "1356759116": {
   "id": "1356759116",
@@ -1384,7 +1406,7 @@
  "1370587212": {
   "id": "1370587212",
   "first_seen": "2026-06-28T19:37:02Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1447,7 +1469,9 @@
   "ownership_name": "Osobní",
   "views": 11056,
   "edited": "2026-08-21",
-  "since": "2026-06-06"
+  "since": "2026-06-06",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "139592524": {
   "id": "139592524",
@@ -1489,7 +1513,7 @@
  "1396953676": {
   "id": "1396953676",
   "first_seen": "2026-06-28T19:37:02Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1557,12 +1581,14 @@
   "ownership_name": "Osobní",
   "views": 142800,
   "edited": "2026-08-25",
-  "since": "2024-11-13"
+  "since": "2024-11-13",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "1404608588": {
   "id": "1404608588",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1630,7 +1656,9 @@
   "ownership_name": "Osobní",
   "views": 17874,
   "edited": "2026-08-26",
-  "since": "2026-04-25"
+  "since": "2026-04-25",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "1405714508": {
   "id": "1405714508",
@@ -1711,7 +1739,7 @@
  "1422692428": {
   "id": "1422692428",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1774,7 +1802,9 @@
   "ownership_name": "Osobní",
   "views": 12089,
   "edited": "2026-08-24",
-  "since": "2026-05-16"
+  "since": "2026-05-16",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "1426231372": {
   "id": "1426231372",
@@ -1822,7 +1852,7 @@
  "1445417804": {
   "id": "1445417804",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1857,7 +1887,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 2.17,
-  "deal_pct": -19,
+  "deal_pct": -18,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -1885,7 +1915,9 @@
   "ownership_name": "Osobní",
   "views": 20551,
   "edited": "2026-03-13",
-  "since": "2026-03-13"
+  "since": "2026-03-13",
+  "parking_state": "priced",
+  "parking_price_czk": 2500
  },
  "1459126348": {
   "id": "1459126348",
@@ -2046,7 +2078,7 @@
  "1489215564": {
   "id": "1489215564",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2109,7 +2141,9 @@
   "ownership_name": "Osobní",
   "views": 9785,
   "edited": "2026-08-06",
-  "since": "2026-04-30"
+  "since": "2026-04-30",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "1505988684": {
   "id": "1505988684",
@@ -2233,7 +2267,7 @@
  "1551852364": {
   "id": "1551852364",
   "first_seen": "2026-06-28T19:37:02Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2301,7 +2335,9 @@
   "ownership_name": "Osobní",
   "views": 48896,
   "edited": "2026-08-22",
-  "since": "2026-02-16"
+  "since": "2026-02-16",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "1560211532": {
   "id": "1560211532",
@@ -2344,7 +2380,7 @@
  "1570738252": {
   "id": "1570738252",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2412,7 +2448,9 @@
   "ownership_name": "Osobní",
   "views": 12418,
   "edited": "2026-08-26",
-  "since": "2026-05-13"
+  "since": "2026-05-13",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "157675596": {
   "id": "157675596",
@@ -2529,7 +2567,7 @@
  "1656258636": {
   "id": "1656258636",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2597,7 +2635,9 @@
   "ownership_name": "Osobní",
   "views": 13556,
   "edited": "2026-08-24",
-  "since": "2026-05-29"
+  "since": "2026-05-29",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "1660416076": {
   "id": "1660416076",
@@ -2678,7 +2718,7 @@
  "1711312972": {
   "id": "1711312972",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2741,7 +2781,9 @@
   "ownership_name": "Osobní",
   "views": 5140,
   "edited": "2026-05-20",
-  "since": "2026-05-20"
+  "since": "2026-05-20",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "1715765324": {
   "id": "1715765324",
@@ -3098,7 +3140,7 @@
  "1871704140": {
   "id": "1871704140",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3161,12 +3203,14 @@
   "ownership_name": "Osobní",
   "views": 6332,
   "edited": "2026-08-24",
-  "since": "2026-06-17"
+  "since": "2026-06-17",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "1875349580": {
   "id": "1875349580",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3229,7 +3273,9 @@
   "ownership_name": "Osobní",
   "views": 6726,
   "edited": "2026-07-19",
-  "since": "2026-05-21"
+  "since": "2026-05-21",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "189460556": {
   "id": "189460556",
@@ -3590,7 +3636,7 @@
  "2062331980": {
   "id": "2062331980",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3653,7 +3699,9 @@
   "ownership_name": "Osobní",
   "views": 11863,
   "edited": "2026-08-24",
-  "since": "2026-04-13"
+  "since": "2026-04-13",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "2075127884": {
   "id": "2075127884",
@@ -3809,7 +3857,7 @@
  "2177581900": {
   "id": "2177581900",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3872,7 +3920,9 @@
   "ownership_name": "Osobní",
   "views": 12896,
   "edited": "2026-08-20",
-  "since": "2026-03-18"
+  "since": "2026-03-18",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "2221404236": {
   "id": "2221404236",
@@ -3915,7 +3965,7 @@
  "2227913548": {
   "id": "2227913548",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3978,12 +4028,14 @@
   "ownership_name": "Osobní",
   "views": 12571,
   "edited": "2026-08-20",
-  "since": "2026-03-18"
+  "since": "2026-03-18",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "2233184332": {
   "id": "2233184332",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4018,7 +4070,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.87,
-  "deal_pct": 1,
+  "deal_pct": 2,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -4046,12 +4098,14 @@
   "ownership_name": "Osobní",
   "views": 11795,
   "edited": "2026-06-24",
-  "since": "2026-04-06"
+  "since": "2026-04-06",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "2234683468": {
   "id": "2234683468",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4124,7 +4178,9 @@
   "ownership_name": "Osobní",
   "views": 14181,
   "edited": "2026-08-26",
-  "since": "2026-05-18"
+  "since": "2026-05-18",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "2239819852": {
   "id": "2239819852",
@@ -4210,7 +4266,7 @@
  "2267501388": {
   "id": "2267501388",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4273,7 +4329,9 @@
   "ownership_name": "Osobní",
   "views": 19268,
   "edited": "2026-04-14",
-  "since": "2026-03-13"
+  "since": "2026-03-13",
+  "parking_state": "priced",
+  "parking_price_czk": 2500
  },
  "2279141452": {
   "id": "2279141452",
@@ -4316,7 +4374,7 @@
  "2295116620": {
   "id": "2295116620",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4379,7 +4437,9 @@
   "ownership_name": "Osobní",
   "views": 31633,
   "edited": "2026-08-10",
-  "since": "2025-06-03"
+  "since": "2025-06-03",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "2303853388": {
   "id": "2303853388",
@@ -4421,7 +4481,7 @@
  "2304201548": {
   "id": "2304201548",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4484,7 +4544,9 @@
   "ownership_name": "Osobní",
   "views": 19251,
   "edited": "2026-03-13",
-  "since": "2026-03-13"
+  "since": "2026-03-13",
+  "parking_state": "priced",
+  "parking_price_czk": 2500
  },
  "23282508": {
   "id": "23282508",
@@ -4527,7 +4589,7 @@
  "2329321548": {
   "id": "2329321548",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4595,7 +4657,9 @@
   "ownership_name": "Družstevní",
   "views": 17416,
   "edited": "2026-08-26",
-  "since": "2026-05-06"
+  "since": "2026-05-06",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "2336637772": {
   "id": "2336637772",
@@ -4637,7 +4701,7 @@
  "2354533196": {
   "id": "2354533196",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4700,7 +4764,9 @@
   "ownership_name": "Osobní",
   "views": 21355,
   "edited": "2026-03-13",
-  "since": "2026-03-13"
+  "since": "2026-03-13",
+  "parking_state": "priced",
+  "parking_price_czk": 2500
  },
  "2356969548": {
   "id": "2356969548",
@@ -4748,7 +4814,7 @@
  "2364244044": {
   "id": "2364244044",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4821,7 +4887,9 @@
   "ownership_name": "Osobní",
   "views": 8329,
   "edited": "2026-08-11",
-  "since": "2026-05-26"
+  "since": "2026-05-26",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "240222284": {
   "id": "240222284",
@@ -5019,7 +5087,7 @@
  "2498511692": {
   "id": "2498511692",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5082,7 +5150,9 @@
   "ownership_name": "Osobní",
   "views": 17129,
   "edited": "2026-07-16",
-  "since": "2026-03-25"
+  "since": "2026-03-25",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "2525925452": {
   "id": "2525925452",
@@ -5167,7 +5237,7 @@
  "2562949196": {
   "id": "2562949196",
   "first_seen": "2026-06-28T19:37:02Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5230,7 +5300,9 @@
   "ownership_name": "Družstevní",
   "views": 21801,
   "edited": "2026-08-26",
-  "since": "2026-06-04"
+  "since": "2026-06-04",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "2571468876": {
   "id": "2571468876",
@@ -5349,7 +5421,7 @@
  "2630566732": {
   "id": "2630566732",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5412,7 +5484,9 @@
   "ownership_name": "Osobní",
   "views": 13443,
   "edited": "2026-08-20",
-  "since": "2026-03-18"
+  "since": "2026-03-18",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "2634195020": {
   "id": "2634195020",
@@ -5455,7 +5529,7 @@
  "2636689484": {
   "id": "2636689484",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [],
   "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/2636689484",
@@ -5511,7 +5585,9 @@
   "ownership_name": "Osobní",
   "views": 19461,
   "edited": "2026-08-26",
-  "since": "2026-04-08"
+  "since": "2026-04-08",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "2639298636": {
   "id": "2639298636",
@@ -5592,7 +5668,7 @@
  "2663968844": {
   "id": "2663968844",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5655,7 +5731,9 @@
   "ownership_name": "Osobní",
   "views": 4793,
   "edited": "2026-07-01",
-  "since": "2026-06-16"
+  "since": "2026-06-16",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "2685567052": {
   "id": "2685567052",
@@ -5967,7 +6045,7 @@
  "2853208140": {
   "id": "2853208140",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6030,12 +6108,14 @@
   "ownership_name": "Osobní",
   "views": 9137,
   "edited": "2026-08-08",
-  "since": "2026-06-08"
+  "since": "2026-06-08",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "2864615500": {
   "id": "2864615500",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6098,7 +6178,9 @@
   "ownership_name": "Osobní",
   "views": 10765,
   "edited": "2026-08-24",
-  "since": "2026-05-14"
+  "since": "2026-05-14",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "2865070156": {
   "id": "2865070156",
@@ -6216,7 +6298,7 @@
  "290865996": {
   "id": "290865996",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6251,7 +6333,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.47,
-  "deal_pct": -14,
+  "deal_pct": -15,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 2,
@@ -6279,7 +6361,9 @@
   "ownership_name": "Osobní",
   "views": 13250,
   "edited": "2026-08-05",
-  "since": "2026-04-01"
+  "since": "2026-04-01",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "2923425868": {
   "id": "2923425868",
@@ -6337,7 +6421,7 @@
  "2960737100": {
   "id": "2960737100",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6405,12 +6489,14 @@
   "ownership_name": "Osobní",
   "views": 11431,
   "edited": "2026-08-25",
-  "since": "2026-03-19"
+  "since": "2026-03-19",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "299324236": {
   "id": "299324236",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [],
   "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/299324236",
@@ -6466,7 +6552,9 @@
   "ownership_name": "Osobní",
   "views": 26776,
   "edited": "2026-08-02",
-  "since": "2026-03-14"
+  "since": "2026-03-14",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "3020812364": {
   "id": "3020812364",
@@ -6788,7 +6876,7 @@
  "3173163084": {
   "id": "3173163084",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6856,7 +6944,9 @@
   "ownership_name": "Osobní",
   "views": 16533,
   "edited": "2026-08-24",
-  "since": "2026-04-30"
+  "since": "2026-04-30",
+  "parking_state": "priced",
+  "parking_price_czk": 534
  },
  "3180195916": {
   "id": "3180195916",
@@ -7231,7 +7321,7 @@
  "3310125132": {
   "id": "3310125132",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7294,7 +7384,9 @@
   "ownership_name": "Osobní",
   "views": 8297,
   "edited": "2026-08-04",
-  "since": "2026-06-02"
+  "since": "2026-06-02",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "3311960140": {
   "id": "3311960140",
@@ -7374,7 +7466,7 @@
  "3327627340": {
   "id": "3327627340",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7409,7 +7501,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.27,
-  "deal_pct": 26,
+  "deal_pct": 27,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -7437,7 +7529,9 @@
   "ownership_name": "Osobní",
   "views": 6035,
   "edited": "2026-05-21",
-  "since": "2026-05-21"
+  "since": "2026-05-21",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "334725196": {
   "id": "334725196",
@@ -7593,7 +7687,7 @@
  "3422503756": {
   "id": "3422503756",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7656,7 +7750,9 @@
   "ownership_name": "Osobní",
   "views": 15590,
   "edited": "2026-06-24",
-  "since": "2026-03-23"
+  "since": "2026-03-23",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "3433591628": {
   "id": "3433591628",
@@ -7693,7 +7789,7 @@
  "3448762444": {
   "id": "3448762444",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7756,12 +7852,14 @@
   "ownership_name": "Osobní",
   "views": 4514,
   "edited": "2026-07-20",
-  "since": "2026-06-17"
+  "since": "2026-06-17",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "3449786444": {
   "id": "3449786444",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7824,7 +7922,9 @@
   "ownership_name": "Osobní",
   "views": 10953,
   "edited": "2026-08-26",
-  "since": "2026-05-13"
+  "since": "2026-05-13",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "3473055820": {
   "id": "3473055820",
@@ -7941,7 +8041,7 @@
  "3579269964": {
   "id": "3579269964",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8004,7 +8104,9 @@
   "ownership_name": "Osobní",
   "views": 18245,
   "edited": "2026-03-13",
-  "since": "2026-03-13"
+  "since": "2026-03-13",
+  "parking_state": "priced",
+  "parking_price_czk": 2500
  },
  "3642011724": {
   "id": "3642011724",
@@ -8122,7 +8224,7 @@
  "3710341964": {
   "id": "3710341964",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8185,12 +8287,14 @@
   "ownership_name": "Osobní",
   "views": 18602,
   "edited": "2026-03-16",
-  "since": "2026-03-13"
+  "since": "2026-03-13",
+  "parking_state": "priced",
+  "parking_price_czk": 2500
  },
  "3717263436": {
   "id": "3717263436",
   "first_seen": "2026-06-28T19:37:02Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8253,7 +8357,9 @@
   "ownership_name": "Osobní",
   "views": 6297,
   "edited": "2026-08-22",
-  "since": "2026-06-26"
+  "since": "2026-06-26",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "3728601164": {
   "id": "3728601164",
@@ -8338,7 +8444,7 @@
  "3768815692": {
   "id": "3768815692",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8406,12 +8512,14 @@
   "ownership_name": "Osobní",
   "views": 11094,
   "edited": "2026-08-24",
-  "since": "2026-05-18"
+  "since": "2026-05-18",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "3791143756": {
   "id": "3791143756",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8479,12 +8587,14 @@
   "ownership_name": "Osobní",
   "views": 11324,
   "edited": "2026-08-25",
-  "since": "2026-03-21"
+  "since": "2026-03-21",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "3807547468": {
   "id": "3807547468",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8547,7 +8657,9 @@
   "ownership_name": "Osobní",
   "views": 8366,
   "edited": "2026-07-07",
-  "since": "2026-05-19"
+  "since": "2026-05-19",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "3812749388": {
   "id": "3812749388",
@@ -8712,7 +8824,7 @@
  "3834703948": {
   "id": "3834703948",
   "first_seen": "2026-06-28T19:37:02Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8775,7 +8887,9 @@
   "ownership_name": "Osobní",
   "views": 6318,
   "edited": "2026-08-15",
-  "since": "2026-06-26"
+  "since": "2026-06-26",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "3841192012": {
   "id": "3841192012",
@@ -8822,7 +8936,7 @@
  "3844817740": {
   "id": "3844817740",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8885,7 +8999,9 @@
   "ownership_name": "Osobní",
   "views": 12616,
   "edited": "2026-08-20",
-  "since": "2026-03-18"
+  "since": "2026-03-18",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "3865149516": {
   "id": "3865149516",
@@ -9198,7 +9314,7 @@
  "3945525324": {
   "id": "3945525324",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9217,23 +9333,23 @@
   "city_part": "Vysočany",
   "pod_harfou": false,
   "price_czk": 20800,
-  "price_czk_per_sqm": 827,
+  "price_czk_per_sqm": 743,
   "backfilled": true,
   "lat": 50.1127357385648,
   "lon": 14.5025940134929,
   "floor_number": 3,
   "floors_total": null,
-  "fees_czk": 2500,
-  "fees_missing": false,
+  "fees_czk": null,
+  "fees_missing": true,
   "electricity_czk": 1500,
   "electricity_estimated": true,
-  "total_czk": 24800,
+  "total_czk": 22300,
   "garage": true,
   "parking": true,
-  "fees_source": "note",
+  "fees_source": null,
   "source": "sreality",
   "dist_km": 1.72,
-  "deal_pct": 13,
+  "deal_pct": 1,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -9261,7 +9377,9 @@
   "ownership_name": "Osobní",
   "views": 9231,
   "edited": "2026-08-25",
-  "since": "2026-06-12"
+  "since": "2026-06-12",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "3946352716": {
   "id": "3946352716",
@@ -9417,7 +9535,7 @@
  "4006981708": {
   "id": "4006981708",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9480,7 +9598,9 @@
   "ownership_name": "Osobní",
   "views": 13849,
   "edited": "2026-08-26",
-  "since": "2026-04-20"
+  "since": "2026-04-20",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "4020285516": {
   "id": "4020285516",
@@ -9791,7 +9911,7 @@
  "4099363660": {
   "id": "4099363660",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9854,7 +9974,9 @@
   "ownership_name": "Osobní",
   "views": 18441,
   "edited": "2026-03-13",
-  "since": "2026-03-13"
+  "since": "2026-03-13",
+  "parking_state": "priced",
+  "parking_price_czk": 2500
  },
  "4109988684": {
   "id": "4109988684",
@@ -9897,7 +10019,7 @@
  "4136693836": {
   "id": "4136693836",
   "first_seen": "2026-06-28T19:37:02Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9960,7 +10082,9 @@
   "ownership_name": "Osobní",
   "views": 6734,
   "edited": "2026-08-22",
-  "since": "2026-06-26"
+  "since": "2026-06-26",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "4172521548": {
   "id": "4172521548",
@@ -10115,7 +10239,7 @@
  "4241449804": {
   "id": "4241449804",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10183,7 +10307,9 @@
   "ownership_name": "Osobní",
   "views": 18927,
   "edited": "2026-08-07",
-  "since": "2026-02-16"
+  "since": "2026-02-16",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "4246900812": {
   "id": "4246900812",
@@ -10236,7 +10362,7 @@
  "4265243212": {
   "id": "4265243212",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10299,7 +10425,9 @@
   "ownership_name": "Osobní",
   "views": 59981,
   "edited": "2026-08-26",
-  "since": "2025-03-14"
+  "since": "2025-03-14",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "4265275468": {
   "id": "4265275468",
@@ -10342,7 +10470,7 @@
  "4276437836": {
   "id": "4276437836",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10410,12 +10538,14 @@
   "ownership_name": "Osobní",
   "views": 21890,
   "edited": "2026-08-07",
-  "since": "2026-04-02"
+  "since": "2026-04-02",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "4282532684": {
   "id": "4282532684",
   "first_seen": "2026-06-28T19:37:02Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10483,7 +10613,9 @@
   "ownership_name": "Osobní",
   "views": 29858,
   "edited": "2026-08-25",
-  "since": "2026-03-27"
+  "since": "2026-03-27",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "4288979020": {
   "id": "4288979020",
@@ -10563,7 +10695,7 @@
  "474043212": {
   "id": "474043212",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10598,7 +10730,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 2.17,
-  "deal_pct": -7,
+  "deal_pct": -6,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -10626,7 +10758,9 @@
   "ownership_name": "Osobní",
   "views": 19757,
   "edited": "2026-03-13",
-  "since": "2026-03-11"
+  "since": "2026-03-11",
+  "parking_state": "priced",
+  "parking_price_czk": 2500
  },
  "480608332": {
   "id": "480608332",
@@ -10821,7 +10955,7 @@
  "552435788": {
   "id": "552435788",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10884,12 +11018,14 @@
   "ownership_name": "Osobní",
   "views": 6441,
   "edited": "2026-08-17",
-  "since": "2026-06-02"
+  "since": "2026-06-02",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "562032716": {
   "id": "562032716",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10918,23 +11054,23 @@
   "city_part": "Vysočany",
   "pod_harfou": true,
   "price_czk": 23500,
-  "price_czk_per_sqm": 589,
+  "price_czk_per_sqm": 500,
   "backfilled": true,
   "lat": 50.104396,
   "lon": 14.506195,
   "floor_number": 4,
   "floors_total": 12,
-  "fees_czk": 4445,
-  "fees_missing": false,
+  "fees_czk": null,
+  "fees_missing": true,
   "electricity_czk": 1500,
   "electricity_estimated": true,
-  "total_czk": 29445,
+  "total_czk": 25000,
   "garage": true,
   "parking": false,
-  "fees_source": "text",
+  "fees_source": null,
   "source": "sreality",
   "dist_km": 1.28,
-  "deal_pct": 1,
+  "deal_pct": -14,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -10962,7 +11098,9 @@
   "ownership_name": "Družstevní",
   "views": 4723,
   "edited": "2026-08-25",
-  "since": "2026-06-17"
+  "since": "2026-06-17",
+  "parking_state": "priced",
+  "parking_price_czk": 388
  },
  "572649548": {
   "id": "572649548",
@@ -11043,7 +11181,7 @@
  "603451468": {
   "id": "603451468",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11111,7 +11249,9 @@
   "ownership_name": "Osobní",
   "views": 4509,
   "edited": "2026-08-25",
-  "since": "2026-06-26"
+  "since": "2026-06-26",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "664510540": {
   "id": "664510540",
@@ -11191,7 +11331,7 @@
  "67654476": {
   "id": "67654476",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11226,7 +11366,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 0.62,
-  "deal_pct": 2,
+  "deal_pct": 3,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 4,
@@ -11254,7 +11394,9 @@
   "ownership_name": "Osobní",
   "views": 17533,
   "edited": "2026-08-26",
-  "since": "2026-03-04"
+  "since": "2026-03-04",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "682655820": {
   "id": "682655820",
@@ -11340,7 +11482,7 @@
  "729280588": {
   "id": "729280588",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11408,12 +11550,14 @@
   "ownership_name": "Osobní",
   "views": 27827,
   "edited": "2026-08-26",
-  "since": "2026-06-26"
+  "since": "2026-06-26",
+  "parking_state": "unpriced",
+  "parking_price_czk": null
  },
  "773816396": {
   "id": "773816396",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11453,7 +11597,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 2.78,
-  "deal_pct": -6,
+  "deal_pct": -7,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -11481,12 +11625,14 @@
   "ownership_name": "Osobní",
   "views": 6143,
   "edited": "2026-08-04",
-  "since": "2026-05-31"
+  "since": "2026-05-31",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "792023884": {
   "id": "792023884",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11549,7 +11695,9 @@
   "ownership_name": "Osobní",
   "views": 16299,
   "edited": "2026-03-16",
-  "since": "2026-03-16"
+  "since": "2026-03-16",
+  "parking_state": "priced",
+  "parking_price_czk": 2500
  },
  "796586060": {
   "id": "796586060",
@@ -11711,7 +11859,7 @@
  "86463308": {
   "id": "86463308",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11774,7 +11922,9 @@
   "ownership_name": "Osobní",
   "views": 19120,
   "edited": "2026-04-14",
-  "since": "2026-03-13"
+  "since": "2026-03-13",
+  "parking_state": "priced",
+  "parking_price_czk": 2500
  },
  "888598604": {
   "id": "888598604",
@@ -11816,7 +11966,7 @@
  "911164236": {
   "id": "911164236",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11835,23 +11985,23 @@
   "city_part": "Vysočany",
   "pod_harfou": false,
   "price_czk": 26000,
-  "price_czk_per_sqm": 545,
+  "price_czk_per_sqm": 491,
   "backfilled": true,
   "lat": 50.1055629221185,
   "lon": 14.502656011427,
   "floor_number": 3,
   "floors_total": 5,
-  "fees_czk": 3000,
-  "fees_missing": false,
+  "fees_czk": null,
+  "fees_missing": true,
   "electricity_czk": 1500,
   "electricity_estimated": true,
-  "total_czk": 30500,
+  "total_czk": 27500,
   "garage": false,
   "parking": false,
-  "fees_source": "note",
+  "fees_source": null,
   "source": "sreality",
   "dist_km": 1.13,
-  "deal_pct": -6,
+  "deal_pct": -16,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -11879,7 +12029,9 @@
   "ownership_name": "Osobní",
   "views": 15451,
   "edited": "2026-06-25",
-  "since": "2026-03-22"
+  "since": "2026-03-22",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "918397004": {
   "id": "918397004",
@@ -11954,7 +12106,7 @@
  "934019660": {
   "id": "934019660",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T17:24:24Z",
+  "last_seen": "2026-08-26T22:08:54Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12017,7 +12169,9 @@
   "ownership_name": "Osobní",
   "views": 93887,
   "edited": "2026-08-13",
-  "since": "2025-03-04"
+  "since": "2025-03-04",
+  "parking_state": "none",
+  "parking_price_czk": null
  },
  "959443020": {
   "id": "959443020",
