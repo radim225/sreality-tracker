@@ -124,7 +124,10 @@ MAX_FEE_ATTEMPTS = 3
 #    claims the fee slot, the cheapest-wins rule is confined to actual
 #    multi-person tier tables, and an all-in total that is not the advertised
 #    rent no longer reads as "fees included". Ten cached rentals change.
-PARSER_VERSION = 5
+# 6: priceNote is written to the snapshot, and "kóje" joins the extras list.
+#    The note changes no answer by itself -- it is stored so the fee chain's
+#    third source stops being unauditable.
+PARSER_VERSION = 6
 
 # Sreality's "estate" payload gives base rent (price) and service fees
 # (params.costOfLiving) separately, but never itemizes electricity -- it's
@@ -317,6 +320,11 @@ RENT_KEYWORDS = ["nájem", "najem", "nájemn", "najemn", "činže", "cinze"]
 EXTRA_KEYWORDS = [
     "garáž", "garaz", "parkovac", "stání",
     "sklep", "sklípek", "komora", "komoru", "komory", "kolárna",
+    # "sklepní kóje" is a cellar by another name -- 71 live adverts use it,
+    # 11 of them with an amount standing next to it. Radim spotted it in the
+    # dataset; the word list had every synonym but this one. Written with the
+    # accent so it cannot reach into "pokoj".
+    "kóje", "kóji", "kójí",
 ]
 # The quoted rent is already all-in. Parsing a fee out of these double-counts
 # it, so we record "fees are included" instead of a number. Written as a window
@@ -938,7 +946,7 @@ ENRICHED_FIELDS = (
     "fees_czk", "fees_missing", "fees_source", "electricity_czk",
     "electricity_estimated", "total_czk", "garage", "parking",
     "price_czk_per_sqm", "floor_area_sqm", "lat", "lon", "cost_of_living_raw",
-    "fee_attempts", "parser_version",
+    "fee_attempts", "parser_version", "price_note_raw",
     # The attribute block (attributes_from_params). Carried forward like the
     # rest: these are static for the life of an advert, so a cached listing must
     # keep them or the 30-day pool would only ever know about this week's
@@ -1097,6 +1105,7 @@ def parse_comparable(r, tx_type):
         "description": None,
         "seller_name": None,
         "cost_of_living_raw": None,
+        "price_note_raw": None,
         # Fees/electricity/garage need the detail page (not in search payload);
         # filled in by enrich_comparable. price_czk_per_sqm above is rent-only
         # until enrichment recomputes it against the all-in total for rentals.
@@ -1151,6 +1160,12 @@ def enrich_comparable(comp):
     # Kept on the record so a fee that parsed wrong can be diagnosed from the
     # snapshot alone, without re-fetching the (possibly delisted) advert.
     comp["cost_of_living_raw"] = params.get("costOfLiving")
+    # And the price note beside it. It feeds the fee chain (source "note",
+    # 146 live rentals) but was the one input never written down, so those
+    # fees could not be checked against anything without re-fetching the
+    # advert -- they sat outside the labelled measurement entirely. Radim
+    # found a parking surcharge living only here ("plus 2000 Kč za parking").
+    comp["price_note_raw"] = params.get("priceNote")
     comp.update(attributes_from_params(params, data))
     fees_czk, fees_source, electricity_explicit = extract_fees_and_electricity(
         params.get("costOfLiving"), data.get("description"), comp.get("price_czk"),
@@ -2060,7 +2075,7 @@ def render_tracked_card(tracked):
 # comparable set is inlined into the HTML, so at ~1000 listings every unused
 # field is dead weight on a phone.
 DASHBOARD_OMIT_FIELDS = (
-    "cost_of_living_raw", "from_cache", "enrich_failed", "active",
+    "cost_of_living_raw", "price_note_raw", "from_cache", "enrich_failed", "active",
     "missing_since", "removed_since", "first_seen",
 )
 
