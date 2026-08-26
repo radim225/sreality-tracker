@@ -36,7 +36,7 @@ MAX_ADMIN_FEE_CZK = 5000
 AREA_CENTER = (50.0995, 14.4900)
 AREA_RADIUS_KM = 3.0
 TARGET_DISPOSITIONS = {"1+kk", "1+1", "2+kk", "2+1", "3+kk", "3+1"}
-_FEE_PARSER = None   # (cost_of_living_raw, description, rent) -> (fee, source, electricity)
+_FEE_PARSER = None   # (cost_of_living_raw, description, rent) -> (fee, source, electricity, unsure)
 _COST_FN = None      # (price, fee, tx, electricity, fee_source) -> cost tuple
 _STREET_GPS = {}     # lowercased street name -> (lat, lon), from the Sreality sweep
 _PREV_BY_ID = {}     # last run's comparables, so unchanged adverts skip their detail fetch
@@ -152,10 +152,17 @@ def _apply_fees(comp, cost_of_living_raw, description):
     instead of a permanent "neuvedeno"."""
     if _FEE_PARSER is None or _COST_FN is None:
         return comp
-    fee, source, electricity = _FEE_PARSER(
+    fee, source, electricity, unsure = _FEE_PARSER(
         cost_of_living_raw, description, comp.get("price_czk")
     )
-    if fee is None and comp.get("fees_czk") is not None:
+    # Same rule as the Sreality path: a guessed fee is stored as unknown, and
+    # the reasons ride along for the review queue. Doing this in only one of
+    # the two paths would make the queue a statement about which portal the
+    # advert came from rather than about the parser.
+    comp["fee_unsure"] = list(unsure)
+    if unsure:
+        fee, source = None, None
+    elif fee is None and comp.get("fees_czk") is not None:
         fee, source = comp["fees_czk"], comp.get("fees_source") or "field"
     fees, missing, elec, elec_est, total = _COST_FN(
         comp.get("price_czk"), fee, comp.get("transaction_type"), electricity, source

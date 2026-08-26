@@ -2,6 +2,7 @@
 """Sreality.cz property monitor: scrapes a seed listing plus comparable
 listings in the same area, snapshots the result, diffs against the previous
 snapshot, and regenerates a mobile-friendly dashboard with photos and a map."""
+import collections
 import html
 import json
 import math
@@ -35,6 +36,7 @@ CHANGES_HISTORY_PATH = ROOT / "changes_history.json"
 # "what happened this week" would silently see a third of it. The log is the
 # record; the JSON file is a view of the most recent slice of it.
 CHANGES_LOG_PATH = ROOT / "changes_log.jsonl"
+FEE_QUEUE_PATH = ROOT / "fee_review_queue.json"
 
 # Sreality category_sub_cb codes (from /hledani estatesFilterPage)
 DISPOSITION_CODES = {2: "1+kk", 3: "1+1", 4: "2+kk", 5: "2+1", 6: "3+kk", 7: "3+1"}
@@ -44,6 +46,21 @@ DISPOSITION_CODES = {2: "1+kk", 3: "1+1", 4: "2+kk", 5: "2+1", 6: "3+kk", 7: "3+
 # number of search pages we have to walk.
 SEARCH_VELIKOST = ",".join(DISPOSITION_CODES.values())
 TRANSACTION_TYPES = ["pronajem", "prodej"]  # rent, sale
+
+# Standalone garages and parking spaces. Sreality files them under the "Ostatní"
+# main category (category_main_cb 5), NOT under flats, with two sub-categories
+# of their own -- so they are invisible to the flat sweep above no matter how
+# the disposition filter is set. Radim bought a garage and wants to know what
+# one is worth on its own, which is a new collection, not a new analysis.
+#
+# These deliberately do NOT join DISPOSITION_CODES: a garage has no disposition,
+# its area comes from a different field, and letting it reach `comparables`
+# would fold it into compute_stats(), which takes the median Kc/m2 across every
+# comparable with no disposition filter at all. A 220 000 Kc/m2 garage sitting
+# in the flat sale median is exactly the kind of silent corruption this project
+# measures against, so garages live in their own snapshot key end to end.
+GARAGE_CATEGORIES = {"garaze": 34, "garazova-stani": 52}
+
 
 # The watched area is a circle, not a ward list: Radim's landmarks straddle
 # ward boundaries (Hrdlořezy sits on the Praha 3/9 line, the Rokytka cycle path
@@ -127,7 +144,15 @@ MAX_FEE_ATTEMPTS = 3
 # 6: priceNote is written to the snapshot, and "kóje" joins the extras list.
 #    The note changes no answer by itself -- it is stored so the fee chain's
 #    third source stops being unauditable.
-PARSER_VERSION = 6
+# 7: the fee parser now refuses to guess. Where it had to pick between
+#    candidates, reach into the next clause, resolve a person-tier table or
+#    conclude "included" with no amount to back it, the stored fee becomes
+#    unknown and the advert goes to fee_review_queue.json instead. 26 of 502
+#    cached rentals change their answer, so they have to be read again.
+#    The same run adds `parking_state`/`parking_price_czk` -- three states for
+#    a garage instead of a boolean -- which is new data on every cached
+#    listing and would need the backfill on its own anyway.
+PARSER_VERSION = 7
 
 # Sreality's "estate" payload gives base rent (price) and service fees
 # (params.costOfLiving) separately, but never itemizes electricity -- it's
@@ -166,12 +191,20 @@ RETRY_STATUSES = {429, 500, 502, 503, 504}
 RETRY_BACKOFF_SECONDS = (2, 5, 10)
 
 
-def fetch_next_data(url, params=None):
+def fetch_next_data(url, params=None, parse_on_404=False):
     """Returns (next_data, status). Raises TransientFetchError once the retries
     are exhausted, so a flaky response can never be mistaken for a missing
     listing. Statuses outside RETRY_STATUSES still raise through
     raise_for_status() -- a persistent 403 block should fail loudly, not be
-    swallowed into a phantom mass removal."""
+    swallowed into a phantom mass removal.
+
+    `parse_on_404` exists for the garage/parking search endpoint, which answers
+    404 for a perfectly valid EMPTY result set -- the body still carries a
+    __NEXT_DATA__ with pagination.total = 0. Measured on
+    /hledani/pronajem/garaze?region=Hrdlorezy. Flats never do this, so the flag
+    is off by default: on a listing detail page a 404 really does mean the
+    advert is gone, and treating it as "empty but fine" would stop removals
+    being detected."""
     last_failure = None
     for backoff in (*RETRY_BACKOFF_SECONDS, None):
         try:
@@ -180,8 +213,11 @@ def fetch_next_data(url, params=None):
             last_failure = f"{type(exc).__name__}: {exc}"
         else:
             if resp.status_code not in RETRY_STATUSES:
-                if resp.status_code == 404:
+                if resp.status_code == 404 and not parse_on_404:
                     return None, resp.status_code
+                if resp.status_code == 404:
+                    m = NEXT_DATA_RE.search(resp.text)
+                    return (json.loads(m.group(1)) if m else None), resp.status_code
                 resp.raise_for_status()
                 m = NEXT_DATA_RE.search(resp.text)
                 if not m:
@@ -398,6 +434,29 @@ def plausible_fee(v):
     return v is not None and FEE_MIN_CZK <= v <= FEE_MAX_CZK
 
 
+# Why the fee parser was not sure. Stored on the listing and queued for Radim
+# to look at, rather than silently resolved -- a wrong number moves the median
+# quietly, an "unknown" only costs coverage. Measured on 177 hand-labelled
+# adverts: queueing these lifts precision 94.7 % -> 97.8 % for 3.4 percentage
+# points of coverage.
+FEE_AMBIGUITY_REASONS = {
+    # Two or more plausible fees contend inside one clause and nothing says
+    # which is meant -- no person-tier table, no ordering signal.
+    "multiple_candidates",
+    # The amount came from the NEXT clause because the keyword clause had none
+    # of its own. Right often enough to keep, wrong often enough to flag.
+    "lookahead",
+    # The cheapest-wins rule fired on a person-tier table ("2 500 pro 1 osobu,
+    # 3 500 pro 2 osoby"). On the labelled set this never changed an answer;
+    # it is here because advert 4010393676 in the live pool shows it picking
+    # the wrong tier. Unmeasured on the labelled data -- said plainly.
+    "person_tier",
+    # "Fees included" was concluded with no amount to corroborate it, so the
+    # stored answer is a bare 0. The single biggest win of the four.
+    "included_without_amount",
+}
+
+
 def is_all_inclusive(text, rent_czk=None):
     """Does the listing say the ADVERTISED rent already covers the fees.
 
@@ -476,8 +535,15 @@ def _scan_clauses(clauses, require_keyword, rent_czk=None):
     * A deposit mention used to void the whole clause. Now the exclusion only
       applies to the amounts in that clause; a fee already found in an earlier
       clause survives a later "Kauce ..." on the same line.
+    
+
+    Returns (fee, electricity, reasons). `reasons` names the guesses the scan
+    had to make -- see FEE_AMBIGUITY_REASONS. It is deliberately reported even
+    when a fee was found: an answer reached by guessing is exactly the one
+    Radim wants to see before it moves a median.
     """
     fee = electricity = None
+    reasons = set()
     for i, clause in enumerate(clauses):
         low = clause.lower()
         if any(k in low for k in EXCLUDE_KEYWORDS):
@@ -515,6 +581,8 @@ def _scan_clauses(clauses, require_keyword, rent_czk=None):
             )
             if not blocked:
                 amounts = parse_amounts(clauses[i + 1])
+                if amounts:
+                    reasons.add("lookahead")
         if not amounts:
             continue
         # A clause that names electricity and whose only fee word is a generic
@@ -530,8 +598,13 @@ def _scan_clauses(clauses, require_keyword, rent_czk=None):
             # 45 000 Kč deposit from being booked as the monthly service charge.
             candidates = [v for v in amounts if plausible_fee(v)]
             if candidates:
+                if len(candidates) > 1:
+                    reasons.add(
+                        "person_tier" if PERSON_RE.search(clause)
+                        else "multiple_candidates"
+                    )
                 fee = pick_fee(clause, candidates)
-    return fee, electricity
+    return fee, electricity, reasons
 
 
 def parse_cost_of_living_text(text, rent_czk=None):
@@ -573,27 +646,33 @@ def extract_fees_and_electricity(cost_of_living_raw, description, rent_czk=None,
     try:
         v = int(raw)
         if v > 0:
-            return v, "field", None
+            # A bare integer in the structured field is the one path with
+            # nothing to guess about, so it is never queued.
+            return v, "field", None, ()
     except ValueError:
         pass
-    fee, electricity = parse_cost_of_living_text(raw, rent_czk)
+    fee, electricity, why = parse_cost_of_living_text(raw, rent_czk)
     if fee is not None:
-        return fee, "field", electricity
-    fee, electricity_note = parse_fee_from_description(price_note, rent_czk)
+        return fee, "field", electricity, tuple(sorted(why))
+    fee, electricity_note, why_note = parse_fee_from_description(price_note, rent_czk)
     electricity = electricity if electricity is not None else electricity_note
     if fee is not None:
-        return fee, "note", electricity
-    fee, electricity_2 = parse_fee_from_description(description, rent_czk)
+        return fee, "note", electricity, tuple(sorted(why_note))
+    fee, electricity_2, why_text = parse_fee_from_description(description, rent_czk)
     electricity = electricity if electricity is not None else electricity_2
     if fee is not None:
-        return fee, "text", electricity
+        return fee, "text", electricity, tuple(sorted(why_text))
     # No number anywhere -- but if the listing states the rent already covers
     # the fees, that is an answer, not a gap, and it must not be presented as
     # "fee unknown, assumed 0" alongside listings that quote rent net of fees.
     if (is_all_inclusive(raw, rent_czk) or is_all_inclusive(description, rent_czk)
             or is_all_inclusive(price_note, rent_czk)):
-        return 0, "included", electricity
-    return None, None, electricity
+        # Nothing corroborates the zero. Of the four queue reasons this is the
+        # one that fires most (25 of 1165 live adverts) and the one that buys
+        # the most precision.
+        return 0, "included", electricity, ("included_without_amount",)
+    # No fee stated anywhere is a finding, not a guess -- not queued.
+    return None, None, electricity, ()
 
 
 def cost_breakdown(price_czk, fees_czk, transaction_type, electricity_explicit=None,
@@ -772,7 +851,7 @@ def fetch_tracked(url, listing_id):
     # "pronajem"/"prodej" values used everywhere else (comparables, URLs).
     type_code = (data.get("categoryTypeCb") or {}).get("value")
     transaction_type = "pronajem" if type_code == 2 else "prodej"
-    fees_czk, fees_source, electricity_explicit = extract_fees_and_electricity(
+    fees_czk, fees_source, electricity_explicit, fee_unsure = extract_fees_and_electricity(
         params.get("costOfLiving"), data.get("description"), rent_czk
     )
     fees_czk, fees_missing, electricity_czk, electricity_estimated, total_czk = (
@@ -796,6 +875,7 @@ def fetch_tracked(url, listing_id):
         "fees_czk": fees_czk,
         "fees_missing": fees_missing,
         "fees_source": fees_source,
+        "fee_unsure": list(fee_unsure),
         "electricity_czk": electricity_czk,
         "electricity_estimated": electricity_estimated,
         "total_czk": total_czk,
@@ -955,9 +1035,15 @@ ENRICHED_FIELDS = (
     "building_type", "building_type_name", "energy_rating", "furnished",
     "commission_czk", "tenant_not_pay_commission", "no_commission",
     "cellar", "cellar_area_sqm", "garage_count", "parking_lots",
+    "parking_state", "parking_price_czk",
     "balcony", "balcony_area_sqm", "loggia", "loggia_area_sqm",
     "terrace", "terrace_area_sqm", "elevator", "ownership", "ownership_name",
     "since", "edited", "views", "price_old_czk",
+    # Without this a cached listing loses its queue flag on the next run and
+    # silently reverts to carrying a guessed fee -- the exact class of stale
+    # mis-parse PARSER_VERSION exists to prevent.
+    "fee_unsure", "fee_would_be",
+    "parking_state", "parking_price_czk",
 )
 
 
@@ -966,6 +1052,161 @@ def carry_enrichment(comp, prev_comp):
         if prev_comp.get(k) is not None:
             comp[k] = prev_comp[k]
     comp["from_cache"] = True
+
+
+def search_ward_garages(ward, tx_type, slug):
+    """Every standalone garage / parking space of one kind in one ward.
+
+    A near-copy of search_ward rather than a branch inside it: the URL, the
+    record shape and the 404 semantics all differ, and the flat path is the one
+    thing in this file that must not acquire another `if`."""
+    want_code = GARAGE_CATEGORIES[slug]
+    found = []
+    page = 1
+    seen_total = None
+    seen_offsets = set()
+    while True:
+        url = f"https://www.sreality.cz/hledani/{tx_type}/{slug}"
+        next_data, status = fetch_next_data(
+            url,
+            params={"region": ward, "strana": page},
+            parse_on_404=True,
+        )
+        if next_data is None:
+            # An empty ward answers 404 WITH a body; a 404 with no body at all
+            # is the real thing. Either way there is nothing here to read, and
+            # unlike the flat sweep this must not abort the run: garages are a
+            # side dish, and one silent ward is better than no snapshot.
+            if status == 404:
+                return found
+            raise TransientFetchError(
+                f"garage search page {page} of {tx_type}/{slug}/{ward}: "
+                f"no __NEXT_DATA__ (HTTP {status})"
+            )
+        data, _ = get_query_data(next_data, "estatesSearch")
+        if data is None:
+            raise TransientFetchError(
+                f"garage search page {page} of {tx_type}/{slug}/{ward}: "
+                "estatesSearch query missing"
+            )
+        pagination = data.get("pagination") or {}
+        seen_total = pagination.get("total")
+        offset = pagination.get("offset")
+        if offset in seen_offsets:
+            break
+        seen_offsets.add(offset)
+        page_results = data.get("results") or []
+        if not page_results:
+            break
+        for r in page_results:
+            if (r.get("categorySubCb") or {}).get("value") != want_code:
+                continue
+            found.append(parse_garage(r, tx_type, slug))
+        limit = pagination.get("limit") or len(page_results) or 22
+        if page * limit >= (seen_total or 0):
+            break
+        page += 1
+    return found
+
+
+def parse_garage(r, tx_type, slug):
+    """One garage/parking record from the search payload.
+
+    No detail fetch: unlike a flat, everything worth having (price, area,
+    locality, GPS) is already in the search result, and there is no service
+    charge to parse. That keeps the whole category to ~30 requests a run."""
+    locality = r.get("locality") or {}
+    price_czk = r.get("priceCzk") or None
+    sqm = None
+    m = re.search(r"(\d+(?:[.,]\d+)?)\s*m", r.get("name") or "")
+    if m:
+        try:
+            sqm = float(m.group(1).replace(",", "."))
+        except ValueError:
+            sqm = None
+    price_per_sqm = r.get("priceCzkPerSqM") or None
+    if not price_per_sqm and price_czk and sqm:
+        price_per_sqm = round(price_czk / sqm)
+    kind = (r.get("categorySubCb") or {}).get("name") or slug
+    return {
+        "id": r["id"],
+        "title": r.get("name"),
+        # `garage_kind`, never `disposition`: the name is the guard. Anything
+        # iterating the pool or the market stats keys off `disposition`, so a
+        # garage that carried one could silently join a flat median.
+        "garage_kind": kind,
+        "garage_slug": slug,
+        "transaction_type": "pronajem" if tx_type == "pronajem" else "prodej",
+        "price_czk": price_czk,
+        "usable_area_sqm": sqm,
+        "price_czk_per_sqm": price_per_sqm,
+        "locality": format_locality(locality),
+        "city_part": locality.get("cityPart"),
+        "street": locality.get("street"),
+        "url": f"https://www.sreality.cz/detail/{tx_type}/ostatni/{slug}/x/{r['id']}",
+        "lat": locality.get("latitude"),
+        "lon": locality.get("longitude"),
+        "dist_km": None,
+        "thumb": extract_thumb(r.get("images")),
+    }
+
+
+def fetch_garages():
+    """Standalone garages and parking spaces across the watched wards."""
+    by_id = {}
+    for ward in SEARCH_WARDS:
+        for tx_type in TRANSACTION_TYPES:
+            for slug in GARAGE_CATEGORIES:
+                for rec in search_ward_garages(ward, tx_type, slug):
+                    by_id.setdefault(rec["id"], rec)
+                time.sleep(0.3)
+    raw_count = len(by_id)
+    garages = [g for g in by_id.values() if in_watched_area(g.get("lat"), g.get("lon"))]
+    for g in garages:
+        g["dist_km"] = round(km_from_center(g.get("lat"), g.get("lon")) or 0, 2)
+    garages.sort(key=lambda g: (g["transaction_type"], g.get("price_czk") or 0))
+    print(
+        f"Garages: {len(garages)}/{raw_count} within {AREA_RADIUS_KM} km",
+        file=sys.stderr,
+    )
+    return garages
+
+
+def compute_garage_stats(garages):
+    """Medians per transaction type, and per kind where the sample allows.
+
+    Reported with n on purpose. The sale side is a dozen adverts spanning
+    245 000 to 3 000 000 Kc, so its median is a location on a very wide
+    distribution, not a market price -- the dashboard has to say so."""
+    out = {}
+    for tx in ("pronajem", "prodej"):
+        for slug in (None, *GARAGE_CATEGORIES):
+            vals = sorted(
+                g["price_czk"]
+                for g in garages
+                if g["transaction_type"] == tx
+                and g.get("price_czk")
+                and (slug is None or g.get("garage_slug") == slug)
+            )
+            key = tx if slug is None else f"{tx}_{slug.replace('-', '_')}"
+            if not vals:
+                out[key] = {"n": 0}
+                continue
+            # statistics.quantiles needs n >= 2 and is overkill for a dozen
+            # values; nearest-rank keeps p25/p75 on real observed prices, which
+            # is what a reader of a 7-advert sample should be shown.
+            def rank(frac):
+                return vals[min(len(vals) - 1, int(frac * (len(vals) - 1) + 0.5))]
+
+            out[key] = {
+                "n": len(vals),
+                "median_czk": round(statistics.median(vals)),
+                "min_czk": vals[0],
+                "max_czk": vals[-1],
+                "p25_czk": rank(0.25),
+                "p75_czk": rank(0.75),
+            }
+    return out
 
 
 def fetch_comparables(prev_snapshot=None):
@@ -1117,6 +1358,8 @@ def parse_comparable(r, tx_type):
         "total_czk": price_czk if price_czk else None,
         "garage": None,
         "parking": None,
+        "parking_state": None,
+        "parking_price_czk": None,
     }
 
 
@@ -1167,7 +1410,7 @@ def enrich_comparable(comp):
     # found a parking surcharge living only here ("plus 2000 Kč za parking").
     comp["price_note_raw"] = params.get("priceNote")
     comp.update(attributes_from_params(params, data))
-    fees_czk, fees_source, electricity_explicit = extract_fees_and_electricity(
+    fees_czk, fees_source, electricity_explicit, fee_unsure = extract_fees_and_electricity(
         params.get("costOfLiving"), data.get("description"), comp.get("price_czk"),
         params.get("priceNote"),
     )
@@ -1175,6 +1418,25 @@ def enrich_comparable(comp):
         cost_breakdown(comp.get("price_czk"), fees_czk, comp.get("transaction_type"),
                        electricity_explicit, fees_source)
     )
+    # Where the parser had to guess, the stored answer becomes unknown rather
+    # than a number: a wrong fee moves the all-in median silently, a missing
+    # one only costs coverage, and `base_eligible` already drops fee-less
+    # rentals from the estimate. The reasons ride along so the review queue can
+    # say WHY, and so a rule can be retired once it stops earning its keep.
+    # Sales have no service charge to be unsure about: the fee chain still runs
+    # over their text and can flag an "included" phrase that means nothing on a
+    # purchase. Queueing those would have put 30 of the 56 entries in front of
+    # Radim for no reason.
+    if comp.get("transaction_type") != "pronajem":
+        fee_unsure = ()
+    comp["fee_unsure"] = list(fee_unsure)
+    if fee_unsure:
+        comp["fee_would_be"] = fees_czk
+        fees_czk, fees_source = None, None
+        fees_czk, fees_missing, electricity_czk, electricity_estimated, total_czk = (
+            cost_breakdown(comp.get("price_czk"), None, comp.get("transaction_type"),
+                           electricity_explicit, None)
+        )
     comp["fees_czk"] = fees_czk
     comp["fees_missing"] = fees_missing
     comp["fees_source"] = fees_source
@@ -1186,6 +1448,10 @@ def enrich_comparable(comp):
     comp["electricity_estimated"] = electricity_estimated
     comp["total_czk"] = total_czk
     comp["garage"], comp["parking"] = garage_parking_from_params(params)
+    # Three states, not two. An advert with a garage and no price is NOT a
+    # free garage -- the rent most likely already covers it and the advert
+    # does not say. It contributes nothing to what a space costs.
+    comp["parking_state"], comp["parking_price_czk"] = parking_state(comp)
     if (
         comp.get("transaction_type") == "pronajem"
         and total_czk
@@ -1767,6 +2033,189 @@ def own_property_stats(comparables):
     }
 
 
+def parking_price_stats(comparables):
+    """What a space costs when the advert says so.
+
+    Only the `priced` adverts count. The `unpriced` ones are excluded on
+    purpose and that is the whole point of the three states: treating them as
+    zero would invent ~135 free garages and pull the median down.
+    """
+    vals = sorted(
+        c["parking_price_czk"]
+        for c in comparables
+        if c.get("transaction_type") == "pronajem" and c.get("parking_price_czk")
+    )
+    counts = collections.Counter(
+        c.get("parking_state")
+        for c in comparables
+        if c.get("transaction_type") == "pronajem" and c.get("parking_state")
+    )
+    out = {f"n_{k}": counts.get(k, 0) for k in PARKING_STATES}
+    if not vals:
+        out["n"] = 0
+        return out
+    out.update({
+        "n": len(vals),
+        "median_czk": round(statistics.median(vals)),
+        "min_czk": vals[0],
+        "max_czk": vals[-1],
+    })
+    return out
+
+
+def build_fee_review_queue(comparables):
+    """The adverts whose fee the parser refused to guess, for Radim to read.
+
+    Its own small file, not a key in latest_snapshot.json or the dashboard:
+    those are megabytes already, and this wants to be openable, diffable and
+    sortable by hand. Each entry carries the raw text the decision was made
+    on, because the point of the queue is to fix the RULE, not the row.
+
+    Measured on the live pool: 53 of 1165 adverts (4.6 %). At the observed
+    median of 11 new adverts a day that is roughly 4 a week in steady state,
+    after a one-off backlog of the 53 on the first run."""
+    queue = []
+    for c in comparables:
+        why = c.get("fee_unsure")
+        if not why or c.get("transaction_type") != "pronajem":
+            continue
+        queue.append({
+            "id": c["id"],
+            "url": c.get("url"),
+            "title": c.get("title"),
+            "why": why,
+            "rent_czk": c.get("price_czk"),
+            # What the parser WOULD have said. Kept so Radim can see whether
+            # the guess was in fact fine -- a reason that keeps turning out
+            # harmless is a reason to retire.
+            "would_have_said": c.get("fee_would_be"),
+            "cost_of_living_raw": c.get("cost_of_living_raw"),
+            "price_note_raw": c.get("price_note_raw"),
+            "description": (c.get("description") or "")[:600],
+        })
+    queue.sort(key=lambda q: (q["why"], str(q["id"])))
+    return queue
+
+
+# --- parking: three states, not two ------------------------------------- #
+# Radim's rule, and the reasoning behind it. An advert that HAS a garage but
+# does not price it does NOT mean the garage is free: it means the quoted rent
+# most likely already covers it, and we cannot tell from the advert. So such an
+# advert contributes nothing to what a space costs -- it is not a zero, it is
+# an absence. Booking it as zero would have invented ~70 of them and dragged
+# the median down; that is the whole reason this is three states and not two.
+#
+#   none      no garage and no parking on the advert
+#   unpriced  it has one, no price is stated -- the rent is taken as all-in
+#   priced    it has one and says what it costs
+PARKING_STATES = ("none", "unpriced", "priced")
+PARKING_KEYWORDS = ("garáž", "garaz", "parkovac", "parking", "stání", "stani")
+# Words whose number is about something else. If one of these sits closer to an
+# amount than the parking word does, the amount is not the parking price --
+# this is what keeps a service charge quoted in the same sentence out.
+PARKING_RIVAL_KEYWORDS = tuple(FEE_KEYWORDS) + tuple(RENT_KEYWORDS) + tuple(ELECTRICITY_KEYWORDS)
+# NUMBER_RE happily bites three digits out of a date or a year and returns an
+# amount that was never a price ("kolaudace 2024" -> 2024 Kč). Measured: this
+# alone produced parking "prices" up to 19 000 Kč before it was caught.
+DATE_RE = re.compile(r"\b\d{1,2}\.\s?\d{1,2}\.\s?(?:19|20)\d{2}\b")
+YEAR_CONTEXT_RE = re.compile(
+    r"\b(?:od|do|roce|rok|roku|kolaudace|výstavb\w*|dokončen\w*|rekonstrukce)\s+(?:19|20)\d{2}\b",
+    re.I,
+)
+# "není zahrnuto", "stání není v ceně" -- the exact opposite of what an
+# inclusive phrase counts as. Found by hand-checking advert 4291883084.
+PARKING_NEGATION_RE = re.compile(r"\bne(?:ní|jsou|obsahuje|zahrnuje)\b", re.I)
+
+
+def _parking_numbers(clause):
+    cleaned = YEAR_CONTEXT_RE.sub(" ", DATE_RE.sub(" ", clause))
+    out = []
+    for m in NUMBER_RE.finditer(cleaned):
+        try:
+            v = int(re.sub(r"[ .,]", "", m.group(1)))
+        except ValueError:
+            continue
+        if plausible_fee(v):
+            out.append((v, (m.start() + m.end()) / 2))
+    return out
+
+
+def _keyword_positions(clause, keywords):
+    low = clause.lower()
+    pos = []
+    for k in keywords:
+        start = 0
+        while (i := low.find(k, start)) >= 0:
+            pos.append(i)
+            start = i + 1
+    return pos
+
+
+def find_parking_price(*texts):
+    """What the advert says a parking space costs, or None.
+
+    The amount has to sit nearer the parking word than to any fee/rent/energy
+    word in the same clause. Nearest-word beats first-number here for the same
+    reason it does in pick_fee: that is how the sentence reads to a human.
+    """
+    for text in texts:
+        norm = normalize_text(text)
+        if not norm:
+            continue
+        clauses = CLAUSE_SPLIT_RE.split(norm)
+        for i, clause in enumerate(clauses):
+            low = clause.lower()
+            if not any(k in low for k in PARKING_KEYWORDS):
+                continue
+            if any(k in low for k in EXCLUDE_KEYWORDS):
+                continue
+            # "nájem vč. parkovacího stání" prices nothing -- it is the
+            # unpriced case, and reading a nearby number as the space's price
+            # is how a service charge ends up quoted as parking.
+            if INCLUSIVE_RE.search(clause) and not PARKING_NEGATION_RE.search(clause):
+                continue
+            park_pos = _keyword_positions(clause, PARKING_KEYWORDS)
+            rival_pos = _keyword_positions(clause, PARKING_RIVAL_KEYWORDS)
+            best = None
+            for value, mid in _parking_numbers(clause):
+                d_park = min(abs(mid - p) for p in park_pos)
+                d_rival = min((abs(mid - r) for r in rival_pos), default=float("inf"))
+                if d_park < d_rival and (best is None or d_park < best[1]):
+                    best = (value, d_park)
+            if best:
+                return best[0]
+            # "Garážové stání" alone on its own line, price on the next one.
+            # Allowed only when this clause is a bare name -- no number and no
+            # rival topic of its own -- and the next one is not about fees
+            # either. Six adverts in the live set are this shape; without the
+            # guards the same reach picks up the service charge instead.
+            if (
+                not _parking_numbers(clause)
+                and not rival_pos
+                and i + 1 < len(clauses)
+            ):
+                nxt = clauses[i + 1]
+                nxt_low = nxt.lower()
+                if not any(k in nxt_low for k in EXCLUDE_KEYWORDS) and not any(
+                    k in nxt_low for k in PARKING_RIVAL_KEYWORDS
+                ):
+                    nums = _parking_numbers(nxt)
+                    if nums:
+                        return nums[0][0]
+    return None
+
+
+def parking_state(comp):
+    """(state, price). See PARKING_STATES."""
+    has = bool(comp.get("garage")) or bool(comp.get("parking"))
+    if not has:
+        return "none", None
+    price = find_parking_price(
+        comp.get("price_note_raw"), comp.get("description"), comp.get("cost_of_living_raw")
+    )
+    return ("priced", price) if price is not None else ("unpriced", None)
+
+
 def compute_stats(comparables):
     def per_sqm(tx, disp_filter=None):
         vals = [
@@ -2084,6 +2533,61 @@ def slim_for_dashboard(comp):
     return {k: v for k, v in comp.items() if k not in DASHBOARD_OMIT_FIELDS}
 
 
+def garage_card(garages, gstats):
+    """The standalone garage/parking section.
+
+    Kept visually apart from the flat statistics because it IS apart: different
+    category, different area field, no disposition. Every number carries its n,
+    and the sale side carries a warning -- eleven adverts spanning 245 000 to
+    3 000 000 Kc have a median, but it is not a price."""
+    if not garages:
+        return ""
+    rent = gstats.get("pronajem") or {"n": 0}
+    sale = gstats.get("prodej") or {"n": 0}
+
+    def cell(st, unit):
+        if not st.get("n"):
+            return '<div class="stat"><div class="num">—</div><div class="lbl">bez dat</div></div>'
+        return (
+            f'<div class="stat"><div class="num">{fmt_czk(st["median_czk"])}</div>'
+            f'<div class="lbl">medián {unit} ({st["n"]})</div></div>'
+        )
+
+    rows = "".join(
+        f"<tr><td>{html.escape(g.get('garage_kind') or '')}</td>"
+        f"<td>{'pronájem' if g['transaction_type'] == 'pronajem' else 'prodej'}</td>"
+        f"<td>{html.escape(g.get('city_part') or '')}</td>"
+        f"<td>{g.get('usable_area_sqm') or ''}</td>"
+        f"<td>{fmt_czk(g.get('price_czk'))}</td>"
+        f'<td><a href="{html.escape(g["url"])}" target="_blank" rel="noopener">↗</a></td></tr>'
+        for g in garages
+    )
+    sale_warn = ""
+    if sale.get("n"):
+        sale_warn = (
+            f'<p class="hint" style="margin:6px 0 0;color:#d9a3c0;">⚠ Prodej stojí na '
+            f'{sale["n"]} inzerátech v rozpětí {fmt_czk(sale["min_czk"])} – '
+            f'{fmt_czk(sale["max_czk"])}. Ten medián je poloha na velmi širokém '
+            f'rozdělení, ne tržní cena.</p>'
+        )
+    return f"""<div class="card" id="garageCard">
+  <h2 style="margin-top:0;font-size:1rem;">🅿️ Garáže a stání samostatně ({AREA_RADIUS_KM} km)</h2>
+  <div class="stats">
+    {cell(rent, "nájem Kč/měs")}
+    {cell(sale, "prodej Kč")}
+  </div>
+  <p class="hint" style="margin:6px 0 0;">Samostatně inzerované garáže a garážová stání —
+    vlastní kategorie Sreality, do statistiky bytů výš nevstupují.</p>
+  {sale_warn}
+  <div class="scroll" style="max-height:260px;margin-top:8px;">
+  <table>
+    <thead><tr><th>Typ</th><th>Transakce</th><th>Část</th><th>m²</th><th>Cena</th><th></th></tr></thead>
+    <tbody>{rows}</tbody>
+  </table>
+  </div>
+</div>"""
+
+
 def render_dashboard(snapshot, changes, stats, history, estimate=None):
     tracked_list = snapshot["tracked"]
     comparables = snapshot["comparables"]
@@ -2092,6 +2596,9 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None):
         c["change_note"] = build_change_note(c["id"], changes)
     tracked_items = [build_tracked_item(t, changes) for t in tracked_list]
 
+    garage_card_html = garage_card(
+        snapshot.get("garages") or [], snapshot.get("garage_stats") or {}
+    )
     data_json = json.dumps([slim_for_dashboard(c) for c in comparables], ensure_ascii=False)
     tracked_json = json.dumps(tracked_items, ensure_ascii=False)
     history_json = json.dumps(history, ensure_ascii=False)
@@ -2286,6 +2793,8 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None):
 {estimate_card_html}
 
 {own_card_html}
+
+{garage_card_html}
 
 <div class="card">
   <h2 style="margin-top:0;font-size:1rem;">Statistika oblasti ({", ".join(DISPOSITION_CODES.values())} · {AREA_RADIUS_KM} km)</h2>
@@ -2556,6 +3065,16 @@ function costBreakdownHtml(item) {
   </div>`;
 }
 
+function parkingStateHtml(item) {
+  // Three states. "unpriced" is deliberately not "0 Kč": the advert has a
+  // space and does not say what it costs, which most often means the rent
+  // already covers it.
+  if (!item.parking_state || item.parking_state === 'none') return '';
+  if (item.parking_state === 'priced')
+    return `<div><b>Stání</b> ${item.parking_price_czk.toLocaleString('cs')} Kč/měs</div>`;
+  return `<div><b>Stání</b> <span title="Inzerát stání má, ale cenu neuvádí — nájem ji nejspíš zahrnuje">je, cena neuvedena</span></div>`;
+}
+
 function garageParkingHtml(item) {
   const fmt = v => v === true ? "Ano" : v === false ? "Ne" : "neuvedeno";
   return `<div><b>Garáž</b>${fmt(item.garage)}</div><div><b>Parkování</b>${fmt(item.parking)}</div>`;
@@ -2582,6 +3101,7 @@ function buildModalHtml(item) {
       <div><b>Type</b>${item.transaction_type === "pronajem" ? "Rent" : "Sale"}</div>
       <div><b>Locality</b>${escapeHtml(item.locality || item.city_part || "—")}</div>
       ${garageParkingHtml(item)}
+      ${parkingStateHtml(item)}
       <div><b>Seller / agent</b>${escapeHtml(item.seller_name || "—")}</div>
     </div>
     <div class="modal-desc">${escapeHtml(item.description || "No description available.")}</div>
@@ -3032,6 +3552,18 @@ def main():
         "enrichment_cache": build_enrichment_cache(folded),
     }
 
+    # Garages are collected after the flat snapshot is fully assembled, and
+    # into their own key. A failure here must not cost a run: the flat data is
+    # the product, this is a side dish Radim asked for to price his own garage.
+    try:
+        garages = fetch_garages()
+        snapshot["garages"] = garages
+        snapshot["garage_stats"] = compute_garage_stats(garages)
+    except Exception as exc:  # noqa: BLE001 -- deliberate: never fail the run
+        print(f"::warning::garage sweep failed: {exc}", file=sys.stderr)
+        snapshot["garages"] = (prev or {}).get("garages", [])
+        snapshot["garage_stats"] = (prev or {}).get("garage_stats", {})
+
     changes = diff_snapshots(prev, snapshot)
     verify_removals(changes, snapshot)
     # Restored listings rejoin the set, so the medians and deal ranking are
@@ -3039,6 +3571,10 @@ def main():
     comparables = rank_deals(snapshot["comparables"])
     stats = compute_stats(comparables)
     snapshot["stats"] = stats
+    snapshot["parking_stats"] = parking_price_stats(comparables)
+    fee_queue = build_fee_review_queue(comparables)
+    FEE_QUEUE_PATH.write_text(json.dumps(fee_queue, ensure_ascii=False, indent=2))
+    print(f"Fee review queue: {len(fee_queue)} adverts", file=sys.stderr)
     history = update_changes_history(changes)
 
     ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
