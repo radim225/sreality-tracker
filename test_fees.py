@@ -142,11 +142,12 @@ CASES = [
 def main():
     failures = []
     for label, col, desc, want, rent in CASES:
-        fee, source, _electricity = parse(col, desc, rent)
+        fee, source, _electricity, unsure = parse(col, desc, rent)
         status = "PASS" if fee == want else "FAIL"
         if fee != want:
             failures.append(f"{label}: got {fee!r} (source {source!r}), want {want!r}")
-        print(f"{status}  {label:26} fee={fee!r:>7} source={source!r}")
+        flag = f" unsure={','.join(unsure)}" if unsure else ""
+        print(f"{status}  {label:26} fee={fee!r:>7} source={source!r}{flag}")
     print()
     if failures:
         print(f"{len(failures)} FAILED:")

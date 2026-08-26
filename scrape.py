@@ -35,6 +35,7 @@ CHANGES_HISTORY_PATH = ROOT / "changes_history.json"
 # "what happened this week" would silently see a third of it. The log is the
 # record; the JSON file is a view of the most recent slice of it.
 CHANGES_LOG_PATH = ROOT / "changes_log.jsonl"
+FEE_QUEUE_PATH = ROOT / "fee_review_queue.json"
 
 # Sreality category_sub_cb codes (from /hledani estatesFilterPage)
 DISPOSITION_CODES = {2: "1+kk", 3: "1+1", 4: "2+kk", 5: "2+1", 6: "3+kk", 7: "3+1"}
@@ -142,7 +143,12 @@ MAX_FEE_ATTEMPTS = 3
 # 6: priceNote is written to the snapshot, and "kóje" joins the extras list.
 #    The note changes no answer by itself -- it is stored so the fee chain's
 #    third source stops being unauditable.
-PARSER_VERSION = 6
+# 7: the fee parser now refuses to guess. Where it had to pick between
+#    candidates, reach into the next clause, resolve a person-tier table or
+#    conclude "included" with no amount to back it, the stored fee becomes
+#    unknown and the advert goes to fee_review_queue.json instead. 26 of 502
+#    cached rentals change their answer, so they have to be read again.
+PARSER_VERSION = 7
 
 # Sreality's "estate" payload gives base rent (price) and service fees
 # (params.costOfLiving) separately, but never itemizes electricity -- it's
@@ -424,6 +430,29 @@ def plausible_fee(v):
     return v is not None and FEE_MIN_CZK <= v <= FEE_MAX_CZK
 
 
+# Why the fee parser was not sure. Stored on the listing and queued for Radim
+# to look at, rather than silently resolved -- a wrong number moves the median
+# quietly, an "unknown" only costs coverage. Measured on 177 hand-labelled
+# adverts: queueing these lifts precision 94.7 % -> 97.8 % for 3.4 percentage
+# points of coverage.
+FEE_AMBIGUITY_REASONS = {
+    # Two or more plausible fees contend inside one clause and nothing says
+    # which is meant -- no person-tier table, no ordering signal.
+    "multiple_candidates",
+    # The amount came from the NEXT clause because the keyword clause had none
+    # of its own. Right often enough to keep, wrong often enough to flag.
+    "lookahead",
+    # The cheapest-wins rule fired on a person-tier table ("2 500 pro 1 osobu,
+    # 3 500 pro 2 osoby"). On the labelled set this never changed an answer;
+    # it is here because advert 4010393676 in the live pool shows it picking
+    # the wrong tier. Unmeasured on the labelled data -- said plainly.
+    "person_tier",
+    # "Fees included" was concluded with no amount to corroborate it, so the
+    # stored answer is a bare 0. The single biggest win of the four.
+    "included_without_amount",
+}
+
+
 def is_all_inclusive(text, rent_czk=None):
     """Does the listing say the ADVERTISED rent already covers the fees.
 
@@ -502,8 +531,15 @@ def _scan_clauses(clauses, require_keyword, rent_czk=None):
     * A deposit mention used to void the whole clause. Now the exclusion only
       applies to the amounts in that clause; a fee already found in an earlier
       clause survives a later "Kauce ..." on the same line.
+    
+
+    Returns (fee, electricity, reasons). `reasons` names the guesses the scan
+    had to make -- see FEE_AMBIGUITY_REASONS. It is deliberately reported even
+    when a fee was found: an answer reached by guessing is exactly the one
+    Radim wants to see before it moves a median.
     """
     fee = electricity = None
+    reasons = set()
     for i, clause in enumerate(clauses):
         low = clause.lower()
         if any(k in low for k in EXCLUDE_KEYWORDS):
@@ -541,6 +577,8 @@ def _scan_clauses(clauses, require_keyword, rent_czk=None):
             )
             if not blocked:
                 amounts = parse_amounts(clauses[i + 1])
+                if amounts:
+                    reasons.add("lookahead")
         if not amounts:
             continue
         # A clause that names electricity and whose only fee word is a generic
@@ -556,8 +594,13 @@ def _scan_clauses(clauses, require_keyword, rent_czk=None):
             # 45 000 Kč deposit from being booked as the monthly service charge.
             candidates = [v for v in amounts if plausible_fee(v)]
             if candidates:
+                if len(candidates) > 1:
+                    reasons.add(
+                        "person_tier" if PERSON_RE.search(clause)
+                        else "multiple_candidates"
+                    )
                 fee = pick_fee(clause, candidates)
-    return fee, electricity
+    return fee, electricity, reasons
 
 
 def parse_cost_of_living_text(text, rent_czk=None):
@@ -599,27 +642,33 @@ def extract_fees_and_electricity(cost_of_living_raw, description, rent_czk=None,
     try:
         v = int(raw)
         if v > 0:
-            return v, "field", None
+            # A bare integer in the structured field is the one path with
+            # nothing to guess about, so it is never queued.
+            return v, "field", None, ()
     except ValueError:
         pass
-    fee, electricity = parse_cost_of_living_text(raw, rent_czk)
+    fee, electricity, why = parse_cost_of_living_text(raw, rent_czk)
     if fee is not None:
-        return fee, "field", electricity
-    fee, electricity_note = parse_fee_from_description(price_note, rent_czk)
+        return fee, "field", electricity, tuple(sorted(why))
+    fee, electricity_note, why_note = parse_fee_from_description(price_note, rent_czk)
     electricity = electricity if electricity is not None else electricity_note
     if fee is not None:
-        return fee, "note", electricity
-    fee, electricity_2 = parse_fee_from_description(description, rent_czk)
+        return fee, "note", electricity, tuple(sorted(why_note))
+    fee, electricity_2, why_text = parse_fee_from_description(description, rent_czk)
     electricity = electricity if electricity is not None else electricity_2
     if fee is not None:
-        return fee, "text", electricity
+        return fee, "text", electricity, tuple(sorted(why_text))
     # No number anywhere -- but if the listing states the rent already covers
     # the fees, that is an answer, not a gap, and it must not be presented as
     # "fee unknown, assumed 0" alongside listings that quote rent net of fees.
     if (is_all_inclusive(raw, rent_czk) or is_all_inclusive(description, rent_czk)
             or is_all_inclusive(price_note, rent_czk)):
-        return 0, "included", electricity
-    return None, None, electricity
+        # Nothing corroborates the zero. Of the four queue reasons this is the
+        # one that fires most (25 of 1165 live adverts) and the one that buys
+        # the most precision.
+        return 0, "included", electricity, ("included_without_amount",)
+    # No fee stated anywhere is a finding, not a guess -- not queued.
+    return None, None, electricity, ()
 
 
 def cost_breakdown(price_czk, fees_czk, transaction_type, electricity_explicit=None,
@@ -798,7 +847,7 @@ def fetch_tracked(url, listing_id):
     # "pronajem"/"prodej" values used everywhere else (comparables, URLs).
     type_code = (data.get("categoryTypeCb") or {}).get("value")
     transaction_type = "pronajem" if type_code == 2 else "prodej"
-    fees_czk, fees_source, electricity_explicit = extract_fees_and_electricity(
+    fees_czk, fees_source, electricity_explicit, fee_unsure = extract_fees_and_electricity(
         params.get("costOfLiving"), data.get("description"), rent_czk
     )
     fees_czk, fees_missing, electricity_czk, electricity_estimated, total_czk = (
@@ -822,6 +871,7 @@ def fetch_tracked(url, listing_id):
         "fees_czk": fees_czk,
         "fees_missing": fees_missing,
         "fees_source": fees_source,
+        "fee_unsure": list(fee_unsure),
         "electricity_czk": electricity_czk,
         "electricity_estimated": electricity_estimated,
         "total_czk": total_czk,
@@ -984,6 +1034,10 @@ ENRICHED_FIELDS = (
     "balcony", "balcony_area_sqm", "loggia", "loggia_area_sqm",
     "terrace", "terrace_area_sqm", "elevator", "ownership", "ownership_name",
     "since", "edited", "views", "price_old_czk",
+    # Without this a cached listing loses its queue flag on the next run and
+    # silently reverts to carrying a guessed fee -- the exact class of stale
+    # mis-parse PARSER_VERSION exists to prevent.
+    "fee_unsure", "fee_would_be",
 )
 
 
@@ -1348,7 +1402,7 @@ def enrich_comparable(comp):
     # found a parking surcharge living only here ("plus 2000 Kč za parking").
     comp["price_note_raw"] = params.get("priceNote")
     comp.update(attributes_from_params(params, data))
-    fees_czk, fees_source, electricity_explicit = extract_fees_and_electricity(
+    fees_czk, fees_source, electricity_explicit, fee_unsure = extract_fees_and_electricity(
         params.get("costOfLiving"), data.get("description"), comp.get("price_czk"),
         params.get("priceNote"),
     )
@@ -1356,6 +1410,25 @@ def enrich_comparable(comp):
         cost_breakdown(comp.get("price_czk"), fees_czk, comp.get("transaction_type"),
                        electricity_explicit, fees_source)
     )
+    # Where the parser had to guess, the stored answer becomes unknown rather
+    # than a number: a wrong fee moves the all-in median silently, a missing
+    # one only costs coverage, and `base_eligible` already drops fee-less
+    # rentals from the estimate. The reasons ride along so the review queue can
+    # say WHY, and so a rule can be retired once it stops earning its keep.
+    # Sales have no service charge to be unsure about: the fee chain still runs
+    # over their text and can flag an "included" phrase that means nothing on a
+    # purchase. Queueing those would have put 30 of the 56 entries in front of
+    # Radim for no reason.
+    if comp.get("transaction_type") != "pronajem":
+        fee_unsure = ()
+    comp["fee_unsure"] = list(fee_unsure)
+    if fee_unsure:
+        comp["fee_would_be"] = fees_czk
+        fees_czk, fees_source = None, None
+        fees_czk, fees_missing, electricity_czk, electricity_estimated, total_czk = (
+            cost_breakdown(comp.get("price_czk"), None, comp.get("transaction_type"),
+                           electricity_explicit, None)
+        )
     comp["fees_czk"] = fees_czk
     comp["fees_missing"] = fees_missing
     comp["fees_source"] = fees_source
@@ -1946,6 +2019,40 @@ def own_property_stats(comparables):
         # Share of comparable adverts asking less per m² than he paid.
         "cheaper_pct": round(cheaper / len(band) * 100),
     }
+
+
+def build_fee_review_queue(comparables):
+    """The adverts whose fee the parser refused to guess, for Radim to read.
+
+    Its own small file, not a key in latest_snapshot.json or the dashboard:
+    those are megabytes already, and this wants to be openable, diffable and
+    sortable by hand. Each entry carries the raw text the decision was made
+    on, because the point of the queue is to fix the RULE, not the row.
+
+    Measured on the live pool: 53 of 1165 adverts (4.6 %). At the observed
+    median of 11 new adverts a day that is roughly 4 a week in steady state,
+    after a one-off backlog of the 53 on the first run."""
+    queue = []
+    for c in comparables:
+        why = c.get("fee_unsure")
+        if not why or c.get("transaction_type") != "pronajem":
+            continue
+        queue.append({
+            "id": c["id"],
+            "url": c.get("url"),
+            "title": c.get("title"),
+            "why": why,
+            "rent_czk": c.get("price_czk"),
+            # What the parser WOULD have said. Kept so Radim can see whether
+            # the guess was in fact fine -- a reason that keeps turning out
+            # harmless is a reason to retire.
+            "would_have_said": c.get("fee_would_be"),
+            "cost_of_living_raw": c.get("cost_of_living_raw"),
+            "price_note_raw": c.get("price_note_raw"),
+            "description": (c.get("description") or "")[:600],
+        })
+    queue.sort(key=lambda q: (q["why"], str(q["id"])))
+    return queue
 
 
 def compute_stats(comparables):
@@ -3292,6 +3399,9 @@ def main():
     comparables = rank_deals(snapshot["comparables"])
     stats = compute_stats(comparables)
     snapshot["stats"] = stats
+    fee_queue = build_fee_review_queue(comparables)
+    FEE_QUEUE_PATH.write_text(json.dumps(fee_queue, ensure_ascii=False, indent=2))
+    print(f"Fee review queue: {len(fee_queue)} adverts", file=sys.stderr)
     history = update_changes_history(changes)
 
     ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
