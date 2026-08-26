@@ -47,6 +47,12 @@ POOL_FIELDS = (
     "building_type", "building_type_name", "energy_rating", "furnished",
     "commission_czk", "tenant_not_pay_commission", "no_commission",
     "cellar", "cellar_area_sqm", "garage", "garage_count", "parking",
+    # The three-state view of the same thing. `garage`/`parking` stay because
+    # they are what the portal states; these two are what we concluded from it,
+    # and only `parking_state` distinguishes "has one, price unknown" from
+    # "has one, costs X". Nothing in market.py reads them yet -- they are here
+    # so the history exists when something does.
+    "parking_state", "parking_price_czk",
     "parking_lots", "balcony", "balcony_area_sqm", "loggia", "loggia_area_sqm",
     "terrace", "terrace_area_sqm", "floor_number", "floors_total", "elevator",
     "ownership", "ownership_name", "views", "edited",
