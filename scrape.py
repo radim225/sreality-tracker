@@ -45,6 +45,21 @@ DISPOSITION_CODES = {2: "1+kk", 3: "1+1", 4: "2+kk", 5: "2+1", 6: "3+kk", 7: "3+
 SEARCH_VELIKOST = ",".join(DISPOSITION_CODES.values())
 TRANSACTION_TYPES = ["pronajem", "prodej"]  # rent, sale
 
+# Standalone garages and parking spaces. Sreality files them under the "Ostatní"
+# main category (category_main_cb 5), NOT under flats, with two sub-categories
+# of their own -- so they are invisible to the flat sweep above no matter how
+# the disposition filter is set. Radim bought a garage and wants to know what
+# one is worth on its own, which is a new collection, not a new analysis.
+#
+# These deliberately do NOT join DISPOSITION_CODES: a garage has no disposition,
+# its area comes from a different field, and letting it reach `comparables`
+# would fold it into compute_stats(), which takes the median Kc/m2 across every
+# comparable with no disposition filter at all. A 220 000 Kc/m2 garage sitting
+# in the flat sale median is exactly the kind of silent corruption this project
+# measures against, so garages live in their own snapshot key end to end.
+GARAGE_CATEGORIES = {"garaze": 34, "garazova-stani": 52}
+
+
 # The watched area is a circle, not a ward list: Radim's landmarks straddle
 # ward boundaries (Hrdlořezy sits on the Praha 3/9 line, the Rokytka cycle path
 # runs Vysočany->Libeň->Karlín). So we search every ward the circle touches and
@@ -166,12 +181,20 @@ RETRY_STATUSES = {429, 500, 502, 503, 504}
 RETRY_BACKOFF_SECONDS = (2, 5, 10)
 
 
-def fetch_next_data(url, params=None):
+def fetch_next_data(url, params=None, parse_on_404=False):
     """Returns (next_data, status). Raises TransientFetchError once the retries
     are exhausted, so a flaky response can never be mistaken for a missing
     listing. Statuses outside RETRY_STATUSES still raise through
     raise_for_status() -- a persistent 403 block should fail loudly, not be
-    swallowed into a phantom mass removal."""
+    swallowed into a phantom mass removal.
+
+    `parse_on_404` exists for the garage/parking search endpoint, which answers
+    404 for a perfectly valid EMPTY result set -- the body still carries a
+    __NEXT_DATA__ with pagination.total = 0. Measured on
+    /hledani/pronajem/garaze?region=Hrdlorezy. Flats never do this, so the flag
+    is off by default: on a listing detail page a 404 really does mean the
+    advert is gone, and treating it as "empty but fine" would stop removals
+    being detected."""
     last_failure = None
     for backoff in (*RETRY_BACKOFF_SECONDS, None):
         try:
@@ -180,8 +203,11 @@ def fetch_next_data(url, params=None):
             last_failure = f"{type(exc).__name__}: {exc}"
         else:
             if resp.status_code not in RETRY_STATUSES:
-                if resp.status_code == 404:
+                if resp.status_code == 404 and not parse_on_404:
                     return None, resp.status_code
+                if resp.status_code == 404:
+                    m = NEXT_DATA_RE.search(resp.text)
+                    return (json.loads(m.group(1)) if m else None), resp.status_code
                 resp.raise_for_status()
                 m = NEXT_DATA_RE.search(resp.text)
                 if not m:
@@ -966,6 +992,161 @@ def carry_enrichment(comp, prev_comp):
         if prev_comp.get(k) is not None:
             comp[k] = prev_comp[k]
     comp["from_cache"] = True
+
+
+def search_ward_garages(ward, tx_type, slug):
+    """Every standalone garage / parking space of one kind in one ward.
+
+    A near-copy of search_ward rather than a branch inside it: the URL, the
+    record shape and the 404 semantics all differ, and the flat path is the one
+    thing in this file that must not acquire another `if`."""
+    want_code = GARAGE_CATEGORIES[slug]
+    found = []
+    page = 1
+    seen_total = None
+    seen_offsets = set()
+    while True:
+        url = f"https://www.sreality.cz/hledani/{tx_type}/{slug}"
+        next_data, status = fetch_next_data(
+            url,
+            params={"region": ward, "strana": page},
+            parse_on_404=True,
+        )
+        if next_data is None:
+            # An empty ward answers 404 WITH a body; a 404 with no body at all
+            # is the real thing. Either way there is nothing here to read, and
+            # unlike the flat sweep this must not abort the run: garages are a
+            # side dish, and one silent ward is better than no snapshot.
+            if status == 404:
+                return found
+            raise TransientFetchError(
+                f"garage search page {page} of {tx_type}/{slug}/{ward}: "
+                f"no __NEXT_DATA__ (HTTP {status})"
+            )
+        data, _ = get_query_data(next_data, "estatesSearch")
+        if data is None:
+            raise TransientFetchError(
+                f"garage search page {page} of {tx_type}/{slug}/{ward}: "
+                "estatesSearch query missing"
+            )
+        pagination = data.get("pagination") or {}
+        seen_total = pagination.get("total")
+        offset = pagination.get("offset")
+        if offset in seen_offsets:
+            break
+        seen_offsets.add(offset)
+        page_results = data.get("results") or []
+        if not page_results:
+            break
+        for r in page_results:
+            if (r.get("categorySubCb") or {}).get("value") != want_code:
+                continue
+            found.append(parse_garage(r, tx_type, slug))
+        limit = pagination.get("limit") or len(page_results) or 22
+        if page * limit >= (seen_total or 0):
+            break
+        page += 1
+    return found
+
+
+def parse_garage(r, tx_type, slug):
+    """One garage/parking record from the search payload.
+
+    No detail fetch: unlike a flat, everything worth having (price, area,
+    locality, GPS) is already in the search result, and there is no service
+    charge to parse. That keeps the whole category to ~30 requests a run."""
+    locality = r.get("locality") or {}
+    price_czk = r.get("priceCzk") or None
+    sqm = None
+    m = re.search(r"(\d+(?:[.,]\d+)?)\s*m", r.get("name") or "")
+    if m:
+        try:
+            sqm = float(m.group(1).replace(",", "."))
+        except ValueError:
+            sqm = None
+    price_per_sqm = r.get("priceCzkPerSqM") or None
+    if not price_per_sqm and price_czk and sqm:
+        price_per_sqm = round(price_czk / sqm)
+    kind = (r.get("categorySubCb") or {}).get("name") or slug
+    return {
+        "id": r["id"],
+        "title": r.get("name"),
+        # `garage_kind`, never `disposition`: the name is the guard. Anything
+        # iterating the pool or the market stats keys off `disposition`, so a
+        # garage that carried one could silently join a flat median.
+        "garage_kind": kind,
+        "garage_slug": slug,
+        "transaction_type": "pronajem" if tx_type == "pronajem" else "prodej",
+        "price_czk": price_czk,
+        "usable_area_sqm": sqm,
+        "price_czk_per_sqm": price_per_sqm,
+        "locality": format_locality(locality),
+        "city_part": locality.get("cityPart"),
+        "street": locality.get("street"),
+        "url": f"https://www.sreality.cz/detail/{tx_type}/ostatni/{slug}/x/{r['id']}",
+        "lat": locality.get("latitude"),
+        "lon": locality.get("longitude"),
+        "dist_km": None,
+        "thumb": extract_thumb(r.get("images")),
+    }
+
+
+def fetch_garages():
+    """Standalone garages and parking spaces across the watched wards."""
+    by_id = {}
+    for ward in SEARCH_WARDS:
+        for tx_type in TRANSACTION_TYPES:
+            for slug in GARAGE_CATEGORIES:
+                for rec in search_ward_garages(ward, tx_type, slug):
+                    by_id.setdefault(rec["id"], rec)
+                time.sleep(0.3)
+    raw_count = len(by_id)
+    garages = [g for g in by_id.values() if in_watched_area(g.get("lat"), g.get("lon"))]
+    for g in garages:
+        g["dist_km"] = round(km_from_center(g.get("lat"), g.get("lon")) or 0, 2)
+    garages.sort(key=lambda g: (g["transaction_type"], g.get("price_czk") or 0))
+    print(
+        f"Garages: {len(garages)}/{raw_count} within {AREA_RADIUS_KM} km",
+        file=sys.stderr,
+    )
+    return garages
+
+
+def compute_garage_stats(garages):
+    """Medians per transaction type, and per kind where the sample allows.
+
+    Reported with n on purpose. The sale side is a dozen adverts spanning
+    245 000 to 3 000 000 Kc, so its median is a location on a very wide
+    distribution, not a market price -- the dashboard has to say so."""
+    out = {}
+    for tx in ("pronajem", "prodej"):
+        for slug in (None, *GARAGE_CATEGORIES):
+            vals = sorted(
+                g["price_czk"]
+                for g in garages
+                if g["transaction_type"] == tx
+                and g.get("price_czk")
+                and (slug is None or g.get("garage_slug") == slug)
+            )
+            key = tx if slug is None else f"{tx}_{slug.replace('-', '_')}"
+            if not vals:
+                out[key] = {"n": 0}
+                continue
+            # statistics.quantiles needs n >= 2 and is overkill for a dozen
+            # values; nearest-rank keeps p25/p75 on real observed prices, which
+            # is what a reader of a 7-advert sample should be shown.
+            def rank(frac):
+                return vals[min(len(vals) - 1, int(frac * (len(vals) - 1) + 0.5))]
+
+            out[key] = {
+                "n": len(vals),
+                "median_czk": round(statistics.median(vals)),
+                "min_czk": vals[0],
+                "max_czk": vals[-1],
+                "p25_czk": rank(0.25),
+                "p75_czk": rank(0.75),
+            }
+    return out
 
 
 def fetch_comparables(prev_snapshot=None):
@@ -2084,6 +2265,61 @@ def slim_for_dashboard(comp):
     return {k: v for k, v in comp.items() if k not in DASHBOARD_OMIT_FIELDS}
 
 
+def garage_card(garages, gstats):
+    """The standalone garage/parking section.
+
+    Kept visually apart from the flat statistics because it IS apart: different
+    category, different area field, no disposition. Every number carries its n,
+    and the sale side carries a warning -- eleven adverts spanning 245 000 to
+    3 000 000 Kc have a median, but it is not a price."""
+    if not garages:
+        return ""
+    rent = gstats.get("pronajem") or {"n": 0}
+    sale = gstats.get("prodej") or {"n": 0}
+
+    def cell(st, unit):
+        if not st.get("n"):
+            return '<div class="stat"><div class="num">—</div><div class="lbl">bez dat</div></div>'
+        return (
+            f'<div class="stat"><div class="num">{fmt_czk(st["median_czk"])}</div>'
+            f'<div class="lbl">medián {unit} ({st["n"]})</div></div>'
+        )
+
+    rows = "".join(
+        f"<tr><td>{html.escape(g.get('garage_kind') or '')}</td>"
+        f"<td>{'pronájem' if g['transaction_type'] == 'pronajem' else 'prodej'}</td>"
+        f"<td>{html.escape(g.get('city_part') or '')}</td>"
+        f"<td>{g.get('usable_area_sqm') or ''}</td>"
+        f"<td>{fmt_czk(g.get('price_czk'))}</td>"
+        f'<td><a href="{html.escape(g["url"])}" target="_blank" rel="noopener">↗</a></td></tr>'
+        for g in garages
+    )
+    sale_warn = ""
+    if sale.get("n"):
+        sale_warn = (
+            f'<p class="hint" style="margin:6px 0 0;color:#d9a3c0;">⚠ Prodej stojí na '
+            f'{sale["n"]} inzerátech v rozpětí {fmt_czk(sale["min_czk"])} – '
+            f'{fmt_czk(sale["max_czk"])}. Ten medián je poloha na velmi širokém '
+            f'rozdělení, ne tržní cena.</p>'
+        )
+    return f"""<div class="card" id="garageCard">
+  <h2 style="margin-top:0;font-size:1rem;">🅿️ Garáže a stání samostatně ({AREA_RADIUS_KM} km)</h2>
+  <div class="stats">
+    {cell(rent, "nájem Kč/měs")}
+    {cell(sale, "prodej Kč")}
+  </div>
+  <p class="hint" style="margin:6px 0 0;">Samostatně inzerované garáže a garážová stání —
+    vlastní kategorie Sreality, do statistiky bytů výš nevstupují.</p>
+  {sale_warn}
+  <div class="scroll" style="max-height:260px;margin-top:8px;">
+  <table>
+    <thead><tr><th>Typ</th><th>Transakce</th><th>Část</th><th>m²</th><th>Cena</th><th></th></tr></thead>
+    <tbody>{rows}</tbody>
+  </table>
+  </div>
+</div>"""
+
+
 def render_dashboard(snapshot, changes, stats, history, estimate=None):
     tracked_list = snapshot["tracked"]
     comparables = snapshot["comparables"]
@@ -2092,6 +2328,9 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None):
         c["change_note"] = build_change_note(c["id"], changes)
     tracked_items = [build_tracked_item(t, changes) for t in tracked_list]
 
+    garage_card_html = garage_card(
+        snapshot.get("garages") or [], snapshot.get("garage_stats") or {}
+    )
     data_json = json.dumps([slim_for_dashboard(c) for c in comparables], ensure_ascii=False)
     tracked_json = json.dumps(tracked_items, ensure_ascii=False)
     history_json = json.dumps(history, ensure_ascii=False)
@@ -2286,6 +2525,8 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None):
 {estimate_card_html}
 
 {own_card_html}
+
+{garage_card_html}
 
 <div class="card">
   <h2 style="margin-top:0;font-size:1rem;">Statistika oblasti ({", ".join(DISPOSITION_CODES.values())} · {AREA_RADIUS_KM} km)</h2>
@@ -3031,6 +3272,18 @@ def main():
         # the next run knows it has already read them.
         "enrichment_cache": build_enrichment_cache(folded),
     }
+
+    # Garages are collected after the flat snapshot is fully assembled, and
+    # into their own key. A failure here must not cost a run: the flat data is
+    # the product, this is a side dish Radim asked for to price his own garage.
+    try:
+        garages = fetch_garages()
+        snapshot["garages"] = garages
+        snapshot["garage_stats"] = compute_garage_stats(garages)
+    except Exception as exc:  # noqa: BLE001 -- deliberate: never fail the run
+        print(f"::warning::garage sweep failed: {exc}", file=sys.stderr)
+        snapshot["garages"] = (prev or {}).get("garages", [])
+        snapshot["garage_stats"] = (prev or {}).get("garage_stats", {})
 
     changes = diff_snapshots(prev, snapshot)
     verify_removals(changes, snapshot)
