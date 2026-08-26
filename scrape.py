@@ -2,6 +2,7 @@
 """Sreality.cz property monitor: scrapes a seed listing plus comparable
 listings in the same area, snapshots the result, diffs against the previous
 snapshot, and regenerates a mobile-friendly dashboard with photos and a map."""
+import collections
 import html
 import json
 import math
@@ -148,6 +149,9 @@ MAX_FEE_ATTEMPTS = 3
 #    conclude "included" with no amount to back it, the stored fee becomes
 #    unknown and the advert goes to fee_review_queue.json instead. 26 of 502
 #    cached rentals change their answer, so they have to be read again.
+#    The same run adds `parking_state`/`parking_price_czk` -- three states for
+#    a garage instead of a boolean -- which is new data on every cached
+#    listing and would need the backfill on its own anyway.
 PARSER_VERSION = 7
 
 # Sreality's "estate" payload gives base rent (price) and service fees
@@ -1031,6 +1035,7 @@ ENRICHED_FIELDS = (
     "building_type", "building_type_name", "energy_rating", "furnished",
     "commission_czk", "tenant_not_pay_commission", "no_commission",
     "cellar", "cellar_area_sqm", "garage_count", "parking_lots",
+    "parking_state", "parking_price_czk",
     "balcony", "balcony_area_sqm", "loggia", "loggia_area_sqm",
     "terrace", "terrace_area_sqm", "elevator", "ownership", "ownership_name",
     "since", "edited", "views", "price_old_czk",
@@ -1038,6 +1043,7 @@ ENRICHED_FIELDS = (
     # silently reverts to carrying a guessed fee -- the exact class of stale
     # mis-parse PARSER_VERSION exists to prevent.
     "fee_unsure", "fee_would_be",
+    "parking_state", "parking_price_czk",
 )
 
 
@@ -1352,6 +1358,8 @@ def parse_comparable(r, tx_type):
         "total_czk": price_czk if price_czk else None,
         "garage": None,
         "parking": None,
+        "parking_state": None,
+        "parking_price_czk": None,
     }
 
 
@@ -1440,6 +1448,10 @@ def enrich_comparable(comp):
     comp["electricity_estimated"] = electricity_estimated
     comp["total_czk"] = total_czk
     comp["garage"], comp["parking"] = garage_parking_from_params(params)
+    # Three states, not two. An advert with a garage and no price is NOT a
+    # free garage -- the rent most likely already covers it and the advert
+    # does not say. It contributes nothing to what a space costs.
+    comp["parking_state"], comp["parking_price_czk"] = parking_state(comp)
     if (
         comp.get("transaction_type") == "pronajem"
         and total_czk
@@ -2021,6 +2033,36 @@ def own_property_stats(comparables):
     }
 
 
+def parking_price_stats(comparables):
+    """What a space costs when the advert says so.
+
+    Only the `priced` adverts count. The `unpriced` ones are excluded on
+    purpose and that is the whole point of the three states: treating them as
+    zero would invent ~135 free garages and pull the median down.
+    """
+    vals = sorted(
+        c["parking_price_czk"]
+        for c in comparables
+        if c.get("transaction_type") == "pronajem" and c.get("parking_price_czk")
+    )
+    counts = collections.Counter(
+        c.get("parking_state")
+        for c in comparables
+        if c.get("transaction_type") == "pronajem" and c.get("parking_state")
+    )
+    out = {f"n_{k}": counts.get(k, 0) for k in PARKING_STATES}
+    if not vals:
+        out["n"] = 0
+        return out
+    out.update({
+        "n": len(vals),
+        "median_czk": round(statistics.median(vals)),
+        "min_czk": vals[0],
+        "max_czk": vals[-1],
+    })
+    return out
+
+
 def build_fee_review_queue(comparables):
     """The adverts whose fee the parser refused to guess, for Radim to read.
 
@@ -2053,6 +2095,125 @@ def build_fee_review_queue(comparables):
         })
     queue.sort(key=lambda q: (q["why"], str(q["id"])))
     return queue
+
+
+# --- parking: three states, not two ------------------------------------- #
+# Radim's rule, and the reasoning behind it. An advert that HAS a garage but
+# does not price it does NOT mean the garage is free: it means the quoted rent
+# most likely already covers it, and we cannot tell from the advert. So such an
+# advert contributes nothing to what a space costs -- it is not a zero, it is
+# an absence. Booking it as zero would have invented ~70 of them and dragged
+# the median down; that is the whole reason this is three states and not two.
+#
+#   none      no garage and no parking on the advert
+#   unpriced  it has one, no price is stated -- the rent is taken as all-in
+#   priced    it has one and says what it costs
+PARKING_STATES = ("none", "unpriced", "priced")
+PARKING_KEYWORDS = ("garáž", "garaz", "parkovac", "parking", "stání", "stani")
+# Words whose number is about something else. If one of these sits closer to an
+# amount than the parking word does, the amount is not the parking price --
+# this is what keeps a service charge quoted in the same sentence out.
+PARKING_RIVAL_KEYWORDS = tuple(FEE_KEYWORDS) + tuple(RENT_KEYWORDS) + tuple(ELECTRICITY_KEYWORDS)
+# NUMBER_RE happily bites three digits out of a date or a year and returns an
+# amount that was never a price ("kolaudace 2024" -> 2024 Kč). Measured: this
+# alone produced parking "prices" up to 19 000 Kč before it was caught.
+DATE_RE = re.compile(r"\b\d{1,2}\.\s?\d{1,2}\.\s?(?:19|20)\d{2}\b")
+YEAR_CONTEXT_RE = re.compile(
+    r"\b(?:od|do|roce|rok|roku|kolaudace|výstavb\w*|dokončen\w*|rekonstrukce)\s+(?:19|20)\d{2}\b",
+    re.I,
+)
+# "není zahrnuto", "stání není v ceně" -- the exact opposite of what an
+# inclusive phrase counts as. Found by hand-checking advert 4291883084.
+PARKING_NEGATION_RE = re.compile(r"\bne(?:ní|jsou|obsahuje|zahrnuje)\b", re.I)
+
+
+def _parking_numbers(clause):
+    cleaned = YEAR_CONTEXT_RE.sub(" ", DATE_RE.sub(" ", clause))
+    out = []
+    for m in NUMBER_RE.finditer(cleaned):
+        try:
+            v = int(re.sub(r"[ .,]", "", m.group(1)))
+        except ValueError:
+            continue
+        if plausible_fee(v):
+            out.append((v, (m.start() + m.end()) / 2))
+    return out
+
+
+def _keyword_positions(clause, keywords):
+    low = clause.lower()
+    pos = []
+    for k in keywords:
+        start = 0
+        while (i := low.find(k, start)) >= 0:
+            pos.append(i)
+            start = i + 1
+    return pos
+
+
+def find_parking_price(*texts):
+    """What the advert says a parking space costs, or None.
+
+    The amount has to sit nearer the parking word than to any fee/rent/energy
+    word in the same clause. Nearest-word beats first-number here for the same
+    reason it does in pick_fee: that is how the sentence reads to a human.
+    """
+    for text in texts:
+        norm = normalize_text(text)
+        if not norm:
+            continue
+        clauses = CLAUSE_SPLIT_RE.split(norm)
+        for i, clause in enumerate(clauses):
+            low = clause.lower()
+            if not any(k in low for k in PARKING_KEYWORDS):
+                continue
+            if any(k in low for k in EXCLUDE_KEYWORDS):
+                continue
+            # "nájem vč. parkovacího stání" prices nothing -- it is the
+            # unpriced case, and reading a nearby number as the space's price
+            # is how a service charge ends up quoted as parking.
+            if INCLUSIVE_RE.search(clause) and not PARKING_NEGATION_RE.search(clause):
+                continue
+            park_pos = _keyword_positions(clause, PARKING_KEYWORDS)
+            rival_pos = _keyword_positions(clause, PARKING_RIVAL_KEYWORDS)
+            best = None
+            for value, mid in _parking_numbers(clause):
+                d_park = min(abs(mid - p) for p in park_pos)
+                d_rival = min((abs(mid - r) for r in rival_pos), default=float("inf"))
+                if d_park < d_rival and (best is None or d_park < best[1]):
+                    best = (value, d_park)
+            if best:
+                return best[0]
+            # "Garážové stání" alone on its own line, price on the next one.
+            # Allowed only when this clause is a bare name -- no number and no
+            # rival topic of its own -- and the next one is not about fees
+            # either. Six adverts in the live set are this shape; without the
+            # guards the same reach picks up the service charge instead.
+            if (
+                not _parking_numbers(clause)
+                and not rival_pos
+                and i + 1 < len(clauses)
+            ):
+                nxt = clauses[i + 1]
+                nxt_low = nxt.lower()
+                if not any(k in nxt_low for k in EXCLUDE_KEYWORDS) and not any(
+                    k in nxt_low for k in PARKING_RIVAL_KEYWORDS
+                ):
+                    nums = _parking_numbers(nxt)
+                    if nums:
+                        return nums[0][0]
+    return None
+
+
+def parking_state(comp):
+    """(state, price). See PARKING_STATES."""
+    has = bool(comp.get("garage")) or bool(comp.get("parking"))
+    if not has:
+        return "none", None
+    price = find_parking_price(
+        comp.get("price_note_raw"), comp.get("description"), comp.get("cost_of_living_raw")
+    )
+    return ("priced", price) if price is not None else ("unpriced", None)
 
 
 def compute_stats(comparables):
@@ -2904,6 +3065,16 @@ function costBreakdownHtml(item) {
   </div>`;
 }
 
+function parkingStateHtml(item) {
+  // Three states. "unpriced" is deliberately not "0 Kč": the advert has a
+  // space and does not say what it costs, which most often means the rent
+  // already covers it.
+  if (!item.parking_state || item.parking_state === 'none') return '';
+  if (item.parking_state === 'priced')
+    return `<div><b>Stání</b> ${item.parking_price_czk.toLocaleString('cs')} Kč/měs</div>`;
+  return `<div><b>Stání</b> <span title="Inzerát stání má, ale cenu neuvádí — nájem ji nejspíš zahrnuje">je, cena neuvedena</span></div>`;
+}
+
 function garageParkingHtml(item) {
   const fmt = v => v === true ? "Ano" : v === false ? "Ne" : "neuvedeno";
   return `<div><b>Garáž</b>${fmt(item.garage)}</div><div><b>Parkování</b>${fmt(item.parking)}</div>`;
@@ -2930,6 +3101,7 @@ function buildModalHtml(item) {
       <div><b>Type</b>${item.transaction_type === "pronajem" ? "Rent" : "Sale"}</div>
       <div><b>Locality</b>${escapeHtml(item.locality || item.city_part || "—")}</div>
       ${garageParkingHtml(item)}
+      ${parkingStateHtml(item)}
       <div><b>Seller / agent</b>${escapeHtml(item.seller_name || "—")}</div>
     </div>
     <div class="modal-desc">${escapeHtml(item.description || "No description available.")}</div>
@@ -3399,6 +3571,7 @@ def main():
     comparables = rank_deals(snapshot["comparables"])
     stats = compute_stats(comparables)
     snapshot["stats"] = stats
+    snapshot["parking_stats"] = parking_price_stats(comparables)
     fee_queue = build_fee_review_queue(comparables)
     FEE_QUEUE_PATH.write_text(json.dumps(fee_queue, ensure_ascii=False, indent=2))
     print(f"Fee review queue: {len(fee_queue)} adverts", file=sys.stderr)
