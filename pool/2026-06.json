@@ -2,7 +2,7 @@
  "1022903116": {
   "id": "1022903116",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -228,7 +228,7 @@
  "1080886092": {
   "id": "1080886092",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -268,7 +268,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 1.39,
-  "deal_pct": 2,
+  "deal_pct": 1,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -341,7 +341,7 @@
  "1146466380": {
   "id": "1146466380",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -376,7 +376,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 0.62,
-  "deal_pct": -5,
+  "deal_pct": -7,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 4,
@@ -411,7 +411,7 @@
  "1154478156": {
   "id": "1154478156",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -423,6 +423,11 @@
     "at": "2026-07-14",
     "price_czk": 17700,
     "total_czk": 19200
+   },
+   {
+    "at": "2026-08-27",
+    "price_czk": 16990,
+    "total_czk": 18490
    }
   ],
   "url": "https://www.sreality.cz/detail/pronajem/byt/1%2Bkk/x/1154478156",
@@ -434,8 +439,8 @@
   "locality": "Freyova, Vysočany, Praha",
   "city_part": "Vysočany",
   "pod_harfou": false,
-  "price_czk": 17700,
-  "price_czk_per_sqm": 582,
+  "price_czk": 16990,
+  "price_czk_per_sqm": 560,
   "backfilled": true,
   "lat": 50.1055629221185,
   "lon": 14.502656011427,
@@ -445,13 +450,13 @@
   "fees_missing": true,
   "electricity_czk": 1500,
   "electricity_estimated": true,
-  "total_czk": 19200,
+  "total_czk": 18490,
   "garage": true,
   "parking": true,
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.13,
-  "deal_pct": -21,
+  "deal_pct": -23,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -477,11 +482,11 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 3939,
-  "edited": "2026-07-31",
+  "views": 4006,
+  "edited": "2026-08-27",
   "since": "2026-06-17",
   "parking_state": "priced",
-  "parking_price_czk": 1900
+  "parking_price_czk": 1500
  },
  "1180168268": {
   "id": "1180168268",
@@ -523,7 +528,7 @@
  "1189876556": {
   "id": "1189876556",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -558,7 +563,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 2.78,
-  "deal_pct": -9,
+  "deal_pct": -10,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -593,7 +598,7 @@
  "120275788": {
   "id": "120275788",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -820,7 +825,7 @@
  "1236435020": {
   "id": "1236435020",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -860,7 +865,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.36,
-  "deal_pct": 2,
+  "deal_pct": 1,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -886,7 +891,7 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 4472,
+  "views": 4552,
   "edited": "2026-08-07",
   "since": "2026-06-05",
   "parking_state": "none",
@@ -933,7 +938,7 @@
  "1254835020": {
   "id": "1254835020",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1003,7 +1008,7 @@
  "1255371340": {
   "id": "1255371340",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1038,7 +1043,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 0.88,
-  "deal_pct": 42,
+  "deal_pct": 43,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -1148,7 +1153,7 @@
  "1301319756": {
   "id": "1301319756",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1188,7 +1193,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 2.28,
-  "deal_pct": -8,
+  "deal_pct": -9,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -1266,7 +1271,7 @@
  "1328894796": {
   "id": "1328894796",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1301,7 +1306,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 2.17,
-  "deal_pct": -13,
+  "deal_pct": -15,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -1406,7 +1411,7 @@
  "1370587212": {
   "id": "1370587212",
   "first_seen": "2026-06-28T19:37:02Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1513,7 +1518,7 @@
  "1396953676": {
   "id": "1396953676",
   "first_seen": "2026-06-28T19:37:02Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1553,7 +1558,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 1.81,
-  "deal_pct": 4,
+  "deal_pct": 3,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -1588,7 +1593,7 @@
  "1404608588": {
   "id": "1404608588",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1739,7 +1744,7 @@
  "1422692428": {
   "id": "1422692428",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1852,7 +1857,7 @@
  "1445417804": {
   "id": "1445417804",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1887,7 +1892,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 2.17,
-  "deal_pct": -18,
+  "deal_pct": -20,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -2078,7 +2083,7 @@
  "1489215564": {
   "id": "1489215564",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2267,7 +2272,7 @@
  "1551852364": {
   "id": "1551852364",
   "first_seen": "2026-06-28T19:37:02Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2307,7 +2312,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 1.81,
-  "deal_pct": 21,
+  "deal_pct": 19,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -2380,7 +2385,7 @@
  "1570738252": {
   "id": "1570738252",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2567,7 +2572,7 @@
  "1656258636": {
   "id": "1656258636",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2607,7 +2612,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.29,
-  "deal_pct": -11,
+  "deal_pct": -10,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -2633,7 +2638,7 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 13556,
+  "views": 13658,
   "edited": "2026-08-24",
   "since": "2026-05-29",
   "parking_state": "none",
@@ -2718,7 +2723,7 @@
  "1711312972": {
   "id": "1711312972",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2779,7 +2784,7 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 5140,
+  "views": 5195,
   "edited": "2026-05-20",
   "since": "2026-05-20",
   "parking_state": "none",
@@ -3062,7 +3067,7 @@
  "1801143116": {
   "id": "1801143116",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3098,7 +3103,36 @@
   "source": "sreality",
   "dist_km": 1.86,
   "deal_pct": 13,
-  "deal_outlier": false
+  "deal_outlier": false,
+  "price_old_czk": null,
+  "building_condition": 9,
+  "building_condition_name": "Po rekonstrukci",
+  "is_new_building": false,
+  "building_type": 7,
+  "building_type_name": "Smíšená",
+  "energy_rating": "G",
+  "furnished": null,
+  "commission_czk": null,
+  "tenant_not_pay_commission": null,
+  "no_commission": null,
+  "cellar": true,
+  "cellar_area_sqm": null,
+  "garage_count": null,
+  "parking_state": "unpriced",
+  "parking_price_czk": null,
+  "parking_lots": false,
+  "balcony": true,
+  "balcony_area_sqm": null,
+  "loggia": false,
+  "loggia_area_sqm": null,
+  "terrace": false,
+  "terrace_area_sqm": null,
+  "elevator": true,
+  "ownership": 1,
+  "ownership_name": "Osobní",
+  "views": 11391,
+  "edited": "2026-08-20",
+  "since": "2026-03-18"
  },
  "1830966092": {
   "id": "1830966092",
@@ -3140,7 +3174,7 @@
  "1871704140": {
   "id": "1871704140",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3175,7 +3209,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.29,
-  "deal_pct": 11,
+  "deal_pct": 9,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -3636,7 +3670,7 @@
  "2062331980": {
   "id": "2062331980",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3857,7 +3891,7 @@
  "2177581900": {
   "id": "2177581900",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3965,7 +3999,7 @@
  "2227913548": {
   "id": "2227913548",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4035,7 +4069,7 @@
  "2233184332": {
   "id": "2233184332",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4070,7 +4104,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.87,
-  "deal_pct": 1,
+  "deal_pct": 2,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -4105,7 +4139,7 @@
  "2234683468": {
   "id": "2234683468",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4266,7 +4300,7 @@
  "2267501388": {
   "id": "2267501388",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4301,7 +4335,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 2.17,
-  "deal_pct": -13,
+  "deal_pct": -14,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -4374,7 +4408,7 @@
  "2295116620": {
   "id": "2295116620",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4481,7 +4515,7 @@
  "2304201548": {
   "id": "2304201548",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4516,7 +4550,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 2.17,
-  "deal_pct": -15,
+  "deal_pct": -16,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -4589,7 +4623,7 @@
  "2329321548": {
   "id": "2329321548",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4701,7 +4735,7 @@
  "2354533196": {
   "id": "2354533196",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4736,7 +4770,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 2.17,
-  "deal_pct": -15,
+  "deal_pct": -16,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -5087,7 +5121,7 @@
  "2498511692": {
   "id": "2498511692",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5237,7 +5271,7 @@
  "2562949196": {
   "id": "2562949196",
   "first_seen": "2026-06-28T19:37:02Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5272,7 +5306,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.42,
-  "deal_pct": -25,
+  "deal_pct": -26,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 2,
@@ -5421,7 +5455,7 @@
  "2630566732": {
   "id": "2630566732",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5529,7 +5563,7 @@
  "2636689484": {
   "id": "2636689484",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [],
   "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/2636689484",
@@ -5668,7 +5702,7 @@
  "2663968844": {
   "id": "2663968844",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5703,7 +5737,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 1.39,
-  "deal_pct": -14,
+  "deal_pct": -15,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -6045,7 +6079,7 @@
  "2853208140": {
   "id": "2853208140",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6115,7 +6149,7 @@
  "2864615500": {
   "id": "2864615500",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6150,7 +6184,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.39,
-  "deal_pct": 15,
+  "deal_pct": 14,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 4,
@@ -6298,7 +6332,7 @@
  "290865996": {
   "id": "290865996",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6333,7 +6367,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.47,
-  "deal_pct": -14,
+  "deal_pct": -15,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 2,
@@ -6496,7 +6530,7 @@
  "299324236": {
   "id": "299324236",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [],
   "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/299324236",
@@ -6876,7 +6910,7 @@
  "3173163084": {
   "id": "3173163084",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7321,7 +7355,7 @@
  "3310125132": {
   "id": "3310125132",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7789,7 +7823,7 @@
  "3448762444": {
   "id": "3448762444",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7824,7 +7858,7 @@
   "fees_source": "note",
   "source": "sreality",
   "dist_km": 1.11,
-  "deal_pct": -10,
+  "deal_pct": -12,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 2,
@@ -7859,7 +7893,7 @@
  "3449786444": {
   "id": "3449786444",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8041,7 +8075,7 @@
  "3579269964": {
   "id": "3579269964",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8076,7 +8110,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 2.17,
-  "deal_pct": -10,
+  "deal_pct": -12,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -8224,7 +8258,7 @@
  "3710341964": {
   "id": "3710341964",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8259,7 +8293,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 2.17,
-  "deal_pct": -10,
+  "deal_pct": -12,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -8294,7 +8328,7 @@
  "3717263436": {
   "id": "3717263436",
   "first_seen": "2026-06-28T19:37:02Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8444,7 +8478,7 @@
  "3768815692": {
   "id": "3768815692",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8594,7 +8628,7 @@
  "3807547468": {
   "id": "3807547468",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8629,7 +8663,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.61,
-  "deal_pct": 2,
+  "deal_pct": 0,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -8824,7 +8858,7 @@
  "3834703948": {
   "id": "3834703948",
   "first_seen": "2026-06-28T19:37:02Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8936,7 +8970,7 @@
  "3844817740": {
   "id": "3844817740",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9152,7 +9186,7 @@
  "3898295116": {
   "id": "3898295116",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9188,7 +9222,36 @@
   "source": "sreality",
   "dist_km": 1.86,
   "deal_pct": 21,
-  "deal_outlier": false
+  "deal_outlier": false,
+  "price_old_czk": null,
+  "building_condition": 9,
+  "building_condition_name": "Po rekonstrukci",
+  "is_new_building": false,
+  "building_type": 7,
+  "building_type_name": "Smíšená",
+  "energy_rating": "G",
+  "furnished": null,
+  "commission_czk": null,
+  "tenant_not_pay_commission": null,
+  "no_commission": null,
+  "cellar": true,
+  "cellar_area_sqm": null,
+  "garage_count": null,
+  "parking_state": "unpriced",
+  "parking_price_czk": null,
+  "parking_lots": false,
+  "balcony": true,
+  "balcony_area_sqm": null,
+  "loggia": false,
+  "loggia_area_sqm": null,
+  "terrace": false,
+  "terrace_area_sqm": null,
+  "elevator": true,
+  "ownership": 1,
+  "ownership_name": "Osobní",
+  "views": 12438,
+  "edited": "2026-08-20",
+  "since": "2026-03-18"
  },
  "3903451212": {
   "id": "3903451212",
@@ -9314,7 +9377,7 @@
  "3945525324": {
   "id": "3945525324",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9349,7 +9412,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.72,
-  "deal_pct": 1,
+  "deal_pct": 2,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -9375,7 +9438,7 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 9231,
+  "views": 9376,
   "edited": "2026-08-25",
   "since": "2026-06-12",
   "parking_state": "unpriced",
@@ -9535,7 +9598,7 @@
  "4006981708": {
   "id": "4006981708",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9570,7 +9633,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 0.62,
-  "deal_pct": 12,
+  "deal_pct": 10,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 4,
@@ -9911,7 +9974,7 @@
  "4099363660": {
   "id": "4099363660",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9946,7 +10009,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 2.17,
-  "deal_pct": -9,
+  "deal_pct": -11,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -10019,7 +10082,7 @@
  "4136693836": {
   "id": "4136693836",
   "first_seen": "2026-06-28T19:37:02Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10239,7 +10302,7 @@
  "4241449804": {
   "id": "4241449804",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10362,7 +10425,7 @@
  "4265243212": {
   "id": "4265243212",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10470,7 +10533,7 @@
  "4276437836": {
   "id": "4276437836",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10510,7 +10573,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 2.46,
-  "deal_pct": 1,
+  "deal_pct": 0,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 4,
@@ -10545,7 +10608,7 @@
  "4282532684": {
   "id": "4282532684",
   "first_seen": "2026-06-28T19:37:02Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10585,7 +10648,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 1.81,
-  "deal_pct": 17,
+  "deal_pct": 15,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -10695,7 +10758,7 @@
  "474043212": {
   "id": "474043212",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10730,7 +10793,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 2.17,
-  "deal_pct": -6,
+  "deal_pct": -8,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -10955,7 +11018,7 @@
  "552435788": {
   "id": "552435788",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11025,7 +11088,7 @@
  "562032716": {
   "id": "562032716",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11070,7 +11133,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.28,
-  "deal_pct": -14,
+  "deal_pct": -15,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -11096,7 +11159,7 @@
   "elevator": true,
   "ownership": 2,
   "ownership_name": "Družstevní",
-  "views": 4723,
+  "views": 4796,
   "edited": "2026-08-25",
   "since": "2026-06-17",
   "parking_state": "priced",
@@ -11181,7 +11244,7 @@
  "603451468": {
   "id": "603451468",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11331,7 +11394,7 @@
  "67654476": {
   "id": "67654476",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11366,7 +11429,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 0.62,
-  "deal_pct": 2,
+  "deal_pct": 3,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 4,
@@ -11482,7 +11545,7 @@
  "729280588": {
   "id": "729280588",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11522,7 +11585,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 2.23,
-  "deal_pct": 9,
+  "deal_pct": 7,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -11548,8 +11611,8 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 27827,
-  "edited": "2026-08-26",
+  "views": 28198,
+  "edited": "2026-08-27",
   "since": "2026-06-26",
   "parking_state": "unpriced",
   "parking_price_czk": null
@@ -11557,7 +11620,7 @@
  "773816396": {
   "id": "773816396",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11597,7 +11660,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 2.78,
-  "deal_pct": -6,
+  "deal_pct": -7,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -11632,7 +11695,7 @@
  "792023884": {
   "id": "792023884",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11667,7 +11730,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 2.17,
-  "deal_pct": -11,
+  "deal_pct": -13,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -11859,7 +11922,7 @@
  "86463308": {
   "id": "86463308",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11894,7 +11957,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 2.17,
-  "deal_pct": -14,
+  "deal_pct": -15,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -11966,7 +12029,7 @@
  "911164236": {
   "id": "911164236",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12001,7 +12064,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.13,
-  "deal_pct": -15,
+  "deal_pct": -17,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -12027,7 +12090,7 @@
   "elevator": null,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 15451,
+  "views": 15498,
   "edited": "2026-06-25",
   "since": "2026-03-22",
   "parking_state": "none",
@@ -12106,7 +12169,7 @@
  "934019660": {
   "id": "934019660",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-08-26T22:18:08Z",
+  "last_seen": "2026-08-27T16:45:16Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12141,7 +12204,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 2.78,
-  "deal_pct": 3,
+  "deal_pct": 4,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
