@@ -85,6 +85,7 @@ jobs:
           python test_parking.py
           python test_own_card.py
           python test_search_paging.py
+          python test_garages.py
           python test_cache.py
           python test_pool.py
           python test_market.py

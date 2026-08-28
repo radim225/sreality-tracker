@@ -116,6 +116,10 @@ MAX_REENRICH_PER_RUN = sources.env_int("MAX_REENRICH", 60)
 # as a "retry" next time, and those listings are on the dashboard meanwhile --
 # they just carry price and locality until their detail lands.
 MAX_DETAIL_FETCHES_PER_RUN = sources.env_int("MAX_DETAIL_FETCHES", 300)
+# Garáže jsou vedlejší kategorie a jejich popisy se nemění, takže se čtou jen
+# jednou a pak žijí z keše. Strop je tu pro první běh a pro případ, že by se
+# celá kategorie protočila naráz.
+MAX_GARAGE_DETAIL_FETCHES = sources.env_int("MAX_GARAGE_DETAIL_FETCHES", 40)
 # How many clean reads an advert gets before "no fee stated" is accepted as the
 # answer rather than retried. Roughly a third of Sreality rentals never quote a
 # service charge anywhere.
@@ -1193,7 +1197,100 @@ def parse_garage(r, tx_type, slug):
     }
 
 
-def fetch_garages():
+# Krátká charakteristika garáže z jejího popisu -- deterministicky, žádný LLM.
+# Radim chce u stání vidět, CO to vlastně je: „1. PP", „venkovní parkoviště",
+# „parklift". Bez toho jsou dva inzeráty za 245 tisíc a 3 miliony na dashboardu
+# nerozlišitelné, přestože jeden je stání pro motocykl v podzemí a druhý
+# samostatná garáž.
+#
+# Pravidla stavěná na 14 skutečných popisech z okruhu, ne vymyšlená. Pořadí
+# rozhoduje: štítky se sbírají odshora a vypisují v pořadí definice, takže
+# nejdřív stojí umístění, pak typ, pak zvláštnosti.
+GARAGE_FEATURE_RULES = [
+    # --- kde to je ------------------------------------------------------ #
+    # Podlaží se vytahuje včetně čísla: „-3. podlaží" a „1. PP" jsou pro cenu
+    # i pohodlí rozdíl, a obojí se v datech píše nejmíň třemi způsoby.
+    # Čísla podlaží: "1. PP", "1. podzemním podlaží" i holé "-3. podlaží",
+    # které se v datech objevuje hned v prvním inzerátu. České koncovky se
+    # berou přes \w*, ne výčtem písmen -- "řadovou" má na konci dva znaky, ne
+    # jeden, a první verze těchhle pravidel proto půlku popisů minula.
+    ("podlazi", re.compile(r"(-?\d)\.\s*(?:PP\b|podzemn\w*\s+podlaž\w*|podlaž\w*)", re.I), None),
+    ("podzemi", re.compile(r"podzemn[íi]\s+gar[áa]ž|v\s+podzem[íi]", re.I), "podzemní"),
+    ("venkovni", re.compile(r"venkovn\w*|na\s+ter[ée]nu|otevřen\w*\s+parkoviš", re.I), "venkovní"),
+    ("parkoviste", re.compile(r"uzavřen\w*\s+parkoviš|oploce\w*\s+(?:a\s+\w+\s+)?are[áa]l", re.I), "uzavřené parkoviště"),
+    ("zastreseno", re.compile(r"zastřešen|přístřeš|carport", re.I), "zastřešené"),
+    ("v_dome", re.compile(r"v\s+(?:bytov\w*|rezidenčn\w*|cihlov\w*|moderní\w*)\s+(?:\w+\s+){0,2}(?:dom[ěe]|objektu|komplexu|novostavb\w*)", re.I), "v domě"),
+    # --- co to je ------------------------------------------------------- #
+    ("radova", re.compile(r"řadov\w*\s+gar[áa]ž\w*", re.I), "řadová garáž"),
+    ("samostatna", re.compile(r"samostatn\w*\s+(?:\w+\s+){0,2}gar[áa]ž\w*", re.I), "samostatná garáž"),
+    ("parklift", re.compile(r"parklift|zakladač|zakládac[íi]|plošin", re.I), "parklift / plošina"),
+    # --- na co si dát pozor --------------------------------------------- #
+    # Tohle je ten důvod, proč karta popis vůbec potřebuje: stání pro motocykl
+    # stojí zlomek ceny auta a v mediánu vypadá jako výhodná koupě.
+    # Řeší se až za smyčkou, protože nejde o výskyt slova, ale o to, jestli je
+    # motorka JEDINÉ, co se tam vejde. „parkování pro Váš vůz, motorku nebo
+    # uskladnění" je normální garáž a varovat u ní by bylo zavádějící.
+    ("velke", re.compile(r"pro\s+SUV|dod[áa]vk|nadstandardn[íi]\s+(?:rozměr|šíř)|extra\s+prostorn", re.I), "prostorné (SUV)"),
+    ("druzstevni", re.compile(r"družstevn", re.I), "družstevní"),
+    ("rezervovano", re.compile(r"\brezervov[áa]n|blokov[áa]no", re.I), "⚠ rezervováno"),
+]
+
+
+def garage_features(description, note=None):
+    """Pár slov o tom, co ta garáž je. Prázdný seznam, když se nic nepozná --
+    vymyslet charakteristiku je horší než ji neuvést."""
+    text = " ".join(x for x in (description, note) if x)
+    if not text:
+        return []
+    text = normalize_text(text)
+    out = []
+    for _key, pattern, label in GARAGE_FEATURE_RULES:
+        m = pattern.search(text)
+        if not m:
+            continue
+        if label is None:
+            # Pravidlo se zachyceným číslem podlaží.
+            floor = m.group(1)
+            out.append(f"{floor}. PP" if not floor.startswith("-") else f"{floor}. podlaží")
+        elif label not in out:
+            out.append(label)
+    # Stání jen pro motorku stojí zlomek ceny toho pro auto a v mediánu
+    # vypadá jako výhodná koupě -- tohle je hlavní důvod, proč karta popis
+    # potřebuje. Ale varuje se, jen když se auto nikde nezmiňuje: jinak by
+    # „pro Váš vůz, motorku nebo uskladnění" hlásilo poplach u běžné garáže.
+    if re.search(r"motocykl|motork|\bmoto\b", text, re.I) and not re.search(
+        r"\bvůz\b|\bvozu\b|\bauto|osobn\w*\s+automobil|\bSUV\b|dod[áa]vk", text, re.I
+    ):
+        out.append("⚠ jen pro motocykl")
+    # Vzájemná vyloučení: popis „samostatnou družstevní řadovou garáž"
+    # spustí obě pravidla naráz a dvojice „řadová garáž · samostatná garáž"
+    # čtenáři nic neřekne. Konkrétnější vyhrává.
+    if "řadová garáž" in out and "samostatná garáž" in out:
+        out.remove("samostatná garáž")
+    if "podzemní" in out and any(x.endswith(("PP", "podlaží")) for x in out):
+        out.remove("podzemní")   # číslo podlaží už říká víc
+    return out
+
+
+def enrich_garage(g):
+    """Dočte detail garáže kvůli popisu. Vrací True, když se něco změnilo."""
+    next_data, status = fetch_next_data(g["url"])
+    if next_data is None:
+        # 404 na detailu znamená u garáže totéž co u bytu: inzerát je pryč.
+        g["detail_status"] = status
+        return False
+    data, _ = get_query_data(next_data, "estate")
+    if not data:
+        return False
+    description = data.get("description") or ""
+    g["description"] = description[:MAX_DESCRIPTION_CHARS]
+    g["features"] = garage_features(description, (data.get("params") or {}).get("note"))
+    g["seller_name"] = ((data.get("seller") or {}).get("premise") or {}).get("name") \
+        or (data.get("premise") or {}).get("name")
+    return True
+
+
+def fetch_garages(prev_garages=None):
     """Standalone garages and parking spaces across the watched wards."""
     by_id = {}
     for ward in SEARCH_WARDS:
@@ -1206,12 +1303,66 @@ def fetch_garages():
     garages = [g for g in by_id.values() if in_watched_area(g.get("lat"), g.get("lon"))]
     for g in garages:
         g["dist_km"] = round(km_from_center(g.get("lat"), g.get("lon")) or 0, 2)
+    # Detaily se čtou kvůli popisu, ze kterého se dělá krátká charakteristika
+    # ("1. PP", "parklift", "jen pro motocykl"). Kešuje se z minulého běhu:
+    # popis inzerátu se prakticky nemění, takže po prvním načtení stojí
+    # kategorie ~0 requestů navíc.
+    # Historie: inzerát, který zmizel, se nemaže. Radim chce vidět, že se to
+    # stání prodávalo, kdy se objevilo, kdy zmizelo a za kolik naposledy --
+    # jinak je nabídka, na kterou minulý týden koukal, prostě pryč a nedá se
+    # říct, jestli se prodala nebo jen stáhla.
+    cached = {str(g["id"]): g for g in (prev_garages or [])}
+    now = now_iso()
+    seen_now = {str(g["id"]) for g in garages}
+    for g in garages:
+        prev = cached.get(str(g["id"]))
+        g["first_seen"] = (prev or {}).get("first_seen") or now
+        g["last_seen"] = now
+        g["gone_at"] = None
+        # Poslední viděná cena se drží i po zdražení, aby šlo poznat pohyb.
+        prev_price = (prev or {}).get("price_czk")
+        g["price_old_czk"] = prev_price if prev_price and prev_price != g.get("price_czk") else (prev or {}).get("price_old_czk")
+    for gid, prev in cached.items():
+        if gid in seen_now:
+            continue
+        gone = dict(prev)
+        # gone_at se zapíše jen jednou -- při druhém běhu už tam je a
+        # přepsat ho na dnešek by z data odstranění udělalo datum posledního
+        # běhu, což je přesně ten druh tichého posunu, co se špatně hledá.
+        gone["gone_at"] = prev.get("gone_at") or now
+        gone["last_seen"] = prev.get("last_seen") or prev.get("gone_at") or now
+        garages.append(gone)
+    fetched = 0
+    for g in garages:
+        prev = cached.get(str(g["id"]))
+        if prev and prev.get("features") is not None:
+            g["description"] = prev.get("description")
+            g["features"] = prev.get("features")
+            g["seller_name"] = prev.get("seller_name")
+            continue
+        if fetched >= MAX_GARAGE_DETAIL_FETCHES:
+            continue
+        try:
+            enrich_garage(g)
+        except Exception as exc:  # noqa: BLE001
+            print(f"::warning::garáž {g['id']}: detail se nenačetl ({exc})", file=sys.stderr)
+        fetched += 1
+        time.sleep(0.3)
+    if fetched:
+        print(f"Garages: {fetched} detailů dočteno", file=sys.stderr)
+
     garages.sort(key=lambda g: (g["transaction_type"], g.get("price_czk") or 0))
     print(
         f"Garages: {len(garages)}/{raw_count} within {AREA_RADIUS_KM} km",
         file=sys.stderr,
     )
     return garages
+
+
+def active_garages(garages):
+    """Jen ty, které jsou v nabídce teď. Statistika z historických by mísila
+    dnešní ceny s tím, co bylo v nabídce před měsícem."""
+    return [g for g in garages if not g.get("gone_at")]
 
 
 def compute_garage_stats(garages):
@@ -1221,6 +1372,7 @@ def compute_garage_stats(garages):
     245 000 to 3 000 000 Kc, so its median is a location on a very wide
     distribution, not a market price -- the dashboard has to say so."""
     out = {}
+    garages = active_garages(garages)
     for tx in ("pronajem", "prodej"):
         for slug in (None, *GARAGE_CATEGORIES):
             vals = sorted(
@@ -2836,14 +2988,67 @@ def garage_card(garages, gstats):
             f'<div class="lbl">medián {unit} ({st["n"]})</div></div>'
         )
 
+    def where(g):
+        """Ulice a část — Radim chce vidět, KDE to stání je, ne jen za kolik."""
+        bits = [b for b in (g.get("street"), g.get("city_part")) if b]
+        return html.escape(", ".join(bits))
+
+    def feats(g):
+        """Krátká charakteristika z popisu. Varování se barví, zbytek ne."""
+        out = []
+        for f in (g.get("features") or []):
+            cls = "gf warn" if f.startswith("⚠") else "gf"
+            out.append(f'<span class="{cls}">{html.escape(f)}</span>')
+        return " ".join(out)
+
+    live = active_garages(garages)
+    # Zmizelé se nemažou. Radim chce vidět, že se to stání nabízelo, kdy se
+    # objevilo, kdy zmizelo a za kolik naposledy -- jinak nabídka, na kterou
+    # minulý týden koukal, prostě není a nedá se říct, co se s ní stalo.
+    gone = sorted(
+        (g for g in garages if g.get("gone_at")),
+        key=lambda g: g.get("gone_at") or "", reverse=True,
+    )
+
+    def day(iso):
+        return (iso or "")[:10]
+
+    gone_rows = "".join(
+        f"<tr><td>{html.escape(g.get('garage_kind') or '')}</td>"
+        f"<td>{'pronájem' if g['transaction_type'] == 'pronajem' else 'prodej'}</td>"
+        f"<td>{where(g)}</td>"
+        f"<td>{g.get('usable_area_sqm') or ''}</td>"
+        f"<td>{fmt_czk(g.get('price_czk'))}</td>"
+        f'<td class="hint">{day(g.get("first_seen"))}</td>'
+        f'<td class="hint">{day(g.get("gone_at"))}</td></tr>'
+        for g in gone[:40]
+    )
+    gone_html = ""
+    if gone:
+        gone_html = f"""
+  <details style="margin-top:10px;">
+    <summary style="cursor:pointer;font-size:0.8rem;color:#bbb;">
+      Už není v nabídce ({len(gone)}) — poslední cena a data</summary>
+    <p class="hint" style="margin:6px 0;">Inzerát zmizel z nabídky. <b>Neznamená to, že se prodal</b> —
+      mohl být stažen nebo přeinzerován. Cena je ta poslední, kterou jsme viděli.</p>
+    <div class="scroll" style="max-height:240px;">
+    <table>
+      <thead><tr><th>Typ</th><th>Transakce</th><th>Kde</th><th>m²</th>
+        <th>Poslední cena</th><th>Poprvé viděno</th><th>Zmizelo</th></tr></thead>
+      <tbody>{gone_rows}</tbody>
+    </table>
+    </div>
+  </details>"""
+
     rows = "".join(
         f"<tr><td>{html.escape(g.get('garage_kind') or '')}</td>"
         f"<td>{'pronájem' if g['transaction_type'] == 'pronajem' else 'prodej'}</td>"
-        f"<td>{html.escape(g.get('city_part') or '')}</td>"
+        f"<td>{where(g)}</td>"
         f"<td>{g.get('usable_area_sqm') or ''}</td>"
         f"<td>{fmt_czk(g.get('price_czk'))}</td>"
+        f"<td>{feats(g)}</td>"
         f'<td><a href="{html.escape(g["url"])}" target="_blank" rel="noopener">↗</a></td></tr>'
-        for g in garages
+        for g in live
     )
     sale_warn = ""
     if sale.get("n"):
@@ -2864,10 +3069,10 @@ def garage_card(garages, gstats):
   {sale_warn}
   <div class="scroll" style="max-height:260px;margin-top:8px;">
   <table>
-    <thead><tr><th>Typ</th><th>Transakce</th><th>Část</th><th>m²</th><th>Cena</th><th></th></tr></thead>
+    <thead><tr><th>Typ</th><th>Transakce</th><th>Kde</th><th>m²</th><th>Cena</th><th>Co to je</th><th></th></tr></thead>
     <tbody>{rows}</tbody>
   </table>
-  </div>
+  </div>{gone_html}
 </div>"""
 
 
@@ -2965,6 +3170,9 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None):
               justify-content: space-between; font-size: 0.8rem; }}
   .fq-head a {{ color: #7ab8ff; }}
   .fq-text {{ font-size: 0.72rem; color: #999; margin-top: 3px; }}
+  .gf {{ display: inline-block; font-size: 0.66rem; padding: 1px 5px; margin: 1px 2px 1px 0;
+         border-radius: 3px; background: #2b2b2b; color: #bbb; white-space: nowrap; }}
+  .gf.warn {{ background: #4a2434; color: #e9a8c2; }}
   /* p10-p90 band with his price drawn on it. Absolute positioning inside a
      fixed-height box, so the labels can sit above and below the same line
      without pushing the layout around. */
@@ -3865,7 +4073,7 @@ def main():
     # into their own key. A failure here must not cost a run: the flat data is
     # the product, this is a side dish Radim asked for to price his own garage.
     try:
-        garages = fetch_garages()
+        garages = fetch_garages((prev or {}).get("garages"))
         snapshot["garages"] = garages
         snapshot["garage_stats"] = compute_garage_stats(garages)
     except Exception as exc:  # noqa: BLE001 -- deliberate: never fail the run
