@@ -78,6 +78,7 @@ jobs:
           python test_fees.py
           python test_fee_queue.py
           python test_parking.py
+          python test_own_card.py
           python test_cache.py
           python test_pool.py
           python test_market.py
@@ -102,6 +103,11 @@ jobs:
           # card does not render. See the note by OWN_PROPERTY: this keeps the
           # figure out of the source, not off the published page.
           OWN_PRICE_CZK: ${{ secrets.OWN_PRICE_CZK }}
+          # Garáž a komora zvlášť, jedním secretem: "garaz=500000,komora=110110".
+          OWN_EXTRA_PRICES_CZK: ${{ secrets.OWN_EXTRA_PRICES_CZK }}
+          # Zaplacené zálohy — bez nich se řádek o chybějícím vlastním kapitálu neukáže.
+          OWN_DEPOSITS_CZK: ${{ secrets.OWN_DEPOSITS_CZK }}
+          OWN_LTV_PCT: ${{ secrets.OWN_LTV_PCT }}
           MAX_DETAIL_FETCHES: ${{ github.event.inputs.max_detail_fetches }}
           MAX_SOURCE_DETAIL_FETCHES: ${{ github.event.inputs.max_source_detail_fetches }}
           MAX_REENRICH: ${{ github.event.inputs.max_reenrich }}

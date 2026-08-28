@@ -1983,12 +1983,119 @@ OWN_PROPERTY = {
     "price_czk": sources.env_int("OWN_PRICE_CZK", None),
     "caveat": "novostavba, dokončení ~léto 2027 — okolní inzeráty jsou převážně starší byty z druhé ruky",
 }
+# The garage and the storage unit are separate units on a separate contract.
+# OWN_PRICE_CZK stays the flat alone because that is what the Kč/m² comparison
+# above needs -- no advert in the area bundles a garage, so folding it in would
+# inflate the flat's price per m² against listings that don't include one.
+#
+# But the flat alone is the wrong number for anything about yield: Radim owns
+# all three, pays one mortgage across all three, and a rent that includes the
+# parking space has to be measured against the price that includes it too.
+# So the two extra units are read separately and the card shows both views.
+#
+# One secret, not three, so there is one thing to set and one thing to forget:
+#   OWN_EXTRA_PRICES_CZK="garaz=500000,komora=110110"
+OWN_EXTRA_PRICES = sources.env_map("OWN_EXTRA_PRICES_CZK")
+# Deposits already paid, and the share of the price a bank will lend. Together
+# these answer the question Radim asked to have on the card: how much of his
+# own money is still missing. Without them that line simply does not appear --
+# a wrong number here is worse than none.
+OWN_DEPOSITS_CZK = sources.env_int("OWN_DEPOSITS_CZK", None)
+OWN_LTV_PCT = sources.env_int("OWN_LTV_PCT", 80)
+
+
+def own_units():
+    """(units, total) -- the flat plus whatever extra units are configured."""
+    units = []
+    if OWN_PROPERTY["price_czk"]:
+        units.append(("byt", OWN_PROPERTY["price_czk"]))
+    for name, price in OWN_EXTRA_PRICES.items():
+        units.append((name, price))
+    return units, sum(p for _, p in units)
+
+
+def own_equity_gap():
+    """How much of his own money is still missing, or None.
+
+    Not a stored constant: the LTV is a knob (the Finep app has it as an input
+    too) and the answer moves with it. At 80 % of 7 166 198 the bank lends
+    5 732 958, the deposits cover 1 294 929, and 138 311 has to come from
+    somewhere else."""
+    _units, total = own_units()
+    if not total or OWN_DEPOSITS_CZK is None:
+        return None
+    own_share_needed = total * (1 - OWN_LTV_PCT / 100)
+    return {
+        "total_czk": total,
+        "ltv_pct": OWN_LTV_PCT,
+        "bank_lends_czk": round(total * OWN_LTV_PCT / 100),
+        "own_needed_czk": round(own_share_needed),
+        "deposits_czk": OWN_DEPOSITS_CZK,
+        "gap_czk": round(own_share_needed - OWN_DEPOSITS_CZK),
+    }
 # Comparables are drawn from a size band, not just the disposition, because
 # Kč/m² falls with size even inside 1+kk: the bathroom, the kitchenette and the
 # entrance cost roughly the same in 25 m² as in 40 m². Ranking his 29,6 m² flat
 # against every 1+kk in the circle would flatter it for a reason that has
 # nothing to do with the price.
 OWN_SIZE_BAND_SQM = (25.0, 35.0)
+
+
+def own_gross_yield(estimate, garage_rent_median):
+    """Hrubý výnos po aktivech: roční nájem ÷ kupní cena.
+
+    Deliberately gross and deliberately here rather than in the Finep app.
+    This is a market comparison -- what the asset earns against what it cost --
+    and it belongs next to the market data it is computed from. Cash flow, the
+    mortgage and the return on Radim's own capital are his private finances and
+    live behind the Finep app's PIN, not on a public page.
+
+    Two views, because they answer different questions:
+      byt     the flat's rent against the flat's price
+      celek   flat + garage rent against all three units, which is the number
+              that matters if he lets them together
+    """
+    units, total = own_units()
+    if not units or not estimate:
+        return None
+    prices = dict(units)
+    flat_price = prices.get("byt")
+    # The bare rent, not the all-in figure: fees and energy pass through to
+    # suppliers, they are not income. The unfurnished profile is the
+    # conservative one -- furnishing it lifts the rent ~10 %, but that is a
+    # decision Radim has not made.
+    profile = (estimate.get("profiles") or {}).get("nezarizeny") or {}
+    flat_rent = (profile.get("rent") or {}).get("median")
+    if not flat_price or not flat_rent:
+        return None
+    rows = [{
+        "unit": "byt",
+        "price_czk": flat_price,
+        "rent_czk": flat_rent,
+        "yield_pct": round(flat_rent * 12 / flat_price * 100, 2),
+    }]
+    garage_price = prices.get("garaz")
+    if garage_price and garage_rent_median:
+        rows.append({
+            "unit": "garáž",
+            "price_czk": garage_price,
+            "rent_czk": garage_rent_median,
+            "yield_pct": round(garage_rent_median * 12 / garage_price * 100, 2),
+        })
+    combined_rent = flat_rent + (garage_rent_median or 0)
+    return {
+        "rows": rows,
+        "total": {
+            "price_czk": total,
+            "rent_czk": combined_rent,
+            "yield_pct": round(combined_rent * 12 / total * 100, 2),
+        },
+        # The storage unit has no rental market of its own in the data, so it
+        # sits in the denominator of the combined view and earns nothing in the
+        # numerator. That understates the combined yield slightly and it is
+        # better than inventing a number for it.
+        "storage_unpriced": "komora" in prices,
+    }
 
 
 def own_property_stats(comparables):
@@ -2318,7 +2425,7 @@ def build_tracked_item(tracked, changes):
     }
 
 
-def render_own_property_card(own):
+def render_own_property_card(own, gap=None, yields=None, garage_stats=None):
     """Radim's own Kč/m² drawn as a line across the asking prices around it.
 
     A single number ("you paid X") says nothing without the spread it sits in,
@@ -2348,6 +2455,76 @@ def render_own_property_card(own):
         if abs(delta) >= 0.5 else "prakticky na mediánu"
     )
     band_lo, band_hi = OWN_SIZE_BAND_SQM
+    units, units_total = own_units()
+    units_html = ""
+    if len(units) > 1:
+        names = {"byt": "Byt", "garaz": "Garáž", "komora": "Komora"}
+        rows = "".join(
+            f'<div class="bdr"><span class="lab">{html.escape(names.get(k, k))}</span>'
+            f"<span>{fmt_czk(v)}</span></div>"
+            for k, v in units
+        )
+        units_html = f"""
+  <div class="own-units">
+    <div class="bdr" style="font-weight:600"><span class="lab">Co jsi koupil</span><span></span></div>
+    {rows}
+    <div class="bdr" style="border-top:1px solid #333;font-weight:600">
+      <span class="lab">Celkem</span><span>{fmt_czk(units_total)}</span></div>
+    <p class="hint" style="margin:6px 0 0;">Srovnání výš je <b>jen byt</b> — garáž ani komora
+      v žádném zdejším inzerátu nejsou, takže vložit je do Kč/m² by ho uměle nafouklo.
+      Pro výnos a hypotéku platí celek.</p>
+  </div>"""
+
+    gap_html = ""
+    if gap and gap.get("gap_czk") is not None:
+        g = gap["gap_czk"]
+        gap_html = f"""
+  <div class="own-units">
+    <div class="bdr"><span class="lab">Banka půjčí při {gap["ltv_pct"]} % LTV</span>
+      <span>{fmt_czk(gap["bank_lends_czk"])}</span></div>
+    <div class="bdr"><span class="lab">Vlastních je tedy potřeba</span>
+      <span>{fmt_czk(gap["own_needed_czk"])}</span></div>
+    <div class="bdr"><span class="lab">Zálohy zaplaceny</span>
+      <span>{fmt_czk(gap["deposits_czk"])}</span></div>
+    <div class="bdr" style="border-top:1px solid #333;font-weight:600">
+      <span class="lab">{"Chybí doplnit" if g > 0 else "Přebývá"}</span>
+      <span class="{"bad" if g > 0 else "good"}">{fmt_czk(abs(g))}</span></div>
+    <p class="hint" style="margin:6px 0 0;">Nad {gap["ltv_pct"]} % ceny banka u vlastního bydlení
+      nepůjčí, takže tenhle rozdíl musí přijít odjinud. Mění se s LTV — v splátkové appce
+      je LTV přepínatelné.</p>
+  </div>"""
+
+    yield_html = ""
+    if yields:
+        names = {"byt": "Byt", "garáž": "Garáž"}
+        rows = "".join(
+            f'<div class="bdr"><span class="lab">{html.escape(names.get(r["unit"], r["unit"]))}'
+            f' <span class="hint">{fmt_czk(r["rent_czk"])}/měs</span></span>'
+            f'<span>{cz(r["yield_pct"])} %</span></div>'
+            for r in yields["rows"]
+        )
+        t = yields["total"]
+        band = ""
+        if garage_stats and garage_stats.get("n"):
+            band = (f' Nájem garáže je medián celého okruhu ({fmt_czk(garage_stats["median_czk"])}, '
+                    f'p25–p75 {fmt_czk(garage_stats["p25_czk"])}–{fmt_czk(garage_stats["p75_czk"])}); '
+                    f'v bližším okolí vychází spíš 2 000, což by výnos garáže srazilo k 4,8 %.')
+        storage = (" Komora je v ceně celku, ale nájem za ni nikdo neinzeruje, "
+                   "takže celkový výnos je o ni mírně podhodnocený.") if yields.get("storage_unpriced") else ""
+        yield_html = f"""
+  <div class="own-units">
+    <div class="bdr" style="font-weight:600"><span class="lab">Hrubý výnos z nájmu</span>
+      <span class="hint">roční nájem ÷ kupní cena</span></div>
+    {rows}
+    <div class="bdr" style="border-top:1px solid #333;font-weight:600">
+      <span class="lab">Celek <span class="hint">{fmt_czk(t["rent_czk"])}/měs</span></span>
+      <span>{cz(t["yield_pct"])} %</span></div>
+    <p class="hint" style="margin:6px 0 0;">Hrubý — bez hypotéky, poplatků, daní a neobsazenosti.
+      Nájem je nezařízený profil, tedy ten opatrnější.{band}{storage}</p>
+    <p class="hint" style="margin:4px 0 0;color:#d9a3c0;">⚠ Proti sazbě hypotéky (~5,3 %) je tenhle
+      výnos nižší, takže dluh dnes stojí víc, než nájem vynáší. Rozdíl musí dorovnat růst ceny.</p>
+  </div>"""
+
     return f"""<div class="card" id="ownCard">
   <h2 style="margin-top:0;font-size:1rem;">🏠 Tvůj byt — {OWN_PROPERTY["disposition"]} {cz(OWN_PROPERTY["floor_area_sqm"])} m²</h2>
   <div class="own-head">
@@ -2375,6 +2552,7 @@ def render_own_property_card(own):
   </p>
   <p class="hint" style="margin:0;color:#d9a3c0;">⚠ {OWN_PROPERTY["caveat"]}. A inzerát je nabídková cena,
     ne realizovaná — obojí posouvá srovnání v tvůj neprospěch a z těchhle dat se to odečíst nedá.</p>
+{units_html}{gap_html}{yield_html}
 </div>"""
 
 
@@ -2494,6 +2672,11 @@ def render_estimate_card(estimate):
   {factors_html}
   {check_html}
   <p class="hint">{mode_note}</p>
+  <p class="hint" style="color:#d9c38f;">⚠ <b>Tenhle odhad je za samotný byt.</b> Vzorek stojí na
+     inzerátech, kde se pronajímá byt — ne byt se stáním a sklepem. Když pronajmeš i garáž a komoru,
+     nájem za ně se <b>přičítá zvlášť</b> (medián samostatného stání je v kartě garáží) a porovnávat
+     ho musíš proti celkové kupní ceně, ne proti ceně bytu. Míchat jedno s druhým je nejrychlejší
+     způsob, jak si spočítat výnos, který neexistuje.</p>
   <p class="hint">Přirážka se zavádí <b>jen</b> za zařízenost a stav budovy. Pro
      {html.escape(", ".join(estimate["not_separable"]))} vzorek rozdíl neoddělí — balkon v něm vyšel
      dokonce záporně, protože byty s balkonem jsou tady systematicky větší a větší byt má nižší
@@ -2546,6 +2729,64 @@ DASHBOARD_OMIT_FIELDS = (
 
 def slim_for_dashboard(comp):
     return {k: v for k, v in comp.items() if k not in DASHBOARD_OMIT_FIELDS}
+
+
+def fee_queue_card(queue):
+    """Fronta inzerátů, u kterých parser odmítl hádat poplatek.
+
+    Na dashboardu, ne jen v JSON souboru: Radim si data otevírá sám a fronta,
+    kterou k přečtení potřebuje git pull a terminál, se prostě číst nebude.
+    Jsou to cizí inzeráty a jejich veřejné texty, takže na veřejné stránce
+    nevadí -- nic osobního tu není.
+
+    Smyslem je opravit PRAVIDLO, ne řádek, proto se řadí po důvodech a u
+    každého je vidět, kolik inzerátů na něm stojí. Důvod, který se opakovaně
+    ukáže jako neškodný, patří ven."""
+    if not queue:
+        return ""
+    popisy = {
+        "lookahead": "částka přišla z následující věty, ne z té s klíčovým slovem",
+        "multiple_candidates": "dvě a víc věrohodných částek v jedné větě",
+        "person_tier": "zafungovalo „ber nižší\" u sazby podle počtu osob",
+        "included_without_amount": "„v ceně\" bez jakékoli částky, která by to potvrdila",
+    }
+    by_reason = {}
+    for q in queue:
+        by_reason.setdefault(", ".join(q["why"]), []).append(q)
+
+    def snippet(q):
+        for field in ("cost_of_living_raw", "price_note_raw", "description"):
+            if q.get(field):
+                text = " ".join(q[field].split())
+                return html.escape(text[:220] + ("…" if len(text) > 220 else ""))
+        return ""
+
+    groups = ""
+    for reason, items in sorted(by_reason.items(), key=lambda kv: -len(kv[1])):
+        rows = "".join(
+            f"""<div class="fq-item">
+              <div class="fq-head">
+                <a href="{html.escape(q["url"])}" target="_blank" rel="noopener">{html.escape(q["title"] or "?")}</a>
+                <span class="hint">nájem {fmt_czk(q["rent_czk"])} · parser by řekl
+                  <b>{fmt_czk(q["would_have_said"]) if q.get("would_have_said") is not None else "—"}</b></span>
+              </div>
+              <div class="fq-text">{snippet(q)}</div>
+            </div>"""
+            for q in items
+        )
+        groups += f"""<div class="fq-group">
+          <div class="fq-reason">{html.escape(reason)} <span class="hint">({len(items)}×)</span></div>
+          <div class="hint" style="margin-bottom:6px;">{html.escape(popisy.get(reason, ""))}</div>
+          {rows}
+        </div>"""
+
+    return f"""<div class="card" id="feeQueueCard">
+  <h2 style="margin-top:0;font-size:1rem;">🔍 Poplatky k rozhodnutí ({len(queue)})</h2>
+  <p class="hint" style="margin:0 0 10px;">Tady si parser nebyl jistý, tak radši neuložil nic.
+    Špatné číslo tiše posune medián; „neznámé\" jen stojí pokrytí. <b>Cílem je opravit pravidlo,
+    ne jednotlivý řádek</b> — když se některý důvod opakovaně ukáže jako neškodný, má zmizet.</p>
+  <div class="scroll" style="max-height:420px;">{groups}</div>
+</div>"""
 
 
 def garage_card(garages, gstats):
@@ -2611,6 +2852,7 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None):
         c["change_note"] = build_change_note(c["id"], changes)
     tracked_items = [build_tracked_item(t, changes) for t in tracked_list]
 
+    fee_queue_card_html = fee_queue_card(build_fee_review_queue(comparables))
     garage_card_html = garage_card(
         snapshot.get("garages") or [], snapshot.get("garage_stats") or {}
     )
@@ -2621,7 +2863,14 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None):
     changed_ids_json = json.dumps(list(changed_ids))
 
     tracked_cards_html = "\n".join(render_tracked_card(t) for t in tracked_list)
-    own_card_html = render_own_property_card(own_property_stats(comparables))
+    own_card_html = render_own_property_card(
+        own_property_stats(comparables),
+        gap=own_equity_gap(),
+        yields=own_gross_yield(
+            estimate, ((snapshot.get("garage_stats") or {}).get("pronajem") or {}).get("median_czk")
+        ),
+        garage_stats=(snapshot.get("garage_stats") or {}).get("pronajem"),
+    )
     estimate_card_html = render_estimate_card(estimate)
 
     head_and_body = f"""<!DOCTYPE html>
@@ -2673,6 +2922,22 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None):
   .own-big span {{ font-size: 0.9rem; font-weight: 500; color: #997; }}
   .own-sub {{ font-size: 0.8rem; color: #bbb; }}
   .own-note {{ font-size: 0.7rem; color: #888; }}
+  /* Rozpady pod kartou bytu: jednotky, chybějící kapitál, výnos. Vlastní
+     třídy, ne .stats -- tohle jsou řádky "název vs. číslo", ne dlaždice. */
+  .own-units {{ margin-top: 12px; padding-top: 10px; border-top: 1px solid #2a2a2a; }}
+  .own-units .bdr {{ display: flex; justify-content: space-between; gap: 12px;
+                     padding: 3px 0; font-size: 0.8rem; }}
+  .own-units .bdr .lab {{ color: #bbb; }}
+  .own-units .bdr .hint {{ color: #777; font-size: 0.72rem; }}
+  .own-units .bad {{ color: #e58fb0; }}
+  .own-units .good {{ color: #7fd18f; }}
+  .fq-group {{ margin-bottom: 14px; }}
+  .fq-reason {{ font-weight: 600; font-size: 0.82rem; color: #d9c38f; }}
+  .fq-item {{ padding: 6px 0; border-top: 1px solid #262626; }}
+  .fq-head {{ display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline;
+              justify-content: space-between; font-size: 0.8rem; }}
+  .fq-head a {{ color: #7ab8ff; }}
+  .fq-text {{ font-size: 0.72rem; color: #999; margin-top: 3px; }}
   /* p10-p90 band with his price drawn on it. Absolute positioning inside a
      fixed-height box, so the labels can sit above and below the same line
      without pushing the layout around. */
@@ -2810,6 +3075,8 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None):
 {own_card_html}
 
 {garage_card_html}
+
+{fee_queue_card_html}
 
 <div class="card">
   <h2 style="margin-top:0;font-size:1rem;">Statistika oblasti ({", ".join(DISPOSITION_CODES.values())} · {AREA_RADIUS_KM} km)</h2>
