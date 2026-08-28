@@ -13,6 +13,7 @@ search endpoint. iDNES allows its /s/ search pages. Both are fetched politely
 import math
 import os
 import re
+import sys
 import time
 
 import requests
@@ -50,6 +51,29 @@ def env_int(name, default):
     imports this module, not the other way round."""
     raw = (os.environ.get(name) or "").strip()
     return int(raw) if raw else default
+
+
+def env_map(name):
+    """A "key=int,key=int" knob from the environment, as a dict.
+
+    One secret instead of one per unit: there is one thing to set and one thing
+    to forget. A malformed pair is skipped with a warning rather than crashing
+    a scheduled run -- the card degrades, the scrape does not die.
+    """
+    out = {}
+    for part in (os.environ.get(name) or "").split(","):
+        part = part.strip()
+        if not part:
+            continue
+        key, _, value = part.partition("=")
+        key = key.strip()
+        try:
+            if not key:
+                raise ValueError("prázdný klíč")
+            out[key] = int(value.strip())
+        except ValueError:
+            print(f"::warning::{name}: nelze přečíst {part!r}, přeskakuji", file=sys.stderr)
+    return out
 
 
 MAX_DETAIL_FETCHES = env_int("MAX_SOURCE_DETAIL_FETCHES", 200)  # per source, per run

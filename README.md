@@ -111,6 +111,9 @@ o tom napíše warning):
 | `NTFY_TOPIC`, `NTFY_TOKEN` | Náhrada. Token je povinný — veřejné téma by si mohl přečíst kdokoli. |
 | `MORTGAGE_PAYMENT_CZK` | Měsíční splátka pro výpočet pokrytí. **Jde jen do notifikace**, nikdy na dashboard ani do archivu. |
 | `OWN_PRICE_CZK` | Kupní cena referenčního bytu. Bez ní se karta „Tvůj byt" nevykreslí. ⚠️ Drží číslo mimo zdroják, **ne mimo publikovanou stránku** — karta ho vypisuje do `dashboard.html`, který je v tomhle veřejném repu. |
+| `OWN_EXTRA_PRICES_CZK` | Garáž a komora zvlášť, jedním secretem: `garaz=500000,komora=110110`. Bez něj karta ukazuje jen byt. |
+| `OWN_DEPOSITS_CZK` | Zaplacené zálohy. Bez nich se řádek „kolik vlastních ještě chybí" nevykreslí — špatné číslo by tu bylo horší než žádné. |
+| `OWN_LTV_PCT` | Kolik z ceny půjčí banka (výchozí 80). Mění, kolik vlastního kapitálu chybí. |
 
 Náhled zprávy bez odeslání: `python3 notify.py --dry-run --week 2026-W34`.
 
@@ -128,6 +131,23 @@ výchozích 60 za běh by se atributy doplňovaly týden a odhad by mezitím po�
 z poloprázdných dat.
 
 
+## Karta „Tvůj byt"
+
+Kč/m² se srovnává **jen za byt** — garáž ani komora v žádném zdejším inzerátu nejsou,
+takže vložit je do ceny za m² by ji uměle nafouklo proti nabídkám, které je neobsahují.
+
+Pod srovnáním jsou tři rozpady, každý z jiného důvodu:
+
+- **Co jsi koupil** — byt / garáž / komora zvlášť i celek. Pro hypotéku a výnos platí celek.
+- **Kolik vlastních chybí** — banka při `OWN_LTV_PCT` půjčí jen část ceny; zbytek minus
+  zaplacené zálohy je rozdíl, který musí přijít odjinud. Není to konstanta, mění se s LTV.
+- **Hrubý výnos** — roční nájem ÷ kupní cena, po aktivech i za celek. Záměrně **hrubý**:
+  hypotéka, poplatky, daně a neobsazenost jsou Radimovy soukromé finance a patří do
+  splátkové appky za PIN, ne na veřejnou stránku. Tahle karta srovnává **aktivum s trhem**.
+
+Komora se počítá do ceny celku, ale nájem za ni nikdo neinzeruje, takže celkový výnos je
+o ni mírně podhodnocený. Lepší než si pro ni číslo vymyslet.
+
 ## Fronta neznámých poplatků
 
 `fee_review_queue.json` drží pronájmy, u kterých parser **odmítl hádat**. Čtyři
@@ -139,6 +159,8 @@ důvody, každý s vlastním jménem v `FEE_AMBIGUITY_REASONS`:
 | `multiple_candidates` | dvě a víc věrohodných částek v jedné větě, nic neříká která |
 | `person_tier` | zafungovalo pravidlo „ber nižší" u sazby podle počtu osob |
 | `included_without_amount` | „v ceně" bez jakékoli částky, která by to potvrdila |
+
+Fronta je i **na dashboardu** jako karta „Poplatky k rozhodnutí" — v souboru ji nikdo číst nebude.
 
 U každého záznamu je doslovný text, ze kterého se rozhodovalo, a `would_have_said`
 — co by parser býval odpověděl. **Smyslem je opravit pravidlo, ne řádek.** Důvod,
