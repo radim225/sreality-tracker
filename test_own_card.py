@@ -90,6 +90,15 @@ card = scrape.fee_queue_card([
 check("nejčastější důvod je první", card.index("lookahead") < card.index("person_tier"), True)
 check("počet u důvodu sedí", "(2×)" in card, True)
 
+# --- degradace: chybějící secrety nesmí nic shodit ---------------------- #
+# Karta drží osobní čísla, která nemusí být nastavená. Chybějící řádek je
+# správná odpověď; pád scrapu kvůli nenastavenému secretu by nebyl.
+saved = (scrape.OWN_EXTRA_PRICES, scrape.OWN_DEPOSITS_CZK)
+scrape.OWN_EXTRA_PRICES, scrape.OWN_DEPOSITS_CZK = {}, None
+check("bez rozpadu jen byt", scrape.own_units()[1], 6556088)
+check("bez záloh žádný chybějící kapitál", scrape.own_equity_gap(), None)
+scrape.OWN_EXTRA_PRICES, scrape.OWN_DEPOSITS_CZK = saved
+
 print()
 if failures:
     print(f"{len(failures)} FAILED:")
