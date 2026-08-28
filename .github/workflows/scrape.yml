@@ -2,7 +2,12 @@ name: Scrape Sreality
 
 on:
   schedule:
-    - cron: "0 */8 * * *"
+    # Každé 4 hodiny místo osmi (Radim, 28. 8.): odkaz na inzerát, který
+    # mezitím zmizel, je nejviditelnější vada dashboardu, a osmihodinové okno
+    # ji dělá zbytečně širokou. Běh sám je levný -- detaily se kešují a
+    # znovu se čtou jen u toho, co se změnilo, takže dvojnásobná frekvence
+    # neznamená dvojnásobek requestů na Sreality.
+    - cron: "0 */4 * * *"
   workflow_dispatch:
     inputs:
       add_url:
@@ -79,6 +84,7 @@ jobs:
           python test_fee_queue.py
           python test_parking.py
           python test_own_card.py
+          python test_search_paging.py
           python test_cache.py
           python test_pool.py
           python test_market.py

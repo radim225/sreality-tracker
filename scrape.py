@@ -971,6 +971,25 @@ def search_ward(ward, tx_type):
             params={"region": ward, "velikost": SEARCH_VELIKOST, "strana": page},
         )
         if next_data is None:
+            # A page PAST the end of the results answers 404, and the end can
+            # move underneath the sweep: listings disappear while we page, the
+            # total shrinks, and the page we were about to ask for stops
+            # existing. On 27. 8. that killed a whole run at
+            # "search page 5 of pronajem/Libeň" -- with nothing wrong except
+            # that Libeň had got smaller since page 1.
+            #
+            # So a 404 beyond the first page ends the sweep instead of failing
+            # it, and only when we have already read something. A 404 on page 1
+            # is still a real error: it means the search itself is broken, and
+            # swallowing that would report the entire ward as removed.
+            if status == 404 and page > 1 and found:
+                print(
+                    f"  {tx_type}/{ward}: strana {page} už neexistuje "
+                    f"(výsledků ubylo během sweepu), končím s {len(found)}",
+                    file=sys.stderr,
+                )
+                complete = True
+                break
             raise TransientFetchError(
                 f"search page {page} of {tx_type}/{ward}: no __NEXT_DATA__ (HTTP {status})"
             )
