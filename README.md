@@ -181,6 +181,35 @@ Dvě různé věci, nepleteme je:
   **odděleně od `comparables` end-to-end**: `compute_stats` počítá medián Kč/m²
   bez filtru na dispozici, takže garáž mezi byty by tiše rozbila statistiku.
 
+### ⚠ Slug pro detail není slug pro hledání
+
+Sreality hledá pod `garazova-stani`, ale detail inzerátu žije na
+`garazove-stani` — a garáž (34) má v detailu `garaz`. Odkaz se špatným slugem
+vrací **404**, aniž by na datech bylo cokoli špatně. Od zavedení kategorie
+26. 8. do 28. 8. tak vedl na chybovou stránku **každý** odkaz na garáž;
+všimnul si toho až Radim kliknutím. Mapování je v `GARAGE_DETAIL_SLUG`
+a hlídá ho `test_garage_links.py` (sahá na síť, proto mimo CI — pouštět ručně
+po každé změně URL).
+
+### Co ta garáž je
+
+`garage_features()` vytáhne z popisu krátkou charakteristiku — „1. PP",
+„parklift", „řadová garáž", „⚠ jen pro motocykl". Deterministicky, pravidla
+stavěná na skutečných inzerátech. Důvod: nejlevnější prodej v datech
+(245 146 Kč) je stání pro **motocykl** a bez štítku je od garáže za 3 miliony
+nerozeznatelné. Štítek se nepřidá, když se nic nepozná — vymyslet
+charakteristiku je horší než ji neuvést.
+
+### Zmizelé inzeráty
+
+Garáž, která zmizí z nabídky, se **nemaže**: drží se `first_seen`, `gone_at`
+a poslední viděná cena, a na kartě je rozbalovací sekce s daty. Do mediánů
+nevstupují (`active_garages()`) — mísit dnešní ceny s tím, co bylo v nabídce
+před měsícem, je stejná chyba jako počítat inzerát bez poplatku jako nulový.
+
+**Zmizel ≠ prodal se.** V historii projektu se 73 inzerátů po zmizení vrátilo,
+a karta to říká nahlas.
+
 ## Zdroje comparables
 
 Kromě sledovaných inzerátů (Sreality) tahá dashboard srovnávací byty (Praha 9,
