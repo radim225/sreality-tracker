@@ -60,6 +60,13 @@ TRANSACTION_TYPES = ["pronajem", "prodej"]  # rent, sale
 # in the flat sale median is exactly the kind of silent corruption this project
 # measures against, so garages live in their own snapshot key end to end.
 GARAGE_CATEGORIES = {"garaze": 34, "garazova-stani": 52}
+# Sreality používá pro TÝŽ typ jiný slug ve vyhledávání a jiný v detailu:
+# hledá se pod /hledani/prodej/garazova-stani, ale detail žije na
+# /detail/prodej/ostatni/garazove-stani/x/{id} -- "garazova" vs "garazove".
+# Odkaz se špatným slugem vrací 404, takže do 28. 8. mířil na chybovou
+# stránku KAŽDÝ odkaz na garáž na dashboardu. Ověřeno na 8 inzerátech napříč
+# oběma kategoriemi a oběma typy transakce: se správným slugem 8/8 vrací 200.
+GARAGE_DETAIL_SLUG = {"garaze": "garaz", "garazova-stani": "garazove-stani"}
 
 
 # The watched area is a circle, not a ward list: Radim's landmarks straddle
@@ -1158,7 +1165,8 @@ def parse_garage(r, tx_type, slug):
         "locality": format_locality(locality),
         "city_part": locality.get("cityPart"),
         "street": locality.get("street"),
-        "url": f"https://www.sreality.cz/detail/{tx_type}/ostatni/{slug}/x/{r['id']}",
+        "url": (f"https://www.sreality.cz/detail/{tx_type}/ostatni/"
+                f"{GARAGE_DETAIL_SLUG.get(slug, slug)}/x/{r['id']}"),
         "lat": locality.get("latitude"),
         "lon": locality.get("longitude"),
         "dist_km": None,
