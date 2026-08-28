@@ -26,6 +26,10 @@ on:
         description: "One-off ceiling per extra source (blank = default 200)."
         required: false
         default: ""
+      max_garage_detail_fetches:
+        description: "One-off ceiling on garage detail reads (blank = default 40). Raise it for the first pass after the description rules change."
+        required: false
+        default: ""
       max_reenrich:
         description: "One-off ceiling on re-reads of already-cached listings (blank = default 60). A PARSER_VERSION bump needs this raised too, or the backfill trickles at 60/run."
         required: false
@@ -118,6 +122,7 @@ jobs:
           MAX_DETAIL_FETCHES: ${{ github.event.inputs.max_detail_fetches }}
           MAX_SOURCE_DETAIL_FETCHES: ${{ github.event.inputs.max_source_detail_fetches }}
           MAX_REENRICH: ${{ github.event.inputs.max_reenrich }}
+          MAX_GARAGE_DETAIL_FETCHES: ${{ github.event.inputs.max_garage_detail_fetches }}
         run: python scrape.py
 
       - name: Mirror dashboard as Pages index
