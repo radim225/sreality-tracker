@@ -18,6 +18,14 @@ on:
         description: "Sreality listing URL (or numeric id) to remove from tracked.json before scraping"
         required: false
         default: ""
+      override_set:
+        description: "JSON object to write into overrides.json before scraping ({id, optional floor_area_sqm, fees_czk, exclude_from_stats, note})"
+        required: false
+        default: ""
+      override_delete:
+        description: "Listing id (Sreality / bez-… / idnes-…) to remove from overrides.json before scraping"
+        required: false
+        default: ""
       max_detail_fetches:
         description: "One-off ceiling on Sreality detail fetches (blank = default 300). Raise for a backfill after a PARSER_VERSION bump."
         required: false
@@ -80,12 +88,25 @@ jobs:
         if: github.event.inputs.remove_url != ''
         run: python remove_tracked.py "${{ github.event.inputs.remove_url }}"
 
+      - name: Set listing override (if requested)
+        if: github.event.inputs.override_set != ''
+        env:
+          OVERRIDE_SET: ${{ github.event.inputs.override_set }}
+        run: python set_override.py
+
+      - name: Delete listing override (if requested)
+        if: github.event.inputs.override_delete != ''
+        env:
+          OVERRIDE_DELETE: ${{ github.event.inputs.override_delete }}
+        run: python delete_override.py
+
       # Offline and fast. Run before the scrape so a broken parser or cache
       # stops the run instead of writing a snapshot full of wrong fees.
       - name: Run tests
         run: |
           python test_fees.py
           python test_fee_queue.py
+          python test_overrides.py
           python test_parking.py
           python test_own_card.py
           python test_search_paging.py
@@ -132,7 +153,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add snapshots latest_snapshot.json last_changes.json changes_history.json dashboard.html index.html tracked.json
+          git add snapshots latest_snapshot.json last_changes.json changes_history.json dashboard.html index.html tracked.json overrides.json
           git add changes_log.jsonl pool reports fee_review_queue.json
           if git diff --cached --quiet; then
             echo "No changes to commit"

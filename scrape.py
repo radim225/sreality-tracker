@@ -37,6 +37,11 @@ CHANGES_HISTORY_PATH = ROOT / "changes_history.json"
 # record; the JSON file is a view of the most recent slice of it.
 CHANGES_LOG_PATH = ROOT / "changes_log.jsonl"
 FEE_QUEUE_PATH = ROOT / "fee_review_queue.json"
+# Manual corrections keyed by listing id. scrape.py only reads this file —
+# adding and deleting is set_override.py / delete_override.py via the same
+# workflow_dispatch path as tracked.json. Records are never pruned when a
+# listing disappears: the same id coming back must still be corrected.
+OVERRIDES_PATH = ROOT / "overrides.json"
 
 # Sreality category_sub_cb codes (from /hledani estatesFilterPage)
 DISPOSITION_CODES = {2: "1+kk", 3: "1+1", 4: "2+kk", 5: "2+1", 6: "3+kk", 7: "3+1"}
@@ -724,6 +729,160 @@ def cost_breakdown(price_czk, fees_czk, transaction_type, electricity_explicit=N
     if price_czk is not None:
         total_czk = price_czk + (fees_czk or 0) + electricity_czk
     return fees_czk, fees_missing, electricity_czk, electricity_estimated, total_czk
+
+
+def load_overrides(path=None):
+    """id (as str) -> override record. Sreality ids are ints on listings and
+    strings in JSON; Bezrealitky/iDNES ids are already strings (`bez-`/`idnes-`).
+    Missing file is an empty map, not an error — the first override creates it."""
+    path = path or OVERRIDES_PATH
+    if not path.exists():
+        return {}
+    data = json.loads(path.read_text())
+    if not isinstance(data, dict):
+        raise SystemExit(f"{path.name} must be an object keyed by listing id")
+    out = {}
+    for key, rec in data.items():
+        if isinstance(rec, dict):
+            out[str(key)] = rec
+        else:
+            print(f"::warning::{path.name}: skipping non-object override {key!r}", file=sys.stderr)
+    return out
+
+
+def save_overrides(overrides, path=None):
+    path = path or OVERRIDES_PATH
+    ordered = {k: overrides[k] for k in sorted(overrides, key=str)}
+    path.write_text(json.dumps(ordered, ensure_ascii=False, indent=2) + "\n")
+
+
+def normalize_override(payload):
+    """Keep only the fields the apply step understands.
+
+    `id` is required. Everything else is optional: a missing field means the
+    parser's value stands. Non-market sales are `exclude_from_stats` + `note`
+    — there is no rent to invent."""
+    if not isinstance(payload, dict):
+        raise ValueError("override must be a JSON object")
+    listing_id = payload.get("id")
+    if listing_id is None or str(listing_id).strip() == "":
+        raise ValueError("override needs id")
+    rec = {"id": str(listing_id).strip()}
+    if payload.get("exclude_from_stats"):
+        rec["exclude_from_stats"] = True
+    if "floor_area_sqm" in payload and payload["floor_area_sqm"] not in (None, ""):
+        try:
+            area = float(payload["floor_area_sqm"])
+        except (TypeError, ValueError) as exc:
+            raise ValueError("floor_area_sqm must be a number") from exc
+        if area <= 0:
+            raise ValueError("floor_area_sqm must be positive")
+        rec["floor_area_sqm"] = area
+    if "fees_czk" in payload and payload["fees_czk"] not in (None, ""):
+        try:
+            fees = int(payload["fees_czk"])
+        except (TypeError, ValueError) as exc:
+            raise ValueError("fees_czk must be an integer") from exc
+        if fees < 0:
+            raise ValueError("fees_czk must be >= 0")
+        rec["fees_czk"] = fees
+    note = payload.get("note")
+    if note:
+        rec["note"] = str(note).strip()
+    return rec
+
+
+def upsert_override(payload, path=None):
+    rec = normalize_override(payload)
+    overrides = load_overrides(path)
+    overrides[rec["id"]] = rec
+    save_overrides(overrides, path)
+    return rec
+
+
+def drop_override(listing_id, path=None):
+    overrides = load_overrides(path)
+    removed = overrides.pop(str(listing_id).strip(), None)
+    if removed is not None:
+        save_overrides(overrides, path)
+    return removed
+
+
+def recompute_listing_costs(listing):
+    """total_czk and Kč/m² from the (possibly overridden) area and fees.
+
+    Sales still total to the purchase price — an override never invents a rent.
+    When a fee is an override, `fees_source` is already `override`, so the
+    all-inclusive shortcut does not fire and electricity returns to the usual
+    estimate unless the advert stated a real amount."""
+    tx = listing.get("transaction_type")
+    price = listing.get("price_czk")
+    if price is None:
+        price = listing.get("rent_czk")
+    if listing.get("electricity_estimated"):
+        elec_explicit = None
+    else:
+        elec_explicit = listing.get("electricity_czk")
+        if listing.get("fees_source") == "override" and not elec_explicit:
+            elec_explicit = None
+    fees_czk, fees_missing, electricity_czk, electricity_estimated, total_czk = (
+        cost_breakdown(
+            price,
+            listing.get("fees_czk"),
+            tx,
+            elec_explicit,
+            listing.get("fees_source"),
+        )
+    )
+    listing["fees_czk"] = fees_czk
+    listing["fees_missing"] = fees_missing
+    listing["electricity_czk"] = electricity_czk
+    listing["electricity_estimated"] = electricity_estimated
+    listing["total_czk"] = total_czk
+    sqm = listing.get("floor_area_sqm")
+    if tx == "pronajem" and total_czk and sqm:
+        listing["price_czk_per_sqm"] = round(total_czk / sqm)
+    elif tx != "pronajem" and price and sqm:
+        listing["price_czk_per_sqm"] = round(price / sqm)
+    history = listing.get("price_history")
+    if history:
+        history[-1]["total_czk"] = total_czk
+
+
+def apply_overrides(listings, overrides, *, stamp_ui=True):
+    """Apply overrides in place AFTER enrich, BEFORE rank/market/estimate.
+
+    A missing override field leaves the parser's value. Listings without an
+    override get `exclude_from_stats=False` so a deleted override cannot stick
+    on a pool record. Does not add or remove listings — the pool is not pruned
+    here, and an override for an id that is not in this list simply waits."""
+    overrides = overrides or {}
+    for listing in listings:
+        ov = overrides.get(str(listing.get("id")))
+        listing["exclude_from_stats"] = False
+        if stamp_ui:
+            listing.pop("override", None)
+            listing.pop("override_note", None)
+        if not ov:
+            continue
+        if stamp_ui:
+            listing["override"] = ov
+            if ov.get("note"):
+                listing["override_note"] = ov["note"]
+        changed = False
+        if "floor_area_sqm" in ov and ov["floor_area_sqm"] is not None:
+            listing["floor_area_sqm"] = float(ov["floor_area_sqm"])
+            changed = True
+        if "fees_czk" in ov and ov["fees_czk"] is not None:
+            listing["fees_czk"] = int(ov["fees_czk"])
+            listing["fees_missing"] = False
+            listing["fees_source"] = "override"
+            changed = True
+        if ov.get("exclude_from_stats"):
+            listing["exclude_from_stats"] = True
+        if changed:
+            recompute_listing_costs(listing)
+    return listings
 
 
 def garage_parking_from_params(params):
@@ -2110,6 +2269,8 @@ def rank_deals(comparables):
         rows are kept off the median as well as out of the deal list, or a run
         with many un-enriched listings would drag the baseline down and make
         everything else look expensive."""
+        if c.get("exclude_from_stats"):
+            return False
         return not (c.get("transaction_type") == "pronajem" and c.get("fees_missing"))
 
     groups = {}
@@ -2304,6 +2465,8 @@ def own_property_stats(comparables):
         # Co-ownership shares, auctions and mistyped areas -- already identified
         # as not-a-price by rank_deals. They belong nowhere near a median.
         if c.get("deal_outlier"):
+            return False
+        if c.get("exclude_from_stats"):
             return False
         sqm = c.get("floor_area_sqm")
         if size_band:
@@ -2524,6 +2687,7 @@ def compute_stats(comparables):
             for c in comparables
             if c["transaction_type"] == tx
             and c.get("price_czk_per_sqm")
+            and not c.get("exclude_from_stats")
             and (disp_filter is None or c.get("disposition") == disp_filter)
         ]
         if not vals:
@@ -2601,6 +2765,9 @@ def build_tracked_item(tracked, changes):
         "url": tracked.get("url"),
         "active": tracked.get("active"),
         "change_note": change_note,
+        "exclude_from_stats": tracked.get("exclude_from_stats"),
+        "override": tracked.get("override"),
+        "override_note": tracked.get("override_note"),
     }
 
 
@@ -2884,7 +3051,7 @@ def render_tracked_card(tracked):
       <div><b>Title</b>{html.escape(tracked.get('title') or '—')}</div>
       <div><b>Disposition</b>{html.escape(tracked.get('disposition') or '—')}</div>
       <div><b>Nájem (net)</b>{fmt_czk(tracked.get('rent_czk'))}</div>
-      <div><b>Poplatky{' (z popisu)' if tracked.get('fees_source') == 'text' else ''}</b>{'neuvedeno' if tracked.get('fees_missing') else fmt_czk(tracked.get('fees_czk'))}</div>
+      <div><b>Poplatky{' (oprava)' if tracked.get('fees_source') == 'override' else ' (z popisu)' if tracked.get('fees_source') == 'text' else ''}</b>{'neuvedeno' if tracked.get('fees_missing') else fmt_czk(tracked.get('fees_czk'))}</div>
       <div><b>Elektřina{' (odhad)' if tracked.get('electricity_estimated') else ''}</b>{fmt_czk(tracked.get('electricity_czk'))}</div>
       <div><b>Celkem</b>{fmt_czk(tracked.get('total_czk'))}</div>
       <div><b>Kč/m² (total)</b>{fmt_czk(tracked.get('price_czk_per_sqm'))}</div>
@@ -2965,6 +3132,67 @@ def fee_queue_card(queue):
     Špatné číslo tiše posune medián; „neznámé\" jen stojí pokrytí. <b>Cílem je opravit pravidlo,
     ne jednotlivý řádek</b> — když se některý důvod opakovaně ukáže jako neškodný, má zmizet.</p>
   <div class="scroll" style="max-height:420px;">{groups}</div>
+</div>"""
+
+
+def overrides_card(overrides, listings):
+    """Ruční opravy inzerátů — karta na dashboardu, stejný tvar jako fronta poplatků.
+
+    Záznam v overrides.json přežije, i když inzerát z nabídky zmizí: stejné id
+    se po návratu znovu opraví. Proto karta ukazuje i id, které teď v tabulce
+    není. Mazání jde stejnou cestou jako sledované inzeráty (PAT + dispatch)."""
+    if not overrides:
+        return ""
+    by_id = {str(c.get("id")): c for c in listings}
+
+    def fields_of(ov):
+        bits = []
+        if "floor_area_sqm" in ov and ov["floor_area_sqm"] is not None:
+            bits.append(f"m² {ov['floor_area_sqm']}")
+        if "fees_czk" in ov and ov["fees_czk"] is not None:
+            bits.append(f"poplatky {fmt_czk(ov['fees_czk'])}")
+        if ov.get("exclude_from_stats"):
+            bits.append("mimo statistiku")
+        return " · ".join(bits) or "jen poznámka"
+
+    rows = []
+    for oid in sorted(overrides, key=str):
+        ov = overrides[oid]
+        listing = by_id.get(str(oid))
+        title = (listing or {}).get("title") or str(oid)
+        url = (listing or {}).get("url") or ""
+        gone = listing is None
+        title_html = html.escape(title)
+        if url:
+            title_html = (
+                f'<a href="{html.escape(url, quote=True)}" target="_blank" '
+                f'rel="noopener">{title_html}</a>'
+            )
+        note = html.escape(ov.get("note") or "")
+        status = (
+            '<span class="hint">inzerát teď není v nabídce — oprava čeká na stejné id</span>'
+            if gone else ""
+        )
+        delete_id = html.escape(json.dumps(str(oid)), quote=True)
+        rows.append(
+            f"""<div class="fq-item">
+              <div class="fq-head">
+                <span>{title_html} <span class="hint">{html.escape(str(oid))}</span></span>
+                <button class="popup-btn" style="background:#7f1d1d;"
+                  onclick="manageTracked({{override_delete: {delete_id}}})">🗑 Smazat</button>
+              </div>
+              <div class="hint">{html.escape(fields_of(ov))}</div>
+              {f'<div class="fq-text">{note}</div>' if note else ""}
+              {status}
+            </div>"""
+        )
+    return f"""<div class="card" id="overridesCard">
+  <h2 style="margin-top:0;font-size:1rem;">✏️ Opravy ({len(overrides)})</h2>
+  <p class="hint" style="margin:0 0 10px;">Ručně opravená plocha nebo poplatek se <b>počítá do odhadu</b>
+    (přepočítá se celkem i Kč/m²). „Mimo statistiku“ je pro ne-tržní prodej — inzerát zůstane na stránce,
+    do mediánu ne. Záznam se nemaže, když inzerát zmizí: stejné id po návratu nese tutéž opravu.
+    Novou opravu zadáš v detailu inzerátu.</p>
+  <div class="scroll" style="max-height:420px;">{"".join(rows)}</div>
 </div>"""
 
 
@@ -3085,6 +3313,8 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None):
     tracked_items = [build_tracked_item(t, changes) for t in tracked_list]
 
     fee_queue_card_html = fee_queue_card(build_fee_review_queue(comparables))
+    overrides = load_overrides()
+    overrides_card_html = overrides_card(overrides, list(comparables) + list(tracked_list))
     garage_card_html = garage_card(
         snapshot.get("garages") or [], snapshot.get("garage_stats") or {}
     )
@@ -3170,6 +3400,14 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None):
               justify-content: space-between; font-size: 0.8rem; }}
   .fq-head a {{ color: #7ab8ff; }}
   .fq-text {{ font-size: 0.72rem; color: #999; margin-top: 3px; }}
+  .ov-form {{ background: #11141b; border-radius: 8px; padding: 10px; margin: 12px 0; }}
+  .ov-form h3 {{ margin: 0 0 8px; font-size: 0.85rem; color: #d9c38f; }}
+  .ov-form label {{ display: block; font-size: 0.7rem; color: #9aa; margin: 6px 0 2px; }}
+  .ov-form input[type="text"], .ov-form input[type="number"], .ov-form textarea {{
+    width: 100%; box-sizing: border-box; }}
+  .ov-form textarea {{ min-height: 56px; resize: vertical; }}
+  .ov-form .ov-row {{ display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 8px; }}
+  .ov-form .ov-check {{ display: flex; gap: 6px; align-items: center; font-size: 0.8rem; color: #ccc; }}
   .gf {{ display: inline-block; font-size: 0.66rem; padding: 1px 5px; margin: 1px 2px 1px 0;
          border-radius: 3px; background: #2b2b2b; color: #bbb; white-space: nowrap; }}
   .gf.warn {{ background: #4a2434; color: #e9a8c2; }}
@@ -3311,6 +3549,8 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None):
 
 {garage_card_html}
 
+{overrides_card_html}
+
 {fee_queue_card_html}
 
 <div class="card">
@@ -3445,6 +3685,7 @@ function fmtTotal(r) {
 function fmtFees(r) {
   if (r.transaction_type !== "pronajem") return "—";
   if (r.fees_source === "included") return `<span class="fee-inc" title="Inzerát uvádí, že nájem je včetně poplatků">v ceně</span>`;
+  if (r.fees_source === "override") return `<span title="Ručně opraveno">${fmtCzk(r.fees_czk)} <i class="fee-src">oprava</i></span>`;
   if (r.fees_missing) return `<span class="fee-na" title="Inzerát poplatky neuvádí — celková cena je proto podhodnocená">neuvedeno</span>`;
   const fromText = r.fees_source === "text";
   return `<span title="${fromText ? "Vyčteno z popisu inzerátu" : "Z pole inzerátu"}">${fmtCzk(r.fees_czk)}${fromText ? ' <i class="fee-src">*</i>' : ""}</span>`;
@@ -3489,7 +3730,10 @@ const GH_REPO = "radim225/sreality-tracker";
 let pendingInputs = null;
 
 function setManageStatus(msg) {
-  document.getElementById("manageStatus").textContent = msg;
+  const el = document.getElementById("manageStatus");
+  if (el) el.textContent = msg;
+  const el2 = document.getElementById("overrideStatus");
+  if (el2) el2.textContent = msg;
 }
 
 function renderTrackedList() {
@@ -3516,12 +3760,14 @@ function savePat() {
 }
 
 async function manageTracked(inputs) {
-  const val = inputs.add_url ?? inputs.remove_url;
+  const val = inputs.add_url ?? inputs.remove_url ?? inputs.override_set ?? inputs.override_delete;
   if (!val) { setManageStatus("Vlož URL inzerátu ze Sreality."); return; }
   const token = localStorage.getItem("gh_pat");
   if (!token) {
     pendingInputs = inputs;
     document.getElementById("patRow").style.display = "flex";
+    const manage = document.getElementById("manageCard");
+    if (manage) manage.scrollIntoView({behavior: "smooth", block: "nearest"});
     setManageStatus("Vlož GitHub token (fine-grained: jen toto repo, Actions Read & write) — akce se pak provede.");
     return;
   }
@@ -3533,7 +3779,12 @@ async function manageTracked(inputs) {
       body: JSON.stringify({ ref: "main", inputs }),
     });
     if (resp.status === 204) {
-      setManageStatus((inputs.add_url ? "Přidání" : "Odebrání") + " spuštěno ✓ — hotovo za ~5–15 min, pak obnov stránku.");
+      let done = "Akce";
+      if (inputs.add_url) done = "Přidání";
+      else if (inputs.remove_url) done = "Odebrání";
+      else if (inputs.override_set) done = "Oprava";
+      else if (inputs.override_delete) done = "Smazání opravy";
+      setManageStatus(done + " spuštěno ✓ — hotovo za ~5–15 min, pak obnov stránku.");
       if (inputs.add_url) document.getElementById("addUrlInput").value = "";
     } else if (resp.status === 401 || resp.status === 403) {
       localStorage.removeItem("gh_pat");
@@ -3566,7 +3817,7 @@ function costBreakdownHtml(item) {
   }
   const feesHtml = item.fees_missing
     ? `<span style="color:#998;">neuvedeno listingem</span>`
-    : fmtCzk(item.fees_czk) + (item.fees_source === "text" ? ' <i style="color:#888;font-size:0.7rem;">(z popisu)</i>' : '');
+    : fmtCzk(item.fees_czk) + (item.fees_source === "text" ? ' <i style="color:#888;font-size:0.7rem;">(z popisu)</i>' : item.fees_source === "override" ? ' <i style="color:#888;font-size:0.7rem;">(oprava)</i>' : '');
   const elecNote = item.electricity_estimated
     ? `<div class="cost-note">Elektřina není u tohoto inzerátu uvedena přesně -- jednotný odhad ${ELECTRICITY_ESTIMATE_CZK} Kč/měsíc pro srovnatelnost.</div>`
     : `<div class="cost-note">Elektřina dle částky uvedené v inzerátu.</div>`;
@@ -3597,6 +3848,68 @@ function garageParkingHtml(item) {
   return `<div><b>Garáž</b>${fmt(item.garage)}</div><div><b>Parkování</b>${fmt(item.parking)}</div>`;
 }
 
+function overrideBadges(item) {
+  let out = "";
+  if (item.override) out += ' <span class="badge approx">oprava</span>';
+  if (item.exclude_from_stats) out += ' <span class="badge bad">mimo statistiku</span>';
+  return out;
+}
+
+function saveOverride(id) {
+  const listingId = String(id);
+  const area = document.getElementById("ovArea").value.trim();
+  const fees = document.getElementById("ovFees").value.trim();
+  const note = document.getElementById("ovNote").value.trim();
+  const exclude = document.getElementById("ovExclude").checked;
+  const payload = {id: listingId};
+  if (area) payload.floor_area_sqm = Number(area);
+  if (fees) payload.fees_czk = Number(fees);
+  if (note) payload.note = note;
+  if (exclude) payload.exclude_from_stats = true;
+  if (payload.floor_area_sqm !== undefined && !(payload.floor_area_sqm > 0)) {
+    setManageStatus("m² musí být kladné číslo.");
+    return;
+  }
+  if (payload.fees_czk !== undefined && !(payload.fees_czk >= 0)) {
+    setManageStatus("Poplatky musí být číslo ≥ 0.");
+    return;
+  }
+  if (!area && !fees && !note && !exclude) {
+    setManageStatus("Vyplň aspoň jedno pole opravy.");
+    return;
+  }
+  manageTracked({override_set: JSON.stringify(payload)});
+}
+
+function overrideFormHtml(item) {
+  const ov = item.override || {};
+  const areaVal = ov.floor_area_sqm != null ? ov.floor_area_sqm : "";
+  const feesVal = ov.fees_czk != null ? ov.fees_czk : "";
+  const noteVal = escapeHtml(ov.note || "").replace(/`/g, "&#96;").replace(/\$/g, "&#36;");
+  const excl = ov.exclude_from_stats ? "checked" : "";
+  const idLit = JSON.stringify(String(item.id));
+  const delBtn = ov.id
+    ? `<button class="popup-btn" style="background:#7f1d1d;" onclick="manageTracked({override_delete: ${idLit}})">Smazat opravu</button>`
+    : "";
+  return `<div class="ov-form" onclick="event.stopPropagation()">
+    <h3>Oprava čísel</h3>
+    <p class="hint" style="margin:0 0 6px;">Prázdné pole = nechat parser. Opravené m²/poplatky jdou do odhadu.
+      Ne-tržní prodej: zaškrtni „mimo statistiku“ a napiš důvod — nájem se nevymýšlí.</p>
+    <label>Plocha m² (teď ${item.floor_area_sqm ?? "—"})</label>
+    <input id="ovArea" type="number" min="0" step="0.1" value="${areaVal}" placeholder="${item.floor_area_sqm ?? ""}">
+    <label>Poplatky Kč/měs (teď ${item.fees_missing ? "neuvedeno" : (item.fees_czk ?? "—")})</label>
+    <input id="ovFees" type="number" min="0" step="1" value="${feesVal}" placeholder="${item.fees_missing ? "" : (item.fees_czk ?? "")}">
+    <label>Poznámka</label>
+    <textarea id="ovNote" placeholder="proč to není tržní / odkud je oprava">${noteVal}</textarea>
+    <label class="ov-check"><input id="ovExclude" type="checkbox" ${excl}> Mimo statistiku (ne-tržní prodej — zůstane na stránce, ne v mediánu)</label>
+    <div class="ov-row">
+      <button class="popup-btn" onclick="saveOverride(${idLit})">Uložit opravu</button>
+      ${delBtn}
+    </div>
+    <div id="overrideStatus" class="hint"></div>
+  </div>`;
+}
+
 function buildModalHtml(item) {
   const gallery = (item.images && item.images.length)
     ? item.images.map(u => `<img src="${escapeHtml(u)}" loading="lazy">`).join("")
@@ -3606,8 +3919,9 @@ function buildModalHtml(item) {
   const approxHtml = item.approx_location ? `<span class="badge approx">approximate location</span>` : "";
   return `
     <button id="modalClose" onclick="closeModal()">&times;</button>
-    <h2>${escapeHtml(item.title || "Listing")} ${approxHtml}</h2>
+    <h2>${escapeHtml(item.title || "Listing")} ${approxHtml}${overrideBadges(item)}</h2>
     ${noteHtml}
+    ${item.override_note ? `<div class="modal-note">Oprava: ${escapeHtml(item.override_note)}</div>` : ""}
     <div class="modal-gallery">${gallery}</div>
     ${costBreakdownHtml(item)}
     <div class="modal-grid">
@@ -3622,6 +3936,7 @@ function buildModalHtml(item) {
       <div><b>Seller / agent</b>${escapeHtml(item.seller_name || "—")}</div>
     </div>
     <div class="modal-desc">${escapeHtml(item.description || "No description available.")}</div>
+    ${overrideFormHtml(item)}
     <a class="modal-link" href="${escapeHtml(item.url)}" target="_blank" rel="noopener">Otevřít na ${portalName(item.source)} →</a>
     ${(item.also_on || []).map(a => `<a class="modal-link" style="background:#334155;" href="${escapeHtml(a.url)}" target="_blank" rel="noopener">Také na ${portalName(a.source)} →</a>`).join(" ")}
     ${item.also_on && item.also_on.length ? '<div class="cost-note">Stejný byt inzerovaný na více portálech — sloučeno do jednoho řádku, odkazy na ostatní výše.</div>' : ""}
@@ -3685,7 +4000,7 @@ function renderPodHarfou() {
   tbody.innerHTML = rows.length ? rows.map(r => `
     <tr class="clickable-row ${CHANGED_IDS.has(r.id) ? 'changed' : ''}" onclick="openModal(${escapeHtml(JSON.stringify(r.id))})">
       <td><img class="thumb" src="${escapeHtml(r.thumb || PLACEHOLDER)}" loading="lazy" onerror="this.src=PLACEHOLDER"></td>
-      <td><button class="linklike" onclick="event.stopPropagation();openModal(${escapeHtml(JSON.stringify(r.id))})">${escapeHtml(r.title) || '—'}</button></td>
+      <td><button class="linklike" onclick="event.stopPropagation();openModal(${escapeHtml(JSON.stringify(r.id))})">${escapeHtml(r.title) || '—'}${overrideBadges(r)}</button></td>
       <td>${r.transaction_type === 'pronajem' ? 'rent' : 'sale'}</td>
       <td>${r.disposition || '—'}</td>
       <td>${fmtCzk(r.price_czk)}</td>
@@ -3768,7 +4083,7 @@ function render() {
   tbody.innerHTML = rows.map(r => `
     <tr class="clickable-row ${CHANGED_IDS.has(r.id) ? 'changed' : ''}" onclick="openModal(${escapeHtml(JSON.stringify(r.id))})">
       <td><img class="thumb" src="${escapeHtml(r.thumb || PLACEHOLDER)}" loading="lazy" onerror="this.src=PLACEHOLDER"></td>
-      <td><button class="linklike" onclick="event.stopPropagation();openModal(${escapeHtml(JSON.stringify(r.id))})">${escapeHtml(r.title) || '—'}</button></td>
+      <td><button class="linklike" onclick="event.stopPropagation();openModal(${escapeHtml(JSON.stringify(r.id))})">${escapeHtml(r.title) || '—'}${overrideBadges(r)}</button></td>
       <td>${r.transaction_type === 'pronajem' ? 'rent' : 'sale'}</td>
       <td>${r.disposition || '—'}</td>
       <td>${fmtCzk(r.price_czk)}</td>
@@ -3902,6 +4217,10 @@ def update_pool_and_reports(snapshot, changes):
     state = pool.load_state()
     config_changed = pool.note_config(state, snapshot["config"], now)
     counts = pool.update_from_snapshot(all_pool, snapshot, changes, at=now)
+    # Re-apply on the pool so a gone listing still in the 30-day window keeps
+    # the corrected m²/fee in the estimate, and a deleted override cannot stick
+    # as exclude_from_stats on a record that is no longer in the snapshot.
+    apply_overrides(list(all_pool.values()), load_overrides(), stamp_ui=False)
     shards = pool.save_pool(all_pool)
     notes = [
         f"Pool: {len(all_pool)} inzerátů celkem, +{counts['new']} nových, "
@@ -4050,6 +4369,12 @@ def main():
     )
     comparables += sources.fetch_extra_comparables()
     comparables, folded = merge_cross_portal(comparables)
+    # After enrich (fetch + extra sources) and fold, before rank / stats /
+    # pool / estimate / dashboard. An override whose listing is not in this
+    # run stays in overrides.json and is applied again when the same id returns.
+    overrides = load_overrides()
+    apply_overrides(comparables, overrides)
+    apply_overrides(tracked, overrides)
     rank_deals(comparables)
     print(f"Found {len(comparables)} unique comparable listings", file=sys.stderr)
 
