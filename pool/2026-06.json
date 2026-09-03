@@ -2,7 +2,7 @@
  "1022903116": {
   "id": "1022903116",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -77,7 +77,8 @@
   "edited": "2026-09-02",
   "since": "2026-03-21",
   "parking_state": "unpriced",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "1025998924": {
   "id": "1025998924",
@@ -115,7 +116,8 @@
   "garage": false,
   "parking": false,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1053466700": {
   "id": "1053466700",
@@ -152,7 +154,8 @@
   "total_czk": 29900,
   "garage": true,
   "parking": false,
-  "fees_source": "text"
+  "fees_source": "text",
+  "exclude_from_stats": false
  },
  "1071924044": {
   "id": "1071924044",
@@ -190,7 +193,8 @@
   "garage": false,
   "parking": false,
   "fees_source": "field",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1073586252": {
   "id": "1073586252",
@@ -228,13 +232,14 @@
   "garage": true,
   "parking": true,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1080886092": {
   "id": "1080886092",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-02T19:27:42Z",
-  "gone_at": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
+  "gone_at": null,
   "price_history": [
    {
     "at": "2026-06-28",
@@ -299,13 +304,15 @@
   "elevator": true,
   "ownership": 2,
   "ownership_name": "Družstevní",
-  "views": 29729,
+  "views": 29892,
   "edited": "2026-08-26",
   "since": "2026-01-10",
   "parking_state": "none",
   "parking_price_czk": null,
   "gone_last_price_czk": 6999900,
-  "gone_last_total_czk": 6999900
+  "gone_last_total_czk": 6999900,
+  "exclude_from_stats": false,
+  "resurrected_at": "2026-09-03T12:52:13Z"
  },
  "1101496396": {
   "id": "1101496396",
@@ -343,12 +350,13 @@
   "garage": false,
   "parking": false,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1146466380": {
   "id": "1146466380",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -413,12 +421,13 @@
   "edited": "2026-08-26",
   "since": "2026-04-20",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "1154478156": {
   "id": "1154478156",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -463,7 +472,7 @@
   "fees_source": "field",
   "source": "sreality",
   "dist_km": 1.13,
-  "deal_pct": -10,
+  "deal_pct": -9,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -493,7 +502,8 @@
   "edited": "2026-08-27",
   "since": "2026-06-17",
   "parking_state": "priced",
-  "parking_price_czk": 1500
+  "parking_price_czk": 1500,
+  "exclude_from_stats": false
  },
  "1180168268": {
   "id": "1180168268",
@@ -530,12 +540,13 @@
   "total_czk": 22486,
   "garage": false,
   "parking": false,
-  "fees_source": "field"
+  "fees_source": "field",
+  "exclude_from_stats": false
  },
  "1189876556": {
   "id": "1189876556",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -600,12 +611,13 @@
   "edited": "2026-08-26",
   "since": "2025-12-12",
   "parking_state": "unpriced",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "120275788": {
   "id": "120275788",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -670,7 +682,8 @@
   "edited": "2026-08-20",
   "since": "2026-03-18",
   "parking_state": "unpriced",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "1218420812": {
   "id": "1218420812",
@@ -708,7 +721,8 @@
   "garage": true,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1228599372": {
   "id": "1228599372",
@@ -746,7 +760,8 @@
   "total_czk": 23500,
   "garage": false,
   "parking": false,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1233354828": {
   "id": "1233354828",
@@ -789,7 +804,8 @@
   "garage": false,
   "parking": true,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1236136012": {
   "id": "1236136012",
@@ -827,12 +843,13 @@
   "garage": false,
   "parking": true,
   "fees_source": "field",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1236435020": {
   "id": "1236435020",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -898,11 +915,12 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 4966,
+  "views": 5024,
   "edited": "2026-08-07",
   "since": "2026-06-05",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "123814732": {
   "id": "123814732",
@@ -940,7 +958,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1254835020": {
   "id": "1254835020",
@@ -1012,12 +1031,13 @@
   "parking_state": "unpriced",
   "parking_price_czk": null,
   "gone_last_price_czk": 12200000,
-  "gone_last_total_czk": 12200000
+  "gone_last_total_czk": 12200000,
+  "exclude_from_stats": false
  },
  "1255371340": {
   "id": "1255371340",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1052,7 +1072,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 0.88,
-  "deal_pct": 39,
+  "deal_pct": 40,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -1082,7 +1102,8 @@
   "edited": "2026-07-16",
   "since": "2025-03-22",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "1255600204": {
   "id": "1255600204",
@@ -1120,7 +1141,8 @@
   "floor_number": 3,
   "floors_total": 4,
   "backfilled": true,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1278914636": {
   "id": "1278914636",
@@ -1157,12 +1179,13 @@
   "total_czk": 29200,
   "garage": true,
   "parking": true,
-  "fees_source": "text"
+  "fees_source": "text",
+  "exclude_from_stats": false
  },
  "1301319756": {
   "id": "1301319756",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1232,7 +1255,8 @@
   "edited": "2026-08-25",
   "since": "2026-05-21",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "1316876364": {
   "id": "1316876364",
@@ -1275,12 +1299,13 @@
   "garage": false,
   "parking": false,
   "fees_source": "field",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1328894796": {
   "id": "1328894796",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1315,7 +1340,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 2.17,
-  "deal_pct": -15,
+  "deal_pct": -16,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -1345,7 +1370,8 @@
   "edited": "2026-03-16",
   "since": "2026-03-16",
   "parking_state": "priced",
-  "parking_price_czk": 2500
+  "parking_price_czk": 2500,
+  "exclude_from_stats": false
  },
  "1356759116": {
   "id": "1356759116",
@@ -1415,12 +1441,13 @@
   "edited": "2026-08-25",
   "since": "2026-06-01",
   "gone_last_price_czk": 21500,
-  "gone_last_total_czk": 23000
+  "gone_last_total_czk": 23000,
+  "exclude_from_stats": false
  },
  "1370587212": {
   "id": "1370587212",
   "first_seen": "2026-06-28T19:37:02Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1485,7 +1512,8 @@
   "edited": "2026-08-21",
   "since": "2026-06-06",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "139592524": {
   "id": "139592524",
@@ -1522,12 +1550,13 @@
   "total_czk": 7974910,
   "garage": false,
   "parking": false,
-  "fees_source": null
+  "fees_source": null,
+  "exclude_from_stats": false
  },
  "1396953676": {
   "id": "1396953676",
   "first_seen": "2026-06-28T19:37:02Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1597,12 +1626,13 @@
   "edited": "2026-08-25",
   "since": "2024-11-13",
   "parking_state": "unpriced",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "1404608588": {
   "id": "1404608588",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1672,7 +1702,8 @@
   "edited": "2026-08-30",
   "since": "2026-04-25",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "1405714508": {
   "id": "1405714508",
@@ -1710,7 +1741,8 @@
   "garage": true,
   "parking": true,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "141553740": {
   "id": "141553740",
@@ -1748,7 +1780,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1422692428": {
   "id": "1422692428",
@@ -1818,7 +1851,8 @@
   "edited": "2026-08-24",
   "since": "2026-05-16",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "1426231372": {
   "id": "1426231372",
@@ -1861,12 +1895,13 @@
   "garage": false,
   "parking": false,
   "fees_source": "field",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1445417804": {
   "id": "1445417804",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1931,7 +1966,8 @@
   "edited": "2026-03-13",
   "since": "2026-03-13",
   "parking_state": "priced",
-  "parking_price_czk": 2500
+  "parking_price_czk": 2500,
+  "exclude_from_stats": false
  },
  "1459126348": {
   "id": "1459126348",
@@ -1969,7 +2005,8 @@
   "total_czk": 9250000,
   "garage": false,
   "parking": true,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1465380940": {
   "id": "1465380940",
@@ -2006,7 +2043,8 @@
   "total_czk": 23191,
   "garage": false,
   "parking": false,
-  "fees_source": "field"
+  "fees_source": "field",
+  "exclude_from_stats": false
  },
  "1469640780": {
   "id": "1469640780",
@@ -2044,7 +2082,8 @@
   "garage": true,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "148828236": {
   "id": "148828236",
@@ -2087,12 +2126,13 @@
   "garage": true,
   "parking": false,
   "fees_source": "field",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1489215564": {
   "id": "1489215564",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2162,7 +2202,8 @@
   "edited": "2026-08-31",
   "since": "2026-04-30",
   "parking_state": "unpriced",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "1505988684": {
   "id": "1505988684",
@@ -2205,7 +2246,8 @@
   "garage": false,
   "parking": false,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1514729548": {
   "id": "1514729548",
@@ -2243,7 +2285,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "154378316": {
   "id": "154378316",
@@ -2281,12 +2324,13 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1551852364": {
   "id": "1551852364",
   "first_seen": "2026-06-28T19:37:02Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2326,7 +2370,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 1.81,
-  "deal_pct": 19,
+  "deal_pct": 18,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -2356,7 +2400,8 @@
   "edited": "2026-08-22",
   "since": "2026-02-16",
   "parking_state": "unpriced",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "1560211532": {
   "id": "1560211532",
@@ -2394,12 +2439,13 @@
   "garage": true,
   "parking": true,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1570738252": {
   "id": "1570738252",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2469,7 +2515,8 @@
   "edited": "2026-08-26",
   "since": "2026-05-13",
   "parking_state": "unpriced",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "157675596": {
   "id": "157675596",
@@ -2506,7 +2553,8 @@
   "parking": true,
   "floor_number": 7,
   "floors_total": 29,
-  "backfilled": true
+  "backfilled": true,
+  "exclude_from_stats": false
  },
  "1589187404": {
   "id": "1589187404",
@@ -2543,7 +2591,8 @@
   "total_czk": 27200,
   "garage": true,
   "parking": true,
-  "fees_source": "text"
+  "fees_source": "text",
+  "exclude_from_stats": false
  },
  "16151372": {
   "id": "16151372",
@@ -2581,12 +2630,13 @@
   "floor_number": 3,
   "floors_total": 6,
   "backfilled": true,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1656258636": {
   "id": "1656258636",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2657,11 +2707,12 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 14123,
+  "views": 14273,
   "edited": "2026-09-01",
   "since": "2026-05-29",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "1660416076": {
   "id": "1660416076",
@@ -2699,7 +2750,8 @@
   "garage": true,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1695215692": {
   "id": "1695215692",
@@ -2737,12 +2789,13 @@
   "total_czk": 23500,
   "garage": false,
   "parking": false,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1711312972": {
   "id": "1711312972",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2803,11 +2856,12 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 5517,
+  "views": 5575,
   "edited": "2026-05-20",
   "since": "2026-05-20",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "1715765324": {
   "id": "1715765324",
@@ -2845,7 +2899,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1732440140": {
   "id": "1732440140",
@@ -2883,7 +2938,8 @@
   "garage": false,
   "parking": false,
   "fees_source": "field",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1735811916": {
   "id": "1735811916",
@@ -2920,7 +2976,8 @@
   "total_czk": 31400,
   "garage": false,
   "parking": true,
-  "fees_source": null
+  "fees_source": null,
+  "exclude_from_stats": false
  },
  "1736540236": {
   "id": "1736540236",
@@ -2968,7 +3025,8 @@
   "deal_pct": -30,
   "deal_outlier": false,
   "gone_last_price_czk": 20490,
-  "gone_last_total_czk": 21990
+  "gone_last_total_czk": 21990,
+  "exclude_from_stats": false
  },
  "1750171724": {
   "id": "1750171724",
@@ -3005,7 +3063,8 @@
   "total_czk": 20400,
   "garage": false,
   "parking": false,
-  "fees_source": null
+  "fees_source": null,
+  "exclude_from_stats": false
  },
  "177270860": {
   "id": "177270860",
@@ -3043,7 +3102,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1799876684": {
   "id": "1799876684",
@@ -3081,7 +3141,8 @@
   "garage": false,
   "parking": false,
   "fees_source": "field",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1801143116": {
   "id": "1801143116",
@@ -3153,7 +3214,8 @@
   "edited": "2026-08-20",
   "since": "2026-03-18",
   "gone_last_price_czk": 10400000,
-  "gone_last_total_czk": 10400000
+  "gone_last_total_czk": 10400000,
+  "exclude_from_stats": false
  },
  "1830966092": {
   "id": "1830966092",
@@ -3190,12 +3252,13 @@
   "total_czk": 30500,
   "garage": false,
   "parking": true,
-  "fees_source": null
+  "fees_source": null,
+  "exclude_from_stats": false
  },
  "1871704140": {
   "id": "1871704140",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3230,7 +3293,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.29,
-  "deal_pct": 10,
+  "deal_pct": 9,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -3260,7 +3323,8 @@
   "edited": "2026-08-24",
   "since": "2026-06-17",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "1875349580": {
   "id": "1875349580",
@@ -3332,7 +3396,8 @@
   "parking_state": "none",
   "parking_price_czk": null,
   "gone_last_price_czk": 8990000,
-  "gone_last_total_czk": 8990000
+  "gone_last_total_czk": 8990000,
+  "exclude_from_stats": false
  },
  "189460556": {
   "id": "189460556",
@@ -3369,7 +3434,8 @@
   "electricity_estimated": false,
   "total_czk": 39900,
   "garage": true,
-  "parking": false
+  "parking": false,
+  "exclude_from_stats": false
  },
  "1904255052": {
   "id": "1904255052",
@@ -3406,7 +3472,8 @@
   "total_czk": 9517000,
   "garage": true,
   "parking": true,
-  "fees_source": null
+  "fees_source": null,
+  "exclude_from_stats": false
  },
  "1905324108": {
   "id": "1905324108",
@@ -3443,7 +3510,8 @@
   "total_czk": 9900000,
   "garage": true,
   "parking": true,
-  "fees_source": null
+  "fees_source": null,
+  "exclude_from_stats": false
  },
  "1926922316": {
   "id": "1926922316",
@@ -3491,7 +3559,8 @@
   "garage": true,
   "parking": false,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1945531212": {
   "id": "1945531212",
@@ -3529,7 +3598,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "1952034892": {
   "id": "1952034892",
@@ -3574,7 +3644,8 @@
   "backfilled": true,
   "source": "sreality",
   "gone_last_price_czk": 19500,
-  "gone_last_total_czk": 25700
+  "gone_last_total_czk": 25700,
+  "exclude_from_stats": false
  },
  "1968959564": {
   "id": "1968959564",
@@ -3612,7 +3683,8 @@
   "garage": false,
   "parking": false,
   "fees_source": "field",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "2037874764": {
   "id": "2037874764",
@@ -3650,7 +3722,8 @@
   "garage": false,
   "parking": false,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "206041164": {
   "id": "206041164",
@@ -3688,12 +3761,13 @@
   "garage": false,
   "parking": false,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "2062331980": {
   "id": "2062331980",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3758,7 +3832,8 @@
   "edited": "2026-08-24",
   "since": "2026-04-13",
   "parking_state": "unpriced",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "2075127884": {
   "id": "2075127884",
@@ -3801,7 +3876,8 @@
   "garage": false,
   "parking": false,
   "fees_source": "field",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "21360716": {
   "id": "21360716",
@@ -3839,7 +3915,8 @@
   "floor_number": 2,
   "floors_total": null,
   "backfilled": true,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "2161897548": {
   "id": "2161897548",
@@ -3909,7 +3986,8 @@
   "edited": "2026-08-24",
   "since": "2026-06-12",
   "gone_last_price_czk": 21500,
-  "gone_last_total_czk": 29000
+  "gone_last_total_czk": 29000,
+  "exclude_from_stats": false
  },
  "2177581900": {
   "id": "2177581900",
@@ -3981,7 +4059,8 @@
   "parking_state": "unpriced",
   "parking_price_czk": null,
   "gone_last_price_czk": 10300000,
-  "gone_last_total_czk": 10300000
+  "gone_last_total_czk": 10300000,
+  "exclude_from_stats": false
  },
  "2221404236": {
   "id": "2221404236",
@@ -4019,7 +4098,8 @@
   "garage": true,
   "parking": false,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "2227913548": {
   "id": "2227913548",
@@ -4091,12 +4171,13 @@
   "parking_state": "unpriced",
   "parking_price_czk": null,
   "gone_last_price_czk": 12400000,
-  "gone_last_total_czk": 12400000
+  "gone_last_total_czk": 12400000,
+  "exclude_from_stats": false
  },
  "2233184332": {
   "id": "2233184332",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4169,12 +4250,13 @@
   "parking_price_czk": null,
   "gone_last_price_czk": 10100000,
   "gone_last_total_czk": 10100000,
-  "resurrected_at": "2026-09-01T13:34:50Z"
+  "resurrected_at": "2026-09-01T13:34:50Z",
+  "exclude_from_stats": false
  },
  "2234683468": {
   "id": "2234683468",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4254,7 +4336,8 @@
   "edited": "2026-09-02",
   "since": "2026-05-18",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "2239819852": {
   "id": "2239819852",
@@ -4297,7 +4380,8 @@
   "garage": false,
   "parking": true,
   "fees_source": "field",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "2267054156": {
   "id": "2267054156",
@@ -4335,12 +4419,13 @@
   "garage": false,
   "parking": true,
   "fees_source": "field",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "2267501388": {
   "id": "2267501388",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4405,7 +4490,8 @@
   "edited": "2026-04-14",
   "since": "2026-03-13",
   "parking_state": "priced",
-  "parking_price_czk": 2500
+  "parking_price_czk": 2500,
+  "exclude_from_stats": false
  },
  "2279141452": {
   "id": "2279141452",
@@ -4443,12 +4529,13 @@
   "garage": false,
   "parking": false,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "2295116620": {
   "id": "2295116620",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4513,7 +4600,8 @@
   "edited": "2026-08-10",
   "since": "2025-06-03",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "2303853388": {
   "id": "2303853388",
@@ -4550,12 +4638,13 @@
   "total_czk": 9113950,
   "garage": false,
   "parking": false,
-  "fees_source": null
+  "fees_source": null,
+  "exclude_from_stats": false
  },
  "2304201548": {
   "id": "2304201548",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4620,7 +4709,8 @@
   "edited": "2026-03-13",
   "since": "2026-03-13",
   "parking_state": "priced",
-  "parking_price_czk": 2500
+  "parking_price_czk": 2500,
+  "exclude_from_stats": false
  },
  "23282508": {
   "id": "23282508",
@@ -4658,7 +4748,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "2329321548": {
   "id": "2329321548",
@@ -4735,7 +4826,8 @@
   "parking_state": "unpriced",
   "parking_price_czk": null,
   "gone_last_price_czk": 6450000,
-  "gone_last_total_czk": 6450000
+  "gone_last_total_czk": 6450000,
+  "exclude_from_stats": false
  },
  "2336637772": {
   "id": "2336637772",
@@ -4772,12 +4864,13 @@
   "total_czk": 25600,
   "garage": false,
   "parking": false,
-  "fees_source": "text"
+  "fees_source": "text",
+  "exclude_from_stats": false
  },
  "2354533196": {
   "id": "2354533196",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4842,7 +4935,8 @@
   "edited": "2026-03-13",
   "since": "2026-03-13",
   "parking_state": "priced",
-  "parking_price_czk": 2500
+  "parking_price_czk": 2500,
+  "exclude_from_stats": false
  },
  "2356969548": {
   "id": "2356969548",
@@ -4885,12 +4979,13 @@
   "garage": true,
   "parking": false,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "2364244044": {
   "id": "2364244044",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4965,7 +5060,8 @@
   "edited": "2026-08-11",
   "since": "2026-05-26",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "240222284": {
   "id": "240222284",
@@ -5003,12 +5099,13 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "2406761292": {
   "id": "2406761292",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5049,7 +5146,7 @@
   "source": "sreality",
   "dist_km": 1.33,
   "price_old_czk": null,
-  "deal_pct": 12,
+  "deal_pct": 11,
   "deal_outlier": false,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
@@ -5078,7 +5175,8 @@
   "ownership_name": "Osobní",
   "views": 18135,
   "edited": "2026-08-31",
-  "since": "2026-04-02"
+  "since": "2026-04-02",
+  "exclude_from_stats": false
  },
  "2409009228": {
   "id": "2409009228",
@@ -5158,7 +5256,8 @@
   "edited": "2026-08-24",
   "since": "2026-05-23",
   "gone_last_price_czk": 23900,
-  "gone_last_total_czk": 25400
+  "gone_last_total_czk": 25400,
+  "exclude_from_stats": false
  },
  "2483195980": {
   "id": "2483195980",
@@ -5195,12 +5294,13 @@
   "total_czk": 19590,
   "garage": false,
   "parking": false,
-  "fees_source": "text"
+  "fees_source": "text",
+  "exclude_from_stats": false
  },
  "2498511692": {
   "id": "2498511692",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5235,7 +5335,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 1.27,
-  "deal_pct": 5,
+  "deal_pct": 6,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -5265,7 +5365,8 @@
   "edited": "2026-07-16",
   "since": "2026-03-25",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "2525925452": {
   "id": "2525925452",
@@ -5302,7 +5403,8 @@
   "total_czk": 6495000,
   "garage": true,
   "parking": true,
-  "fees_source": null
+  "fees_source": null,
+  "exclude_from_stats": false
  },
  "2548015180": {
   "id": "2548015180",
@@ -5345,7 +5447,8 @@
   "garage": false,
   "parking": true,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "2562949196": {
   "id": "2562949196",
@@ -5417,7 +5520,8 @@
   "parking_state": "none",
   "parking_price_czk": null,
   "gone_last_price_czk": 4500000,
-  "gone_last_total_czk": 4500000
+  "gone_last_total_czk": 4500000,
+  "exclude_from_stats": false
  },
  "2571468876": {
   "id": "2571468876",
@@ -5455,7 +5559,8 @@
   "garage": false,
   "parking": false,
   "fees_source": "field",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "2578313292": {
   "id": "2578313292",
@@ -5493,7 +5598,8 @@
   "garage": true,
   "parking": false,
   "fees_source": "field",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "261857356": {
   "id": "261857356",
@@ -5531,7 +5637,8 @@
   "garage": false,
   "parking": true,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "2630566732": {
   "id": "2630566732",
@@ -5603,7 +5710,8 @@
   "parking_state": "unpriced",
   "parking_price_czk": null,
   "gone_last_price_czk": 9900000,
-  "gone_last_total_czk": 9900000
+  "gone_last_total_czk": 9900000,
+  "exclude_from_stats": false
  },
  "2634195020": {
   "id": "2634195020",
@@ -5641,12 +5749,13 @@
   "garage": false,
   "parking": true,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "2636689484": {
   "id": "2636689484",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [],
   "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/2636689484",
@@ -5704,7 +5813,8 @@
   "edited": "2026-08-26",
   "since": "2026-04-08",
   "parking_state": "unpriced",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "2639298636": {
   "id": "2639298636",
@@ -5742,7 +5852,8 @@
   "garage": false,
   "parking": true,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "2660270156": {
   "id": "2660270156",
@@ -5780,12 +5891,13 @@
   "garage": true,
   "parking": true,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "2663968844": {
   "id": "2663968844",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5850,7 +5962,8 @@
   "edited": "2026-07-01",
   "since": "2026-06-16",
   "parking_state": "unpriced",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "2685567052": {
   "id": "2685567052",
@@ -5888,7 +6001,8 @@
   "garage": true,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "2697236556": {
   "id": "2697236556",
@@ -5926,7 +6040,8 @@
   "garage": true,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "2711023692": {
   "id": "2711023692",
@@ -5964,7 +6079,8 @@
   "floor_number": 3,
   "floors_total": 7,
   "backfilled": true,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "2715058252": {
   "id": "2715058252",
@@ -6001,7 +6117,8 @@
   "total_czk": 7500000,
   "garage": true,
   "parking": false,
-  "fees_source": null
+  "fees_source": null,
+  "exclude_from_stats": false
  },
  "2746347596": {
   "id": "2746347596",
@@ -6038,7 +6155,8 @@
   "total_czk": 22500,
   "garage": false,
   "parking": true,
-  "fees_source": null
+  "fees_source": null,
+  "exclude_from_stats": false
  },
  "2790125644": {
   "id": "2790125644",
@@ -6081,7 +6199,8 @@
   "garage": true,
   "parking": true,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "2816435020": {
   "id": "2816435020",
@@ -6119,7 +6238,8 @@
   "garage": true,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "2824990796": {
   "id": "2824990796",
@@ -6157,12 +6277,13 @@
   "garage": false,
   "parking": false,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "2853208140": {
   "id": "2853208140",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6232,12 +6353,13 @@
   "edited": "2026-08-29",
   "since": "2026-06-08",
   "parking_state": "unpriced",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "2864615500": {
   "id": "2864615500",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6277,7 +6399,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.39,
-  "deal_pct": 11,
+  "deal_pct": 10,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 4,
@@ -6307,7 +6429,8 @@
   "edited": "2026-09-02",
   "since": "2026-05-14",
   "parking_state": "unpriced",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "2865070156": {
   "id": "2865070156",
@@ -6344,7 +6467,8 @@
   "total_czk": 8440000,
   "garage": true,
   "parking": false,
-  "fees_source": null
+  "fees_source": null,
+  "exclude_from_stats": false
  },
  "2872176716": {
   "id": "2872176716",
@@ -6382,7 +6506,8 @@
   "garage": false,
   "parking": false,
   "fees_source": "field",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "2884038732": {
   "id": "2884038732",
@@ -6420,12 +6545,13 @@
   "floor_number": 3,
   "floors_total": 8,
   "backfilled": true,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "290865996": {
   "id": "290865996",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6493,7 +6619,8 @@
   "parking_price_czk": null,
   "gone_last_price_czk": 6940000,
   "gone_last_total_czk": 6940000,
-  "resurrected_at": "2026-09-01T13:34:50Z"
+  "resurrected_at": "2026-09-01T13:34:50Z",
+  "exclude_from_stats": false
  },
  "2923425868": {
   "id": "2923425868",
@@ -6546,12 +6673,13 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "2960737100": {
   "id": "2960737100",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6626,12 +6754,13 @@
   "edited": "2026-09-02",
   "since": "2026-03-19",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "299324236": {
   "id": "299324236",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [],
   "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/299324236",
@@ -6689,7 +6818,8 @@
   "edited": "2026-08-02",
   "since": "2026-03-14",
   "parking_state": "unpriced",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "3020812364": {
   "id": "3020812364",
@@ -6727,7 +6857,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3106308172": {
   "id": "3106308172",
@@ -6770,7 +6901,8 @@
   "garage": false,
   "parking": false,
   "fees_source": "field",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3109064780": {
   "id": "3109064780",
@@ -6813,7 +6945,8 @@
   "garage": false,
   "parking": false,
   "fees_source": "field",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3113349196": {
   "id": "3113349196",
@@ -6851,7 +6984,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3130479436": {
   "id": "3130479436",
@@ -6889,7 +7023,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3149328460": {
   "id": "3149328460",
@@ -6932,7 +7067,8 @@
   "floor_number": 4,
   "floors_total": 11,
   "backfilled": true,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3151396940": {
   "id": "3151396940",
@@ -6969,7 +7105,8 @@
   "total_czk": 26400,
   "garage": false,
   "parking": false,
-  "fees_source": null
+  "fees_source": null,
+  "exclude_from_stats": false
  },
  "3152117836": {
   "id": "3152117836",
@@ -7006,12 +7143,13 @@
   "total_czk": 25000,
   "garage": true,
   "parking": false,
-  "fees_source": null
+  "fees_source": null,
+  "exclude_from_stats": false
  },
  "3173163084": {
   "id": "3173163084",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7081,7 +7219,8 @@
   "edited": "2026-08-24",
   "since": "2026-04-30",
   "parking_state": "priced",
-  "parking_price_czk": 534
+  "parking_price_czk": 534,
+  "exclude_from_stats": false
  },
  "3180195916": {
   "id": "3180195916",
@@ -7118,7 +7257,8 @@
   "total_czk": 33000,
   "garage": true,
   "parking": true,
-  "fees_source": "text"
+  "fees_source": "text",
+  "exclude_from_stats": false
  },
  "3182461004": {
   "id": "3182461004",
@@ -7161,7 +7301,8 @@
   "garage": true,
   "parking": false,
   "fees_source": "field",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3184717900": {
   "id": "3184717900",
@@ -7204,7 +7345,8 @@
   "garage": false,
   "parking": false,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3200053324": {
   "id": "3200053324",
@@ -7242,7 +7384,8 @@
   "garage": true,
   "parking": true,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3203366988": {
   "id": "3203366988",
@@ -7280,7 +7423,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3214315596": {
   "id": "3214315596",
@@ -7328,7 +7472,8 @@
   "garage": true,
   "parking": true,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3215949900": {
   "id": "3215949900",
@@ -7365,7 +7510,8 @@
   "total_czk": 22000,
   "garage": false,
   "parking": false,
-  "fees_source": null
+  "fees_source": null,
+  "exclude_from_stats": false
  },
  "3256741964": {
   "id": "3256741964",
@@ -7403,7 +7549,8 @@
   "garage": true,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3297701964": {
   "id": "3297701964",
@@ -7451,12 +7598,13 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3310125132": {
   "id": "3310125132",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7521,7 +7669,8 @@
   "edited": "2026-08-04",
   "since": "2026-06-02",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "3311960140": {
   "id": "3311960140",
@@ -7559,7 +7708,8 @@
   "garage": false,
   "parking": false,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3314319436": {
   "id": "3314319436",
@@ -7596,12 +7746,13 @@
   "total_czk": 21500,
   "garage": false,
   "parking": false,
-  "fees_source": null
+  "fees_source": null,
+  "exclude_from_stats": false
  },
  "3327627340": {
   "id": "3327627340",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7666,7 +7817,8 @@
   "edited": "2026-05-21",
   "since": "2026-05-21",
   "parking_state": "unpriced",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "334725196": {
   "id": "334725196",
@@ -7704,7 +7856,8 @@
   "garage": true,
   "parking": true,
   "fees_source": "field",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3350368332": {
   "id": "3350368332",
@@ -7741,7 +7894,8 @@
   "total_czk": 15490,
   "garage": false,
   "parking": true,
-  "fees_source": null
+  "fees_source": null,
+  "exclude_from_stats": false
  },
  "3356684364": {
   "id": "3356684364",
@@ -7779,7 +7933,8 @@
   "garage": true,
   "parking": false,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3411710028": {
   "id": "3411710028",
@@ -7817,7 +7972,8 @@
   "garage": true,
   "parking": true,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3422503756": {
   "id": "3422503756",
@@ -7889,7 +8045,8 @@
   "parking_state": "none",
   "parking_price_czk": null,
   "gone_last_price_czk": 8990000,
-  "gone_last_total_czk": 8990000
+  "gone_last_total_czk": 8990000,
+  "exclude_from_stats": false
  },
  "3433591628": {
   "id": "3433591628",
@@ -7921,12 +8078,13 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3448762444": {
   "id": "3448762444",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7961,7 +8119,7 @@
   "fees_source": "note",
   "source": "sreality",
   "dist_km": 1.11,
-  "deal_pct": -12,
+  "deal_pct": -13,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 2,
@@ -7991,12 +8149,13 @@
   "edited": "2026-07-20",
   "since": "2026-06-17",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "3449786444": {
   "id": "3449786444",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8061,7 +8220,8 @@
   "edited": "2026-08-26",
   "since": "2026-05-13",
   "parking_state": "unpriced",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "3473055820": {
   "id": "3473055820",
@@ -8099,7 +8259,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3492118604": {
   "id": "3492118604",
@@ -8137,7 +8298,8 @@
   "garage": false,
   "parking": true,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "350589004": {
   "id": "350589004",
@@ -8173,12 +8335,13 @@
   "electricity_estimated": true,
   "total_czk": 23500,
   "garage": false,
-  "parking": false
+  "parking": false,
+  "exclude_from_stats": false
  },
  "3579269964": {
   "id": "3579269964",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8243,7 +8406,8 @@
   "edited": "2026-03-13",
   "since": "2026-03-13",
   "parking_state": "priced",
-  "parking_price_czk": 2500
+  "parking_price_czk": 2500,
+  "exclude_from_stats": false
  },
  "3642011724": {
   "id": "3642011724",
@@ -8281,7 +8445,8 @@
   "garage": false,
   "parking": true,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3668766796": {
   "id": "3668766796",
@@ -8318,7 +8483,8 @@
   "total_czk": 21490,
   "garage": false,
   "parking": false,
-  "fees_source": null
+  "fees_source": null,
+  "exclude_from_stats": false
  },
  "3682639948": {
   "id": "3682639948",
@@ -8356,12 +8522,13 @@
   "garage": false,
   "parking": false,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3710341964": {
   "id": "3710341964",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8426,12 +8593,13 @@
   "edited": "2026-03-16",
   "since": "2026-03-13",
   "parking_state": "priced",
-  "parking_price_czk": 2500
+  "parking_price_czk": 2500,
+  "exclude_from_stats": false
  },
  "3717263436": {
   "id": "3717263436",
   "first_seen": "2026-06-28T19:37:02Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8496,7 +8664,8 @@
   "edited": "2026-08-22",
   "since": "2026-06-26",
   "parking_state": "unpriced",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "3728601164": {
   "id": "3728601164",
@@ -8533,7 +8702,8 @@
   "total_czk": 6000000,
   "garage": true,
   "parking": false,
-  "fees_source": null
+  "fees_source": null,
+  "exclude_from_stats": false
  },
  "3735584844": {
   "id": "3735584844",
@@ -8576,12 +8746,13 @@
   "garage": true,
   "parking": true,
   "fees_source": "field",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3768815692": {
   "id": "3768815692",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8651,12 +8822,13 @@
   "edited": "2026-08-24",
   "since": "2026-05-18",
   "parking_state": "unpriced",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "3791143756": {
   "id": "3791143756",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8731,12 +8903,13 @@
   "edited": "2026-09-02",
   "since": "2026-03-21",
   "parking_state": "unpriced",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "3807547468": {
   "id": "3807547468",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8771,7 +8944,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.61,
-  "deal_pct": 1,
+  "deal_pct": 0,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -8801,7 +8974,8 @@
   "edited": "2026-07-07",
   "since": "2026-05-19",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "3812749388": {
   "id": "3812749388",
@@ -8844,7 +9018,8 @@
   "garage": false,
   "parking": false,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3816637260": {
   "id": "3816637260",
@@ -8884,7 +9059,8 @@
   "fees_source": null,
   "source": "sreality",
   "gone_last_price_czk": 21800,
-  "gone_last_total_czk": 23300
+  "gone_last_total_czk": 23300,
+  "exclude_from_stats": false
  },
  "3833152332": {
   "id": "3833152332",
@@ -8924,7 +9100,8 @@
   "fees_source": null,
   "source": "sreality",
   "gone_last_price_czk": 9805000,
-  "gone_last_total_czk": 9805000
+  "gone_last_total_czk": 9805000,
+  "exclude_from_stats": false
  },
  "3833692236": {
   "id": "3833692236",
@@ -8961,12 +9138,13 @@
   "total_czk": 20490,
   "garage": false,
   "parking": false,
-  "fees_source": null
+  "fees_source": null,
+  "exclude_from_stats": false
  },
  "3834703948": {
   "id": "3834703948",
   "first_seen": "2026-06-28T19:37:02Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9031,7 +9209,8 @@
   "edited": "2026-08-15",
   "since": "2026-06-26",
   "parking_state": "unpriced",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "3841192012": {
   "id": "3841192012",
@@ -9073,7 +9252,8 @@
   "total_czk": 4280000,
   "garage": true,
   "parking": true,
-  "fees_source": null
+  "fees_source": null,
+  "exclude_from_stats": false
  },
  "3844817740": {
   "id": "3844817740",
@@ -9143,7 +9323,8 @@
   "edited": "2026-08-20",
   "since": "2026-03-18",
   "parking_state": "unpriced",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "3865149516": {
   "id": "3865149516",
@@ -9181,7 +9362,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3876102220": {
   "id": "3876102220",
@@ -9219,7 +9401,8 @@
   "garage": true,
   "parking": false,
   "fees_source": "field",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3885473868": {
   "id": "3885473868",
@@ -9257,7 +9440,8 @@
   "garage": false,
   "parking": false,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3888943180": {
   "id": "3888943180",
@@ -9289,7 +9473,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3898295116": {
   "id": "3898295116",
@@ -9361,7 +9546,8 @@
   "edited": "2026-08-20",
   "since": "2026-03-18",
   "gone_last_price_czk": 11600000,
-  "gone_last_total_czk": 11600000
+  "gone_last_total_czk": 11600000,
+  "exclude_from_stats": false
  },
  "3903451212": {
   "id": "3903451212",
@@ -9404,7 +9590,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3912736844": {
   "id": "3912736844",
@@ -9442,7 +9629,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3920490572": {
   "id": "3920490572",
@@ -9482,12 +9670,13 @@
   "fees_source": "field",
   "source": "sreality",
   "gone_last_price_czk": 26500,
-  "gone_last_total_czk": 31600
+  "gone_last_total_czk": 31600,
+  "exclude_from_stats": false
  },
  "3945525324": {
   "id": "3945525324",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9548,11 +9737,12 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 10339,
+  "views": 10510,
   "edited": "2026-09-02",
   "since": "2026-06-12",
   "parking_state": "unpriced",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "3946352716": {
   "id": "3946352716",
@@ -9590,7 +9780,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3966083148": {
   "id": "3966083148",
@@ -9627,7 +9818,8 @@
   "total_czk": 21499,
   "garage": true,
   "parking": true,
-  "fees_source": null
+  "fees_source": null,
+  "exclude_from_stats": false
  },
  "3986485324": {
   "id": "3986485324",
@@ -9665,7 +9857,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "3992273740": {
   "id": "3992273740",
@@ -9703,12 +9896,13 @@
   "garage": false,
   "parking": true,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "4006981708": {
   "id": "4006981708",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9743,7 +9937,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 0.62,
-  "deal_pct": 11,
+  "deal_pct": 10,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 4,
@@ -9773,7 +9967,8 @@
   "edited": "2026-08-26",
   "since": "2026-04-20",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "4020285516": {
   "id": "4020285516",
@@ -9816,7 +10011,8 @@
   "floor_number": 4,
   "floors_total": 1,
   "backfilled": true,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "4026957900": {
   "id": "4026957900",
@@ -9854,7 +10050,8 @@
   "garage": false,
   "parking": false,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "4052193356": {
   "id": "4052193356",
@@ -9892,7 +10089,8 @@
   "garage": false,
   "parking": true,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "4060803148": {
   "id": "4060803148",
@@ -9929,7 +10127,8 @@
   "total_czk": 23500,
   "garage": false,
   "parking": false,
-  "fees_source": null
+  "fees_source": null,
+  "exclude_from_stats": false
  },
  "4063666252": {
   "id": "4063666252",
@@ -9966,7 +10165,8 @@
   "total_czk": 21590,
   "garage": false,
   "parking": false,
-  "fees_source": "text"
+  "fees_source": "text",
+  "exclude_from_stats": false
  },
  "4066680908": {
   "id": "4066680908",
@@ -10004,7 +10204,8 @@
   "garage": false,
   "parking": false,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "4073254988": {
   "id": "4073254988",
@@ -10042,7 +10243,8 @@
   "garage": false,
   "parking": true,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "4085444684": {
   "id": "4085444684",
@@ -10079,12 +10281,13 @@
   "total_czk": 19500,
   "garage": false,
   "parking": true,
-  "fees_source": null
+  "fees_source": null,
+  "exclude_from_stats": false
  },
  "4099363660": {
   "id": "4099363660",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10119,7 +10322,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 2.17,
-  "deal_pct": -11,
+  "deal_pct": -12,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -10149,7 +10352,8 @@
   "edited": "2026-03-13",
   "since": "2026-03-13",
   "parking_state": "priced",
-  "parking_price_czk": 2500
+  "parking_price_czk": 2500,
+  "exclude_from_stats": false
  },
  "4109988684": {
   "id": "4109988684",
@@ -10187,12 +10391,13 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "4136693836": {
   "id": "4136693836",
   "first_seen": "2026-06-28T19:37:02Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10257,7 +10462,8 @@
   "edited": "2026-08-22",
   "since": "2026-06-26",
   "parking_state": "unpriced",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "4172521548": {
   "id": "4172521548",
@@ -10295,7 +10501,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "4179750988": {
   "id": "4179750988",
@@ -10333,7 +10540,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "4234584140": {
   "id": "4234584140",
@@ -10370,7 +10578,8 @@
   "total_czk": 30226,
   "garage": false,
   "parking": true,
-  "fees_source": "text"
+  "fees_source": "text",
+  "exclude_from_stats": false
  },
  "4235617100": {
   "id": "4235617100",
@@ -10407,12 +10616,13 @@
   "total_czk": 29500,
   "garage": false,
   "parking": true,
-  "fees_source": null
+  "fees_source": null,
+  "exclude_from_stats": false
  },
  "4241449804": {
   "id": "4241449804",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10482,7 +10692,8 @@
   "edited": "2026-08-07",
   "since": "2026-02-16",
   "parking_state": "unpriced",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "4246900812": {
   "id": "4246900812",
@@ -10530,12 +10741,13 @@
   "garage": false,
   "parking": false,
   "fees_source": "field",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "4265243212": {
   "id": "4265243212",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10600,7 +10812,8 @@
   "edited": "2026-08-26",
   "since": "2025-03-14",
   "parking_state": "unpriced",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "4265275468": {
   "id": "4265275468",
@@ -10638,12 +10851,13 @@
   "total_czk": 24500,
   "garage": false,
   "parking": false,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "4276437836": {
   "id": "4276437836",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10713,12 +10927,13 @@
   "edited": "2026-08-07",
   "since": "2026-04-02",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "4282532684": {
   "id": "4282532684",
   "first_seen": "2026-06-28T19:37:02Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10758,7 +10973,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 1.81,
-  "deal_pct": 15,
+  "deal_pct": 14,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -10788,7 +11003,8 @@
   "edited": "2026-08-25",
   "since": "2026-03-27",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "4288979020": {
   "id": "4288979020",
@@ -10825,7 +11041,8 @@
   "total_czk": 22500,
   "garage": true,
   "parking": true,
-  "fees_source": null
+  "fees_source": null,
+  "exclude_from_stats": false
  },
  "472662860": {
   "id": "472662860",
@@ -10863,12 +11080,13 @@
   "garage": false,
   "parking": false,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "474043212": {
   "id": "474043212",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10903,7 +11121,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 2.17,
-  "deal_pct": -8,
+  "deal_pct": -9,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -10933,7 +11151,8 @@
   "edited": "2026-03-13",
   "since": "2026-03-11",
   "parking_state": "priced",
-  "parking_price_czk": 2500
+  "parking_price_czk": 2500,
+  "exclude_from_stats": false
  },
  "480608332": {
   "id": "480608332",
@@ -10971,7 +11190,8 @@
   "garage": false,
   "parking": false,
   "fees_source": "field",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "504070220": {
   "id": "504070220",
@@ -11009,7 +11229,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "5148748": {
   "id": "5148748",
@@ -11047,7 +11268,8 @@
   "garage": false,
   "parking": true,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "546672716": {
   "id": "546672716",
@@ -11085,7 +11307,8 @@
   "garage": false,
   "parking": false,
   "fees_source": "text",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "547389516": {
   "id": "547389516",
@@ -11123,13 +11346,14 @@
   "garage": true,
   "parking": true,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "552435788": {
   "id": "552435788",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-02T04:19:01Z",
-  "gone_at": "2026-09-02T19:27:42Z",
+  "last_seen": "2026-09-03T12:52:13Z",
+  "gone_at": null,
   "price_history": [
    {
     "at": "2026-06-28",
@@ -11138,16 +11362,16 @@
    }
   ],
   "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/552435788",
-  "title": "Prodej bytu 2+kk 46 m²",
+  "title": "Prodej bytu 2+kk 42 m²",
   "transaction_type": "prodej",
   "disposition": "2+kk",
-  "floor_area_sqm": 46.0,
+  "floor_area_sqm": 42.0,
   "street": "Pod Harfou",
   "locality": "Pod Harfou, Vysočany, Praha",
   "city_part": "Vysočany",
   "pod_harfou": true,
   "price_czk": 9399000,
-  "price_czk_per_sqm": 204326,
+  "price_czk_per_sqm": 223786,
   "backfilled": true,
   "lat": 50.1039745039,
   "lon": 14.5081401426,
@@ -11163,7 +11387,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.39,
-  "deal_pct": 15,
+  "deal_pct": 26,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -11181,7 +11405,7 @@
   "garage_count": null,
   "parking_lots": true,
   "balcony": true,
-  "balcony_area_sqm": 5,
+  "balcony_area_sqm": 4,
   "loggia": false,
   "loggia_area_sqm": null,
   "terrace": false,
@@ -11189,13 +11413,15 @@
   "elevator": null,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 6441,
-  "edited": "2026-08-17",
+  "views": 7043,
+  "edited": "2026-09-03",
   "since": "2026-06-02",
   "parking_state": "unpriced",
   "parking_price_czk": null,
   "gone_last_price_czk": 9399000,
-  "gone_last_total_czk": 9399000
+  "gone_last_total_czk": 9399000,
+  "exclude_from_stats": false,
+  "resurrected_at": "2026-09-03T12:52:13Z"
  },
  "562032716": {
   "id": "562032716",
@@ -11277,7 +11503,8 @@
   "parking_state": "priced",
   "parking_price_czk": 388,
   "gone_last_price_czk": 23500,
-  "gone_last_total_czk": 25000
+  "gone_last_total_czk": 25000,
+  "exclude_from_stats": false
  },
  "572649548": {
   "id": "572649548",
@@ -11315,7 +11542,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "592244812": {
   "id": "592244812",
@@ -11353,12 +11581,13 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "603451468": {
   "id": "603451468",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11428,7 +11657,8 @@
   "edited": "2026-08-25",
   "since": "2026-06-26",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "664510540": {
   "id": "664510540",
@@ -11466,7 +11696,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "671580236": {
   "id": "671580236",
@@ -11503,12 +11734,13 @@
   "total_czk": 24800,
   "garage": false,
   "parking": false,
-  "fees_source": "text"
+  "fees_source": "text",
+  "exclude_from_stats": false
  },
  "67654476": {
   "id": "67654476",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11573,7 +11805,8 @@
   "edited": "2026-08-26",
   "since": "2026-03-04",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "682655820": {
   "id": "682655820",
@@ -11616,12 +11849,13 @@
   "garage": true,
   "parking": false,
   "fees_source": "field",
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "705409100": {
   "id": "705409100",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11691,12 +11925,13 @@
   "ownership_name": "Osobní",
   "views": 12085,
   "edited": "2026-09-03",
-  "since": "2026-04-06"
+  "since": "2026-04-06",
+  "exclude_from_stats": false
  },
  "729280588": {
   "id": "729280588",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11762,16 +11997,17 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 29583,
-  "edited": "2026-09-02",
+  "views": 29821,
+  "edited": "2026-09-03",
   "since": "2026-06-26",
   "parking_state": "unpriced",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "773816396": {
   "id": "773816396",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11841,12 +12077,13 @@
   "edited": "2026-08-04",
   "since": "2026-05-31",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "792023884": {
   "id": "792023884",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11881,7 +12118,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 2.17,
-  "deal_pct": -13,
+  "deal_pct": -14,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -11911,7 +12148,8 @@
   "edited": "2026-03-16",
   "since": "2026-03-16",
   "parking_state": "priced",
-  "parking_price_czk": 2500
+  "parking_price_czk": 2500,
+  "exclude_from_stats": false
  },
  "796586060": {
   "id": "796586060",
@@ -11949,7 +12187,8 @@
   "total_czk": 31500,
   "garage": false,
   "parking": false,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "822931532": {
   "id": "822931532",
@@ -11985,7 +12224,8 @@
   "electricity_estimated": true,
   "total_czk": 18500,
   "garage": false,
-  "parking": false
+  "parking": false,
+  "exclude_from_stats": false
  },
  "840007756": {
   "id": "840007756",
@@ -12030,7 +12270,8 @@
   "fees_source": "text",
   "source": "sreality",
   "gone_last_price_czk": 18500,
-  "gone_last_total_czk": 22600
+  "gone_last_total_czk": 22600,
+  "exclude_from_stats": false
  },
  "840822860": {
   "id": "840822860",
@@ -12068,12 +12309,13 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  },
  "86463308": {
   "id": "86463308",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12138,7 +12380,8 @@
   "edited": "2026-04-14",
   "since": "2026-03-13",
   "parking_state": "priced",
-  "parking_price_czk": 2500
+  "parking_price_czk": 2500,
+  "exclude_from_stats": false
  },
  "888598604": {
   "id": "888598604",
@@ -12175,12 +12418,13 @@
   "parking": false,
   "floor_number": 5,
   "floors_total": 15,
-  "backfilled": true
+  "backfilled": true,
+  "exclude_from_stats": false
  },
  "911164236": {
   "id": "911164236",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12215,7 +12459,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.13,
-  "deal_pct": -17,
+  "deal_pct": -18,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -12241,11 +12485,12 @@
   "elevator": null,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 15823,
+  "views": 15871,
   "edited": "2026-06-25",
   "since": "2026-03-22",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "918397004": {
   "id": "918397004",
@@ -12315,12 +12560,13 @@
   "edited": "2026-08-26",
   "since": "2026-04-28",
   "gone_last_price_czk": 23000,
-  "gone_last_total_czk": 27500
+  "gone_last_total_czk": 27500,
+  "exclude_from_stats": false
  },
  "934019660": {
   "id": "934019660",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-09-03T04:12:53Z",
+  "last_seen": "2026-09-03T12:52:13Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12355,7 +12601,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 2.78,
-  "deal_pct": 1,
+  "deal_pct": 2,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -12385,7 +12631,8 @@
   "edited": "2026-08-13",
   "since": "2025-03-04",
   "parking_state": "none",
-  "parking_price_czk": null
+  "parking_price_czk": null,
+  "exclude_from_stats": false
  },
  "959443020": {
   "id": "959443020",
@@ -12428,6 +12675,7 @@
   "garage": false,
   "parking": true,
   "fees_source": null,
-  "source": "sreality"
+  "source": "sreality",
+  "exclude_from_stats": false
  }
 }
