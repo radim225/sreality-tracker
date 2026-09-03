@@ -109,6 +109,8 @@ def base_eligible(rec):
         return False
     if rec.get("deal_outlier"):
         return False
+    if rec.get("exclude_from_stats"):
+        return False
     return True
 
 
@@ -374,6 +376,7 @@ def level(records, tx, as_of, disposition=None):
         per_sqm_at(r, as_of) for r in records
         if r.get("transaction_type") == tx
         and not r.get("deal_outlier")
+        and not r.get("exclude_from_stats")
         and (disposition is None or r.get("disposition") == disposition)
         and not (tx == "pronajem" and r.get("fees_missing"))
     ]

@@ -60,6 +60,8 @@ check("a different disposition is excluded",
       market.base_eligible(rental(4, 700, disposition="2+kk")), False)
 check("a not-a-price outlier is excluded",
       market.base_eligible(rental(5, 700, deal_outlier=True)), False)
+check("excluded-from-stats is not eligible",
+      market.base_eligible(rental(7, 700, exclude_from_stats=True)), False)
 check("a sale is not a rental", market.base_eligible(rental(6, 700, transaction_type="prodej")),
       False)
 

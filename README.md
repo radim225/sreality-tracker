@@ -23,7 +23,8 @@ GitHub Action [`.github/workflows/scrape.yml`](.github/workflows/scrape.yml):
 
 - **Cron** `0 */8 * * *` → spouští se každých 8 hodin.
 - **Ruční spuštění** (`workflow_dispatch`) → volitelný vstup `add_url` přidá nový inzerát
-  do `tracked.json` ještě před scrapem.
+  do `tracked.json` ještě před scrapem. Stejně `override_set` / `override_delete`
+  zapíšou nebo smažou ruční opravu v `overrides.json`.
 - Po scrapu zkopíruje `dashboard.html` → `index.html`, commitne a pushne do `main`.
   Push do `main` automaticky přebuildí GitHub Pages, takže se aktualizuje stejný odkaz.
 
@@ -54,6 +55,9 @@ Symetricky k přidání:
 | `add_tracked.py` | Přidá URL inzerátu do `tracked.json` (idempotentní). |
 | `remove_tracked.py` | Odebere inzerát z `tracked.json` podle URL nebo id (idempotentní). |
 | `tracked.json` | Seznam sledovaných inzerátů (`id` + `url`). |
+| `set_override.py` | Zapíše ruční opravu do `overrides.json` (JSON objekt, klíč = id inzerátu). |
+| `delete_override.py` | Smaže opravu podle id (Sreality / `bez-` / `idnes-`). |
+| `overrides.json` | Ruční opravy ploše / poplatku / vyřazení ze statistiky. Záznam se nemaže, když inzerát zmizí. |
 | `latest_snapshot.json` | Poslední kompletní stav všech sledovaných inzerátů. |
 | `last_changes.json` | Změny z posledního běhu. |
 | `changes_history.json` | Posledních 300 událostí — to, co se inlinuje do dashboardu. |
@@ -66,7 +70,7 @@ Symetricky k přidání:
 | `notify.py` | Odeslání týdenního verdiktu na mobil (Telegram, ntfy jako náhrada). |
 | `backfill_pool.py` | Jednorázové přehrání archivu snapshotů do poolu. |
 | `fee_review_queue.json` | Pronájmy, u kterých parser odmítl hádat poplatek — k ručnímu projití. |
-| `test_fees.py`, `test_fee_queue.py`, `test_parking.py`, `test_cache.py`, `test_pool.py`, `test_market.py`, `test_report.py`, `test_notify.py` | Testy, běží v CI před scrapem. |
+| `test_fees.py`, `test_fee_queue.py`, `test_overrides.py`, `test_parking.py`, `test_cache.py`, `test_pool.py`, `test_market.py`, `test_report.py`, `test_notify.py` | Testy, běží v CI před scrapem. |
 | `dashboard.html` / `index.html` | Statický dashboard (GitHub Pages servíruje `index.html`). |
 | `snapshots/` | Historické snapshoty jednotlivých běhů. |
 | `.github/workflows/scrape.yml` | Naplánovaná automatizace. |
@@ -169,6 +173,31 @@ který se opakovaně ukáže jako neškodný, se má zrušit.
 Prodeje se do fronty nedostanou nikdy: nemají měsíční poplatky, o kterých by se
 dalo pochybovat.
 
+## Opravy inzerátů
+
+Parser občas uhodne špatnou výměru nebo poplatek, a občas je inzerát vůbec
+ne-tržní (družstevní převod, podíl). [`overrides.json`](overrides.json) drží
+ruční opravy **podle id inzerátu** (včetně `bez-` a `idnes-`). scrape.py je
+aplikuje **až po obohacení, před řazením / trhem / odhadem / dashboardem**.
+
+- Opravené m² nebo poplatky se **přepočítají do celkem a Kč/m² a zůstanou v odhadu**.
+- `exclude_from_stats` vyřadí inzerát z mediánu, ale **ne ze stránky**.
+- Ne-tržní prodej: `exclude_from_stats` + `note`. Nájem se nevymýšlí.
+- Záznam se **nemaže**, když inzerát zmizí — stejné id po návratu nese tutéž opravu.
+- Fronta poplatků (`fee_review_queue`) se tím nemění: opravuje se řádek, ne pravidlo.
+- Pool se kvůli opravě **nemaže**.
+
+Zapsat jde třemi cestami, stejně jako sledované inzeráty:
+
+1. **Ručně** – klíč v [`overrides.json`](overrides.json).
+2. **Lokálně** – `python set_override.py '{"id":"123","floor_area_sqm":32}'`
+   a `python delete_override.py 123`.
+3. **Z dashboardu** – formulář v detailu inzerátu, karta „Opravy“, stejný
+   GitHub PAT v `localStorage` (`gh_pat`) a `workflow_dispatch` jako u sledovaných.
+   Stránka je veřejná, žádný PIN.
+
+Chybějící pole v záznamu znamená „nech parser“.
+
 ## Garáže a parkování
 
 Dvě různé věci, nepleteme je:
@@ -240,7 +269,7 @@ pip install -r requirements.txt
 python scrape.py
 
 # testy (běží v sekundách, v CI před scrapem)
-for t in test_fees test_cache test_pool test_market test_report test_notify; do python "$t.py" || break; done
+for t in test_fees test_cache test_pool test_market test_report test_notify test_overrides; do python "$t.py" || break; done
 
 # jednorázové naplnění poolu z archivu snapshotů
 python backfill_pool.py

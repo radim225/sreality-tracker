@@ -41,7 +41,7 @@ POOL_FIELDS = (
     # price
     "price_czk", "fees_czk", "fees_missing", "fees_source", "electricity_czk",
     "electricity_estimated", "total_czk", "price_czk_per_sqm", "price_old_czk",
-    "deal_pct", "deal_outlier",
+    "deal_pct", "deal_outlier", "exclude_from_stats",
     # attributes (see scrape.enrich_comparable)
     "building_condition", "building_condition_name", "is_new_building",
     "building_type", "building_type_name", "energy_rating", "furnished",
