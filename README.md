@@ -264,6 +264,21 @@ Tento repozitář se stará jen o scrape a publikaci; upozorňování je odděle
 
 ## Lokální spuštění
 
+### Bezpečnostní opravy 6. 9. 2026
+
+JSON v HTML escapuje hranici `<script>`; nahrazování placeholderů probíhá jedním
+průchodem, takže řetězce v datech nemohou spustit další substituci. Workflow
+předává správcovské vstupy přes proměnné prostředí, URL validuje host a schéma.
+GitHub token se drží jen v paměti stránky a po obnovení se zadává znovu; původní
+`localStorage.gh_pat` se odstraní. To snižuje dobu jeho uložení, nikoli oprávnění
+tokenu — používat jen fine-grained token pro tento repozitář.
+
+`python test_security.py` ověřuje renderer i shell quoting a běží v CI.
+`python render_latest.py` přegeneruje oba HTML soubory z uložených dat bez scrapu
+a notifikací; pro zachování osobní karty vyžaduje stejné `OWN_*` jako scraper.
+
+### Příkazy
+
 ```bash
 pip install -r requirements.txt
 python scrape.py

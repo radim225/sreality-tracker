@@ -6,6 +6,7 @@ import json
 import re
 import sys
 from pathlib import Path
+from listing_url import listing_id
 
 TRACKED_PATH = Path(__file__).parent / "tracked.json"
 ID_RE = re.compile(r"/(\d+)/?$")
@@ -16,23 +17,20 @@ def main():
         print("Usage: remove_tracked.py <sreality.cz listing URL | listing id>", file=sys.stderr)
         sys.exit(1)
     arg = sys.argv[1].strip()
-    if arg.isdigit():
-        listing_id = int(arg)
-    else:
-        m = ID_RE.search(arg)
-        if not m:
-            print(f"Could not extract a listing id from: {arg}", file=sys.stderr)
-            sys.exit(1)
-        listing_id = int(m.group(1))
+    try:
+        parsed_id = listing_id(arg, allow_id=True)
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        sys.exit(1)
 
     tracked = json.loads(TRACKED_PATH.read_text()) if TRACKED_PATH.exists() else []
-    kept = [t for t in tracked if t.get("id") != listing_id]
+    kept = [t for t in tracked if t.get("id") != parsed_id]
     if len(kept) == len(tracked):
-        print(f"Listing {listing_id} is not tracked (nothing to remove)", file=sys.stderr)
+        print(f"Listing {parsed_id} is not tracked (nothing to remove)", file=sys.stderr)
         return
 
     TRACKED_PATH.write_text(json.dumps(kept, ensure_ascii=False, indent=2) + "\n")
-    print(f"Removed listing {listing_id} from tracked.json", file=sys.stderr)
+    print(f"Removed listing {parsed_id} from tracked.json", file=sys.stderr)
 
 
 if __name__ == "__main__":

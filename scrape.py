@@ -3304,6 +3304,11 @@ def garage_card(garages, gstats):
 </div>"""
 
 
+def script_json(value):
+    """JSON inside HTML raw-text script elements must never contain a '<'."""
+    return json.dumps(value, ensure_ascii=False).replace("<", "\\u003c").replace("\u2028", "\\u2028").replace("\u2029", "\\u2029")
+
+
 def render_dashboard(snapshot, changes, stats, history, estimate=None):
     tracked_list = snapshot["tracked"]
     comparables = snapshot["comparables"]
@@ -3318,11 +3323,11 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None):
     garage_card_html = garage_card(
         snapshot.get("garages") or [], snapshot.get("garage_stats") or {}
     )
-    data_json = json.dumps([slim_for_dashboard(c) for c in comparables], ensure_ascii=False)
-    tracked_json = json.dumps(tracked_items, ensure_ascii=False)
-    history_json = json.dumps(history, ensure_ascii=False)
+    data_json = script_json([slim_for_dashboard(c) for c in comparables])
+    tracked_json = script_json(tracked_items)
+    history_json = script_json(history)
     changed_ids = {c["id"] for c in changes.get("price_changes", [])}
-    changed_ids_json = json.dumps(list(changed_ids))
+    changed_ids_json = script_json(list(changed_ids))
 
     tracked_cards_html = "\n".join(render_tracked_card(t) for t in tracked_list)
     own_card_html = render_own_property_card(
@@ -3533,13 +3538,13 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None):
   </div>
   <div id="patRow" class="controls" style="display:none;margin:8px 0 0;">
     <input id="patInput" type="password" placeholder="github_pat_…" style="flex:1;min-width:200px;">
-    <button class="popup-btn" onclick="savePat()">Uložit token</button>
+    <button class="popup-btn" onclick="savePat()">Použít pro tuto stránku</button>
   </div>
   <div id="manageStatus" style="font-size:0.8rem;margin-top:8px;color:#7ab8ff;"></div>
   <div style="font-size:0.72rem;color:#888;margin-top:6px;">Spouští GitHub Action — změna se projeví za ~5–15 min, pak obnov stránku.
     Vyžaduje fine-grained PAT: jen repo sreality-tracker, oprávnění Actions „Read and write".
     <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Vytvořit token</a> ·
-    <button class="linklike" style="font-size:0.72rem;" onclick="localStorage.removeItem('gh_pat');document.getElementById('manageStatus').textContent='Token zapomenut.'">zapomenout token</button>
+    <button class="linklike" style="font-size:0.72rem;" onclick="forgetPat();document.getElementById('manageStatus').textContent='Token zapomenut.'">zapomenout token</button>
   </div>
 </div>
 
@@ -3750,10 +3755,14 @@ function renderTrackedList() {
     </div>`).join("") : '<div style="color:#888;font-size:0.8rem;">Žádné sledované inzeráty.</div>';
 }
 
+// Credentials are no longer persisted across page loads. Remove only the old token.
+let pageToken = "";
+try { localStorage.removeItem("gh_pat"); } catch (e) {}
+function forgetPat() { pageToken = ""; }
 function savePat() {
   const v = document.getElementById("patInput").value.trim();
   if (!v) return;
-  localStorage.setItem("gh_pat", v);
+  pageToken = v;
   document.getElementById("patInput").value = "";
   document.getElementById("patRow").style.display = "none";
   if (pendingInputs) { const p = pendingInputs; pendingInputs = null; manageTracked(p); }
@@ -3762,7 +3771,7 @@ function savePat() {
 async function manageTracked(inputs) {
   const val = inputs.add_url ?? inputs.remove_url ?? inputs.override_set ?? inputs.override_delete;
   if (!val) { setManageStatus("Vlož URL inzerátu ze Sreality."); return; }
-  const token = localStorage.getItem("gh_pat");
+  const token = pageToken;
   if (!token) {
     pendingInputs = inputs;
     document.getElementById("patRow").style.display = "flex";
@@ -3787,7 +3796,7 @@ async function manageTracked(inputs) {
       setManageStatus(done + " spuštěno ✓ — hotovo za ~5–15 min, pak obnov stránku.");
       if (inputs.add_url) document.getElementById("addUrlInput").value = "";
     } else if (resp.status === 401 || resp.status === 403) {
-      localStorage.removeItem("gh_pat");
+      forgetPat();
       pendingInputs = inputs;
       document.getElementById("patRow").style.display = "flex";
       setManageStatus(`GitHub token odmítl (HTTP ${resp.status}) — vlož platný token.`);
@@ -4165,12 +4174,13 @@ initMap();
 """
 
     js = (
-        js_template.replace("__TRACKED_JSON__", tracked_json)
-        .replace("__HISTORY_JSON__", history_json)
-        .replace("__ELECTRICITY_CZK__", str(ELECTRICITY_ESTIMATE_CZK))
-        .replace("__DEAL_THRESHOLD__", str(DEAL_THRESHOLD_PCT))
-        .replace("__DATA_JSON__", data_json)
-        .replace("__CHANGED_IDS_JSON__", changed_ids_json)
+        re.sub(r"__(?:TRACKED_JSON|HISTORY_JSON|ELECTRICITY_CZK|DEAL_THRESHOLD|DATA_JSON|CHANGED_IDS_JSON)__",
+               lambda m: {
+                   "__TRACKED_JSON__": tracked_json, "__HISTORY_JSON__": history_json,
+                   "__ELECTRICITY_CZK__": str(ELECTRICITY_ESTIMATE_CZK),
+                   "__DEAL_THRESHOLD__": str(DEAL_THRESHOLD_PCT),
+                   "__DATA_JSON__": data_json, "__CHANGED_IDS_JSON__": changed_ids_json,
+               }[m.group(0)], js_template)
     )
 
     # Not named `html`: that would shadow the stdlib module of the same name,

@@ -45,8 +45,6 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 concurrency:
   group: scrape
@@ -82,11 +80,15 @@ jobs:
 
       - name: Add tracked listing (if requested)
         if: github.event.inputs.add_url != ''
-        run: python add_tracked.py "${{ github.event.inputs.add_url }}"
+        env:
+          ADD_URL: ${{ github.event.inputs.add_url }}
+        run: python add_tracked.py "$ADD_URL"
 
       - name: Remove tracked listing (if requested)
         if: github.event.inputs.remove_url != ''
-        run: python remove_tracked.py "${{ github.event.inputs.remove_url }}"
+        env:
+          REMOVE_URL: ${{ github.event.inputs.remove_url }}
+        run: python remove_tracked.py "$REMOVE_URL"
 
       - name: Set listing override (if requested)
         if: github.event.inputs.override_set != ''
@@ -116,6 +118,7 @@ jobs:
           python test_market.py
           python test_report.py
           python test_notify.py
+          python test_security.py
 
       - name: Run scraper
         env:
