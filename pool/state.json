@@ -12,24 +12,27 @@
  "filter_weeks": {
   "2026-W34": 13,
   "2026-W31": 0,
-  "2026-W35": 19
+  "2026-W35": 19,
+  "2026-W36": 24
  },
  "hard_filters_since": null,
  "last_report": {
-  "week": "2026-W35",
-  "at": "2026-08-31T05:23:49Z",
-  "estimate_rent_median": 17949,
-  "rent_level": 594,
-  "verdict": "quiet"
+  "week": "2026-W36",
+  "at": "2026-09-07T04:26:44Z",
+  "estimate_rent_median": 16995,
+  "rent_level": 596,
+  "verdict": "important"
  },
  "weekly_arrived": {
   "2026-W34": 59,
-  "2026-W35": 36
+  "2026-W35": 36,
+  "2026-W36": 36
  },
  "weekly_left": {
   "2026-W34": 7,
-  "2026-W35": 25
+  "2026-W35": 25,
+  "2026-W36": 16
  },
- "notified_week": "2026-W35",
+ "notified_week": "2026-W36",
  "notified_month": "2026-08"
 }
