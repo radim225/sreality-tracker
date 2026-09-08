@@ -119,6 +119,7 @@ jobs:
           python test_report.py
           python test_notify.py
           python test_security.py
+          python test_sale_extras.py
 
       - name: Run scraper
         env:

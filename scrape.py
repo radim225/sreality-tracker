@@ -656,6 +656,208 @@ def parse_fee_from_description(text, rent_czk=None):
     )
 
 
+# --- Jednorázové příplatky u prodeje -----------------------------------------
+# A sale advert quotes one price and then buries in the prose that the garage
+# space, the cellar or the storage box costs another 500-900k on top. That
+# number never reaches the fee parser: fees are monthly, and EXTRA_KEYWORDS
+# exists over there only to stop a garage price being read AS the fee. Here the
+# same vocabulary is the target rather than the veto.
+#
+# Measured on the 693 sale adverts in the 2026-09-08 snapshot. Keyword + an
+# amount in range hits 36 clauses in 31 adverts, of which 5 are wrong -- and all
+# 5 quote a price per m² ("dokoupit sklep (cena 67 200 Kč/m2)", "Cena za m2
+# užitné plochy vychází bez garáže a sklepu na 184.000,-kč"). Vetoing a per-m²
+# marker anywhere in the clause removes exactly those 5 and none of the other
+# 31. Additionally requiring a purchase cue ("přikoupit", "dokoupit", "za
+# příplatek") was measured too and is strictly worse: it drops 12 genuine
+# clauses ("Doplatek ke garážovému stání: 390.000", "Sklep: 170 000 Kč") to
+# remove nothing.
+#
+# This runs over the description already stored on the listing, so it is a
+# post-pass and NOT a reason to bump PARSER_VERSION -- nothing has to be
+# fetched again for a cached advert to gain its extras.
+SALE_EXTRA_MIN_CZK, SALE_EXTRA_MAX_CZK = 20_000, 5_000_000
+# An "odstupné" is not an extra on top; it is the slice of the purchase price
+# payable now, on a contract-assignment sale. Its own ceiling, because it can
+# legitimately run to millions.
+UPFRONT_MAX_CZK = 30_000_000
+MAX_SALE_EXTRAS = 4
+# "Kč/m2", "/m²", "za m2" -- the tell that the amount beside it is a unit price
+# rather than what the extra costs.
+PER_SQM_RE = re.compile(r'k[čc]\s*/\s*m[²2]|/\s*m[²2]|\bza\s+m[²2]', re.I)
+# Ordered: the label of the first category wins the row's name, and the rest
+# join it, so "garážové stání včetně komory" reads "garážové stání + komora".
+EXTRA_CATEGORIES = (
+    ("garážové stání", ("garáž", "garaz", "garaž")),
+    ("parkovací stání", ("parkovac", "stání", "stani")),
+    ("sklep", ("sklep", "sklípek", "sklipek")),
+    ("komora", ("komor",)),
+    ("kóje", ("kóje", "kóji", "kójí")),
+    ("kolárna", ("kolárn", "kolarn")),
+)
+UPFRONT_KEYWORDS = ("odstupné", "odstupne")
+
+
+def sale_extra_labels(low):
+    """Which extras one clause names. "Garážové stání" contains "stání", so the
+    generic parking label is dropped whenever the garage one already fired --
+    otherwise every garage row would read "garážové stání + parkovací stání"."""
+    labels = [lab for lab, kws in EXTRA_CATEGORIES if any(k in low for k in kws)]
+    if "garážové stání" in labels and "parkovací stání" in labels:
+        labels.remove("parkovací stání")
+    return labels
+
+
+def parse_sale_extras(description, price_czk=None):
+    """One-off amounts a sale advert prices separately from the flat itself.
+
+    Returns a list of {"kind", "label", "amounts", "text"}; `text` is the
+    advert's own sentence, kept so the page can show where the number came from
+    instead of asking anyone to trust it.
+
+    The amounts are deliberately NOT folded into total_czk or Kč/m². An extra is
+    optional in some adverts and compulsory in others, and summing it would move
+    the medians by whatever each advert happened to mention -- the same reason
+    rentals with an unknown fee stay out of the ranking. It is information on
+    the row, not a number the market is measured with.
+
+    A clause with several amounts ("sklep za 199.000 a stání za 550.000") keeps
+    all of them rather than picking one: which number belongs to which extra is
+    exactly the guess that the fee parser was taught to stop making."""
+    out, seen = [], set()
+    for clause in CLAUSE_SPLIT_RE.split(normalize_text(description or "")):
+        low = clause.lower()
+        upfront = any(k in low for k in UPFRONT_KEYWORDS)
+        labels = sale_extra_labels(low)
+        if not upfront and not labels:
+            continue
+        if PER_SQM_RE.search(clause):
+            continue
+        ceiling = UPFRONT_MAX_CZK if upfront else SALE_EXTRA_MAX_CZK
+        amounts = [
+            v for v in parse_amounts(clause)
+            if SALE_EXTRA_MIN_CZK <= v <= ceiling and v != price_czk
+        ]
+        if not amounts:
+            continue
+        if upfront:
+            kind, label = "upfront", "odstupné (splatné nyní)"
+        else:
+            kind, label = "extra", " + ".join(labels)
+        text = " ".join(clause.split())
+        key = (label, tuple(amounts))
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append({
+            "kind": kind,
+            "label": label,
+            "amounts": amounts,
+            "text": text[:240] + ("…" if len(text) > 240 else ""),
+        })
+        if len(out) >= MAX_SALE_EXTRAS:
+            break
+    return out
+
+
+def attach_sale_extras(listings):
+    """Fill `sale_extras` on every sale in the list. Rentals are skipped: their
+    garage and cellar are priced by the month and already handled by
+    parking_state / the fee parser's extras guard."""
+    filled = 0
+    for listing in listings:
+        listing["sale_extras"] = []
+        if listing.get("transaction_type") == "pronajem":
+            continue
+        price = listing.get("price_czk")
+        if price is None:
+            price = listing.get("rent_czk")
+        extras = parse_sale_extras(listing.get("description"), price)
+        listing["sale_extras"] = extras
+        if extras:
+            filled += 1
+    return filled
+
+
+# Sreality's structured `floorArea` is empty on a contract-assignment sale
+# ("postoupení smlouvy o budoucí kupní smlouvě") -- the flat does not exist yet,
+# so the developer's unit table is all there is. The title still carries the
+# number, because Sreality generates it from the advert: "Prodej bytu 1+kk
+# 30 m²". Without this, such a listing shows "m² —" and has no Kč/m² to compare
+# on at all, which is how the Pod Harfou flat sat on the dashboard for months.
+AREA_IN_TITLE_RE = re.compile(r'(\d+(?:[.,]\d+)?)\s*m(?:²|2)\b', re.I)
+
+
+def area_from_title(title):
+    m = AREA_IN_TITLE_RE.search(normalize_text(title or ""))
+    if not m:
+        return None
+    try:
+        area = float(m.group(1).replace(",", "."))
+    except ValueError:
+        return None
+    return area if area > 0 else None
+
+
+def backfill_missing_areas(listings):
+    """Take the area from the advert's own title when the structured field is
+    empty, and say so in `floor_area_source`. A derived number that looks
+    identical to a measured one is exactly the kind of thing that gets argued
+    about later; the title is rounded to whole m², the params field is not.
+
+    Runs before apply_overrides, so a hand-entered area still wins."""
+    filled = 0
+    for listing in listings:
+        if listing.get("floor_area_sqm"):
+            listing.setdefault("floor_area_source", "field")
+            continue
+        area = area_from_title(listing.get("title"))
+        if not area:
+            continue
+        listing["floor_area_sqm"] = area
+        listing["floor_area_source"] = "title"
+        recompute_listing_costs(listing)
+        filled += 1
+    return filled
+
+
+# A price that cannot belong to the category the portal filed the advert under.
+# Sreality's numeric type code is normally right, but an agent who posts a sale
+# into the rental category hands us a 6.75M "rent" that would sit in the rent
+# median and drag it into orbit. The advert is flagged and kept out of the
+# medians; it is never silently reclassified, because a flip on a hunch is a
+# quiet edit to somebody else's data (and because the one advert that provoked
+# this was mislabelled by our own code, not by Sreality).
+TX_SUSPECT_RENT_MAX_CZK = 100_000
+TX_SUSPECT_SALE_MIN_CZK = 300_000
+
+
+def flag_transaction_mismatch(listings):
+    """Sets `tx_suspect` (a Czech reason, or None) and takes such a listing out
+    of the statistics. Must run AFTER apply_overrides, which resets
+    exclude_from_stats for every listing."""
+    flagged = 0
+    for listing in listings:
+        listing["tx_suspect"] = None
+        price = listing.get("price_czk")
+        if price is None:
+            price = listing.get("rent_czk")
+        if not price:
+            continue
+        tx = listing.get("transaction_type")
+        reason = None
+        if tx == "pronajem" and price > TX_SUSPECT_RENT_MAX_CZK:
+            reason = f"vedeno jako pronájem, ale cena {fmt_czk(price)} odpovídá prodeji"
+        elif tx == "prodej" and price < TX_SUSPECT_SALE_MIN_CZK:
+            reason = f"vedeno jako prodej, ale cena {fmt_czk(price)} odpovídá pronájmu"
+        if not reason:
+            continue
+        listing["tx_suspect"] = reason
+        listing["exclude_from_stats"] = True
+        flagged += 1
+    return flagged
+
+
 def extract_fees_and_electricity(cost_of_living_raw, description, rent_czk=None,
                                  price_note=None):
     """Returns (fees_czk, fees_source, electricity_explicit_czk).
@@ -872,6 +1074,10 @@ def apply_overrides(listings, overrides, *, stamp_ui=True):
         changed = False
         if "floor_area_sqm" in ov and ov["floor_area_sqm"] is not None:
             listing["floor_area_sqm"] = float(ov["floor_area_sqm"])
+            # Otherwise a hand-entered area keeps whatever source the backfill
+            # left behind, and the page tells Radim his own correction was read
+            # off the advert's title.
+            listing["floor_area_source"] = "override"
             changed = True
         if "fees_czk" in ov and ov["fees_czk"] is not None:
             listing["fees_czk"] = int(ov["fees_czk"])
@@ -2737,7 +2943,12 @@ def build_tracked_item(tracked, changes):
         "is_seed": True,
         "title": tracked.get("title"),
         "disposition": tracked.get("disposition"),
-        "transaction_type": "pronajem",
+        # Was hard-coded "pronajem" from the days when the only watched listings
+        # were rentals. The moment Radim tracked a flat for sale, the dashboard
+        # called its 6 750 000 Kč purchase price a monthly rent, ran it through
+        # the rent cost breakdown and labelled the modal "Nájem (net)" -- while
+        # the snapshot underneath had `prodej` right all along.
+        "transaction_type": tracked.get("transaction_type") or "pronajem",
         "price_czk": tracked.get("rent_czk"),
         "total_czk": tracked.get("total_czk"),
         "fees_czk": tracked.get("fees_czk"),
@@ -2748,7 +2959,11 @@ def build_tracked_item(tracked, changes):
         "garage": tracked.get("garage"),
         "parking": tracked.get("parking"),
         "floor_area_sqm": tracked.get("floor_area_sqm"),
+        "floor_area_source": tracked.get("floor_area_source"),
         "price_czk_per_sqm": tracked.get("price_czk_per_sqm"),
+        "sale_extras": tracked.get("sale_extras") or [],
+        "price_history": tracked.get("price_history") or [],
+        "tx_suspect": tracked.get("tx_suspect"),
         "floor_number": tracked.get("floor_number"),
         "floors_total": tracked.get("floors_total"),
         "locality": tracked.get("locality"),
@@ -3043,25 +3258,80 @@ def render_tracked_card(tracked):
         if not tracked.get("active") and tracked.get("last_active_at")
         else ""
     )
-    return f"""<div class="card seed-card" onclick="openModal({tracked['id']})">
-  <img class="seed-thumb" src="{html.escape(tracked.get('thumb') or '', quote=True)}" onerror="this.style.visibility='hidden'" alt="">
-  <div style="flex:1;">
-    <h2 style="margin-top:0;font-size:1rem;">Tracked listing {active_badge}</h2>
-    <div class="seed-grid">
-      <div><b>Title</b>{html.escape(tracked.get('title') or '—')}</div>
-      <div><b>Disposition</b>{html.escape(tracked.get('disposition') or '—')}</div>
+    is_rent = tracked.get("transaction_type") != "prodej"
+    # The card is rendered here, in Python, and the modal is rendered in JS.
+    # Both used to assume a rental, and both had to be taught otherwise: a sale
+    # has no service charge, no electricity estimate and no all-in total, so
+    # printing those rows fills half the card with dashes and calls a purchase
+    # price a rent.
+    if is_rent:
+        money_cells = f"""
       <div><b>Nájem (net)</b>{fmt_czk(tracked.get('rent_czk'))}</div>
       <div><b>Poplatky{' (oprava)' if tracked.get('fees_source') == 'override' else ' (z popisu)' if tracked.get('fees_source') == 'text' else ''}</b>{'neuvedeno' if tracked.get('fees_missing') else fmt_czk(tracked.get('fees_czk'))}</div>
       <div><b>Elektřina{' (odhad)' if tracked.get('electricity_estimated') else ''}</b>{fmt_czk(tracked.get('electricity_czk'))}</div>
       <div><b>Celkem</b>{fmt_czk(tracked.get('total_czk'))}</div>
-      <div><b>Kč/m² (total)</b>{fmt_czk(tracked.get('price_czk_per_sqm'))}</div>
-      <div><b>m²</b>{html.escape(str(tracked.get('floor_area_sqm')) if tracked.get('floor_area_sqm') is not None else '—')}</div>
+      <div><b>Kč/m² (total)</b>{fmt_czk(tracked.get('price_czk_per_sqm'))}</div>"""
+    else:
+        extras = "".join(
+            f'<div><b>{html.escape(e["label"])} (z popisu)</b>'
+            f'{" / ".join(fmt_czk(a) for a in e["amounts"])}</div>'
+            for e in (tracked.get("sale_extras") or [])
+        )
+        money_cells = f"""
+      <div><b>Kupní cena</b>{fmt_czk(tracked.get('rent_czk'))}</div>
+      <div><b>Kč/m²</b>{fmt_czk(tracked.get('price_czk_per_sqm'))}</div>{extras}"""
+    area = tracked.get("floor_area_sqm")
+    if area is None:
+        area_cell = "—"
+    elif tracked.get("floor_area_source") == "title":
+        area_cell = (
+            f'<span title="Inzerát plochu neuvádí v datech — vzato z jeho vlastního '
+            f'titulku, zaokrouhleno na celé m²">{area}~</span>'
+        )
+    else:
+        area_cell = html.escape(str(area))
+    move_html = render_price_move(tracked.get("price_history"))
+    return f"""<div class="card seed-card" onclick="openModal({tracked['id']})">
+  <img class="seed-thumb" src="{html.escape(tracked.get('thumb') or '', quote=True)}" onerror="this.style.visibility='hidden'" alt="">
+  <div style="flex:1;">
+    <h2 style="margin-top:0;font-size:1rem;">Sledovaný inzerát — {'pronájem' if is_rent else 'prodej'} {active_badge}</h2>
+    <div class="seed-grid">
+      <div><b>Title</b>{html.escape(tracked.get('title') or '—')}</div>
+      <div><b>Disposition</b>{html.escape(tracked.get('disposition') or '—')}</div>{money_cells}
+      <div><b>m²</b>{area_cell}</div>
       <div><b>Locality</b>{html.escape(tracked.get('locality') or '—')}</div>
     </div>
+    {move_html}
     {last_active_html}
     <div style="font-size:0.75rem;color:#7ab8ff;margin-top:6px;">Tap for full details →</div>
   </div>
 </div>"""
+
+
+def render_price_move(history):
+    """The one line the card has to carry: is this cheaper than it was?
+
+    Radim's flat went from 6 950 000 to 6 750 000 on 2026-09-02 and the page
+    said nothing at all -- the pool had recorded it since June and nothing read
+    it back. The detail (every point, every step) is a click away in the modal;
+    this is the sentence you see without clicking."""
+    points = [h for h in (history or []) if h.get("price_czk")]
+    if len(points) < 2:
+        return ""
+    first, last = points[0]["price_czk"], points[-1]["price_czk"]
+    if first == last:
+        return ""
+    diff = last - first
+    down = diff < 0
+    pct = f"{diff / first * 100:+.1f}".replace(".", ",")
+    colour = "#7CFFB2" if down else "#ff9a9a"
+    word = "▼ Zlevněno" if down else "▲ Zdraženo"
+    since = html.escape(points[0]["at"])
+    return (
+        f'<div style="margin-top:8px;font-size:0.8rem;color:{colour};">'
+        f'{word} o {fmt_czk(abs(diff))} ({pct} %) z {fmt_czk(first)} '
+        f'sledovaných od {since} — rozklikni pro celou historii</div>'
+    )
 
 
 # Bookkeeping the scraper needs across runs but the page never reads. The whole
@@ -3073,8 +3343,16 @@ DASHBOARD_OMIT_FIELDS = (
 )
 
 
+# Empty on most rows, and at ~1200 rows an empty list still costs ~20 bytes of
+# inlined JSON each. The page treats a missing key and an empty one the same.
+DASHBOARD_DROP_IF_EMPTY = ("sale_extras", "price_history", "tx_suspect")
+
+
 def slim_for_dashboard(comp):
-    return {k: v for k, v in comp.items() if k not in DASHBOARD_OMIT_FIELDS}
+    return {
+        k: v for k, v in comp.items()
+        if k not in DASHBOARD_OMIT_FIELDS and not (k in DASHBOARD_DROP_IF_EMPTY and not v)
+    }
 
 
 def fee_queue_card(queue):
@@ -3131,7 +3409,7 @@ def fee_queue_card(queue):
   <p class="hint" style="margin:0 0 10px;">Tady si parser nebyl jistý, tak radši neuložil nic.
     Špatné číslo tiše posune medián; „neznámé\" jen stojí pokrytí. <b>Cílem je opravit pravidlo,
     ne jednotlivý řádek</b> — když se některý důvod opakovaně ukáže jako neškodný, má zmizet.</p>
-  <div class="scroll" style="max-height:420px;">{groups}</div>
+  <div class="scroll">{groups}</div>
 </div>"""
 
 
@@ -3192,7 +3470,7 @@ def overrides_card(overrides, listings):
     (přepočítá se celkem i Kč/m²). „Mimo statistiku“ je pro ne-tržní prodej — inzerát zůstane na stránce,
     do mediánu ne. Záznam se nemaže, když inzerát zmizí: stejné id po návratu nese tutéž opravu.
     Novou opravu zadáš v detailu inzerátu.</p>
-  <div class="scroll" style="max-height:420px;">{"".join(rows)}</div>
+  <div class="scroll">{"".join(rows)}</div>
 </div>"""
 
 
@@ -3259,7 +3537,7 @@ def garage_card(garages, gstats):
       Už není v nabídce ({len(gone)}) — poslední cena a data</summary>
     <p class="hint" style="margin:6px 0;">Inzerát zmizel z nabídky. <b>Neznamená to, že se prodal</b> —
       mohl být stažen nebo přeinzerován. Cena je ta poslední, kterou jsme viděli.</p>
-    <div class="scroll" style="max-height:240px;">
+    <div class="scroll">
     <table>
       <thead><tr><th>Typ</th><th>Transakce</th><th>Kde</th><th>m²</th>
         <th>Poslední cena</th><th>Poprvé viděno</th><th>Zmizelo</th></tr></thead>
@@ -3295,7 +3573,7 @@ def garage_card(garages, gstats):
   <p class="hint" style="margin:6px 0 0;">Samostatně inzerované garáže a garážová stání —
     vlastní kategorie Sreality, do statistiky bytů výš nevstupují.</p>
   {sale_warn}
-  <div class="scroll" style="max-height:260px;margin-top:8px;">
+  <div class="scroll" style="margin-top:8px;">
   <table>
     <thead><tr><th>Typ</th><th>Transakce</th><th>Kde</th><th>m²</th><th>Cena</th><th>Co to je</th><th></th></tr></thead>
     <tbody>{rows}</tbody>
@@ -3309,12 +3587,19 @@ def script_json(value):
     return json.dumps(value, ensure_ascii=False).replace("<", "\\u003c").replace("\u2028", "\\u2028").replace("\u2029", "\\u2029")
 
 
-def render_dashboard(snapshot, changes, stats, history, estimate=None):
+def render_dashboard(snapshot, changes, stats, history, estimate=None, histories=None):
     tracked_list = snapshot["tracked"]
     comparables = snapshot["comparables"]
+    histories = histories or {}
 
     for c in comparables:
         c["change_note"] = build_change_note(c["id"], changes)
+    for listing in list(comparables) + list(tracked_list):
+        # The pool is keyed by string id; the snapshot's ids are ints on
+        # Sreality and namespaced strings on the other portals.
+        points = histories.get(str(listing.get("id")))
+        if points:
+            listing["price_history"] = points
     tracked_items = [build_tracked_item(t, changes) for t in tracked_list]
 
     fee_queue_card_html = fee_queue_card(build_fee_review_queue(comparables))
@@ -3434,14 +3719,51 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None):
                     padding: 6px 8px; font-size: 0.85rem; }}
   table {{ width: 100%; border-collapse: collapse; font-size: 0.8rem; }}
   th, td {{ padding: 8px 6px; text-align: left; border-bottom: 1px solid #262a33; vertical-align: middle; }}
-  th {{ cursor: pointer; color: #aab; white-space: nowrap; position: sticky; top: 0; z-index: 2; background: #1b1f29; }}
+  /* Sticks under the page header now that the table is not its own scrollport.
+     --hdr is the header's measured height, set once at load; z-index stays
+     below the header's 5 so the two never fight over the same pixels. */
+  th {{ cursor: pointer; color: #aab; white-space: nowrap; position: sticky;
+        top: var(--hdr, 0px); z-index: 4; background: #1b1f29; }}
   tr.changed td {{ background: #2a2410; }}
   tr.clickable-row {{ cursor: pointer; }}
   tr.clickable-row:hover td {{ background: #20242f; }}
   .thumb {{ width: 48px; height: 48px; object-fit: cover; border-radius: 6px; background: #11141b; display: block; }}
   .linklike {{ background: none; border: none; color: #7ab8ff; cursor: pointer; padding: 0; font-size: 0.8rem; text-align: left; }}
   a {{ color: #7ab8ff; text-decoration: none; }}
-  .scroll {{ overflow: auto; max-height: 78vh; margin: 0 12px; }}
+  /* One vertical scrollbar on the whole page, on purpose.
+     This used to be `overflow: auto; max-height: 78vh`, and with the deals
+     list, the change history, the garage card, the overrides card and the fee
+     queue each having a max-height of their own, the page had six scroll
+     regions. The wheel then scrolled whichever one the pointer happened to be
+     over, which is the "scrolluje mi to v rámci tabulky, ne stránky" that
+     Radim reported -- and the fix is fewer scrollports, not a cleverer one.
+     Horizontal scrolling stays where the table genuinely does not fit; on a
+     phone that box is expected, and there it is the only one on the page. */
+  .scroll {{ margin: 0 12px; }}
+  /* The trap was a wheel gesture, so the cure is scoped to where a wheel is.
+     Above 1100px the capped columns below let the table fit, nothing overflows
+     in either axis, and the header sticks to the page -- one scrollbar, which
+     is the whole point. Below it a 13-column table cannot fit any screen, so
+     the old box comes back: on touch, dragging inside it is how you read a
+     wide table anyway, and its sticky header still works.
+     Note it must be `overflow: auto`, not `overflow-x`: per CSS Overflow, auto
+     on one axis computes the visible one to auto as well, so a box meant to
+     scroll only sideways silently becomes a scrollport in both axes -- with no
+     height limit it then never scrolls vertically, and the sticky header
+     quietly stops sticking. Half-declaring it is the worst of both. */
+  @media (max-width: 1100px) {{
+    .scroll {{ overflow: auto; max-height: 78vh; }}
+    /* Inside the box the header sticks to the box, not under the page header. */
+    th {{ top: 0; }}
+  }}
+  /* Locality and Title stretch to whatever they hold; unbounded, those two
+     alone push the table 750px past what it needs and force a horizontal
+     scrollbar onto a laptop that could have shown everything. Clipping the
+     CELL would take the badges with it -- the "oprava" marker and the
+     cross-portal links, which are the two things on the row that must never be
+     silently hidden -- so only the text is clipped and the badges follow it. */
+  .clip {{ display: inline-block; max-width: 230px; overflow: hidden;
+           text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }}
   .changes-list {{ font-size: 0.8rem; }}
   .changes-list li {{ margin-bottom: 4px; }}
   footer {{ text-align: center; color: #666; font-size: 0.7rem; margin-top: 24px; }}
@@ -3476,7 +3798,6 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None):
   .history-item:last-child {{ border-bottom: none; }}
   .history-item .htxt {{ flex: 1; font-size: 0.8rem; }}
   .history-item .hat {{ font-size: 0.68rem; color: #888; }}
-  .history-list {{ max-height: 420px; overflow-y: auto; }}
   .hkind {{ font-size: 0.95rem; }}
   .src.dupe {{ opacity: 0.45; }}
   .fee-na {{ color: #b9975b; font-style: italic; }}
@@ -3492,8 +3813,23 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None):
   .deal .dtitle {{ font-size: 0.84rem; font-weight: 600; }}
   .deal .dmeta {{ font-size: 0.7rem; color: #99a; margin-top: 2px; }}
   .deal .dpct {{ font-size: 1rem; font-weight: 700; color: #7CFFB2; flex-shrink: 0; }}
-  .deals-list {{ max-height: 460px; overflow-y: auto; }}
   .hint {{ font-size: 0.7rem; color: #888; margin: 6px 0 0; }}
+  .pmove {{ font-size: 0.68rem; white-space: nowrap; padding: 1px 5px; border-radius: 10px; }}
+  .pm-down {{ color: #7CFFB2; background: #14301f; }}
+  .pm-up {{ color: #ff9a9a; background: #331a1a; }}
+  .ph-box {{ background: #11141b; border-radius: 8px; padding: 8px 10px; margin: 10px 0; }}
+  .ph-title {{ font-size: 0.8rem; color: #9aa; margin-bottom: 4px; }}
+  .ph-head {{ font-size: 0.85rem; font-weight: 600; padding: 2px 0 6px; background: none; }}
+  .ph-table {{ font-size: 0.8rem; }}
+  .ph-table td {{ padding: 4px 6px; border-bottom: 1px solid #1e222b; }}
+  .ph-table tr:last-child td {{ border-bottom: none; }}
+  /* Cards fold away. On a laptop the page is a dozen stacked cards and the one
+     you want is three screens down; the state is remembered per card so the
+     layout you left is the layout you come back to. */
+  .card-toggle {{ cursor: pointer; user-select: none; display: flex; align-items: center; gap: 6px; }}
+  .card-toggle::before {{ content: attr(data-state); color: #7ab8ff; font-size: 0.8rem; width: 12px; }}
+  .card.collapsed {{ padding-bottom: 10px; }}
+  #ovPatInput {{ flex: 1 1 260px; }}
 </style>
 </head>
 <body>
@@ -3581,12 +3917,33 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None):
 </div>
 
 <div class="card" id="podHarfouCard">
-  <h2 style="margin-top:0;font-size:1rem;">📍 Pod Harfou (same street as tracked listing)</h2>
+  <h2 style="margin-top:0;font-size:1rem;">📍 Pod Harfou — tvoje ulice <span id="podCount" class="hint"></span></h2>
+  <div class="controls" style="margin:0 0 8px;">
+    <select id="podTx">
+      <option value="">Prodej i pronájem</option>
+      <option value="prodej">Jen prodej</option>
+      <option value="pronajem">Jen pronájem</option>
+    </select>
+    <select id="podDisp">
+      <option value="">Všechny dispozice</option>
+      {"".join(f'<option value="{d}">{d}</option>' for d in DISPOSITION_CODES.values())}
+    </select>
+    <input id="podSearch" type="text" placeholder="Hledat název / makléře…">
+  </div>
   <div class="scroll">
   <table id="tblPod">
     <thead>
       <tr>
-        <th></th><th>Title</th><th>Type</th><th>Disp.</th><th>Nájem</th><th>Poplatky</th><th>Celkem</th><th>m²</th><th>Kč/m²</th><th>Odkaz</th>
+        <th></th>
+        <th data-k="title">Title</th>
+        <th data-k="transaction_type">Type</th>
+        <th data-k="disposition">Disp.</th>
+        <th data-k="price_czk">Cena / nájem</th>
+        <th data-k="fees_czk">Poplatky</th>
+        <th data-k="total_czk">Celkem</th>
+        <th data-k="floor_area_sqm">m²</th>
+        <th data-k="price_czk_per_sqm">Kč/m²</th>
+        <th>Odkaz</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -3632,7 +3989,7 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None):
       <th data-k="title">Title</th>
       <th data-k="transaction_type">Type</th>
       <th data-k="disposition">Disp.</th>
-      <th data-k="price_czk" title="Base rent (sale: purchase price)">Nájem</th>
+      <th data-k="price_czk" title="Nájem bez poplatků, u prodeje kupní cena. ▼/▲ = cena se od prvního zachycení pohnula.">Cena / nájem</th>
       <th data-k="fees_czk" title="Měsíční poplatky za služby, jak je uvádí inzerát. „—“ znamená, že je inzerát neuvádí — celková cena je pak podhodnocená.">Poplatky</th>
       <th data-k="total_czk" title="Rent: nájem + poplatky + elektřina (real or estimated). Sale: purchase price.">Celkem</th>
       <th data-k="floor_area_sqm">m²</th>
@@ -3694,6 +4051,89 @@ function fmtFees(r) {
   if (r.fees_missing) return `<span class="fee-na" title="Inzerát poplatky neuvádí — celková cena je proto podhodnocená">neuvedeno</span>`;
   const fromText = r.fees_source === "text";
   return `<span title="${fromText ? "Vyčteno z popisu inzerátu" : "Z pole inzerátu"}">${fmtCzk(r.fees_czk)}${fromText ? ' <i class="fee-src">*</i>' : ""}</span>`;
+}
+
+// The area can come from the advert's structured field or be read off its own
+// title when that field is empty. Both are the advert's numbers, but the title
+// is rounded to whole m², so the derived one is marked rather than passed off
+// as measured.
+function fmtArea(r) {
+  if (r.floor_area_sqm === null || r.floor_area_sqm === undefined) return "—";
+  if (r.floor_area_source !== "title") return String(r.floor_area_sqm);
+  return `<span title="Inzerát plochu neuvádí v datech — vzato z jeho vlastního titulku, zaokrouhleno na celé m²">${r.floor_area_sqm}~</span>`;
+}
+
+// First and last point of the pool's price path -- not "changed in the last
+// run". Scanning a list, the question is whether today's asking price is below
+// what the advert opened with, and that is a fact about the listing's whole
+// life, not about the most recent 8 hours.
+function priceMove(r) {
+  const h = r.price_history;
+  if (!h || h.length < 2) return null;
+  const first = h[0].price_czk, last = h[h.length - 1].price_czk;
+  if (!first || !last || first === last) return null;
+  return { first, last, diff: last - first, pct: (last - first) / first * 100 };
+}
+
+function fmtPct1(v) {
+  return (v > 0 ? "+" : "") + v.toFixed(1).replace(".", ",") + " %";
+}
+
+function priceMoveBadge(r) {
+  const m = priceMove(r);
+  if (!m) return "";
+  const down = m.diff < 0;
+  const title = `${down ? "Zlevněno" : "Zdraženo"} z ${fmtCzk(m.first)} na ${fmtCzk(m.last)}`
+    + ` (${fmtCzk(Math.abs(m.diff))}) — otevři inzerát pro celou historii`;
+  return ` <span class="pmove ${down ? "pm-down" : "pm-up"}" title="${escapeHtml(title)}">`
+    + `${down ? "▼" : "▲"} ${fmtPct1(m.pct)}</span>`;
+}
+
+function priceHistoryHtml(r) {
+  const h = r.price_history;
+  if (!h || h.length < 2) return "";
+  const m = priceMove(r);
+  const head = m
+    ? `<div class="ph-head ${m.diff < 0 ? "pm-down" : "pm-up"}">${m.diff < 0 ? "▼ Zlevněno" : "▲ Zdraženo"}
+        o ${fmtCzk(Math.abs(m.diff))} (${fmtPct1(m.pct)}) od prvního zachycení</div>`
+    : "";
+  const rows = h.map((p, i) => {
+    const prev = i ? h[i - 1].price_czk : null;
+    const d = prev ? p.price_czk - prev : null;
+    let delta = d === null
+      ? '<span style="color:#888;">první zachycená cena</span>'
+      : `<span class="${d < 0 ? "pm-down" : "pm-up"}">${d < 0 ? "−" : "+"}${fmtCzk(Math.abs(d))}</span>`;
+    // A very long path is truncated in the middle, so this one step spans the
+    // hidden part and is not a single move.
+    if (p.after_gap) delta += ' <i style="color:#888;font-size:0.7rem;">(mezilehlé kroky vynechány)</i>';
+    return `<tr><td>${escapeHtml(p.at)}</td><td>${fmtCzk(p.price_czk)}</td><td>${delta}</td></tr>`;
+  }).join("");
+  return `<div class="ph-box">
+    <div class="ph-title">📉 Historie ceny</div>
+    ${head}
+    <table class="ph-table"><tbody>${rows}</tbody></table>
+    <div class="cost-note">Ceny zachycené vlastním sledováním od ${escapeHtml(h[0].at)} — ne z inzerátu.
+      Zaznamenává se jen den, kdy se cena skutečně změnila.</div>
+  </div>`;
+}
+
+// One-off amounts a sale advert prices next to the flat: the garage space, the
+// cellar, the storage box, or the assignment fee payable now. Deliberately
+// listed, never added up -- see parse_sale_extras.
+function saleExtrasHtml(r) {
+  const ex = r.sale_extras;
+  if (!ex || !ex.length) return "";
+  const rows = ex.map(e => {
+    const amounts = e.amounts.map(fmtCzk).join(" / ");
+    const many = e.amounts.length > 1
+      ? ' <i style="color:#888;font-size:0.7rem;">(víc částek v jedné větě)</i>' : "";
+    return `<div class="cost-row" title="${escapeHtml(e.text)}">
+      <span>${e.kind === "upfront" ? "🧾" : "➕"} ${escapeHtml(e.label)}
+        <i class="fee-src">z popisu</i></span>
+      <span>${amounts}${many}</span></div>`;
+  }).join("");
+  return rows + `<div class="cost-note">Jednorázové částky vyčtené z textu inzerátu — najeď myší na řádek
+    pro celou větu. Do celkové ceny ani do Kč/m² se nezapočítávají.</div>`;
 }
 
 function fmtDeal(r) {
@@ -3759,14 +4199,41 @@ function renderTrackedList() {
 let pageToken = "";
 try { localStorage.removeItem("gh_pat"); } catch (e) {}
 function forgetPat() { pageToken = ""; }
-function savePat() {
-  const v = document.getElementById("patInput").value.trim();
+
+function modalIsOpen() {
+  return document.getElementById("modalOverlay").classList.contains("open");
+}
+
+// Where to ask for the token: inside the modal when the modal is what covers
+// the screen, otherwise in the manage card. Getting this wrong is not cosmetic
+// -- with the token row living only in the manage card, "Uložit opravu" from a
+// listing's detail scrolled a card the modal was covering into view and then
+// waited for a token nobody could type. Every note saved that way was lost, and
+// the page said "hotovo za ~5–15 min".
+function askForPat() {
+  const row = document.getElementById(modalIsOpen() ? "ovPatRow" : "patRow");
+  if (!row) return;
+  row.style.display = "flex";
+  const input = row.querySelector("input");
+  if (input) input.focus();
+  if (!modalIsOpen()) {
+    const manage = document.getElementById("manageCard");
+    if (manage) manage.scrollIntoView({behavior: "smooth", block: "nearest"});
+  }
+}
+
+function savePatFrom(inputId, rowId) {
+  const input = document.getElementById(inputId);
+  const v = (input.value || "").trim();
   if (!v) return;
   pageToken = v;
-  document.getElementById("patInput").value = "";
-  document.getElementById("patRow").style.display = "none";
+  input.value = "";
+  document.getElementById(rowId).style.display = "none";
   if (pendingInputs) { const p = pendingInputs; pendingInputs = null; manageTracked(p); }
 }
+
+function savePat() { savePatFrom("patInput", "patRow"); }
+function saveModalPat() { savePatFrom("ovPatInput", "ovPatRow"); }
 
 async function manageTracked(inputs) {
   const val = inputs.add_url ?? inputs.remove_url ?? inputs.override_set ?? inputs.override_delete;
@@ -3774,9 +4241,7 @@ async function manageTracked(inputs) {
   const token = pageToken;
   if (!token) {
     pendingInputs = inputs;
-    document.getElementById("patRow").style.display = "flex";
-    const manage = document.getElementById("manageCard");
-    if (manage) manage.scrollIntoView({behavior: "smooth", block: "nearest"});
+    askForPat();
     setManageStatus("Vlož GitHub token (fine-grained: jen toto repo, Actions Read & write) — akce se pak provede.");
     return;
   }
@@ -3798,7 +4263,7 @@ async function manageTracked(inputs) {
     } else if (resp.status === 401 || resp.status === 403) {
       forgetPat();
       pendingInputs = inputs;
-      document.getElementById("patRow").style.display = "flex";
+      askForPat();
       setManageStatus(`GitHub token odmítl (HTTP ${resp.status}) — vlož platný token.`);
     } else {
       setManageStatus(`Neočekávaná odpověď (HTTP ${resp.status}).`);
@@ -3813,7 +4278,15 @@ function costBreakdownHtml(item) {
     ? `<div class="cost-row"><span>📋 Administrativní poplatek (jednorázově)</span><span>${fmtCzk(item.admin_fee_czk)}</span></div>`
     : "";
   if (item.transaction_type !== "pronajem") {
-    return `<div class="cost-box"><div class="cost-row total"><span>💰 Cena</span><span>${fmtCzk(item.price_czk)}</span></div>${adminRow}</div>`;
+    // A sale has no monthly breakdown to show, so the row that would have been
+    // "elektřina" is where the one-off extras belong instead: on this street a
+    // 800 000 Kč garage space is the difference between two adverts that look
+    // identically priced.
+    return `<div class="cost-box">
+      <div class="cost-row total"><span>💰 Kupní cena</span><span>${fmtCzk(item.price_czk)}</span></div>
+      ${adminRow}
+      ${saleExtrasHtml(item)}
+    </div>`;
   }
   if (item.fees_source === "included") {
     return `<div class="cost-box">
@@ -3915,7 +4388,14 @@ function overrideFormHtml(item) {
       <button class="popup-btn" onclick="saveOverride(${idLit})">Uložit opravu</button>
       ${delBtn}
     </div>
+    <div id="ovPatRow" class="ov-row" style="display:none;">
+      <input id="ovPatInput" type="password" autocomplete="off"
+             placeholder="GitHub token — fine-grained, jen toto repo, Actions Read & write">
+      <button class="popup-btn" onclick="saveModalPat()">Použít token a uložit</button>
+    </div>
     <div id="overrideStatus" class="hint"></div>
+    <p class="hint" style="margin:6px 0 0;">Poznámka se commituje do veřejného repa a vypíše se na této
+      stránce — piš ji tak, aby ji mohl číst kdokoli.</p>
   </div>`;
 }
 
@@ -3930,15 +4410,17 @@ function buildModalHtml(item) {
     <button id="modalClose" onclick="closeModal()">&times;</button>
     <h2>${escapeHtml(item.title || "Listing")} ${approxHtml}${overrideBadges(item)}</h2>
     ${noteHtml}
+    ${item.tx_suspect ? `<div class="modal-note">⚠ ${escapeHtml(item.tx_suspect)} — inzerát zůstává, jak ho portál vede, ale je mimo statistiku.</div>` : ""}
     ${item.override_note ? `<div class="modal-note">Oprava: ${escapeHtml(item.override_note)}</div>` : ""}
     <div class="modal-gallery">${gallery}</div>
     ${costBreakdownHtml(item)}
+    ${priceHistoryHtml(item)}
     <div class="modal-grid">
       <div><b>Kč/m²${item.transaction_type === "pronajem" ? " (total)" : ""}</b>${fmtCzk(item.price_czk_per_sqm)}</div>
       <div><b>Disposition</b>${item.disposition || "—"}</div>
-      <div><b>m²</b>${item.floor_area_sqm ?? "—"}</div>
+      <div><b>m²</b>${fmtArea(item)}</div>
       <div><b>Floor</b>${floorLine}</div>
-      <div><b>Type</b>${item.transaction_type === "pronajem" ? "Rent" : "Sale"}</div>
+      <div><b>Typ</b>${item.transaction_type === "pronajem" ? "pronájem" : "prodej"}</div>
       <div><b>Locality</b>${escapeHtml(item.locality || item.city_part || "—")}</div>
       ${garageParkingHtml(item)}
       ${parkingStateHtml(item)}
@@ -3973,13 +4455,24 @@ function closeModal() {
   document.getElementById("modalOverlay").classList.remove("open");
 }
 
+// The change log holds up to 300 events. It used to live in a 420px scroll box;
+// now that the page has a single scrollbar, an unbounded list of 300 rows would
+// be most of the document's height. Show a screenful and let it be asked for.
+let historyShown = 30;
+
+function showAllHistory() {
+  historyShown = HISTORY.length;
+  renderHistory();
+}
+
 function renderHistory() {
   const list = document.getElementById("historyList");
   if (!HISTORY.length) {
     list.innerHTML = `<div style="color:#888;font-size:0.8rem;">No changes recorded yet.</div>`;
     return;
   }
-  list.innerHTML = HISTORY.map((ev, idx) => {
+  const more = HISTORY.length - historyShown;
+  list.innerHTML = HISTORY.slice(0, historyShown).map((ev, idx) => {
     const item = ev.item || {};
     const thumb = item.thumb || PLACEHOLDER;
     let icon = "🆕", text = "";
@@ -4000,25 +4493,63 @@ function renderHistory() {
       <div class="htxt">${text}<div class="hat">${escapeHtml(ev.at || "")}</div></div>
       <div class="hkind">${icon}</div>
     </div>`;
-  }).join("");
+  }).join("") + (more > 0
+    ? `<div style="padding-top:8px;"><button class="popup-btn" onclick="showAllHistory()">Zobrazit zbylých ${more} změn</button></div>`
+    : "");
+}
+
+// The Pod Harfou card is the one Radim actually reads -- it is his street --
+// and until now it was the only table on the page you could neither filter nor
+// sort, so a mixed list of rentals and sales came out in whatever order the
+// snapshot happened to hold. It gets the same controls as the main table, and
+// it draws from ALL rather than DATA so his own tracked flat appears in its own
+// street's list instead of being the one listing missing from it.
+let podSortKey = "price_czk_per_sqm", podSortDir = 1;
+
+function podHarfouRows() {
+  const tx = document.getElementById("podTx").value;
+  const disp = document.getElementById("podDisp").value;
+  const q = document.getElementById("podSearch").value.toLowerCase();
+  const seen = new Set();
+  // TRACKED first: a watched listing is also in DATA, and its row is the one
+  // carrying the seed marker, exactly as openModal resolves it.
+  return ALL.filter(r => {
+    if (!r.pod_harfou) return false;
+    const key = String(r.id);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    if (tx && r.transaction_type !== tx) return false;
+    if (disp && r.disposition !== disp) return false;
+    if (q && !((r.title||"").toLowerCase().includes(q) || (r.locality||"").toLowerCase().includes(q)
+               || (r.seller_name||"").toLowerCase().includes(q))) return false;
+    return true;
+  }).sort((a, b) => {
+    let av = a[podSortKey], bv = b[podSortKey];
+    if (av === null || av === undefined) av = -Infinity;
+    if (bv === null || bv === undefined) bv = -Infinity;
+    if (av < bv) return -1 * podSortDir;
+    if (av > bv) return 1 * podSortDir;
+    return 0;
+  });
 }
 
 function renderPodHarfou() {
-  const rows = DATA.filter(r => r.pod_harfou);
+  const rows = podHarfouRows();
   const tbody = document.querySelector("#tblPod tbody");
+  document.getElementById("podCount").textContent = `${rows.length} inzerátů`;
   tbody.innerHTML = rows.length ? rows.map(r => `
     <tr class="clickable-row ${CHANGED_IDS.has(r.id) ? 'changed' : ''}" onclick="openModal(${escapeHtml(JSON.stringify(r.id))})">
       <td><img class="thumb" src="${escapeHtml(r.thumb || PLACEHOLDER)}" loading="lazy" onerror="this.src=PLACEHOLDER"></td>
-      <td><button class="linklike" onclick="event.stopPropagation();openModal(${escapeHtml(JSON.stringify(r.id))})">${escapeHtml(r.title) || '—'}${overrideBadges(r)}</button></td>
+      <td><button class="linklike" onclick="event.stopPropagation();openModal(${escapeHtml(JSON.stringify(r.id))})">${escapeHtml(r.title) || '—'}${r.is_seed ? ' <span class="badge ok">sledovaný</span>' : ''}${overrideBadges(r)}</button></td>
       <td>${r.transaction_type === 'pronajem' ? 'rent' : 'sale'}</td>
       <td>${r.disposition || '—'}</td>
-      <td>${fmtCzk(r.price_czk)}</td>
+      <td>${fmtCzk(r.price_czk)}${priceMoveBadge(r)}</td>
       <td>${fmtFees(r)}</td>
       <td>${fmtTotal(r)}</td>
-      <td>${r.floor_area_sqm ?? '—'}</td>
+      <td>${fmtArea(r)}</td>
       <td>${fmtCzk(r.price_czk_per_sqm)}</td>
       <td>${r.url ? `<a href="${escapeHtml(r.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Otevřít ↗</a>` : '—'}</td>
-    </tr>`).join("") : `<tr><td colspan="10" style="color:#888;">No other Pod Harfou listings currently found.</td></tr>`;
+    </tr>`).join("") : `<tr><td colspan="10" style="color:#888;">Žádný inzerát Pod Harfou neodpovídá filtru.</td></tr>`;
 }
 
 // Deals: cheapest-for-what-it-is, not merely cheapest. Ranked by how far a
@@ -4092,17 +4623,17 @@ function render() {
   tbody.innerHTML = rows.map(r => `
     <tr class="clickable-row ${CHANGED_IDS.has(r.id) ? 'changed' : ''}" onclick="openModal(${escapeHtml(JSON.stringify(r.id))})">
       <td><img class="thumb" src="${escapeHtml(r.thumb || PLACEHOLDER)}" loading="lazy" onerror="this.src=PLACEHOLDER"></td>
-      <td><button class="linklike" onclick="event.stopPropagation();openModal(${escapeHtml(JSON.stringify(r.id))})">${escapeHtml(r.title) || '—'}${overrideBadges(r)}</button></td>
+      <td><button class="linklike" onclick="event.stopPropagation();openModal(${escapeHtml(JSON.stringify(r.id))})"><span class="clip" title="${escapeHtml(r.title || '')}">${escapeHtml(r.title) || '—'}</span></button>${overrideBadges(r)}</td>
       <td>${r.transaction_type === 'pronajem' ? 'rent' : 'sale'}</td>
       <td>${r.disposition || '—'}</td>
-      <td>${fmtCzk(r.price_czk)}</td>
+      <td>${fmtCzk(r.price_czk)}${priceMoveBadge(r)}</td>
       <td>${fmtFees(r)}</td>
       <td>${fmtTotal(r)}</td>
-      <td>${r.floor_area_sqm ?? '—'}</td>
+      <td>${fmtArea(r)}</td>
       <td>${fmtCzk(r.price_czk_per_sqm)}${CHANGED_IDS.has(r.id) ? ' ⚡' : ''}</td>
       <td>${fmtDeal(r)}</td>
       <td>${r.dist_km != null ? r.dist_km.toFixed(1) : '—'}</td>
-      <td>${escapeHtml(r.locality || r.city_part || '—')}${srcBadge(r.source)}${alsoBadges(r)}</td>
+      <td><span class="clip" title="${escapeHtml(r.locality || r.city_part || '')}">${escapeHtml(r.locality || r.city_part || '—')}</span>${srcBadge(r.source)}${alsoBadges(r)}</td>
       <td>${r.url ? `<a href="${escapeHtml(r.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Otevřít ↗</a>` : '—'}</td>
     </tr>`).join("");
 }
@@ -4111,6 +4642,7 @@ function initMap() {
   const center = TRACKED.find(t => t.lat != null) || DATA.find(d => d.lat != null);
   if (!center) return;
   const map = L.map("map").setView([center.lat, center.lon], 14);
+  MAP = map;
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
     attribution: "&copy; OpenStreetMap contributors",
@@ -4150,6 +4682,53 @@ function initMap() {
   });
 }
 
+// Table headers stick under the page header, so the page has to know how tall
+// that header actually is -- it wraps to two lines on a phone.
+function measureHeader() {
+  const hdr = document.querySelector("header");
+  if (hdr) document.documentElement.style.setProperty("--hdr", hdr.offsetHeight + "px");
+}
+
+// Every card becomes foldable without touching the twelve templates that build
+// them: the h2 is the handle and everything after it moves into one body div.
+// Must run before initMap -- moving a live Leaflet container breaks its sizing,
+// and a map that was built while hidden needs invalidateSize on the way back.
+let MAP = null;
+
+function makeCollapsible() {
+  document.querySelectorAll(".card").forEach(card => {
+    const h = card.querySelector("h2");
+    if (!h || h.parentElement !== card) return;
+    const key = "fold:" + (card.id || (h.textContent || "").trim().slice(0, 40));
+    const body = document.createElement("div");
+    body.className = "card-body";
+    while (h.nextSibling) body.appendChild(h.nextSibling);
+    card.appendChild(body);
+    h.classList.add("card-toggle");
+    h.setAttribute("role", "button");
+    h.tabIndex = 0;
+    const set = collapsed => {
+      card.classList.toggle("collapsed", collapsed);
+      body.hidden = collapsed;
+      h.dataset.state = collapsed ? "▸" : "▾";
+      if (!collapsed && MAP) MAP.invalidateSize();
+    };
+    let saved = null;
+    try { saved = localStorage.getItem(key); } catch (e) {}
+    set(saved === "1");
+    const toggle = () => {
+      const collapse = !card.classList.contains("collapsed");
+      set(collapse);
+      try { localStorage.setItem(key, collapse ? "1" : "0"); } catch (e) {}
+      measureHeader();
+    };
+    h.addEventListener("click", toggle);
+    h.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); }
+    });
+  });
+}
+
 document.querySelectorAll("#tbl th[data-k]").forEach(th => {
   th.addEventListener("click", () => {
     const k = th.dataset.k;
@@ -4157,6 +4736,16 @@ document.querySelectorAll("#tbl th[data-k]").forEach(th => {
     render();
   });
 });
+document.querySelectorAll("#tblPod th[data-k]").forEach(th => {
+  th.addEventListener("click", () => {
+    const k = th.dataset.k;
+    if (podSortKey === k) podSortDir *= -1; else { podSortKey = k; podSortDir = 1; }
+    renderPodHarfou();
+  });
+});
+document.getElementById("podTx").addEventListener("change", renderPodHarfou);
+document.getElementById("podDisp").addEventListener("change", renderPodHarfou);
+document.getElementById("podSearch").addEventListener("input", renderPodHarfou);
 document.getElementById("filterTx").addEventListener("change", render);
 document.getElementById("filterDisp").addEventListener("change", render);
 document.getElementById("filterSource").addEventListener("change", render);
@@ -4165,6 +4754,9 @@ document.getElementById("filterFees").addEventListener("change", render);
 document.getElementById("search").addEventListener("input", render);
 document.getElementById("dealTx").addEventListener("change", renderDeals);
 document.getElementById("dealDisp").addEventListener("change", renderDeals);
+makeCollapsible();
+measureHeader();
+window.addEventListener("resize", measureHeader);
 render();
 renderDeals();
 renderPodHarfou();
@@ -4216,12 +4808,48 @@ def has_data_for(all_pool, start, end):
     return False
 
 
+# How many price points a row carries into the page. Measured on the pool as of
+# 2026-09-08: 271 of 2 544 records have moved at all, 249 of those exactly once,
+# and a single record has 13 points. Twelve therefore truncates nothing anyone
+# will meet, and the first point is kept regardless -- "what did it originally
+# ask?" is the whole question, and it lives at the far end of the list.
+MAX_PRICE_POINTS = 12
+
+
+def price_histories(all_pool):
+    """{id: [{at, price_czk}, ...]} for listings whose price has actually moved.
+
+    The pool has recorded this since August and nothing on the page has ever
+    shown it, so a flat that dropped 200 000 Kč looked exactly like one that has
+    asked the same price since June. Single-point records are left out: one
+    price is not a history, and dropping them keeps this at ~30 KB of the
+    inlined JSON instead of ~300 KB."""
+    out = {}
+    for rec in all_pool.values():
+        points = [
+            {"at": h["at"], "price_czk": h["price_czk"]}
+            for h in (rec.get("price_history") or [])
+            if h.get("price_czk") and h.get("at")
+        ]
+        if len(points) < 2:
+            continue
+        if len(points) > MAX_PRICE_POINTS:
+            tail = points[-(MAX_PRICE_POINTS - 1):]
+            # The page draws each row's change against the row above it, so a
+            # cut middle would render as one ordinary step under a caption that
+            # promises every move is listed. Marked instead, and the row says so.
+            tail[0] = {**tail[0], "after_gap": True}
+            points = points[:1] + tail
+        out[str(rec.get("id"))] = points
+    return out
+
+
 def update_pool_and_reports(snapshot, changes):
     """Fold the run into the pool, then write up anything that is due.
 
-    Returns (estimate_for_dashboard, notes). Raises on a genuine failure: a
-    broken report has to turn the run red rather than leave a week silently
-    missing from the archive (R-8.5)."""
+    Returns (estimate_for_dashboard, notes, price_histories). Raises on a
+    genuine failure: a broken report has to turn the run red rather than leave a
+    week silently missing from the archive (R-8.5)."""
     now = snapshot["generated_at"]
     all_pool = pool.load_pool()
     state = pool.load_state()
@@ -4318,7 +4946,7 @@ def update_pool_and_reports(snapshot, changes):
         pool.window(all_pool), as_of=now, state=json.loads(json.dumps(state)),
         week_key=market.iso_week_key(now), allow_switch=False,
     )
-    return estimate, notes
+    return estimate, notes, price_histories(all_pool)
 
 
 def main():
@@ -4383,8 +5011,18 @@ def main():
     # pool / estimate / dashboard. An override whose listing is not in this
     # run stays in overrides.json and is applied again when the same id returns.
     overrides = load_overrides()
+    # Before the overrides, so a hand-entered area still beats the title.
+    filled_area = backfill_missing_areas(comparables) + backfill_missing_areas(tracked)
+    if filled_area:
+        print(f"Plocha doplněna z titulku u {filled_area} inzerátů", file=sys.stderr)
     apply_overrides(comparables, overrides)
     apply_overrides(tracked, overrides)
+    # After the overrides, which reset exclude_from_stats on every listing.
+    mismatched = flag_transaction_mismatch(comparables) + flag_transaction_mismatch(tracked)
+    if mismatched:
+        print(f"::warning::{mismatched} inzerátů má cenu, která neodpovídá typu obchodu", file=sys.stderr)
+    with_extras = attach_sale_extras(comparables) + attach_sale_extras(tracked)
+    print(f"Jednorázové příplatky nalezeny u {with_extras} prodejů", file=sys.stderr)
     rank_deals(comparables)
     print(f"Found {len(comparables)} unique comparable listings", file=sys.stderr)
 
@@ -4420,6 +5058,15 @@ def main():
     verify_removals(changes, snapshot)
     # Restored listings rejoin the set, so the medians and deal ranking are
     # recomputed over the final population rather than the pre-verification one.
+    # The text passes are re-run for the same reason: a listing brought back by
+    # verify_removals never went through them, and an unchecked one would be the
+    # single row that reaches the median with a price that does not match its
+    # transaction type -- which is the one thing the check exists to stop. All
+    # three read stored text and are idempotent, so a second pass costs a second
+    # of CPU and no fetches.
+    backfill_missing_areas(snapshot["comparables"])
+    flag_transaction_mismatch(snapshot["comparables"])
+    attach_sale_extras(snapshot["comparables"])
     comparables = rank_deals(snapshot["comparables"])
     stats = compute_stats(comparables)
     snapshot["stats"] = stats
@@ -4438,15 +5085,16 @@ def main():
     # The snapshot is on disk before anything downstream runs, so a bug in the
     # pool or the write-up costs a report, never a run's worth of scraping.
     estimate, pool_error = None, None
+    histories = {}
     try:
-        estimate, notes = update_pool_and_reports(snapshot, changes)
+        estimate, notes, histories = update_pool_and_reports(snapshot, changes)
         for note in notes:
             print(note, file=sys.stderr)
     except Exception as exc:  # noqa: BLE001 -- re-raised below, after the render
         pool_error = exc
         print(f"::error::Pool nebo týdenní zápis selhal: {exc}", file=sys.stderr)
 
-    render_dashboard(snapshot, changes, stats, history, estimate)
+    render_dashboard(snapshot, changes, stats, history, estimate, histories)
 
     print(f"Snapshot saved: {snapshot_path}", file=sys.stderr)
     print(f"Stats: {stats}", file=sys.stderr)
