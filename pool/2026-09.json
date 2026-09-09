@@ -2,7 +2,7 @@
  "1006514252": {
   "id": "1006514252",
   "first_seen": "2026-09-05T15:06:02Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -33,7 +33,7 @@
   "total_czk": 57050,
   "price_czk_per_sqm": 620,
   "price_old_czk": null,
-  "deal_pct": 12,
+  "deal_pct": 13,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -72,7 +72,7 @@
  "1031417932": {
   "id": "1031417932",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -142,8 +142,8 @@
  "1032663116": {
   "id": "1032663116",
   "first_seen": "2026-09-07T14:20:54Z",
-  "last_seen": "2026-09-08T19:32:22Z",
-  "gone_at": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
+  "gone_at": null,
   "price_history": [
    {
     "at": "2026-09-07",
@@ -173,7 +173,7 @@
   "total_czk": 34500,
   "price_czk_per_sqm": 556,
   "price_old_czk": null,
-  "deal_pct": -7,
+  "deal_pct": -5,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -205,16 +205,17 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 0,
+  "views": 403,
   "edited": "2026-09-07",
   "since": "2026-09-07",
   "gone_last_price_czk": 29000,
-  "gone_last_total_czk": 34500
+  "gone_last_total_czk": 34500,
+  "resurrected_at": "2026-09-09T13:03:50Z"
  },
  "1066938444": {
   "id": "1066938444",
   "first_seen": "2026-09-03T19:25:36Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -245,7 +246,7 @@
   "total_czk": 9990000,
   "price_czk_per_sqm": 135000,
   "price_old_czk": null,
-  "deal_pct": -5,
+  "deal_pct": -6,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -284,7 +285,7 @@
  "1080897612": {
   "id": "1080897612",
   "first_seen": "2026-09-06T22:11:14Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -315,7 +316,7 @@
   "total_czk": 3400000,
   "price_czk_per_sqm": 141667,
   "price_old_czk": null,
-  "deal_pct": -31,
+  "deal_pct": -30,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 9,
@@ -351,10 +352,80 @@
   "edited": "2026-09-06",
   "since": "2026-09-06"
  },
+ "1081602124": {
+  "id": "1081602124",
+  "first_seen": "2026-09-09T13:03:50Z",
+  "last_seen": "2026-09-09T13:03:50Z",
+  "gone_at": null,
+  "price_history": [
+   {
+    "at": "2026-09-09",
+    "price_czk": 12500000,
+    "total_czk": 12500000
+   }
+  ],
+  "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/1081602124",
+  "source": "sreality",
+  "title": "Prodej bytu 2+kk 65 m²",
+  "transaction_type": "prodej",
+  "disposition": "2+kk",
+  "floor_area_sqm": 65.0,
+  "street": "V Třešňovce",
+  "locality": "V Třešňovce, Hrdlořezy, Praha",
+  "city_part": "Hrdlořezy",
+  "lat": 50.094226,
+  "lon": 14.499879,
+  "dist_km": 0.92,
+  "pod_harfou": false,
+  "price_czk": 12500000,
+  "fees_czk": 0,
+  "fees_missing": false,
+  "fees_source": "included",
+  "electricity_czk": null,
+  "electricity_estimated": false,
+  "total_czk": 12500000,
+  "price_czk_per_sqm": 192308,
+  "price_old_czk": 13650000,
+  "deal_pct": 8,
+  "deal_outlier": false,
+  "exclude_from_stats": false,
+  "building_condition": 6,
+  "building_condition_name": "Novostavba",
+  "is_new_building": true,
+  "building_type": 6,
+  "building_type_name": "Skeletová",
+  "energy_rating": "G",
+  "furnished": "ne",
+  "commission_czk": null,
+  "tenant_not_pay_commission": null,
+  "no_commission": null,
+  "cellar": true,
+  "cellar_area_sqm": null,
+  "garage": false,
+  "garage_count": null,
+  "parking": true,
+  "parking_state": "unpriced",
+  "parking_price_czk": null,
+  "parking_lots": true,
+  "balcony": true,
+  "balcony_area_sqm": null,
+  "loggia": false,
+  "loggia_area_sqm": null,
+  "terrace": true,
+  "terrace_area_sqm": null,
+  "floor_number": 10,
+  "floors_total": 10,
+  "elevator": true,
+  "ownership": 1,
+  "ownership_name": "Osobní",
+  "views": 3456,
+  "edited": "2026-09-09",
+  "since": "2026-06-26"
+ },
  "1116287052": {
   "id": "1116287052",
   "first_seen": "2026-09-02T19:27:42Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -424,7 +495,7 @@
  "1161637964": {
   "id": "1161637964",
   "first_seen": "2026-09-07T14:20:54Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -455,7 +526,7 @@
   "total_czk": 14390000,
   "price_czk_per_sqm": 167326,
   "price_old_czk": null,
-  "deal_pct": -4,
+  "deal_pct": -3,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -494,7 +565,7 @@
  "1184641100": {
   "id": "1184641100",
   "first_seen": "2026-09-08T12:55:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -525,7 +596,7 @@
   "total_czk": 23875,
   "price_czk_per_sqm": 568,
   "price_old_czk": null,
-  "deal_pct": -5,
+  "deal_pct": -3,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -564,7 +635,7 @@
  "1197617228": {
   "id": "1197617228",
   "first_seen": "2026-09-08T22:36:56Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -634,7 +705,7 @@
  "1230909516": {
   "id": "1230909516",
   "first_seen": "2026-09-04T19:03:49Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -704,7 +775,7 @@
  "123613260": {
   "id": "123613260",
   "first_seen": "2026-09-04T19:03:49Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -735,7 +806,7 @@
   "total_czk": 22416,
   "price_czk_per_sqm": 606,
   "price_old_czk": null,
-  "deal_pct": 1,
+  "deal_pct": 3,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 9,
@@ -774,7 +845,7 @@
  "1295790156": {
   "id": "1295790156",
   "first_seen": "2026-09-07T19:55:58Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -810,7 +881,7 @@
   "total_czk": 24000,
   "price_czk_per_sqm": 421,
   "price_old_czk": null,
-  "deal_pct": -30,
+  "deal_pct": -28,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -845,6 +916,76 @@
   "views": 390,
   "edited": "2026-09-08",
   "since": "2026-09-07"
+ },
+ "1307717708": {
+  "id": "1307717708",
+  "first_seen": "2026-09-09T13:03:50Z",
+  "last_seen": "2026-09-09T13:03:50Z",
+  "gone_at": null,
+  "price_history": [
+   {
+    "at": "2026-09-09",
+    "price_czk": 8490000,
+    "total_czk": 8490000
+   }
+  ],
+  "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/1307717708",
+  "source": "sreality",
+  "title": "Prodej bytu 2+kk 62 m²",
+  "transaction_type": "prodej",
+  "disposition": "2+kk",
+  "floor_area_sqm": 62.0,
+  "street": "Roháčova",
+  "locality": "Roháčova, Žižkov, Praha",
+  "city_part": "Žižkov",
+  "lat": 50.0888654,
+  "lon": 14.4641768,
+  "dist_km": 2.19,
+  "pod_harfou": false,
+  "price_czk": 8490000,
+  "fees_czk": null,
+  "fees_missing": true,
+  "fees_source": null,
+  "electricity_czk": null,
+  "electricity_estimated": false,
+  "total_czk": 8490000,
+  "price_czk_per_sqm": 136935,
+  "price_old_czk": null,
+  "deal_pct": -23,
+  "deal_outlier": false,
+  "exclude_from_stats": false,
+  "building_condition": 2,
+  "building_condition_name": "Dobrý",
+  "is_new_building": false,
+  "building_type": 2,
+  "building_type_name": "Cihlová",
+  "energy_rating": "G",
+  "furnished": "ano",
+  "commission_czk": null,
+  "tenant_not_pay_commission": null,
+  "no_commission": null,
+  "cellar": true,
+  "cellar_area_sqm": null,
+  "garage": false,
+  "garage_count": null,
+  "parking": false,
+  "parking_state": "none",
+  "parking_price_czk": null,
+  "parking_lots": false,
+  "balcony": true,
+  "balcony_area_sqm": null,
+  "loggia": false,
+  "loggia_area_sqm": null,
+  "terrace": false,
+  "terrace_area_sqm": null,
+  "floor_number": 6,
+  "floors_total": null,
+  "elevator": true,
+  "ownership": 2,
+  "ownership_name": "Družstevní",
+  "views": 0,
+  "edited": "2026-09-09",
+  "since": "2026-09-09"
  },
  "1315386188": {
   "id": "1315386188",
@@ -919,7 +1060,7 @@
  "1335832652": {
   "id": "1335832652",
   "first_seen": "2026-09-04T19:03:49Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -955,7 +1096,7 @@
   "total_czk": 17500000,
   "price_czk_per_sqm": 184211,
   "price_old_czk": null,
-  "deal_pct": 6,
+  "deal_pct": 7,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -1064,7 +1205,7 @@
  "1378431052": {
   "id": "1378431052",
   "first_seen": "2026-09-02T12:50:31Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1095,7 +1236,7 @@
   "total_czk": 7190000,
   "price_czk_per_sqm": 143800,
   "price_old_czk": null,
-  "deal_pct": -30,
+  "deal_pct": -29,
   "deal_outlier": false,
   "building_condition": 1,
   "building_condition_name": "Velmi dobrý",
@@ -1134,7 +1275,7 @@
  "138031180": {
   "id": "138031180",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1165,7 +1306,7 @@
   "total_czk": 28500,
   "price_czk_per_sqm": 570,
   "price_old_czk": null,
-  "deal_pct": -5,
+  "deal_pct": -3,
   "deal_outlier": false,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
@@ -1196,7 +1337,7 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 1340,
+  "views": 1580,
   "edited": "2026-09-08",
   "since": "2026-09-01",
   "exclude_from_stats": false
@@ -1204,7 +1345,7 @@
  "1409822796": {
   "id": "1409822796",
   "first_seen": "2026-09-03T12:52:13Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1274,7 +1415,7 @@
  "1412313164": {
   "id": "1412313164",
   "first_seen": "2026-09-04T19:03:49Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1416,7 +1557,7 @@
  "1442590796": {
   "id": "1442590796",
   "first_seen": "2026-09-07T22:49:30Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1558,7 +1699,7 @@
  "1450127436": {
   "id": "1450127436",
   "first_seen": "2026-09-03T19:25:36Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1700,7 +1841,7 @@
  "1479422028": {
   "id": "1479422028",
   "first_seen": "2026-09-04T19:03:49Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1711,7 +1852,7 @@
   ],
   "url": "https://www.sreality.cz/detail/prodej/byt/1%2B1/x/1479422028",
   "source": "sreality",
-  "title": "Prodej bytu 1+1 39 m²",
+  "title": "For sale apartment 1+1 39 m²",
   "transaction_type": "prodej",
   "disposition": "1+1",
   "floor_area_sqm": 39.0,
@@ -1731,7 +1872,7 @@
   "total_czk": 5900000,
   "price_czk_per_sqm": 151282,
   "price_old_czk": null,
-  "deal_pct": -10,
+  "deal_pct": -12,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -1770,7 +1911,7 @@
  "1496920140": {
   "id": "1496920140",
   "first_seen": "2026-09-02T12:50:31Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1801,7 +1942,7 @@
   "total_czk": 26650,
   "price_czk_per_sqm": 952,
   "price_old_czk": null,
-  "deal_pct": 27,
+  "deal_pct": 25,
   "deal_outlier": false,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
@@ -1840,7 +1981,7 @@
  "1500262476": {
   "id": "1500262476",
   "first_seen": "2026-09-07T14:20:54Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [],
   "url": "https://www.sreality.cz/detail/prodej/byt/2%2B1/x/1500262476",
@@ -1903,7 +2044,7 @@
  "1502490700": {
   "id": "1502490700",
   "first_seen": "2026-09-06T22:11:14Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2045,7 +2186,7 @@
  "1581068364": {
   "id": "1581068364",
   "first_seen": "2026-09-07T14:20:54Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2115,7 +2256,7 @@
  "1594699852": {
   "id": "1594699852",
   "first_seen": "2026-09-07T14:20:54Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2146,7 +2287,7 @@
   "total_czk": 36141,
   "price_czk_per_sqm": 574,
   "price_old_czk": null,
-  "deal_pct": -4,
+  "deal_pct": -2,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -2185,7 +2326,7 @@
  "1637036108": {
   "id": "1637036108",
   "first_seen": "2026-09-09T04:29:28Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2216,7 +2357,7 @@
   "total_czk": 28138,
   "price_czk_per_sqm": 599,
   "price_old_czk": null,
-  "deal_pct": 0,
+  "deal_pct": 2,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -2255,7 +2396,7 @@
  "1642934348": {
   "id": "1642934348",
   "first_seen": "2026-09-07T14:20:54Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2286,7 +2427,7 @@
   "total_czk": 31100,
   "price_czk_per_sqm": 555,
   "price_old_czk": null,
-  "deal_pct": 9,
+  "deal_pct": 6,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -2325,7 +2466,7 @@
  "1658531916": {
   "id": "1658531916",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2395,7 +2536,7 @@
  "168149068": {
   "id": "168149068",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2426,7 +2567,7 @@
   "total_czk": 34500,
   "price_czk_per_sqm": 690,
   "price_old_czk": null,
-  "deal_pct": 15,
+  "deal_pct": 17,
   "deal_outlier": false,
   "building_condition": 1,
   "building_condition_name": "Velmi dobrý",
@@ -2534,10 +2675,80 @@
   "gone_last_price_czk": 24990,
   "gone_last_total_czk": 31490
  },
+ "1691496524": {
+  "id": "1691496524",
+  "first_seen": "2026-09-09T13:03:50Z",
+  "last_seen": "2026-09-09T13:03:50Z",
+  "gone_at": null,
+  "price_history": [
+   {
+    "at": "2026-09-09",
+    "price_czk": 21000,
+    "total_czk": 24500
+   }
+  ],
+  "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/1691496524",
+  "source": "sreality",
+  "title": "Pronájem bytu 2+kk 54 m²",
+  "transaction_type": "pronajem",
+  "disposition": "2+kk",
+  "floor_area_sqm": 54.0,
+  "street": "Na Balkáně",
+  "locality": "Na Balkáně, Žižkov, Praha",
+  "city_part": "Žižkov",
+  "lat": 50.0953430725494,
+  "lon": 14.4945214987902,
+  "dist_km": 0.56,
+  "pod_harfou": false,
+  "price_czk": 21000,
+  "fees_czk": 2000,
+  "fees_missing": false,
+  "fees_source": "text",
+  "electricity_czk": 1500,
+  "electricity_estimated": true,
+  "total_czk": 24500,
+  "price_czk_per_sqm": 454,
+  "price_old_czk": null,
+  "deal_pct": -23,
+  "deal_outlier": false,
+  "exclude_from_stats": false,
+  "building_condition": 9,
+  "building_condition_name": "Po rekonstrukci",
+  "is_new_building": false,
+  "building_type": 2,
+  "building_type_name": "Cihlová",
+  "energy_rating": "G",
+  "furnished": "ne",
+  "commission_czk": 0,
+  "tenant_not_pay_commission": null,
+  "no_commission": true,
+  "cellar": false,
+  "cellar_area_sqm": null,
+  "garage": false,
+  "garage_count": null,
+  "parking": false,
+  "parking_state": "none",
+  "parking_price_czk": null,
+  "parking_lots": false,
+  "balcony": false,
+  "balcony_area_sqm": null,
+  "loggia": false,
+  "loggia_area_sqm": null,
+  "terrace": false,
+  "terrace_area_sqm": null,
+  "floor_number": 3,
+  "floors_total": 3,
+  "elevator": null,
+  "ownership": 1,
+  "ownership_name": "Osobní",
+  "views": 0,
+  "edited": "2026-09-09",
+  "since": "2026-09-09"
+ },
  "1694380108": {
   "id": "1694380108",
   "first_seen": "2026-09-05T11:52:32Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2568,7 +2779,7 @@
   "total_czk": 44300,
   "price_czk_per_sqm": 515,
   "price_old_czk": null,
-  "deal_pct": -7,
+  "deal_pct": -6,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -2607,7 +2818,7 @@
  "1710764108": {
   "id": "1710764108",
   "first_seen": "2026-09-03T12:52:13Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2638,7 +2849,7 @@
   "total_czk": 20700,
   "price_czk_per_sqm": 627,
   "price_old_czk": null,
-  "deal_pct": -16,
+  "deal_pct": -17,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -2677,7 +2888,7 @@
  "1713582156": {
   "id": "1713582156",
   "first_seen": "2026-09-08T12:55:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2708,7 +2919,7 @@
   "total_czk": 47500,
   "price_czk_per_sqm": 1033,
   "price_old_czk": null,
-  "deal_pct": 73,
+  "deal_pct": 76,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -2747,7 +2958,7 @@
  "1714303052": {
   "id": "1714303052",
   "first_seen": "2026-09-04T19:03:49Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2817,7 +3028,7 @@
  "1742942284": {
   "id": "1742942284",
   "first_seen": "2026-09-08T12:55:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2848,7 +3059,7 @@
   "total_czk": 25000,
   "price_czk_per_sqm": 362,
   "price_old_czk": null,
-  "deal_pct": -39,
+  "deal_pct": -38,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 2,
@@ -2887,7 +3098,7 @@
  "1747566668": {
   "id": "1747566668",
   "first_seen": "2026-09-03T12:52:13Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2918,7 +3129,7 @@
   "total_czk": 13990000,
   "price_czk_per_sqm": 186533,
   "price_old_czk": null,
-  "deal_pct": 7,
+  "deal_pct": 8,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -3096,10 +3307,80 @@
   "gone_last_price_czk": 3990000,
   "gone_last_total_czk": 3990000
  },
+ "1783771212": {
+  "id": "1783771212",
+  "first_seen": "2026-09-09T13:03:50Z",
+  "last_seen": "2026-09-09T13:03:50Z",
+  "gone_at": null,
+  "price_history": [
+   {
+    "at": "2026-09-09",
+    "price_czk": 21000,
+    "total_czk": 26900
+   }
+  ],
+  "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/1783771212",
+  "source": "sreality",
+  "title": "Pronájem bytu 2+kk 58 m²",
+  "transaction_type": "pronajem",
+  "disposition": "2+kk",
+  "floor_area_sqm": 58.0,
+  "street": "bratří Dohalských",
+  "locality": "bratří Dohalských, Vysočany, Praha",
+  "city_part": "Vysočany",
+  "lat": 50.1111250190999,
+  "lon": 14.4996438714187,
+  "dist_km": 1.46,
+  "pod_harfou": false,
+  "price_czk": 21000,
+  "fees_czk": 4400,
+  "fees_missing": false,
+  "fees_source": "note",
+  "electricity_czk": 1500,
+  "electricity_estimated": true,
+  "total_czk": 26900,
+  "price_czk_per_sqm": 464,
+  "price_old_czk": null,
+  "deal_pct": -21,
+  "deal_outlier": false,
+  "exclude_from_stats": false,
+  "building_condition": 9,
+  "building_condition_name": "Po rekonstrukci",
+  "is_new_building": false,
+  "building_type": 2,
+  "building_type_name": "Cihlová",
+  "energy_rating": "C",
+  "furnished": "ne",
+  "commission_czk": 0,
+  "tenant_not_pay_commission": null,
+  "no_commission": true,
+  "cellar": true,
+  "cellar_area_sqm": null,
+  "garage": false,
+  "garage_count": null,
+  "parking": false,
+  "parking_state": "none",
+  "parking_price_czk": null,
+  "parking_lots": false,
+  "balcony": false,
+  "balcony_area_sqm": null,
+  "loggia": false,
+  "loggia_area_sqm": null,
+  "terrace": false,
+  "terrace_area_sqm": null,
+  "floor_number": 3,
+  "floors_total": 5,
+  "elevator": true,
+  "ownership": 1,
+  "ownership_name": "Osobní",
+  "views": 0,
+  "edited": "2026-09-09",
+  "since": "2026-09-09"
+ },
  "1797075020": {
   "id": "1797075020",
   "first_seen": "2026-09-07T14:20:54Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3130,7 +3411,7 @@
   "total_czk": 6950000,
   "price_czk_per_sqm": 131132,
   "price_old_czk": null,
-  "deal_pct": -8,
+  "deal_pct": -9,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 2,
@@ -3169,7 +3450,7 @@
  "1805594700": {
   "id": "1805594700",
   "first_seen": "2026-09-04T19:03:49Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3200,8 +3481,8 @@
   "total_czk": 6800000,
   "price_czk_per_sqm": 97143,
   "price_old_czk": null,
-  "deal_pct": -45,
-  "deal_outlier": false,
+  "deal_pct": -46,
+  "deal_outlier": true,
   "exclude_from_stats": false,
   "building_condition": 8,
   "building_condition_name": "Před rekonstrukcí",
@@ -3239,7 +3520,7 @@
  "1809002572": {
   "id": "1809002572",
   "first_seen": "2026-09-08T18:49:57Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3270,7 +3551,7 @@
   "total_czk": 8300000,
   "price_czk_per_sqm": 197619,
   "price_old_czk": null,
-  "deal_pct": -3,
+  "deal_pct": -2,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -3306,10 +3587,150 @@
   "edited": "2026-09-08",
   "since": "2026-09-08"
  },
+ "1829908556": {
+  "id": "1829908556",
+  "first_seen": "2026-09-09T13:03:50Z",
+  "last_seen": "2026-09-09T13:03:50Z",
+  "gone_at": null,
+  "price_history": [
+   {
+    "at": "2026-09-09",
+    "price_czk": 32000,
+    "total_czk": 37700
+   }
+  ],
+  "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/1829908556",
+  "source": "sreality",
+  "title": "Pronájem bytu 2+kk 54 m²",
+  "transaction_type": "pronajem",
+  "disposition": "2+kk",
+  "floor_area_sqm": 54.0,
+  "street": "U Mlýnského kanálu",
+  "locality": "U Mlýnského kanálu, Karlín, Praha",
+  "city_part": "Karlín",
+  "lat": 50.096107,
+  "lon": 14.452165,
+  "dist_km": 2.72,
+  "pod_harfou": false,
+  "price_czk": 32000,
+  "fees_czk": 4200,
+  "fees_missing": false,
+  "fees_source": "field",
+  "electricity_czk": 1500,
+  "electricity_estimated": true,
+  "total_czk": 37700,
+  "price_czk_per_sqm": 698,
+  "price_old_czk": null,
+  "deal_pct": 19,
+  "deal_outlier": false,
+  "exclude_from_stats": false,
+  "building_condition": 1,
+  "building_condition_name": "Velmi dobrý",
+  "is_new_building": false,
+  "building_type": 2,
+  "building_type_name": "Cihlová",
+  "energy_rating": "B",
+  "furnished": null,
+  "commission_czk": 0,
+  "tenant_not_pay_commission": null,
+  "no_commission": true,
+  "cellar": true,
+  "cellar_area_sqm": 2,
+  "garage": true,
+  "garage_count": null,
+  "parking": true,
+  "parking_state": "unpriced",
+  "parking_price_czk": null,
+  "parking_lots": true,
+  "balcony": false,
+  "balcony_area_sqm": null,
+  "loggia": false,
+  "loggia_area_sqm": null,
+  "terrace": false,
+  "terrace_area_sqm": null,
+  "floor_number": 1,
+  "floors_total": 10,
+  "elevator": true,
+  "ownership": 1,
+  "ownership_name": "Osobní",
+  "views": 0,
+  "edited": "2026-09-09",
+  "since": "2026-09-09"
+ },
+ "1894920268": {
+  "id": "1894920268",
+  "first_seen": "2026-09-09T13:03:50Z",
+  "last_seen": "2026-09-09T13:03:50Z",
+  "gone_at": null,
+  "price_history": [
+   {
+    "at": "2026-09-09",
+    "price_czk": 30000,
+    "total_czk": 34500
+   }
+  ],
+  "url": "https://www.sreality.cz/detail/pronajem/byt/1%2Bkk/x/1894920268",
+  "source": "sreality",
+  "title": "Pronájem bytu 1+kk 63 m²",
+  "transaction_type": "pronajem",
+  "disposition": "1+kk",
+  "floor_area_sqm": 63.0,
+  "street": "Breitfeldova",
+  "locality": "Breitfeldova, Karlín, Praha",
+  "city_part": "Karlín",
+  "lat": 50.0965090187,
+  "lon": 14.4535178453,
+  "dist_km": 2.62,
+  "pod_harfou": false,
+  "price_czk": 30000,
+  "fees_czk": 3500,
+  "fees_missing": false,
+  "fees_source": "note",
+  "electricity_czk": 1000,
+  "electricity_estimated": false,
+  "total_czk": 34500,
+  "price_czk_per_sqm": 548,
+  "price_old_czk": null,
+  "deal_pct": -28,
+  "deal_outlier": false,
+  "exclude_from_stats": false,
+  "building_condition": 6,
+  "building_condition_name": "Novostavba",
+  "is_new_building": true,
+  "building_type": 2,
+  "building_type_name": "Cihlová",
+  "energy_rating": "B",
+  "furnished": "ano",
+  "commission_czk": 0,
+  "tenant_not_pay_commission": false,
+  "no_commission": true,
+  "cellar": true,
+  "cellar_area_sqm": null,
+  "garage": false,
+  "garage_count": null,
+  "parking": true,
+  "parking_state": "unpriced",
+  "parking_price_czk": null,
+  "parking_lots": true,
+  "balcony": false,
+  "balcony_area_sqm": null,
+  "loggia": true,
+  "loggia_area_sqm": 13,
+  "terrace": false,
+  "terrace_area_sqm": null,
+  "floor_number": 5,
+  "floors_total": 8,
+  "elevator": true,
+  "ownership": 1,
+  "ownership_name": "Osobní",
+  "views": 0,
+  "edited": "2026-09-09",
+  "since": "2026-09-09"
+ },
  "190722124": {
   "id": "190722124",
   "first_seen": "2026-09-04T19:03:49Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3379,7 +3800,7 @@
  "1908944972": {
   "id": "1908944972",
   "first_seen": "2026-09-03T12:52:13Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3410,7 +3831,7 @@
   "total_czk": 38400,
   "price_czk_per_sqm": 573,
   "price_old_czk": null,
-  "deal_pct": -4,
+  "deal_pct": -3,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -3524,7 +3945,7 @@
  "1944924236": {
   "id": "1944924236",
   "first_seen": "2026-09-08T12:55:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3560,7 +3981,7 @@
   "total_czk": 30000,
   "price_czk_per_sqm": 577,
   "price_old_czk": null,
-  "deal_pct": -4,
+  "deal_pct": -2,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -3599,7 +4020,7 @@
  "1986211916": {
   "id": "1986211916",
   "first_seen": "2026-09-08T12:55:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3630,7 +4051,7 @@
   "total_czk": 27537,
   "price_czk_per_sqm": 765,
   "price_old_czk": null,
-  "deal_pct": 2,
+  "deal_pct": 1,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -3741,7 +4162,7 @@
  "2026640204": {
   "id": "2026640204",
   "first_seen": "2026-09-07T14:20:54Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3772,7 +4193,7 @@
   "total_czk": 17500000,
   "price_czk_per_sqm": 198864,
   "price_old_czk": null,
-  "deal_pct": 14,
+  "deal_pct": 15,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -3811,7 +4232,7 @@
  "2057515084": {
   "id": "2057515084",
   "first_seen": "2026-09-08T18:49:57Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3881,7 +4302,7 @@
  "2060202060": {
   "id": "2060202060",
   "first_seen": "2026-09-08T12:55:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4024,7 +4445,7 @@
   "id": "2079076428",
   "first_seen": "2026-09-07T22:49:30Z",
   "last_seen": "2026-09-08T22:36:56Z",
-  "gone_at": null,
+  "gone_at": "2026-09-09T13:03:50Z",
   "price_history": [
    {
     "at": "2026-09-07",
@@ -4088,12 +4509,14 @@
   "ownership_name": "Osobní",
   "views": 56,
   "edited": "2026-09-08",
-  "since": "2026-09-07"
+  "since": "2026-09-07",
+  "gone_last_price_czk": 27500,
+  "gone_last_total_czk": 29000
  },
  "2096705612": {
   "id": "2096705612",
   "first_seen": "2026-09-02T19:27:42Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4155,7 +4578,7 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 1398,
+  "views": 1587,
   "edited": "2026-09-02",
   "since": "2026-09-02",
   "exclude_from_stats": false
@@ -4235,7 +4658,7 @@
  "2145267788": {
   "id": "2145267788",
   "first_seen": "2026-09-05T22:05:46Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4266,7 +4689,7 @@
   "total_czk": 6290000,
   "price_czk_per_sqm": 165526,
   "price_old_czk": null,
-  "deal_pct": -19,
+  "deal_pct": -18,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -4305,7 +4728,7 @@
  "2154442828": {
   "id": "2154442828",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4336,7 +4759,7 @@
   "total_czk": 24990,
   "price_czk_per_sqm": 714,
   "price_old_czk": null,
-  "deal_pct": -5,
+  "deal_pct": -6,
   "deal_outlier": false,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
@@ -4375,7 +4798,7 @@
  "2186096716": {
   "id": "2186096716",
   "first_seen": "2026-09-06T22:11:14Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4406,7 +4829,7 @@
   "total_czk": 33200,
   "price_czk_per_sqm": 496,
   "price_old_czk": null,
-  "deal_pct": -17,
+  "deal_pct": -16,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -4445,7 +4868,7 @@
  "2187210828": {
   "id": "2187210828",
   "first_seen": "2026-09-04T19:03:49Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4476,7 +4899,7 @@
   "total_czk": 24731,
   "price_czk_per_sqm": 773,
   "price_old_czk": null,
-  "deal_pct": 3,
+  "deal_pct": 2,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -4595,7 +5018,7 @@
  "2206085196": {
   "id": "2206085196",
   "first_seen": "2026-09-04T19:03:49Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4626,7 +5049,7 @@
   "total_czk": 5950000,
   "price_czk_per_sqm": 205172,
   "price_old_czk": null,
-  "deal_pct": 1,
+  "deal_pct": 2,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 2,
@@ -4665,7 +5088,7 @@
  "2249011276": {
   "id": "2249011276",
   "first_seen": "2026-09-07T14:20:54Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4696,7 +5119,7 @@
   "total_czk": 33120,
   "price_czk_per_sqm": 828,
   "price_old_czk": null,
-  "deal_pct": 38,
+  "deal_pct": 41,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -4728,14 +5151,14 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 299,
+  "views": 547,
   "edited": "2026-09-08",
   "since": "2026-09-07"
  },
  "2258448460": {
   "id": "2258448460",
   "first_seen": "2026-09-07T14:20:54Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4766,7 +5189,7 @@
   "total_czk": 28600,
   "price_czk_per_sqm": 609,
   "price_old_czk": null,
-  "deal_pct": 2,
+  "deal_pct": 4,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 9,
@@ -4805,7 +5228,7 @@
  "2310221900": {
   "id": "2310221900",
   "first_seen": "2026-09-08T18:49:57Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4836,7 +5259,7 @@
   "total_czk": 23500,
   "price_czk_per_sqm": 588,
   "price_old_czk": null,
-  "deal_pct": -22,
+  "deal_pct": -23,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -4944,10 +5367,80 @@
   "gone_last_price_czk": 20000,
   "gone_last_total_czk": 21500
  },
+ "2331127884": {
+  "id": "2331127884",
+  "first_seen": "2026-09-09T13:03:50Z",
+  "last_seen": "2026-09-09T13:03:50Z",
+  "gone_at": null,
+  "price_history": [
+   {
+    "at": "2026-09-09",
+    "price_czk": 30000,
+    "total_czk": 34500
+   }
+  ],
+  "url": "https://www.sreality.cz/detail/pronajem/byt/1%2Bkk/x/2331127884",
+  "source": "sreality",
+  "title": "Pronájem bytu 1+kk 45 m²",
+  "transaction_type": "pronajem",
+  "disposition": "1+kk",
+  "floor_area_sqm": 45.0,
+  "street": "Breitfeldova",
+  "locality": "Breitfeldova, Karlín, Praha",
+  "city_part": "Karlín",
+  "lat": 50.0965090187,
+  "lon": 14.4535178453,
+  "dist_km": 2.62,
+  "pod_harfou": false,
+  "price_czk": 30000,
+  "fees_czk": 3500,
+  "fees_missing": false,
+  "fees_source": "note",
+  "electricity_czk": 1000,
+  "electricity_estimated": false,
+  "total_czk": 34500,
+  "price_czk_per_sqm": 767,
+  "price_old_czk": null,
+  "deal_pct": 1,
+  "deal_outlier": false,
+  "exclude_from_stats": false,
+  "building_condition": 6,
+  "building_condition_name": "Novostavba",
+  "is_new_building": true,
+  "building_type": 2,
+  "building_type_name": "Cihlová",
+  "energy_rating": "B",
+  "furnished": "ano",
+  "commission_czk": 0,
+  "tenant_not_pay_commission": false,
+  "no_commission": true,
+  "cellar": true,
+  "cellar_area_sqm": null,
+  "garage": false,
+  "garage_count": null,
+  "parking": true,
+  "parking_state": "unpriced",
+  "parking_price_czk": null,
+  "parking_lots": true,
+  "balcony": false,
+  "balcony_area_sqm": null,
+  "loggia": false,
+  "loggia_area_sqm": null,
+  "terrace": false,
+  "terrace_area_sqm": null,
+  "floor_number": 1,
+  "floors_total": 8,
+  "elevator": true,
+  "ownership": 1,
+  "ownership_name": "Osobní",
+  "views": 0,
+  "edited": "2026-09-09",
+  "since": "2026-09-09"
+ },
  "2338992204": {
   "id": "2338992204",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4978,7 +5471,7 @@
   "total_czk": 23500,
   "price_czk_per_sqm": 839,
   "price_old_czk": null,
-  "deal_pct": 12,
+  "deal_pct": 10,
   "deal_outlier": false,
   "building_condition": 1,
   "building_condition_name": "Velmi dobrý",
@@ -5017,7 +5510,7 @@
  "2354589772": {
   "id": "2354589772",
   "first_seen": "2026-09-03T12:52:13Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5048,7 +5541,7 @@
   "total_czk": 27000,
   "price_czk_per_sqm": 551,
   "price_old_czk": null,
-  "deal_pct": 8,
+  "deal_pct": 5,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 2,
@@ -5087,7 +5580,7 @@
  "2358194252": {
   "id": "2358194252",
   "first_seen": "2026-09-04T12:48:45Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5118,7 +5611,7 @@
   "total_czk": 7199000,
   "price_czk_per_sqm": 138442,
   "price_old_czk": null,
-  "deal_pct": -3,
+  "deal_pct": -4,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -5157,7 +5650,7 @@
  "2368417868": {
   "id": "2368417868",
   "first_seen": "2026-09-01T04:57:13Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5227,7 +5720,7 @@
  "2379034700": {
   "id": "2379034700",
   "first_seen": "2026-09-07T14:20:54Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5258,7 +5751,7 @@
   "total_czk": 30050,
   "price_czk_per_sqm": 509,
   "price_old_czk": null,
-  "deal_pct": 0,
+  "deal_pct": -3,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 9,
@@ -5294,10 +5787,80 @@
   "edited": "2026-09-07",
   "since": "2026-09-07"
  },
+ "2402431052": {
+  "id": "2402431052",
+  "first_seen": "2026-09-09T13:03:50Z",
+  "last_seen": "2026-09-09T13:03:50Z",
+  "gone_at": null,
+  "price_history": [
+   {
+    "at": "2026-09-09",
+    "price_czk": 14900000,
+    "total_czk": 14900000
+   }
+  ],
+  "url": "https://www.sreality.cz/detail/prodej/byt/3%2Bkk/x/2402431052",
+  "source": "sreality",
+  "title": "Prodej bytu 3+kk 89 m²",
+  "transaction_type": "prodej",
+  "disposition": "3+kk",
+  "floor_area_sqm": 89.0,
+  "street": "V Třešňovce",
+  "locality": "V Třešňovce, Hrdlořezy, Praha",
+  "city_part": "Hrdlořezy",
+  "lat": 50.094226,
+  "lon": 14.499879,
+  "dist_km": 0.92,
+  "pod_harfou": false,
+  "price_czk": 14900000,
+  "fees_czk": null,
+  "fees_missing": true,
+  "fees_source": null,
+  "electricity_czk": null,
+  "electricity_estimated": false,
+  "total_czk": 14900000,
+  "price_czk_per_sqm": 167416,
+  "price_old_czk": null,
+  "deal_pct": -3,
+  "deal_outlier": false,
+  "exclude_from_stats": false,
+  "building_condition": 6,
+  "building_condition_name": "Novostavba",
+  "is_new_building": true,
+  "building_type": 6,
+  "building_type_name": "Skeletová",
+  "energy_rating": "B",
+  "furnished": "ne",
+  "commission_czk": null,
+  "tenant_not_pay_commission": null,
+  "no_commission": null,
+  "cellar": true,
+  "cellar_area_sqm": null,
+  "garage": false,
+  "garage_count": null,
+  "parking": true,
+  "parking_state": "unpriced",
+  "parking_price_czk": null,
+  "parking_lots": true,
+  "balcony": false,
+  "balcony_area_sqm": null,
+  "loggia": false,
+  "loggia_area_sqm": null,
+  "terrace": true,
+  "terrace_area_sqm": null,
+  "floor_number": 10,
+  "floors_total": 10,
+  "elevator": true,
+  "ownership": 1,
+  "ownership_name": "Osobní",
+  "views": 0,
+  "edited": "2026-09-09",
+  "since": "2026-09-09"
+ },
  "2403020876": {
   "id": "2403020876",
   "first_seen": "2026-09-01T04:57:13Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5367,7 +5930,7 @@
  "2443128908": {
   "id": "2443128908",
   "first_seen": "2026-09-04T12:48:45Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5398,7 +5961,7 @@
   "total_czk": 9100000,
   "price_czk_per_sqm": 124658,
   "price_old_czk": null,
-  "deal_pct": -14,
+  "deal_pct": -11,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 9,
@@ -5437,7 +6000,7 @@
  "244920396": {
   "id": "244920396",
   "first_seen": "2026-09-02T19:27:42Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5468,7 +6031,7 @@
   "total_czk": 23090,
   "price_czk_per_sqm": 502,
   "price_old_czk": null,
-  "deal_pct": -33,
+  "deal_pct": -34,
   "deal_outlier": false,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
@@ -5507,7 +6070,7 @@
  "2500014156": {
   "id": "2500014156",
   "first_seen": "2026-09-08T12:55:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5538,7 +6101,7 @@
   "total_czk": 23100,
   "price_czk_per_sqm": 770,
   "price_old_czk": null,
-  "deal_pct": 3,
+  "deal_pct": 1,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -5577,7 +6140,7 @@
  "2519674956": {
   "id": "2519674956",
   "first_seen": "2026-09-03T22:33:30Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5647,7 +6210,7 @@
  "2521641036": {
   "id": "2521641036",
   "first_seen": "2026-09-06T22:11:14Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5717,7 +6280,7 @@
  "2551132236": {
   "id": "2551132236",
   "first_seen": "2026-09-04T12:48:45Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5748,7 +6311,7 @@
   "total_czk": 32950,
   "price_czk_per_sqm": 686,
   "price_old_czk": null,
-  "deal_pct": 15,
+  "deal_pct": 17,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -5787,7 +6350,7 @@
  "2556047436": {
   "id": "2556047436",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5818,7 +6381,7 @@
   "total_czk": 34300,
   "price_czk_per_sqm": 612,
   "price_old_czk": null,
-  "deal_pct": 2,
+  "deal_pct": 4,
   "deal_outlier": false,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
@@ -5849,7 +6412,7 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 1118,
+  "views": 1250,
   "edited": "2026-09-01",
   "since": "2026-09-01",
   "exclude_from_stats": false
@@ -5927,7 +6490,7 @@
  "2564370508": {
   "id": "2564370508",
   "first_seen": "2026-09-02T19:27:42Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5958,7 +6521,7 @@
   "total_czk": 42500,
   "price_czk_per_sqm": 720,
   "price_old_czk": null,
-  "deal_pct": 20,
+  "deal_pct": 22,
   "deal_outlier": false,
   "building_condition": 1,
   "building_condition_name": "Velmi dobrý",
@@ -5997,7 +6560,7 @@
  "25964620": {
   "id": "25964620",
   "first_seen": "2026-09-08T12:55:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6009,6 +6572,11 @@
     "at": "2026-09-08",
     "price_czk": 43000,
     "total_czk": 53000
+   },
+   {
+    "at": "2026-09-09",
+    "price_czk": 42000,
+    "total_czk": 51500
    }
   ],
   "url": "https://www.sreality.cz/detail/pronajem/byt/3%2Bkk/x/25964620",
@@ -6024,16 +6592,16 @@
   "lon": 14.460503058799514,
   "dist_km": 2.11,
   "pod_harfou": false,
-  "price_czk": 43000,
-  "fees_czk": 8500,
+  "price_czk": 42000,
+  "fees_czk": 8000,
   "fees_missing": false,
   "fees_source": "field",
   "electricity_czk": 1500,
   "electricity_estimated": true,
-  "total_czk": 53000,
-  "price_czk_per_sqm": 662,
+  "total_czk": 51500,
+  "price_czk_per_sqm": 644,
   "price_old_czk": null,
-  "deal_pct": 20,
+  "deal_pct": 17,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -6065,14 +6633,14 @@
   "elevator": null,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 0,
-  "edited": "2026-09-08",
+  "views": 266,
+  "edited": "2026-09-09",
   "since": "2026-09-08"
  },
  "260845644": {
   "id": "260845644",
   "first_seen": "2026-09-08T12:55:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6142,7 +6710,7 @@
  "2616733772": {
   "id": "2616733772",
   "first_seen": "2026-09-03T12:52:13Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6173,7 +6741,7 @@
   "total_czk": 22000,
   "price_czk_per_sqm": 579,
   "price_old_czk": null,
-  "deal_pct": -3,
+  "deal_pct": -1,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 2,
@@ -6212,7 +6780,7 @@
  "2620141644": {
   "id": "2620141644",
   "first_seen": "2026-09-07T19:55:58Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6282,7 +6850,7 @@
  "2630627404": {
   "id": "2630627404",
   "first_seen": "2026-09-08T12:55:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6352,7 +6920,7 @@
  "2646663244": {
   "id": "2646663244",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6494,7 +7062,7 @@
  "2687250508": {
   "id": "2687250508",
   "first_seen": "2026-09-07T19:55:58Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6525,7 +7093,7 @@
   "total_czk": 26764,
   "price_czk_per_sqm": 478,
   "price_old_czk": null,
-  "deal_pct": -6,
+  "deal_pct": -9,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -6564,7 +7132,7 @@
  "2704945228": {
   "id": "2704945228",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6595,7 +7163,7 @@
   "total_czk": 28190,
   "price_czk_per_sqm": 613,
   "price_old_czk": null,
-  "deal_pct": 3,
+  "deal_pct": 4,
   "deal_outlier": false,
   "building_condition": 2,
   "building_condition_name": "Dobrý",
@@ -6634,7 +7202,7 @@
  "271265868": {
   "id": "271265868",
   "first_seen": "2026-09-01T04:57:13Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6665,7 +7233,7 @@
   "total_czk": 35800,
   "price_czk_per_sqm": 778,
   "price_old_czk": null,
-  "deal_pct": 30,
+  "deal_pct": 32,
   "deal_outlier": false,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
@@ -6704,7 +7272,7 @@
  "2745118796": {
   "id": "2745118796",
   "first_seen": "2026-09-04T19:03:49Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6846,7 +7414,7 @@
  "2766090316": {
   "id": "2766090316",
   "first_seen": "2026-09-04T12:48:45Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6916,7 +7484,7 @@
  "2778476620": {
   "id": "2778476620",
   "first_seen": "2026-09-08T12:55:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6947,7 +7515,7 @@
   "total_czk": 20500,
   "price_czk_per_sqm": 661,
   "price_old_czk": null,
-  "deal_pct": 11,
+  "deal_pct": 13,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -6986,7 +7554,7 @@
  "2778673228": {
   "id": "2778673228",
   "first_seen": "2026-09-04T12:48:45Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7017,7 +7585,7 @@
   "total_czk": 25008,
   "price_czk_per_sqm": 556,
   "price_old_czk": null,
-  "deal_pct": -7,
+  "deal_pct": -5,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -7128,7 +7696,7 @@
  "2818125900": {
   "id": "2818125900",
   "first_seen": "2026-09-02T12:50:31Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7198,7 +7766,7 @@
  "281882700": {
   "id": "281882700",
   "first_seen": "2026-09-07T14:20:54Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7234,7 +7802,7 @@
   "total_czk": 11999000,
   "price_czk_per_sqm": 149988,
   "price_old_czk": null,
-  "deal_pct": -14,
+  "deal_pct": -13,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -7273,7 +7841,7 @@
  "2859085900": {
   "id": "2859085900",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7304,7 +7872,7 @@
   "total_czk": 12970000,
   "price_czk_per_sqm": 170658,
   "price_old_czk": null,
-  "deal_pct": -2,
+  "deal_pct": -1,
   "deal_outlier": false,
   "building_condition": 9,
   "building_condition_name": "Po rekonstrukci",
@@ -7343,7 +7911,7 @@
  "2884317260": {
   "id": "2884317260",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7355,6 +7923,11 @@
     "at": "2026-09-04",
     "price_czk": 22500,
     "total_czk": 27000
+   },
+   {
+    "at": "2026-09-09",
+    "price_czk": 21000,
+    "total_czk": 25700
    }
   ],
   "url": "https://www.sreality.cz/detail/pronajem/byt/1%2B1/x/2884317260",
@@ -7370,16 +7943,16 @@
   "lon": 14.469261,
   "dist_km": 1.91,
   "pod_harfou": false,
-  "price_czk": 22500,
-  "fees_czk": 3000,
+  "price_czk": 21000,
+  "fees_czk": 2000,
   "fees_missing": false,
   "fees_source": "note",
-  "electricity_czk": 1500,
-  "electricity_estimated": true,
-  "total_czk": 27000,
-  "price_czk_per_sqm": 750,
+  "electricity_czk": 2700,
+  "electricity_estimated": false,
+  "total_czk": 25700,
+  "price_czk_per_sqm": 714,
   "price_old_czk": null,
-  "deal_pct": 26,
+  "deal_pct": 22,
   "deal_outlier": false,
   "building_condition": 9,
   "building_condition_name": "Po rekonstrukci",
@@ -7410,15 +7983,15 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 622,
-  "edited": "2026-09-04",
+  "views": 1284,
+  "edited": "2026-09-09",
   "since": "2026-09-01",
   "exclude_from_stats": false
  },
  "2886479948": {
   "id": "2886479948",
   "first_seen": "2026-09-07T19:55:58Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7449,7 +8022,7 @@
   "total_czk": 20499,
   "price_czk_per_sqm": 603,
   "price_old_czk": null,
-  "deal_pct": 2,
+  "deal_pct": 3,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 9,
@@ -7481,14 +8054,84 @@
   "elevator": false,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 367,
+  "views": 728,
   "edited": "2026-09-07",
   "since": "2026-09-07"
+ },
+ "289550412": {
+  "id": "289550412",
+  "first_seen": "2026-09-09T13:03:50Z",
+  "last_seen": "2026-09-09T13:03:50Z",
+  "gone_at": null,
+  "price_history": [
+   {
+    "at": "2026-09-09",
+    "price_czk": 22000,
+    "total_czk": 28000
+   }
+  ],
+  "url": "https://www.sreality.cz/detail/pronajem/byt/1%2Bkk/x/289550412",
+  "source": "sreality",
+  "title": "Pronájem bytu 1+kk 30 m²",
+  "transaction_type": "pronajem",
+  "disposition": "1+kk",
+  "floor_area_sqm": 30.0,
+  "street": "Olšanská",
+  "locality": "Olšanská, Žižkov, Praha",
+  "city_part": "Žižkov",
+  "lat": 50.0835229884827,
+  "lon": 14.4647910662886,
+  "dist_km": 2.53,
+  "pod_harfou": false,
+  "price_czk": 22000,
+  "fees_czk": 4500,
+  "fees_missing": false,
+  "fees_source": "note",
+  "electricity_czk": 1500,
+  "electricity_estimated": true,
+  "total_czk": 28000,
+  "price_czk_per_sqm": 933,
+  "price_old_czk": null,
+  "deal_pct": 23,
+  "deal_outlier": false,
+  "exclude_from_stats": false,
+  "building_condition": 6,
+  "building_condition_name": "Novostavba",
+  "is_new_building": true,
+  "building_type": 2,
+  "building_type_name": "Cihlová",
+  "energy_rating": null,
+  "furnished": "ano",
+  "commission_czk": 0,
+  "tenant_not_pay_commission": null,
+  "no_commission": true,
+  "cellar": false,
+  "cellar_area_sqm": null,
+  "garage": true,
+  "garage_count": null,
+  "parking": true,
+  "parking_state": "unpriced",
+  "parking_price_czk": null,
+  "parking_lots": true,
+  "balcony": true,
+  "balcony_area_sqm": 3,
+  "loggia": false,
+  "loggia_area_sqm": null,
+  "terrace": false,
+  "terrace_area_sqm": null,
+  "floor_number": 3,
+  "floors_total": 21,
+  "elevator": true,
+  "ownership": 1,
+  "ownership_name": "Osobní",
+  "views": 0,
+  "edited": "2026-09-09",
+  "since": "2026-09-09"
  },
  "2928160844": {
   "id": "2928160844",
   "first_seen": "2026-09-03T19:25:36Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7519,7 +8162,7 @@
   "total_czk": 23899,
   "price_czk_per_sqm": 771,
   "price_old_czk": null,
-  "deal_pct": 3,
+  "deal_pct": 2,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -7558,7 +8201,7 @@
  "2929274956": {
   "id": "2929274956",
   "first_seen": "2026-09-02T19:27:42Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7589,7 +8232,7 @@
   "total_czk": 23835,
   "price_czk_per_sqm": 596,
   "price_old_czk": null,
-  "deal_pct": -21,
+  "deal_pct": -22,
   "deal_outlier": false,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
@@ -7628,7 +8271,7 @@
  "2975412300": {
   "id": "2975412300",
   "first_seen": "2026-09-02T12:50:31Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7770,7 +8413,7 @@
  "3022663756": {
   "id": "3022663756",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7801,7 +8444,7 @@
   "total_czk": 31004,
   "price_czk_per_sqm": 689,
   "price_old_czk": null,
-  "deal_pct": 15,
+  "deal_pct": 17,
   "deal_outlier": false,
   "building_condition": 1,
   "building_condition_name": "Velmi dobrý",
@@ -7840,7 +8483,7 @@
  "3029545036": {
   "id": "3029545036",
   "first_seen": "2026-09-08T19:32:22Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7871,7 +8514,7 @@
   "total_czk": 21500,
   "price_czk_per_sqm": 467,
   "price_old_czk": null,
-  "deal_pct": -21,
+  "deal_pct": -20,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 2,
@@ -7903,14 +8546,14 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 0,
-  "edited": "2026-09-08",
+  "views": 371,
+  "edited": "2026-09-09",
   "since": "2026-09-08"
  },
  "3042652236": {
   "id": "3042652236",
   "first_seen": "2026-09-01T04:57:13Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7941,7 +8584,7 @@
   "total_czk": 25031,
   "price_czk_per_sqm": 759,
   "price_old_czk": null,
-  "deal_pct": 1,
+  "deal_pct": 0,
   "deal_outlier": false,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
@@ -7980,7 +8623,7 @@
  "3056152652": {
   "id": "3056152652",
   "first_seen": "2026-09-02T12:50:31Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8011,7 +8654,7 @@
   "total_czk": 29500,
   "price_czk_per_sqm": 410,
   "price_old_czk": null,
-  "deal_pct": -12,
+  "deal_pct": -8,
   "deal_outlier": false,
   "building_condition": 1,
   "building_condition_name": "Velmi dobrý",
@@ -8042,7 +8685,7 @@
   "elevator": null,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 1252,
+  "views": 1433,
   "edited": "2026-09-02",
   "since": "2026-09-02",
   "exclude_from_stats": false
@@ -8050,7 +8693,7 @@
  "3091017804": {
   "id": "3091017804",
   "first_seen": "2026-09-07T14:20:54Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8081,7 +8724,7 @@
   "total_czk": 6390000,
   "price_czk_per_sqm": 116182,
   "price_old_czk": null,
-  "deal_pct": -18,
+  "deal_pct": -19,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -8120,7 +8763,7 @@
  "3123261516": {
   "id": "3123261516",
   "first_seen": "2026-09-02T12:50:31Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8151,7 +8794,7 @@
   "total_czk": 7500000,
   "price_czk_per_sqm": 138889,
   "price_old_czk": null,
-  "deal_pct": -2,
+  "deal_pct": -3,
   "deal_outlier": false,
   "building_condition": 2,
   "building_condition_name": "Dobrý",
@@ -8190,7 +8833,7 @@
  "3135909964": {
   "id": "3135909964",
   "first_seen": "2026-09-01T19:23:47Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8221,7 +8864,7 @@
   "total_czk": 31500,
   "price_czk_per_sqm": 594,
   "price_old_czk": null,
-  "deal_pct": -1,
+  "deal_pct": 1,
   "deal_outlier": false,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
@@ -8260,7 +8903,7 @@
  "3139973196": {
   "id": "3139973196",
   "first_seen": "2026-09-03T12:52:13Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8291,7 +8934,7 @@
   "total_czk": 23000,
   "price_czk_per_sqm": 767,
   "price_old_czk": null,
-  "deal_pct": 2,
+  "deal_pct": 1,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -8330,7 +8973,7 @@
  "3165859916": {
   "id": "3165859916",
   "first_seen": "2026-09-08T18:49:57Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8400,7 +9043,7 @@
  "3197775948": {
   "id": "3197775948",
   "first_seen": "2026-09-02T12:50:31Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8431,7 +9074,7 @@
   "total_czk": 29000,
   "price_czk_per_sqm": 592,
   "price_old_czk": null,
-  "deal_pct": 16,
+  "deal_pct": 13,
   "deal_outlier": false,
   "building_condition": 2,
   "building_condition_name": "Dobrý",
@@ -8470,7 +9113,7 @@
  "3249745996": {
   "id": "3249745996",
   "first_seen": "2026-09-08T18:49:57Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8501,7 +9144,7 @@
   "total_czk": 29244,
   "price_czk_per_sqm": 836,
   "price_old_czk": null,
-  "deal_pct": 40,
+  "deal_pct": 42,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -8533,14 +9176,14 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 0,
+  "views": 236,
   "edited": "2026-09-08",
   "since": "2026-09-08"
  },
  "3259773004": {
   "id": "3259773004",
   "first_seen": "2026-09-07T14:20:54Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8571,7 +9214,7 @@
   "total_czk": 43300,
   "price_czk_per_sqm": 817,
   "price_old_czk": null,
-  "deal_pct": 37,
+  "deal_pct": 39,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -8610,7 +9253,7 @@
  "3263836236": {
   "id": "3263836236",
   "first_seen": "2026-09-02T12:50:31Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8641,7 +9284,7 @@
   "total_czk": 29990,
   "price_czk_per_sqm": 469,
   "price_old_czk": null,
-  "deal_pct": -21,
+  "deal_pct": -20,
   "deal_outlier": false,
   "building_condition": 1,
   "building_condition_name": "Velmi dobrý",
@@ -8680,7 +9323,7 @@
  "3265802316": {
   "id": "3265802316",
   "first_seen": "2026-09-03T12:52:13Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8711,7 +9354,7 @@
   "total_czk": 6880000,
   "price_czk_per_sqm": 132308,
   "price_old_czk": null,
-  "deal_pct": -7,
+  "deal_pct": -8,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 8,
@@ -8750,7 +9393,7 @@
  "3267244108": {
   "id": "3267244108",
   "first_seen": "2026-09-06T12:13:21Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8781,7 +9424,7 @@
   "total_czk": 22400,
   "price_czk_per_sqm": 640,
   "price_old_czk": null,
-  "deal_pct": -15,
+  "deal_pct": -16,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -8820,7 +9463,7 @@
  "3277598796": {
   "id": "3277598796",
   "first_seen": "2026-09-07T19:55:58Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8851,7 +9494,7 @@
   "total_czk": 30400,
   "price_czk_per_sqm": 533,
   "price_old_czk": null,
-  "deal_pct": -11,
+  "deal_pct": -9,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 9,
@@ -8890,7 +9533,7 @@
  "3279867980": {
   "id": "3279867980",
   "first_seen": "2026-09-04T12:48:45Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8965,7 +9608,7 @@
  "3335729228": {
   "id": "3335729228",
   "first_seen": "2026-09-08T18:49:57Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8996,7 +9639,7 @@
   "total_czk": 29535,
   "price_czk_per_sqm": 615,
   "price_old_czk": null,
-  "deal_pct": 3,
+  "deal_pct": 5,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -9035,7 +9678,7 @@
  "338309196": {
   "id": "338309196",
   "first_seen": "2026-09-04T19:03:49Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9066,7 +9709,7 @@
   "total_czk": 14900000,
   "price_czk_per_sqm": 261404,
   "price_old_czk": null,
-  "deal_pct": 47,
+  "deal_pct": 46,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -9177,7 +9820,7 @@
  "3393073228": {
   "id": "3393073228",
   "first_seen": "2026-09-04T22:22:58Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9208,7 +9851,7 @@
   "total_czk": 29500,
   "price_czk_per_sqm": 656,
   "price_old_czk": null,
-  "deal_pct": 10,
+  "deal_pct": 12,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -9247,7 +9890,7 @@
  "3396284492": {
   "id": "3396284492",
   "first_seen": "2026-09-03T19:25:36Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9278,7 +9921,7 @@
   "total_czk": 25649,
   "price_czk_per_sqm": 712,
   "price_old_czk": null,
-  "deal_pct": -5,
+  "deal_pct": -6,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -9317,7 +9960,7 @@
  "3423350860": {
   "id": "3423350860",
   "first_seen": "2026-09-07T19:55:58Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9348,7 +9991,7 @@
   "total_czk": 13900,
   "price_czk_per_sqm": 1158,
   "price_old_czk": null,
-  "deal_pct": 54,
+  "deal_pct": 52,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 2,
@@ -9383,6 +10026,76 @@
   "views": 0,
   "edited": "2026-09-07",
   "since": "2026-09-07"
+ },
+ "3469881420": {
+  "id": "3469881420",
+  "first_seen": "2026-09-09T13:03:50Z",
+  "last_seen": "2026-09-09T13:03:50Z",
+  "gone_at": null,
+  "price_history": [
+   {
+    "at": "2026-09-09",
+    "price_czk": 9050000,
+    "total_czk": 9050000
+   }
+  ],
+  "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/3469881420",
+  "source": "sreality",
+  "title": "Prodej bytu 2+kk 97 m²",
+  "transaction_type": "prodej",
+  "disposition": "2+kk",
+  "floor_area_sqm": 97.0,
+  "street": "Gerstelova",
+  "locality": "Gerstelova, Vysočany, Praha",
+  "city_part": "Vysočany",
+  "lat": 50.103823,
+  "lon": 14.506708,
+  "dist_km": 1.28,
+  "pod_harfou": false,
+  "price_czk": 9050000,
+  "fees_czk": null,
+  "fees_missing": true,
+  "fees_source": null,
+  "electricity_czk": null,
+  "electricity_estimated": false,
+  "total_czk": 9050000,
+  "price_czk_per_sqm": 93299,
+  "price_old_czk": null,
+  "deal_pct": -48,
+  "deal_outlier": true,
+  "exclude_from_stats": false,
+  "building_condition": 6,
+  "building_condition_name": "Novostavba",
+  "is_new_building": true,
+  "building_type": 2,
+  "building_type_name": "Cihlová",
+  "energy_rating": "B",
+  "furnished": "ne",
+  "commission_czk": null,
+  "tenant_not_pay_commission": null,
+  "no_commission": null,
+  "cellar": false,
+  "cellar_area_sqm": null,
+  "garage": true,
+  "garage_count": null,
+  "parking": true,
+  "parking_state": "unpriced",
+  "parking_price_czk": null,
+  "parking_lots": true,
+  "balcony": true,
+  "balcony_area_sqm": 11,
+  "loggia": false,
+  "loggia_area_sqm": null,
+  "terrace": true,
+  "terrace_area_sqm": null,
+  "floor_number": 5,
+  "floors_total": 7,
+  "elevator": true,
+  "ownership": 1,
+  "ownership_name": "Osobní",
+  "views": 0,
+  "edited": "2026-09-09",
+  "since": "2026-09-09"
  },
  "3495538764": {
   "id": "3495538764",
@@ -9459,7 +10172,7 @@
  "3503894604": {
   "id": "3503894604",
   "first_seen": "2026-09-02T19:27:42Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9601,7 +10314,7 @@
  "3508154444": {
   "id": "3508154444",
   "first_seen": "2026-09-01T19:23:47Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9632,7 +10345,7 @@
   "total_czk": 25849,
   "price_czk_per_sqm": 783,
   "price_old_czk": null,
-  "deal_pct": 4,
+  "deal_pct": 3,
   "deal_outlier": false,
   "building_condition": 1,
   "building_condition_name": "Velmi dobrý",
@@ -9671,7 +10384,7 @@
  "3511496780": {
   "id": "3511496780",
   "first_seen": "2026-09-06T22:11:14Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9741,7 +10454,7 @@
  "3514445900": {
   "id": "3514445900",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9811,7 +10524,7 @@
  "3529715788": {
   "id": "3529715788",
   "first_seen": "2026-09-08T12:55:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9842,7 +10555,7 @@
   "total_czk": 24690,
   "price_czk_per_sqm": 574,
   "price_old_czk": null,
-  "deal_pct": -4,
+  "deal_pct": -2,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -9881,7 +10594,7 @@
  "3535548492": {
   "id": "3535548492",
   "first_seen": "2026-09-08T12:55:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9912,7 +10625,7 @@
   "total_czk": 7206000,
   "price_czk_per_sqm": 184769,
   "price_old_czk": null,
-  "deal_pct": -9,
+  "deal_pct": -8,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -9951,7 +10664,7 @@
  "3559534668": {
   "id": "3559534668",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9982,7 +10695,7 @@
   "total_czk": 8990000,
   "price_czk_per_sqm": 160536,
   "price_old_czk": null,
-  "deal_pct": 13,
+  "deal_pct": 12,
   "deal_outlier": false,
   "building_condition": 9,
   "building_condition_name": "Po rekonstrukci",
@@ -10021,7 +10734,7 @@
  "3591581772": {
   "id": "3591581772",
   "first_seen": "2026-09-08T12:55:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10052,7 +10765,7 @@
   "total_czk": 29100,
   "price_czk_per_sqm": 647,
   "price_old_czk": null,
-  "deal_pct": 8,
+  "deal_pct": 10,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -10084,14 +10797,14 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 0,
+  "views": 301,
   "edited": "2026-09-08",
   "since": "2026-09-08"
  },
  "3610849356": {
   "id": "3610849356",
   "first_seen": "2026-09-02T12:50:31Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10122,7 +10835,7 @@
   "total_czk": 29700,
   "price_czk_per_sqm": 495,
   "price_old_czk": null,
-  "deal_pct": -17,
+  "deal_pct": -16,
   "deal_outlier": false,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
@@ -10161,7 +10874,7 @@
  "362491980": {
   "id": "362491980",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10192,7 +10905,7 @@
   "total_czk": 3999000,
   "price_czk_per_sqm": 153808,
   "price_old_czk": null,
-  "deal_pct": -25,
+  "deal_pct": -24,
   "deal_outlier": false,
   "building_condition": 2,
   "building_condition_name": "Dobrý",
@@ -10231,7 +10944,7 @@
  "3638046796": {
   "id": "3638046796",
   "first_seen": "2026-09-03T12:52:13Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10267,7 +10980,7 @@
   "total_czk": 6990000,
   "price_czk_per_sqm": 199714,
   "price_old_czk": null,
-  "deal_pct": 18,
+  "deal_pct": 16,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 9,
@@ -10306,7 +11019,7 @@
  "3703451724": {
   "id": "3703451724",
   "first_seen": "2026-09-06T12:13:21Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10337,7 +11050,7 @@
   "total_czk": 31500,
   "price_czk_per_sqm": 516,
   "price_old_czk": null,
-  "deal_pct": -14,
+  "deal_pct": -12,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -10376,7 +11089,7 @@
  "372125772": {
   "id": "372125772",
   "first_seen": "2026-09-04T19:03:49Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10515,10 +11228,80 @@
   "gone_last_price_czk": 24800,
   "gone_last_total_czk": 32600
  },
+ "3737268300": {
+  "id": "3737268300",
+  "first_seen": "2026-09-09T13:03:50Z",
+  "last_seen": "2026-09-09T13:03:50Z",
+  "gone_at": null,
+  "price_history": [
+   {
+    "at": "2026-09-09",
+    "price_czk": 21990,
+    "total_czk": 27350
+   }
+  ],
+  "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/3737268300",
+  "source": "sreality",
+  "title": "Pronájem bytu 2+kk 47 m²",
+  "transaction_type": "pronajem",
+  "disposition": "2+kk",
+  "floor_area_sqm": 47.0,
+  "street": "Spojovací",
+  "locality": "Spojovací, Vysočany, Praha",
+  "city_part": "Vysočany",
+  "lat": 50.1018517604829,
+  "lon": 14.4861181738346,
+  "dist_km": 0.38,
+  "pod_harfou": false,
+  "price_czk": 21990,
+  "fees_czk": 3860,
+  "fees_missing": false,
+  "fees_source": "field",
+  "electricity_czk": 1500,
+  "electricity_estimated": true,
+  "total_czk": 27350,
+  "price_czk_per_sqm": 582,
+  "price_old_czk": null,
+  "deal_pct": -1,
+  "deal_outlier": false,
+  "exclude_from_stats": false,
+  "building_condition": 2,
+  "building_condition_name": "Dobrý",
+  "is_new_building": false,
+  "building_type": 2,
+  "building_type_name": "Cihlová",
+  "energy_rating": "B",
+  "furnished": "ne",
+  "commission_czk": 0,
+  "tenant_not_pay_commission": null,
+  "no_commission": true,
+  "cellar": true,
+  "cellar_area_sqm": null,
+  "garage": false,
+  "garage_count": null,
+  "parking": false,
+  "parking_state": "none",
+  "parking_price_czk": null,
+  "parking_lots": false,
+  "balcony": true,
+  "balcony_area_sqm": null,
+  "loggia": false,
+  "loggia_area_sqm": null,
+  "terrace": false,
+  "terrace_area_sqm": null,
+  "floor_number": 3,
+  "floors_total": 6,
+  "elevator": true,
+  "ownership": 1,
+  "ownership_name": "Osobní",
+  "views": 0,
+  "edited": "2026-09-09",
+  "since": "2026-09-09"
+ },
  "3752734796": {
   "id": "3752734796",
   "first_seen": "2026-09-06T12:13:21Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10549,7 +11332,7 @@
   "total_czk": 27480,
   "price_czk_per_sqm": 500,
   "price_old_czk": null,
-  "deal_pct": -16,
+  "deal_pct": -15,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -10588,7 +11371,7 @@
  "3794284620": {
   "id": "3794284620",
   "first_seen": "2026-09-03T12:52:13Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10619,7 +11402,7 @@
   "total_czk": 44500,
   "price_czk_per_sqm": 754,
   "price_old_czk": null,
-  "deal_pct": 26,
+  "deal_pct": 28,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -10658,7 +11441,7 @@
  "3836686412": {
   "id": "3836686412",
   "first_seen": "2026-09-04T12:48:45Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10689,7 +11472,7 @@
   "total_czk": 27450,
   "price_czk_per_sqm": 499,
   "price_old_czk": null,
-  "deal_pct": -2,
+  "deal_pct": -5,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 2,
@@ -10728,7 +11511,7 @@
  "3868405836": {
   "id": "3868405836",
   "first_seen": "2026-09-08T22:36:56Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10759,7 +11542,7 @@
   "total_czk": 29000,
   "price_czk_per_sqm": 569,
   "price_old_czk": null,
-  "deal_pct": -5,
+  "deal_pct": -3,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -10798,7 +11581,7 @@
  "3877843020": {
   "id": "3877843020",
   "first_seen": "2026-09-08T12:55:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10829,7 +11612,7 @@
   "total_czk": 6750000,
   "price_czk_per_sqm": 182432,
   "price_old_czk": null,
-  "deal_pct": -11,
+  "deal_pct": -9,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -10868,7 +11651,7 @@
  "3891998796": {
   "id": "3891998796",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10899,7 +11682,7 @@
   "total_czk": 9190000,
   "price_czk_per_sqm": 117821,
   "price_old_czk": null,
-  "deal_pct": -19,
+  "deal_pct": -15,
   "deal_outlier": false,
   "building_condition": 2,
   "building_condition_name": "Dobrý",
@@ -10935,10 +11718,80 @@
   "since": "2026-09-01",
   "exclude_from_stats": false
  },
+ "3894554700": {
+  "id": "3894554700",
+  "first_seen": "2026-09-09T13:03:50Z",
+  "last_seen": "2026-09-09T13:03:50Z",
+  "gone_at": null,
+  "price_history": [
+   {
+    "at": "2026-09-09",
+    "price_czk": 18900,
+    "total_czk": 22596
+   }
+  ],
+  "url": "https://www.sreality.cz/detail/pronajem/byt/1%2Bkk/x/3894554700",
+  "source": "sreality",
+  "title": "Pronájem bytu 1+kk 32 m²",
+  "transaction_type": "pronajem",
+  "disposition": "1+kk",
+  "floor_area_sqm": 32.0,
+  "street": "Poděbradská",
+  "locality": "Poděbradská, Hloubětín, Praha",
+  "city_part": "Hloubětín",
+  "lat": 50.103446,
+  "lon": 14.523596,
+  "dist_km": 2.44,
+  "pod_harfou": false,
+  "price_czk": 18900,
+  "fees_czk": 2496,
+  "fees_missing": false,
+  "fees_source": "text",
+  "electricity_czk": 1200,
+  "electricity_estimated": false,
+  "total_czk": 22596,
+  "price_czk_per_sqm": 706,
+  "price_old_czk": null,
+  "deal_pct": -7,
+  "deal_outlier": false,
+  "exclude_from_stats": false,
+  "building_condition": 6,
+  "building_condition_name": "Novostavba",
+  "is_new_building": true,
+  "building_type": 2,
+  "building_type_name": "Cihlová",
+  "energy_rating": "B",
+  "furnished": "castecne",
+  "commission_czk": 0,
+  "tenant_not_pay_commission": false,
+  "no_commission": true,
+  "cellar": true,
+  "cellar_area_sqm": 3,
+  "garage": false,
+  "garage_count": null,
+  "parking": false,
+  "parking_state": "none",
+  "parking_price_czk": null,
+  "parking_lots": false,
+  "balcony": false,
+  "balcony_area_sqm": null,
+  "loggia": true,
+  "loggia_area_sqm": 5,
+  "terrace": false,
+  "terrace_area_sqm": null,
+  "floor_number": 3,
+  "floors_total": null,
+  "elevator": true,
+  "ownership": 1,
+  "ownership_name": "Osobní",
+  "views": 0,
+  "edited": "2026-09-09",
+  "since": "2026-09-09"
+ },
  "3908841548": {
   "id": "3908841548",
   "first_seen": "2026-09-07T22:49:30Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10969,7 +11822,7 @@
   "total_czk": 26500000,
   "price_czk_per_sqm": 234513,
   "price_old_czk": null,
-  "deal_pct": 35,
+  "deal_pct": 36,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -11008,7 +11861,7 @@
  "3916943436": {
   "id": "3916943436",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11039,7 +11892,7 @@
   "total_czk": 31000,
   "price_czk_per_sqm": 738,
   "price_old_czk": null,
-  "deal_pct": 23,
+  "deal_pct": 26,
   "deal_outlier": false,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
@@ -11078,7 +11931,7 @@
  "3938070604": {
   "id": "3938070604",
   "first_seen": "2026-09-02T04:19:01Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11109,7 +11962,7 @@
   "total_czk": 25300,
   "price_czk_per_sqm": 767,
   "price_old_czk": null,
-  "deal_pct": 2,
+  "deal_pct": 1,
   "deal_outlier": false,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
@@ -11148,7 +12001,7 @@
  "3952029772": {
   "id": "3952029772",
   "first_seen": "2026-09-04T12:48:45Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11179,7 +12032,7 @@
   "total_czk": 32317,
   "price_czk_per_sqm": 521,
   "price_old_czk": null,
-  "deal_pct": -13,
+  "deal_pct": -11,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -11218,7 +12071,7 @@
  "3957993548": {
   "id": "3957993548",
   "first_seen": "2026-09-01T19:23:47Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11288,7 +12141,7 @@
  "3962318924": {
   "id": "3962318924",
   "first_seen": "2026-09-07T19:55:58Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11319,7 +12172,7 @@
   "total_czk": 23400,
   "price_czk_per_sqm": 371,
   "price_old_czk": null,
-  "deal_pct": -38,
+  "deal_pct": -37,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -11355,10 +12208,80 @@
   "edited": "2026-09-07",
   "since": "2026-09-07"
  },
+ "3973197900": {
+  "id": "3973197900",
+  "first_seen": "2026-09-09T13:03:50Z",
+  "last_seen": "2026-09-09T13:03:50Z",
+  "gone_at": null,
+  "price_history": [
+   {
+    "at": "2026-09-09",
+    "price_czk": 42000,
+    "total_czk": 53500
+   }
+  ],
+  "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/3973197900",
+  "source": "sreality",
+  "title": "Pronájem bytu 2+kk 58 m²",
+  "transaction_type": "pronajem",
+  "disposition": "2+kk",
+  "floor_area_sqm": 58.0,
+  "street": "Sokolovská",
+  "locality": "Sokolovská, Karlín, Praha",
+  "city_part": "Karlín",
+  "lat": 50.0992821048,
+  "lon": 14.4688838805,
+  "dist_km": 1.51,
+  "pod_harfou": false,
+  "price_czk": 42000,
+  "fees_czk": 10000,
+  "fees_missing": false,
+  "fees_source": "text",
+  "electricity_czk": 1500,
+  "electricity_estimated": true,
+  "total_czk": 53500,
+  "price_czk_per_sqm": 922,
+  "price_old_czk": null,
+  "deal_pct": 57,
+  "deal_outlier": false,
+  "exclude_from_stats": false,
+  "building_condition": 1,
+  "building_condition_name": "Velmi dobrý",
+  "is_new_building": false,
+  "building_type": 7,
+  "building_type_name": "Smíšená",
+  "energy_rating": "A",
+  "furnished": "ano",
+  "commission_czk": 0,
+  "tenant_not_pay_commission": false,
+  "no_commission": true,
+  "cellar": true,
+  "cellar_area_sqm": 3,
+  "garage": true,
+  "garage_count": 1,
+  "parking": true,
+  "parking_state": "unpriced",
+  "parking_price_czk": null,
+  "parking_lots": true,
+  "balcony": false,
+  "balcony_area_sqm": null,
+  "loggia": true,
+  "loggia_area_sqm": 4,
+  "terrace": false,
+  "terrace_area_sqm": null,
+  "floor_number": 5,
+  "floors_total": null,
+  "elevator": true,
+  "ownership": 1,
+  "ownership_name": "Osobní",
+  "views": 0,
+  "edited": "2026-09-09",
+  "since": "2026-09-09"
+ },
  "402403404": {
   "id": "402403404",
   "first_seen": "2026-09-07T22:49:30Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11428,7 +12351,7 @@
  "4055773260": {
   "id": "4055773260",
   "first_seen": "2026-09-06T12:13:21Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11495,10 +12418,80 @@
   "edited": "2026-09-06",
   "since": "2026-09-06"
  },
+ "4059181132": {
+  "id": "4059181132",
+  "first_seen": "2026-09-09T13:03:50Z",
+  "last_seen": "2026-09-09T13:03:50Z",
+  "gone_at": null,
+  "price_history": [
+   {
+    "at": "2026-09-09",
+    "price_czk": 30000,
+    "total_czk": 31500
+   }
+  ],
+  "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/4059181132",
+  "source": "sreality",
+  "title": "Pronájem bytu 2+kk 47 m²",
+  "transaction_type": "pronajem",
+  "disposition": "2+kk",
+  "floor_area_sqm": 47.0,
+  "street": "Švarcova",
+  "locality": "Švarcova, Karlín, Praha",
+  "city_part": "Karlín",
+  "lat": 50.0926315633954,
+  "lon": 14.4630527245228,
+  "dist_km": 2.07,
+  "pod_harfou": false,
+  "price_czk": 30000,
+  "fees_czk": null,
+  "fees_missing": true,
+  "fees_source": null,
+  "electricity_czk": 1500,
+  "electricity_estimated": true,
+  "total_czk": 31500,
+  "price_czk_per_sqm": 670,
+  "price_old_czk": null,
+  "deal_pct": 14,
+  "deal_outlier": false,
+  "exclude_from_stats": false,
+  "building_condition": 6,
+  "building_condition_name": "Novostavba",
+  "is_new_building": true,
+  "building_type": 7,
+  "building_type_name": "Smíšená",
+  "energy_rating": "B",
+  "furnished": "ne",
+  "commission_czk": 0,
+  "tenant_not_pay_commission": null,
+  "no_commission": true,
+  "cellar": true,
+  "cellar_area_sqm": null,
+  "garage": false,
+  "garage_count": null,
+  "parking": false,
+  "parking_state": "none",
+  "parking_price_czk": null,
+  "parking_lots": false,
+  "balcony": true,
+  "balcony_area_sqm": 4,
+  "loggia": false,
+  "loggia_area_sqm": null,
+  "terrace": false,
+  "terrace_area_sqm": null,
+  "floor_number": 2,
+  "floors_total": null,
+  "elevator": true,
+  "ownership": 1,
+  "ownership_name": "Osobní",
+  "views": 0,
+  "edited": "2026-09-09",
+  "since": "2026-09-09"
+ },
  "4088934476": {
   "id": "4088934476",
   "first_seen": "2026-09-03T19:25:36Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11568,7 +12561,7 @@
  "4089983052": {
   "id": "4089983052",
   "first_seen": "2026-09-03T12:52:13Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11599,7 +12592,7 @@
   "total_czk": 4399000,
   "price_czk_per_sqm": 183292,
   "price_old_czk": null,
-  "deal_pct": -10,
+  "deal_pct": -9,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -11710,7 +12703,7 @@
  "4116459596": {
   "id": "4116459596",
   "first_seen": "2026-09-07T14:20:54Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11741,7 +12734,7 @@
   "total_czk": 28200,
   "price_czk_per_sqm": 588,
   "price_old_czk": null,
-  "deal_pct": -2,
+  "deal_pct": 0,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 9,
@@ -11780,7 +12773,7 @@
  "4149723212": {
   "id": "4149723212",
   "first_seen": "2026-09-01T19:23:47Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11816,7 +12809,7 @@
   "total_czk": 25114,
   "price_czk_per_sqm": 502,
   "price_old_czk": null,
-  "deal_pct": -2,
+  "deal_pct": -4,
   "deal_outlier": false,
   "building_condition": 9,
   "building_condition_name": "Po rekonstrukci",
@@ -11855,7 +12848,7 @@
  "4152307788": {
   "id": "4152307788",
   "first_seen": "2026-09-03T19:25:36Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11925,7 +12918,7 @@
  "4159909964": {
   "id": "4159909964",
   "first_seen": "2026-09-08T18:49:57Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11956,7 +12949,7 @@
   "total_czk": 19500,
   "price_czk_per_sqm": 488,
   "price_old_czk": null,
-  "deal_pct": -18,
+  "deal_pct": -17,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -11995,7 +12988,7 @@
  "4180488268": {
   "id": "4180488268",
   "first_seen": "2026-09-07T14:20:54Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12026,7 +13019,7 @@
   "total_czk": 9460000,
   "price_czk_per_sqm": 165965,
   "price_old_czk": null,
-  "deal_pct": 17,
+  "deal_pct": 16,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 2,
@@ -12065,7 +13058,7 @@
  "4188680268": {
   "id": "4188680268",
   "first_seen": "2026-09-01T22:38:34Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12096,7 +13089,7 @@
   "total_czk": 5190000,
   "price_czk_per_sqm": 103800,
   "price_old_czk": null,
-  "deal_pct": -49,
+  "deal_pct": -48,
   "deal_outlier": true,
   "building_condition": 2,
   "building_condition_name": "Dobrý",
@@ -12135,7 +13128,7 @@
  "4203622476": {
   "id": "4203622476",
   "first_seen": "2026-09-06T22:11:14Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12166,7 +13159,7 @@
   "total_czk": 25350,
   "price_czk_per_sqm": 461,
   "price_old_czk": null,
-  "deal_pct": -23,
+  "deal_pct": -22,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -12205,13 +13198,18 @@
  "4204736588": {
   "id": "4204736588",
   "first_seen": "2026-09-04T19:03:49Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
     "at": "2026-09-04",
     "price_czk": 18800,
     "total_czk": 24549
+   },
+   {
+    "at": "2026-09-09",
+    "price_czk": 18500,
+    "total_czk": 24249
    }
   ],
   "url": "https://www.sreality.cz/detail/pronajem/byt/1%2Bkk/x/4204736588",
@@ -12227,16 +13225,16 @@
   "lon": 14.5255359341,
   "dist_km": 2.74,
   "pod_harfou": false,
-  "price_czk": 18800,
+  "price_czk": 18500,
   "fees_czk": 4249,
   "fees_missing": false,
   "fees_source": "field",
   "electricity_czk": 1500,
   "electricity_estimated": true,
-  "total_czk": 24549,
-  "price_czk_per_sqm": 682,
+  "total_czk": 24249,
+  "price_czk_per_sqm": 674,
   "price_old_czk": null,
-  "deal_pct": -9,
+  "deal_pct": -11,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -12246,7 +13244,7 @@
   "building_type_name": "Smíšená",
   "energy_rating": "B",
   "furnished": "castecne",
-  "commission_czk": 22748,
+  "commission_czk": 22385,
   "tenant_not_pay_commission": false,
   "no_commission": false,
   "cellar": true,
@@ -12268,14 +13266,14 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 0,
-  "edited": "2026-09-04",
+  "views": 373,
+  "edited": "2026-09-09",
   "since": "2026-09-04"
  },
  "4216926284": {
   "id": "4216926284",
   "first_seen": "2026-09-02T12:50:31Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12306,7 +13304,7 @@
   "total_czk": 29900,
   "price_czk_per_sqm": 575,
   "price_old_czk": null,
-  "deal_pct": -4,
+  "deal_pct": -2,
   "deal_outlier": false,
   "building_condition": 1,
   "building_condition_name": "Velmi dobrý",
@@ -12345,7 +13343,7 @@
  "4233769036": {
   "id": "4233769036",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12376,7 +13374,7 @@
   "total_czk": 6500000,
   "price_czk_per_sqm": 203125,
   "price_old_czk": null,
-  "deal_pct": 0,
+  "deal_pct": 1,
   "deal_outlier": false,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
@@ -12415,7 +13413,7 @@
  "4254281804": {
   "id": "4254281804",
   "first_seen": "2026-09-08T22:36:56Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12446,7 +13444,7 @@
   "total_czk": 24800,
   "price_czk_per_sqm": 459,
   "price_old_czk": null,
-  "deal_pct": -10,
+  "deal_pct": -12,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -12485,7 +13483,7 @@
  "425537612": {
   "id": "425537612",
   "first_seen": "2026-09-07T14:20:54Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12521,7 +13519,7 @@
   "total_czk": 22490,
   "price_czk_per_sqm": 592,
   "price_old_czk": null,
-  "deal_pct": 16,
+  "deal_pct": 13,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 2,
@@ -12560,7 +13558,7 @@
  "4271779916": {
   "id": "4271779916",
   "first_seen": "2026-09-06T22:11:14Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12591,7 +13589,7 @@
   "total_czk": 8850000,
   "price_czk_per_sqm": 124648,
   "price_old_czk": null,
-  "deal_pct": -14,
+  "deal_pct": -11,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 2,
@@ -12630,7 +13628,7 @@
  "434909260": {
   "id": "434909260",
   "first_seen": "2026-09-07T19:55:58Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12661,7 +13659,7 @@
   "total_czk": 35000,
   "price_czk_per_sqm": 625,
   "price_old_czk": null,
-  "deal_pct": 5,
+  "deal_pct": 6,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -12700,7 +13698,7 @@
  "443035724": {
   "id": "443035724",
   "first_seen": "2026-09-02T22:35:41Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12731,7 +13729,7 @@
   "total_czk": 25546,
   "price_czk_per_sqm": 393,
   "price_old_czk": null,
-  "deal_pct": -23,
+  "deal_pct": -25,
   "deal_outlier": false,
   "building_condition": 1,
   "building_condition_name": "Velmi dobrý",
@@ -12839,10 +13837,80 @@
   "gone_last_price_czk": 23000,
   "gone_last_total_czk": 29500
  },
+ "469905484": {
+  "id": "469905484",
+  "first_seen": "2026-09-09T13:03:50Z",
+  "last_seen": "2026-09-09T13:03:50Z",
+  "gone_at": null,
+  "price_history": [
+   {
+    "at": "2026-09-09",
+    "price_czk": 19000,
+    "total_czk": 25000
+   }
+  ],
+  "url": "https://www.sreality.cz/detail/pronajem/byt/2%2B1/x/469905484",
+  "source": "sreality",
+  "title": "Pronájem bytu 2+1 50 m²",
+  "transaction_type": "pronajem",
+  "disposition": "2+1",
+  "floor_area_sqm": 50.0,
+  "street": "Sokolovská",
+  "locality": "Sokolovská, Libeň, Praha",
+  "city_part": "Libeň",
+  "lat": 50.105435,
+  "lon": 14.484303,
+  "dist_km": 0.77,
+  "pod_harfou": false,
+  "price_czk": 19000,
+  "fees_czk": 4500,
+  "fees_missing": false,
+  "fees_source": "note",
+  "electricity_czk": 1500,
+  "electricity_estimated": true,
+  "total_czk": 25000,
+  "price_czk_per_sqm": 500,
+  "price_old_czk": null,
+  "deal_pct": -5,
+  "deal_outlier": false,
+  "exclude_from_stats": false,
+  "building_condition": 1,
+  "building_condition_name": "Velmi dobrý",
+  "is_new_building": false,
+  "building_type": 2,
+  "building_type_name": "Cihlová",
+  "energy_rating": "G",
+  "furnished": null,
+  "commission_czk": 0,
+  "tenant_not_pay_commission": false,
+  "no_commission": true,
+  "cellar": false,
+  "cellar_area_sqm": null,
+  "garage": false,
+  "garage_count": null,
+  "parking": false,
+  "parking_state": "none",
+  "parking_price_czk": null,
+  "parking_lots": false,
+  "balcony": false,
+  "balcony_area_sqm": null,
+  "loggia": true,
+  "loggia_area_sqm": null,
+  "terrace": false,
+  "terrace_area_sqm": null,
+  "floor_number": 5,
+  "floors_total": 6,
+  "elevator": null,
+  "ownership": 2,
+  "ownership_name": "Družstevní",
+  "views": 0,
+  "edited": "2026-09-09",
+  "since": "2026-09-09"
+ },
  "470081612": {
   "id": "470081612",
   "first_seen": "2026-09-03T12:52:13Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12873,7 +13941,7 @@
   "total_czk": 78000,
   "price_czk_per_sqm": 848,
   "price_old_czk": null,
-  "deal_pct": 53,
+  "deal_pct": 54,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -12912,7 +13980,7 @@
  "550056012": {
   "id": "550056012",
   "first_seen": "2026-09-02T19:27:42Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12982,7 +14050,7 @@
  "561852492": {
   "id": "561852492",
   "first_seen": "2026-09-06T22:11:14Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -13052,7 +14120,7 @@
  "562245708": {
   "id": "562245708",
   "first_seen": "2026-09-08T18:49:57Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -13083,7 +14151,7 @@
   "total_czk": 46000,
   "price_czk_per_sqm": 630,
   "price_old_czk": null,
-  "deal_pct": 5,
+  "deal_pct": 7,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -13122,7 +14190,7 @@
  "573255756": {
   "id": "573255756",
   "first_seen": "2026-09-01T04:57:13Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -13153,7 +14221,7 @@
   "total_czk": 35400,
   "price_czk_per_sqm": 472,
   "price_old_czk": null,
-  "deal_pct": -15,
+  "deal_pct": -14,
   "deal_outlier": false,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
@@ -13192,7 +14260,7 @@
  "579022924": {
   "id": "579022924",
   "first_seen": "2026-09-08T18:49:57Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -13223,7 +14291,7 @@
   "total_czk": 15490000,
   "price_czk_per_sqm": 163053,
   "price_old_czk": null,
-  "deal_pct": -6,
+  "deal_pct": -5,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 9,
@@ -13262,7 +14330,7 @@
  "58208332": {
   "id": "58208332",
   "first_seen": "2026-09-03T04:12:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -13293,7 +14361,7 @@
   "total_czk": 21900,
   "price_czk_per_sqm": 576,
   "price_old_czk": null,
-  "deal_pct": -23,
+  "deal_pct": -24,
   "deal_outlier": false,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
@@ -13404,7 +14472,7 @@
  "60436556": {
   "id": "60436556",
   "first_seen": "2026-09-02T12:50:31Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -13435,7 +14503,7 @@
   "total_czk": 26490,
   "price_czk_per_sqm": 564,
   "price_old_czk": null,
-  "deal_pct": -6,
+  "deal_pct": -4,
   "deal_outlier": false,
   "building_condition": 1,
   "building_condition_name": "Velmi dobrý",
@@ -13477,7 +14545,7 @@
  "605417548": {
   "id": "605417548",
   "first_seen": "2026-09-08T12:55:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -13547,7 +14615,7 @@
  "620703820": {
   "id": "620703820",
   "first_seen": "2026-09-04T12:48:45Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -13578,7 +14646,7 @@
   "total_czk": 5490000,
   "price_czk_per_sqm": 203333,
   "price_old_czk": null,
-  "deal_pct": 0,
+  "deal_pct": 1,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 9,
@@ -13617,7 +14685,7 @@
  "623521868": {
   "id": "623521868",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -13648,7 +14716,7 @@
   "total_czk": 21500,
   "price_czk_per_sqm": 694,
   "price_old_czk": null,
-  "deal_pct": 16,
+  "deal_pct": 18,
   "deal_outlier": false,
   "building_condition": 9,
   "building_condition_name": "Po rekonstrukci",
@@ -13687,7 +14755,7 @@
  "628764748": {
   "id": "628764748",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -13718,7 +14786,7 @@
   "total_czk": 6590000,
   "price_czk_per_sqm": 178108,
   "price_old_czk": null,
-  "deal_pct": -13,
+  "deal_pct": -11,
   "deal_outlier": false,
   "building_condition": 1,
   "building_condition_name": "Velmi dobrý",
@@ -13757,7 +14825,7 @@
  "629092428": {
   "id": "629092428",
   "first_seen": "2026-09-03T19:25:36Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -13788,7 +14856,7 @@
   "total_czk": 33490,
   "price_czk_per_sqm": 465,
   "price_old_czk": null,
-  "deal_pct": 0,
+  "deal_pct": 4,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -13827,7 +14895,7 @@
  "667103308": {
   "id": "667103308",
   "first_seen": "2026-09-08T18:49:57Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -13858,7 +14926,7 @@
   "total_czk": 25367,
   "price_czk_per_sqm": 769,
   "price_old_czk": null,
-  "deal_pct": 2,
+  "deal_pct": 1,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -13897,7 +14965,7 @@
  "669986892": {
   "id": "669986892",
   "first_seen": "2026-09-04T12:48:45Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -13967,7 +15035,7 @@
  "695873612": {
   "id": "695873612",
   "first_seen": "2026-09-01T19:23:47Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -13998,7 +15066,7 @@
   "total_czk": 40000,
   "price_czk_per_sqm": 690,
   "price_old_czk": null,
-  "deal_pct": 15,
+  "deal_pct": 17,
   "deal_outlier": false,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
@@ -14037,7 +15105,7 @@
  "725561420": {
   "id": "725561420",
   "first_seen": "2026-09-07T14:20:54Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -14107,7 +15175,7 @@
  "752365644": {
   "id": "752365644",
   "first_seen": "2026-09-03T12:52:13Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -14138,7 +15206,7 @@
   "total_czk": 19650,
   "price_czk_per_sqm": 819,
   "price_old_czk": null,
-  "deal_pct": 9,
+  "deal_pct": 8,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 9,
@@ -14177,7 +15245,7 @@
  "762523724": {
   "id": "762523724",
   "first_seen": "2026-09-08T12:55:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -14208,7 +15276,7 @@
   "total_czk": 21500,
   "price_czk_per_sqm": 524,
   "price_old_czk": null,
-  "deal_pct": -12,
+  "deal_pct": -11,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 9,
@@ -14240,14 +15308,14 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 0,
+  "views": 345,
   "edited": "2026-09-08",
   "since": "2026-09-08"
  },
  "773730380": {
   "id": "773730380",
   "first_seen": "2026-09-05T11:52:32Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -14278,7 +15346,7 @@
   "total_czk": 3190000,
   "price_czk_per_sqm": 159500,
   "price_old_czk": null,
-  "deal_pct": -22,
+  "deal_pct": -21,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 8,
@@ -14317,13 +15385,18 @@
  "781725772": {
   "id": "781725772",
   "first_seen": "2026-09-03T19:25:36Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
     "at": "2026-09-03",
     "price_czk": 26500,
     "total_czk": 28000
+   },
+   {
+    "at": "2026-09-09",
+    "price_czk": 25900,
+    "total_czk": 27400
    }
   ],
   "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/781725772",
@@ -14339,14 +15412,14 @@
   "lon": 14.5081401426,
   "dist_km": 1.39,
   "pod_harfou": true,
-  "price_czk": 26500,
+  "price_czk": 25900,
   "fees_czk": null,
   "fees_missing": true,
   "fees_source": null,
   "electricity_czk": 1500,
   "electricity_estimated": true,
-  "total_czk": 28000,
-  "price_czk_per_sqm": 636,
+  "total_czk": 27400,
+  "price_czk_per_sqm": 623,
   "price_old_czk": null,
   "deal_pct": 6,
   "deal_outlier": false,
@@ -14380,14 +15453,14 @@
   "elevator": true,
   "ownership": 2,
   "ownership_name": "Družstevní",
-  "views": 939,
-  "edited": "2026-09-08",
+  "views": 1139,
+  "edited": "2026-09-09",
   "since": "2026-09-03"
  },
  "782970956": {
   "id": "782970956",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -14423,7 +15496,7 @@
   "total_czk": 17700,
   "price_czk_per_sqm": 770,
   "price_old_czk": null,
-  "deal_pct": 3,
+  "deal_pct": 1,
   "deal_outlier": false,
   "building_condition": 1,
   "building_condition_name": "Velmi dobrý",
@@ -14462,7 +15535,7 @@
  "789524556": {
   "id": "789524556",
   "first_seen": "2026-09-04T12:48:45Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -14493,7 +15566,7 @@
   "total_czk": 8999999,
   "price_czk_per_sqm": 243243,
   "price_old_czk": null,
-  "deal_pct": 19,
+  "deal_pct": 21,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -14532,7 +15605,7 @@
  "804925516": {
   "id": "804925516",
   "first_seen": "2026-09-01T19:23:47Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -14563,7 +15636,7 @@
   "total_czk": 6990000,
   "price_czk_per_sqm": 225484,
   "price_old_czk": null,
-  "deal_pct": 11,
+  "deal_pct": 12,
   "deal_outlier": false,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
@@ -14602,7 +15675,7 @@
  "80621644": {
   "id": "80621644",
   "first_seen": "2026-09-05T18:11:41Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -14633,7 +15706,7 @@
   "total_czk": 18000,
   "price_czk_per_sqm": 514,
   "price_old_czk": null,
-  "deal_pct": -14,
+  "deal_pct": -13,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 2,
@@ -14665,14 +15738,14 @@
   "elevator": null,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 1123,
+  "views": 1442,
   "edited": "2026-09-07",
   "since": "2026-09-05"
  },
  "811479116": {
   "id": "811479116",
   "first_seen": "2026-09-04T19:03:49Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -14683,7 +15756,7 @@
   ],
   "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/811479116",
   "source": "sreality",
-  "title": "Prodej bytu 2+kk 42 m²",
+  "title": "На продажу квартира 2-комн. студия 42 m²",
   "transaction_type": "prodej",
   "disposition": "2+kk",
   "floor_area_sqm": 42.0,
@@ -14742,7 +15815,7 @@
  "812707916": {
   "id": "812707916",
   "first_seen": "2026-09-02T19:27:42Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -14773,7 +15846,7 @@
   "total_czk": 16000,
   "price_czk_per_sqm": 500,
   "price_old_czk": null,
-  "deal_pct": -16,
+  "deal_pct": -14,
   "deal_outlier": false,
   "building_condition": 2,
   "building_condition_name": "Dobrý",
@@ -14804,7 +15877,7 @@
   "elevator": null,
   "ownership": 2,
   "ownership_name": "Družstevní",
-  "views": 4767,
+  "views": 5160,
   "edited": "2026-09-02",
   "since": "2026-06-25",
   "exclude_from_stats": false
@@ -14812,7 +15885,7 @@
  "815673420": {
   "id": "815673420",
   "first_seen": "2026-09-06T22:11:14Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -14843,7 +15916,7 @@
   "total_czk": 25000,
   "price_czk_per_sqm": 500,
   "price_old_czk": null,
-  "deal_pct": -16,
+  "deal_pct": -15,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -14875,14 +15948,14 @@
   "elevator": true,
   "ownership": 2,
   "ownership_name": "Družstevní",
-  "views": 149,
+  "views": 205,
   "edited": "2026-09-06",
   "since": "2026-09-06"
  },
  "816394316": {
   "id": "816394316",
   "first_seen": "2026-09-02T19:27:42Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -14913,7 +15986,7 @@
   "total_czk": 38400,
   "price_czk_per_sqm": 557,
   "price_old_czk": null,
-  "deal_pct": -7,
+  "deal_pct": -5,
   "deal_outlier": false,
   "building_condition": 1,
   "building_condition_name": "Velmi dobrý",
@@ -14952,7 +16025,7 @@
  "824782924": {
   "id": "824782924",
   "first_seen": "2026-09-03T19:25:36Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -14982,7 +16055,7 @@
   "electricity_estimated": true,
   "total_czk": 20700,
   "price_czk_per_sqm": 470,
-  "deal_pct": -21,
+  "deal_pct": -20,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": false,
@@ -15022,7 +16095,7 @@
  "83570764": {
   "id": "83570764",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -15053,7 +16126,7 @@
   "total_czk": 26300,
   "price_czk_per_sqm": 939,
   "price_old_czk": null,
-  "deal_pct": 25,
+  "deal_pct": 24,
   "deal_outlier": false,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
@@ -15092,10 +16165,80 @@
   "gone_last_total_czk": 26300,
   "resurrected_at": "2026-09-07T04:23:57Z"
  },
+ "839004236": {
+  "id": "839004236",
+  "first_seen": "2026-09-09T13:03:50Z",
+  "last_seen": "2026-09-09T13:03:50Z",
+  "gone_at": null,
+  "price_history": [
+   {
+    "at": "2026-09-09",
+    "price_czk": 37000,
+    "total_czk": 43500
+   }
+  ],
+  "url": "https://www.sreality.cz/detail/pronajem/byt/3%2Bkk/x/839004236",
+  "source": "sreality",
+  "title": "Pronájem bytu 3+kk 75 m²",
+  "transaction_type": "pronajem",
+  "disposition": "3+kk",
+  "floor_area_sqm": 75.0,
+  "street": "Pod Harfou",
+  "locality": "Pod Harfou, Vysočany, Praha",
+  "city_part": "Vysočany",
+  "lat": 50.1039745039,
+  "lon": 14.5081401426,
+  "dist_km": 1.39,
+  "pod_harfou": true,
+  "price_czk": 37000,
+  "fees_czk": 5000,
+  "fees_missing": false,
+  "fees_source": "note",
+  "electricity_czk": 1500,
+  "electricity_estimated": true,
+  "total_czk": 43500,
+  "price_czk_per_sqm": 580,
+  "price_old_czk": null,
+  "deal_pct": 5,
+  "deal_outlier": false,
+  "exclude_from_stats": false,
+  "building_condition": 6,
+  "building_condition_name": "Novostavba",
+  "is_new_building": true,
+  "building_type": 2,
+  "building_type_name": "Cihlová",
+  "energy_rating": "B",
+  "furnished": "castecne",
+  "commission_czk": 0,
+  "tenant_not_pay_commission": null,
+  "no_commission": true,
+  "cellar": false,
+  "cellar_area_sqm": null,
+  "garage": false,
+  "garage_count": null,
+  "parking": false,
+  "parking_state": "none",
+  "parking_price_czk": null,
+  "parking_lots": false,
+  "balcony": true,
+  "balcony_area_sqm": null,
+  "loggia": false,
+  "loggia_area_sqm": null,
+  "terrace": false,
+  "terrace_area_sqm": 8,
+  "floor_number": 2,
+  "floors_total": 1,
+  "elevator": true,
+  "ownership": 2,
+  "ownership_name": "Družstevní",
+  "views": 0,
+  "edited": "2026-09-09",
+  "since": "2026-09-09"
+ },
  "847917132": {
   "id": "847917132",
   "first_seen": "2026-09-02T12:50:31Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -15126,7 +16269,7 @@
   "total_czk": 29990,
   "price_czk_per_sqm": 469,
   "price_old_czk": null,
-  "deal_pct": -22,
+  "deal_pct": -20,
   "deal_outlier": false,
   "building_condition": 1,
   "building_condition_name": "Velmi dobrý",
@@ -15165,7 +16308,7 @@
  "861876300": {
   "id": "861876300",
   "first_seen": "2026-09-03T22:33:30Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -15196,7 +16339,7 @@
   "total_czk": 35602,
   "price_czk_per_sqm": 603,
   "price_old_czk": null,
-  "deal_pct": 9,
+  "deal_pct": 10,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -15235,7 +16378,7 @@
  "88289356": {
   "id": "88289356",
   "first_seen": "2026-09-08T12:55:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -15305,7 +16448,7 @@
  "902312012": {
   "id": "902312012",
   "first_seen": "2026-09-03T12:52:13Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -15375,7 +16518,7 @@
  "935997516": {
   "id": "935997516",
   "first_seen": "2026-09-01T19:23:47Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -15445,7 +16588,7 @@
  "950874188": {
   "id": "950874188",
   "first_seen": "2026-09-07T14:20:54Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -15476,7 +16619,7 @@
   "total_czk": 10800000,
   "price_czk_per_sqm": 150000,
   "price_old_czk": null,
-  "deal_pct": 3,
+  "deal_pct": 8,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -15515,7 +16658,7 @@
  "97333324": {
   "id": "97333324",
   "first_seen": "2026-09-07T14:20:54Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -15546,7 +16689,7 @@
   "total_czk": 22500,
   "price_czk_per_sqm": 703,
   "price_old_czk": null,
-  "deal_pct": -6,
+  "deal_pct": -7,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -15585,7 +16728,7 @@
  "981676108": {
   "id": "981676108",
   "first_seen": "2026-09-08T19:32:22Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -15616,7 +16759,7 @@
   "total_czk": 21000,
   "price_czk_per_sqm": 750,
   "price_old_czk": null,
-  "deal_pct": 0,
+  "deal_pct": -1,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 6,
@@ -15655,7 +16798,7 @@
  "984363084": {
   "id": "984363084",
   "first_seen": "2026-09-08T12:55:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -15686,7 +16829,7 @@
   "total_czk": 6650000,
   "price_czk_per_sqm": 184722,
   "price_old_czk": null,
-  "deal_pct": -9,
+  "deal_pct": -8,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -15725,7 +16868,7 @@
  "987746380": {
   "id": "987746380",
   "first_seen": "2026-09-07T14:20:54Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -15756,7 +16899,7 @@
   "total_czk": 8250000,
   "price_czk_per_sqm": 171875,
   "price_old_czk": null,
-  "deal_pct": 2,
+  "deal_pct": 0,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "building_condition": 1,
@@ -15795,7 +16938,7 @@
  "bez-1005353": {
   "id": "bez-1005353",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -15953,7 +17096,7 @@
  "bez-1045618": {
   "id": "bez-1045618",
   "first_seen": "2026-09-08T18:49:57Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -15983,7 +17126,7 @@
   "electricity_estimated": true,
   "total_czk": 25660,
   "price_czk_per_sqm": 611,
-  "deal_pct": -19,
+  "deal_pct": -20,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -15992,7 +17135,7 @@
  "bez-1051633": {
   "id": "bez-1051633",
   "first_seen": "2026-09-01T19:23:47Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -16031,7 +17174,7 @@
  "bez-1053377": {
   "id": "bez-1053377",
   "first_seen": "2026-09-06T22:11:14Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -16061,7 +17204,46 @@
   "electricity_estimated": true,
   "total_czk": 42611,
   "price_czk_per_sqm": 735,
-  "deal_pct": 24,
+  "deal_pct": 25,
+  "deal_outlier": false,
+  "exclude_from_stats": false,
+  "garage": null,
+  "parking": null
+ },
+ "bez-1054315": {
+  "id": "bez-1054315",
+  "first_seen": "2026-09-09T13:03:50Z",
+  "last_seen": "2026-09-09T13:03:50Z",
+  "gone_at": null,
+  "price_history": [
+   {
+    "at": "2026-09-09",
+    "price_czk": 10900000,
+    "total_czk": 10900000
+   }
+  ],
+  "url": "https://www.bezrealitky.cz/nemovitosti-byty-domy/1054315-nabidka-prodej-bytu-primatorska-praha",
+  "source": "bezrealitky",
+  "title": "Prodej bytu 2+1 68 m²",
+  "transaction_type": "prodej",
+  "disposition": "2+1",
+  "floor_area_sqm": 68,
+  "street": null,
+  "locality": "okolí Pod Harfou",
+  "city_part": null,
+  "lat": 50.1137608,
+  "lon": 14.471977,
+  "dist_km": 2.04,
+  "pod_harfou": false,
+  "price_czk": 10900000,
+  "fees_czk": null,
+  "fees_missing": true,
+  "fees_source": null,
+  "electricity_czk": null,
+  "electricity_estimated": false,
+  "total_czk": 10900000,
+  "price_czk_per_sqm": 160294,
+  "deal_pct": 12,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -16109,7 +17291,7 @@
  "bez-1059824": {
   "id": "bez-1059824",
   "first_seen": "2026-09-08T12:55:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -16187,7 +17369,7 @@
  "bez-1061836": {
   "id": "bez-1061836",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -16265,7 +17447,7 @@
  "bez-1061904": {
   "id": "bez-1061904",
   "first_seen": "2026-09-01T19:23:47Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -16343,7 +17525,7 @@
  "bez-1061937": {
   "id": "bez-1061937",
   "first_seen": "2026-09-01T22:38:34Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -16421,7 +17603,7 @@
  "bez-1062362": {
   "id": "bez-1062362",
   "first_seen": "2026-09-02T19:27:42Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -16451,7 +17633,7 @@
   "electricity_estimated": true,
   "total_czk": 26500,
   "price_czk_per_sqm": 482,
-  "deal_pct": -19,
+  "deal_pct": -18,
   "deal_outlier": false,
   "garage": null,
   "parking": null,
@@ -16460,7 +17642,7 @@
  "bez-1062377": {
   "id": "bez-1062377",
   "first_seen": "2026-09-02T19:27:42Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -16490,7 +17672,7 @@
   "electricity_estimated": false,
   "total_czk": 13000000,
   "price_czk_per_sqm": 171053,
-  "deal_pct": -3,
+  "deal_pct": -1,
   "deal_outlier": false,
   "garage": null,
   "parking": null,
@@ -16499,7 +17681,7 @@
  "bez-1062379": {
   "id": "bez-1062379",
   "first_seen": "2026-09-02T19:27:42Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -16538,7 +17720,7 @@
  "bez-1063144": {
   "id": "bez-1063144",
   "first_seen": "2026-09-04T04:20:00Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -16568,7 +17750,7 @@
   "electricity_estimated": true,
   "total_czk": 29500,
   "price_czk_per_sqm": 492,
-  "deal_pct": -17,
+  "deal_pct": -16,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -16777,7 +17959,7 @@
  "bez-1063818": {
   "id": "bez-1063818",
   "first_seen": "2026-09-06T12:13:21Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -16816,7 +17998,7 @@
  "bez-1063821": {
   "id": "bez-1063821",
   "first_seen": "2026-09-06T12:13:21Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -16846,7 +18028,7 @@
   "electricity_estimated": true,
   "total_czk": 27500,
   "price_czk_per_sqm": 539,
-  "deal_pct": -9,
+  "deal_pct": -8,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -16855,7 +18037,7 @@
  "bez-1063823": {
   "id": "bez-1063823",
   "first_seen": "2026-09-06T12:13:21Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -16885,7 +18067,7 @@
   "electricity_estimated": true,
   "total_czk": 23000,
   "price_czk_per_sqm": 535,
-  "deal_pct": -10,
+  "deal_pct": -9,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -16933,7 +18115,7 @@
  "bez-1063857": {
   "id": "bez-1063857",
   "first_seen": "2026-09-06T22:11:14Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -17011,7 +18193,7 @@
  "bez-1064187": {
   "id": "bez-1064187",
   "first_seen": "2026-09-08T12:55:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -17041,7 +18223,7 @@
   "electricity_estimated": false,
   "total_czk": 6650000,
   "price_czk_per_sqm": 184722,
-  "deal_pct": -9,
+  "deal_pct": -8,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -17050,7 +18232,7 @@
  "bez-1064204": {
   "id": "bez-1064204",
   "first_seen": "2026-09-08T12:55:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -17080,7 +18262,7 @@
   "electricity_estimated": false,
   "total_czk": 9300000,
   "price_czk_per_sqm": 238462,
-  "deal_pct": 17,
+  "deal_pct": 18,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -17245,7 +18427,7 @@
  "bez-1064620": {
   "id": "bez-1064620",
   "first_seen": "2026-09-08T18:49:57Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -17275,7 +18457,7 @@
   "electricity_estimated": true,
   "total_czk": 22000,
   "price_czk_per_sqm": 846,
-  "deal_pct": 13,
+  "deal_pct": 11,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -17323,7 +18505,7 @@
  "bez-1064671": {
   "id": "bez-1064671",
   "first_seen": "2026-09-08T18:49:57Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -17353,7 +18535,7 @@
   "electricity_estimated": false,
   "total_czk": 4750000,
   "price_czk_per_sqm": 190000,
-  "deal_pct": -7,
+  "deal_pct": -6,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -17362,7 +18544,7 @@
  "bez-1064674": {
   "id": "bez-1064674",
   "first_seen": "2026-09-08T18:49:57Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -17392,7 +18574,7 @@
   "electricity_estimated": true,
   "total_czk": 22500,
   "price_czk_per_sqm": 536,
-  "deal_pct": -10,
+  "deal_pct": -9,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -17401,7 +18583,7 @@
  "bez-1064675": {
   "id": "bez-1064675",
   "first_seen": "2026-09-08T18:49:57Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -17431,7 +18613,85 @@
   "electricity_estimated": true,
   "total_czk": 37300,
   "price_czk_per_sqm": 549,
-  "deal_pct": -1,
+  "deal_pct": 0,
+  "deal_outlier": false,
+  "exclude_from_stats": false,
+  "garage": null,
+  "parking": null
+ },
+ "bez-1065034": {
+  "id": "bez-1065034",
+  "first_seen": "2026-09-09T13:03:50Z",
+  "last_seen": "2026-09-09T13:03:50Z",
+  "gone_at": null,
+  "price_history": [
+   {
+    "at": "2026-09-09",
+    "price_czk": 15500000,
+    "total_czk": 15500000
+   }
+  ],
+  "url": "https://www.bezrealitky.cz/nemovitosti-byty-domy/1065034-nabidka-prodej-bytu-jankovcova-praha",
+  "source": "bezrealitky",
+  "title": "Prodej bytu 2+kk 65 m²",
+  "transaction_type": "prodej",
+  "disposition": "2+kk",
+  "floor_area_sqm": 65,
+  "street": null,
+  "locality": "okolí Pod Harfou",
+  "city_part": null,
+  "lat": 50.1087371,
+  "lon": 14.4537341,
+  "dist_km": 2.78,
+  "pod_harfou": false,
+  "price_czk": 15500000,
+  "fees_czk": null,
+  "fees_missing": true,
+  "fees_source": null,
+  "electricity_czk": null,
+  "electricity_estimated": false,
+  "total_czk": 15500000,
+  "price_czk_per_sqm": 238462,
+  "deal_pct": 34,
+  "deal_outlier": false,
+  "exclude_from_stats": false,
+  "garage": null,
+  "parking": null
+ },
+ "bez-1065042": {
+  "id": "bez-1065042",
+  "first_seen": "2026-09-09T13:03:50Z",
+  "last_seen": "2026-09-09T13:03:50Z",
+  "gone_at": null,
+  "price_history": [
+   {
+    "at": "2026-09-09",
+    "price_czk": 19000,
+    "total_czk": 23600
+   }
+  ],
+  "url": "https://www.bezrealitky.cz/nemovitosti-byty-domy/1065042-nabidka-pronajem-bytu-nad-primaskou-praha",
+  "source": "bezrealitky",
+  "title": "Pronájem bytu 1+kk 34 m²",
+  "transaction_type": "pronajem",
+  "disposition": "1+kk",
+  "floor_area_sqm": 34,
+  "street": null,
+  "locality": "okolí Pod Harfou",
+  "city_part": null,
+  "lat": 50.0748286,
+  "lon": 14.4914559,
+  "dist_km": 2.75,
+  "pod_harfou": false,
+  "price_czk": 19000,
+  "fees_czk": 3100,
+  "fees_missing": false,
+  "fees_source": "field",
+  "electricity_czk": 1500,
+  "electricity_estimated": true,
+  "total_czk": 23600,
+  "price_czk_per_sqm": 694,
+  "deal_pct": -9,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -17479,7 +18739,7 @@
  "bez-279496": {
   "id": "bez-279496",
   "first_seen": "2026-09-05T22:05:46Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -17518,7 +18778,7 @@
  "bez-361584": {
   "id": "bez-361584",
   "first_seen": "2026-09-07T14:20:54Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -17548,7 +18808,7 @@
   "electricity_estimated": true,
   "total_czk": 32900,
   "price_czk_per_sqm": 548,
-  "deal_pct": 27,
+  "deal_pct": 22,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -17557,7 +18817,7 @@
  "bez-400832": {
   "id": "bez-400832",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -17593,10 +18853,49 @@
   "parking": null,
   "exclude_from_stats": false
  },
+ "bez-450163": {
+  "id": "bez-450163",
+  "first_seen": "2026-09-09T13:03:50Z",
+  "last_seen": "2026-09-09T13:03:50Z",
+  "gone_at": null,
+  "price_history": [
+   {
+    "at": "2026-09-09",
+    "price_czk": 17000,
+    "total_czk": 23000
+   }
+  ],
+  "url": "https://www.bezrealitky.cz/nemovitosti-byty-domy/450163-nabidka-pronajem-bytu-nad-primaskou-praha-10",
+  "source": "bezrealitky",
+  "title": "Pronájem bytu 2+kk 58 m²",
+  "transaction_type": "pronajem",
+  "disposition": "2+kk",
+  "floor_area_sqm": 58,
+  "street": null,
+  "locality": "okolí Pod Harfou",
+  "city_part": null,
+  "lat": 50.0741994,
+  "lon": 14.4847211,
+  "dist_km": 2.84,
+  "pod_harfou": false,
+  "price_czk": 17000,
+  "fees_czk": 4500,
+  "fees_missing": false,
+  "fees_source": "field",
+  "electricity_czk": 1500,
+  "electricity_estimated": true,
+  "total_czk": 23000,
+  "price_czk_per_sqm": 397,
+  "deal_pct": -32,
+  "deal_outlier": false,
+  "exclude_from_stats": false,
+  "garage": null,
+  "parking": null
+ },
  "bez-486761": {
   "id": "bez-486761",
   "first_seen": "2026-09-05T18:11:41Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -17626,7 +18925,7 @@
   "electricity_estimated": true,
   "total_czk": 30500,
   "price_czk_per_sqm": 635,
-  "deal_pct": 7,
+  "deal_pct": 8,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -17674,7 +18973,7 @@
  "bez-531027": {
   "id": "bez-531027",
   "first_seen": "2026-09-07T14:20:54Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -17713,7 +19012,7 @@
  "bez-536912": {
   "id": "bez-536912",
   "first_seen": "2026-09-04T12:48:45Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -17743,7 +19042,7 @@
   "electricity_estimated": true,
   "total_czk": 36500,
   "price_czk_per_sqm": 521,
-  "deal_pct": -13,
+  "deal_pct": -11,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -17869,7 +19168,7 @@
  "bez-597471": {
   "id": "bez-597471",
   "first_seen": "2026-09-08T22:36:56Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -17899,7 +19198,7 @@
   "electricity_estimated": true,
   "total_czk": 28000,
   "price_czk_per_sqm": 700,
-  "deal_pct": -7,
+  "deal_pct": -8,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -17908,13 +19207,18 @@
  "bez-621433": {
   "id": "bez-621433",
   "first_seen": "2026-09-04T12:48:45Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
     "at": "2026-09-04",
     "price_czk": 25000,
     "total_czk": 33500
+   },
+   {
+    "at": "2026-09-09",
+    "price_czk": 28000,
+    "total_czk": 36500
    }
   ],
   "url": "https://www.bezrealitky.cz/nemovitosti-byty-domy/621433-nabidka-pronajem-bytu-molakova-praha",
@@ -17930,15 +19234,15 @@
   "lon": 14.4652,
   "dist_km": 1.79,
   "pod_harfou": false,
-  "price_czk": 25000,
+  "price_czk": 28000,
   "fees_czk": 7000,
   "fees_missing": false,
   "fees_source": "field",
   "electricity_czk": 1500,
   "electricity_estimated": true,
-  "total_czk": 33500,
-  "price_czk_per_sqm": 728,
-  "deal_pct": 42,
+  "total_czk": 36500,
+  "price_czk_per_sqm": 793,
+  "deal_pct": 51,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -17947,7 +19251,7 @@
  "bez-623613": {
   "id": "bez-623613",
   "first_seen": "2026-09-05T15:06:02Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -17986,7 +19290,7 @@
  "bez-632752": {
   "id": "bez-632752",
   "first_seen": "2026-09-05T11:52:32Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -18025,7 +19329,7 @@
  "bez-668823": {
   "id": "bez-668823",
   "first_seen": "2026-09-08T12:55:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -18055,7 +19359,7 @@
   "electricity_estimated": true,
   "total_czk": 25500,
   "price_czk_per_sqm": 464,
-  "deal_pct": -38,
+  "deal_pct": -39,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -18064,7 +19368,7 @@
  "bez-780317": {
   "id": "bez-780317",
   "first_seen": "2026-09-02T19:27:42Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -18142,7 +19446,7 @@
  "bez-798046": {
   "id": "bez-798046",
   "first_seen": "2026-09-02T12:50:31Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -18172,7 +19476,7 @@
   "electricity_estimated": true,
   "total_czk": 31100,
   "price_czk_per_sqm": 691,
-  "deal_pct": 17,
+  "deal_pct": 18,
   "deal_outlier": false,
   "garage": null,
   "parking": null,
@@ -18217,10 +19521,49 @@
   "garage": null,
   "parking": null
  },
+ "bez-834499": {
+  "id": "bez-834499",
+  "first_seen": "2026-09-09T13:03:50Z",
+  "last_seen": "2026-09-09T13:03:50Z",
+  "gone_at": null,
+  "price_history": [
+   {
+    "at": "2026-09-09",
+    "price_czk": 17900,
+    "total_czk": 23670
+   }
+  ],
+  "url": "https://www.bezrealitky.cz/nemovitosti-byty-domy/834499-nabidka-pronajem-bytu-lovosicka-praha",
+  "source": "bezrealitky",
+  "title": "Pronájem bytu 1+1 30 m²",
+  "transaction_type": "pronajem",
+  "disposition": "1+1",
+  "floor_area_sqm": 30,
+  "street": null,
+  "locality": "okolí Pod Harfou",
+  "city_part": null,
+  "lat": 50.1246184,
+  "lon": 14.5047554,
+  "dist_km": 2.98,
+  "pod_harfou": false,
+  "price_czk": 17900,
+  "fees_czk": 4270,
+  "fees_missing": false,
+  "fees_source": "field",
+  "electricity_czk": 1500,
+  "electricity_estimated": true,
+  "total_czk": 23670,
+  "price_czk_per_sqm": 789,
+  "deal_pct": 35,
+  "deal_outlier": false,
+  "exclude_from_stats": false,
+  "garage": null,
+  "parking": null
+ },
  "bez-847443": {
   "id": "bez-847443",
   "first_seen": "2026-09-01T19:23:47Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -18250,7 +19593,7 @@
   "electricity_estimated": true,
   "total_czk": 33200,
   "price_czk_per_sqm": 527,
-  "deal_pct": -11,
+  "deal_pct": -10,
   "deal_outlier": false,
   "garage": null,
   "parking": null,
@@ -18259,7 +19602,7 @@
  "bez-849060": {
   "id": "bez-849060",
   "first_seen": "2026-09-04T12:48:45Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -18415,7 +19758,7 @@
  "bez-876336": {
   "id": "bez-876336",
   "first_seen": "2026-09-04T12:48:45Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -18445,7 +19788,7 @@
   "electricity_estimated": true,
   "total_czk": 45500,
   "price_czk_per_sqm": 615,
-  "deal_pct": 11,
+  "deal_pct": 12,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -18532,7 +19875,7 @@
  "bez-914218": {
   "id": "bez-914218",
   "first_seen": "2026-09-03T12:52:13Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -18610,7 +19953,7 @@
  "bez-942467": {
   "id": "bez-942467",
   "first_seen": "2026-09-06T12:13:21Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -18649,7 +19992,7 @@
  "bez-950703": {
   "id": "bez-950703",
   "first_seen": "2026-09-02T19:27:42Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -18688,7 +20031,7 @@
  "bez-960227": {
   "id": "bez-960227",
   "first_seen": "2026-09-08T12:55:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -18718,7 +20061,7 @@
   "electricity_estimated": false,
   "total_czk": 15000000,
   "price_czk_per_sqm": 187500,
-  "deal_pct": 8,
+  "deal_pct": 9,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -18802,10 +20145,49 @@
   "parking": null,
   "exclude_from_stats": false
  },
+ "idnes-62de6ffecb90f74a4610082a": {
+  "id": "idnes-62de6ffecb90f74a4610082a",
+  "first_seen": "2026-09-09T13:03:50Z",
+  "last_seen": "2026-09-09T13:03:50Z",
+  "gone_at": null,
+  "price_history": [
+   {
+    "at": "2026-09-09",
+    "price_czk": 21500,
+    "total_czk": 23000
+   }
+  ],
+  "url": "https://reality.idnes.cz/detail/pronajem/byt/praha-9-kurta-konrada/62de6ffecb90f74a4610082a/",
+  "source": "idnes",
+  "title": "Pronájem bytu 1+kk 35 m²",
+  "transaction_type": "pronajem",
+  "disposition": "1+kk",
+  "floor_area_sqm": 35.0,
+  "street": "Kurta Konráda",
+  "locality": "Kurta Konráda, Praha 9 - Libeň",
+  "city_part": "Libeň",
+  "lat": 50.10444749233382,
+  "lon": 14.48845044938456,
+  "dist_km": 0.56,
+  "pod_harfou": false,
+  "price_czk": 21500,
+  "fees_czk": null,
+  "fees_missing": true,
+  "fees_source": null,
+  "electricity_czk": 1500,
+  "electricity_estimated": true,
+  "total_czk": 23000,
+  "price_czk_per_sqm": 657,
+  "deal_pct": -13,
+  "deal_outlier": false,
+  "exclude_from_stats": false,
+  "garage": null,
+  "parking": null
+ },
  "idnes-6454badf821a7b3c6b021df4": {
   "id": "idnes-6454badf821a7b3c6b021df4",
   "first_seen": "2026-09-04T12:48:45Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -18844,7 +20226,7 @@
  "idnes-67124b85a3d3b33f87083741": {
   "id": "idnes-67124b85a3d3b33f87083741",
   "first_seen": "2026-09-06T04:24:42Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -18874,7 +20256,7 @@
   "electricity_estimated": true,
   "total_czk": 36000,
   "price_czk_per_sqm": 621,
-  "deal_pct": 5,
+  "deal_pct": 6,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -18883,7 +20265,7 @@
  "idnes-68975ae7a1141daf510ce404": {
   "id": "idnes-68975ae7a1141daf510ce404",
   "first_seen": "2026-09-04T19:03:49Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -18922,7 +20304,7 @@
  "idnes-69c6f55e8171f2fa780e30a6": {
   "id": "idnes-69c6f55e8171f2fa780e30a6",
   "first_seen": "2026-09-02T22:35:41Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -19075,10 +20457,49 @@
   "parking": null,
   "exclude_from_stats": false
  },
+ "idnes-6a5aacf84916b32d80046cd6": {
+  "id": "idnes-6a5aacf84916b32d80046cd6",
+  "first_seen": "2026-09-09T13:03:50Z",
+  "last_seen": "2026-09-09T13:03:50Z",
+  "gone_at": null,
+  "price_history": [
+   {
+    "at": "2026-09-09",
+    "price_czk": 34500,
+    "total_czk": 42800
+   }
+  ],
+  "url": "https://reality.idnes.cz/detail/pronajem/byt/praha-3-malesicka/6a5aacf84916b32d80046cd6/",
+  "source": "idnes",
+  "title": "Pronájem bytu 2+kk 98 m²",
+  "transaction_type": "pronajem",
+  "disposition": "2+kk",
+  "floor_area_sqm": 98.0,
+  "street": "Malešická",
+  "locality": "Malešická, Praha 3 - Žižkov",
+  "city_part": "Žižkov",
+  "lat": 50.087057700979244,
+  "lon": 14.48126711746856,
+  "dist_km": 1.52,
+  "pod_harfou": false,
+  "price_czk": 34500,
+  "fees_czk": 6800,
+  "fees_missing": false,
+  "fees_source": "field",
+  "electricity_czk": 1500,
+  "electricity_estimated": true,
+  "total_czk": 42800,
+  "price_czk_per_sqm": 437,
+  "deal_pct": -26,
+  "deal_outlier": false,
+  "exclude_from_stats": false,
+  "garage": null,
+  "parking": null
+ },
  "idnes-6a63a7eb1a5d1fcc120b4d3a": {
   "id": "idnes-6a63a7eb1a5d1fcc120b4d3a",
   "first_seen": "2026-09-08T12:55:53Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -19117,7 +20538,7 @@
  "idnes-6a69b66c7d25e1795d0d71dd": {
   "id": "idnes-6a69b66c7d25e1795d0d71dd",
   "first_seen": "2026-09-01T04:57:13Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -19312,7 +20733,7 @@
  "idnes-6a7c2467f43d133d680ab434": {
   "id": "idnes-6a7c2467f43d133d680ab434",
   "first_seen": "2026-09-07T04:23:57Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -19342,7 +20763,7 @@
   "electricity_estimated": false,
   "total_czk": 20600000,
   "price_czk_per_sqm": 141096,
-  "deal_pct": -20,
+  "deal_pct": -18,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -19351,7 +20772,7 @@
  "idnes-6a7de9b5be121772e003e824": {
   "id": "idnes-6a7de9b5be121772e003e824",
   "first_seen": "2026-09-01T04:57:13Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -19390,7 +20811,7 @@
  "idnes-6a7ded4271f18532b60078a2": {
   "id": "idnes-6a7ded4271f18532b60078a2",
   "first_seen": "2026-09-01T04:57:13Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -19429,7 +20850,7 @@
  "idnes-6a8626ee6a49673cbf0e2294": {
   "id": "idnes-6a8626ee6a49673cbf0e2294",
   "first_seen": "2026-09-01T04:57:13Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -19546,7 +20967,7 @@
  "idnes-6a8d7ca434035d657d05fad2": {
   "id": "idnes-6a8d7ca434035d657d05fad2",
   "first_seen": "2026-09-08T22:36:56Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -19576,7 +20997,7 @@
   "electricity_estimated": false,
   "total_czk": 7990000,
   "price_czk_per_sqm": 177556,
-  "deal_pct": 5,
+  "deal_pct": 3,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -19585,7 +21006,7 @@
  "idnes-6a901bed6ae445f16c0c8729": {
   "id": "idnes-6a901bed6ae445f16c0c8729",
   "first_seen": "2026-09-06T22:11:14Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -19614,8 +21035,8 @@
   "electricity_czk": null,
   "electricity_estimated": false,
   "total_czk": 10990000,
-  "price_czk_per_sqm": 140897,
-  "deal_pct": -20,
+  "price_czk_per_sqm": 130833,
+  "deal_pct": -24,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -19663,7 +21084,7 @@
  "idnes-6a928fe463760085ec0c5167": {
   "id": "idnes-6a928fe463760085ec0c5167",
   "first_seen": "2026-09-01T04:57:13Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -19693,7 +21114,7 @@
   "electricity_estimated": true,
   "total_czk": 37800,
   "price_czk_per_sqm": 440,
-  "deal_pct": -26,
+  "deal_pct": -25,
   "deal_outlier": false,
   "garage": null,
   "parking": null,
@@ -19702,7 +21123,7 @@
  "idnes-6a9293741e9226b6d605bc04": {
   "id": "idnes-6a9293741e9226b6d605bc04",
   "first_seen": "2026-09-01T04:57:13Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -19741,7 +21162,7 @@
  "idnes-6a9334cc3aacbdd86d0db88a": {
   "id": "idnes-6a9334cc3aacbdd86d0db88a",
   "first_seen": "2026-09-01T04:57:13Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -19780,7 +21201,7 @@
  "idnes-6a9574d1b299217c290d17a9": {
   "id": "idnes-6a9574d1b299217c290d17a9",
   "first_seen": "2026-09-01T04:57:13Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -19858,7 +21279,7 @@
  "idnes-6a966a16d2445d0ca00b9329": {
   "id": "idnes-6a966a16d2445d0ca00b9329",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -19888,7 +21309,7 @@
   "electricity_estimated": false,
   "total_czk": 26000,
   "price_czk_per_sqm": 634,
-  "deal_pct": 7,
+  "deal_pct": 9,
   "deal_outlier": false,
   "garage": null,
   "parking": null,
@@ -20053,7 +21474,7 @@
  "idnes-6a96c19040aa268ca2011b13": {
   "id": "idnes-6a96c19040aa268ca2011b13",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -20083,7 +21504,7 @@
   "electricity_estimated": false,
   "total_czk": 6500000,
   "price_czk_per_sqm": 196970,
-  "deal_pct": -3,
+  "deal_pct": -2,
   "deal_outlier": false,
   "garage": null,
   "parking": null,
@@ -20131,7 +21552,7 @@
  "idnes-6a96c79f2002cd2a01045e56": {
   "id": "idnes-6a96c79f2002cd2a01045e56",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -20170,7 +21591,7 @@
  "idnes-6a96c80df11e2805dc0764a8": {
   "id": "idnes-6a96c80df11e2805dc0764a8",
   "first_seen": "2026-09-01T13:34:50Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -20188,9 +21609,9 @@
   "street": "Jeseniova",
   "locality": "Jeseniova, Praha 3 - Žižkov",
   "city_part": "Žižkov",
-  "lat": 50.08878702968068,
-  "lon": 14.470868960266847,
-  "dist_km": 1.81,
+  "lat": 50.088686862565474,
+  "lon": 14.470328508827173,
+  "dist_km": 1.85,
   "pod_harfou": false,
   "price_czk": 22500,
   "fees_czk": null,
@@ -20209,7 +21630,7 @@
  "idnes-6a96ea5881a7bebd4406199d": {
   "id": "idnes-6a96ea5881a7bebd4406199d",
   "first_seen": "2026-09-01T22:38:34Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -20287,7 +21708,7 @@
  "idnes-6a9707078900f9bc350ef11d": {
   "id": "idnes-6a9707078900f9bc350ef11d",
   "first_seen": "2026-09-01T22:38:34Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -20317,7 +21738,7 @@
   "electricity_estimated": false,
   "total_czk": 7290000,
   "price_czk_per_sqm": 197027,
-  "deal_pct": -3,
+  "deal_pct": -2,
   "deal_outlier": false,
   "garage": null,
   "parking": null,
@@ -20326,7 +21747,7 @@
  "idnes-6a970d5d682ec64c9d0912a3": {
   "id": "idnes-6a970d5d682ec64c9d0912a3",
   "first_seen": "2026-09-01T22:38:34Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -20365,7 +21786,7 @@
  "idnes-6a97c84eb0b1024fa9058a19": {
   "id": "idnes-6a97c84eb0b1024fa9058a19",
   "first_seen": "2026-09-02T22:35:41Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -20395,7 +21816,7 @@
   "electricity_estimated": true,
   "total_czk": 26490,
   "price_czk_per_sqm": 564,
-  "deal_pct": -5,
+  "deal_pct": -4,
   "deal_outlier": false,
   "garage": null,
   "parking": null,
@@ -20404,7 +21825,7 @@
  "idnes-6a982c0b86f95717b6066260": {
   "id": "idnes-6a982c0b86f95717b6066260",
   "first_seen": "2026-09-02T19:27:42Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -20443,7 +21864,7 @@
  "idnes-6a98a38684c99512fa0870c5": {
   "id": "idnes-6a98a38684c99512fa0870c5",
   "first_seen": "2026-09-03T19:25:36Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -20473,7 +21894,7 @@
   "electricity_estimated": true,
   "total_czk": 38400,
   "price_czk_per_sqm": 557,
-  "deal_pct": -6,
+  "deal_pct": -5,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -20482,7 +21903,7 @@
  "idnes-6a993ca0b7aab45f7602719b": {
   "id": "idnes-6a993ca0b7aab45f7602719b",
   "first_seen": "2026-09-03T12:52:13Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -20512,7 +21933,7 @@
   "electricity_estimated": true,
   "total_czk": 30650,
   "price_czk_per_sqm": 426,
-  "deal_pct": -29,
+  "deal_pct": -28,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -20521,7 +21942,7 @@
  "idnes-6a996fa1ee6b84545b014561": {
   "id": "idnes-6a996fa1ee6b84545b014561",
   "first_seen": "2026-09-03T19:25:36Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -20551,7 +21972,7 @@
   "electricity_estimated": false,
   "total_czk": 14900000,
   "price_czk_per_sqm": 261404,
-  "deal_pct": 47,
+  "deal_pct": 46,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -20560,7 +21981,7 @@
  "idnes-6a99aa63ec86df430a0dd1b6": {
   "id": "idnes-6a99aa63ec86df430a0dd1b6",
   "first_seen": "2026-09-03T19:25:36Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -20638,7 +22059,7 @@
  "idnes-6a99c9309dbac3999009d3b3": {
   "id": "idnes-6a99c9309dbac3999009d3b3",
   "first_seen": "2026-09-03T22:33:30Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -20668,7 +22089,7 @@
   "electricity_estimated": true,
   "total_czk": 47091,
   "price_czk_per_sqm": 561,
-  "deal_pct": 30,
+  "deal_pct": 25,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -20755,7 +22176,7 @@
  "idnes-6a9ae67028c034a83802ae36": {
   "id": "idnes-6a9ae67028c034a83802ae36",
   "first_seen": "2026-09-04T19:03:49Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -20794,7 +22215,7 @@
  "idnes-6a9aefe290980fb8a50ebcdd": {
   "id": "idnes-6a9aefe290980fb8a50ebcdd",
   "first_seen": "2026-09-04T19:03:49Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -20872,7 +22293,7 @@
  "idnes-6a9c2dfd7b5f4b0be70502d4": {
   "id": "idnes-6a9c2dfd7b5f4b0be70502d4",
   "first_seen": "2026-09-05T15:06:02Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -20911,7 +22332,7 @@
  "idnes-6a9d0362dcc63d2ae20ed265": {
   "id": "idnes-6a9d0362dcc63d2ae20ed265",
   "first_seen": "2026-09-06T12:13:21Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -20950,7 +22371,7 @@
  "idnes-6a9e8b71476b64ba4c0cb926": {
   "id": "idnes-6a9e8b71476b64ba4c0cb926",
   "first_seen": "2026-09-07T14:20:54Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -20980,7 +22401,7 @@
   "electricity_estimated": false,
   "total_czk": 9450000,
   "price_czk_per_sqm": 150000,
-  "deal_pct": -14,
+  "deal_pct": -13,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -21028,7 +22449,7 @@
  "idnes-6a9e9f0ffc8a43559704381f": {
   "id": "idnes-6a9e9f0ffc8a43559704381f",
   "first_seen": "2026-09-07T14:20:54Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -21067,7 +22488,7 @@
  "idnes-6a9ed03a604e143cbd0b1540": {
   "id": "idnes-6a9ed03a604e143cbd0b1540",
   "first_seen": "2026-09-07T19:55:58Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -21097,7 +22518,7 @@
   "electricity_estimated": false,
   "total_czk": 11783000,
   "price_czk_per_sqm": 163653,
-  "deal_pct": -6,
+  "deal_pct": -5,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -21106,7 +22527,7 @@
  "idnes-6a9ed0549975c3a62606c7de": {
   "id": "idnes-6a9ed0549975c3a62606c7de",
   "first_seen": "2026-09-07T19:55:58Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -21145,7 +22566,7 @@
  "idnes-6a9f3af7013935ec1f04eba5": {
   "id": "idnes-6a9f3af7013935ec1f04eba5",
   "first_seen": "2026-09-07T22:49:30Z",
-  "last_seen": "2026-09-08T22:36:56Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [],
   "url": "https://reality.idnes.cz/detail/prodej/byt/praha-8-molakova/6a9f3af7013935ec1f04eba5/",
@@ -21255,7 +22676,7 @@
  "idnes-6a9ff78d7bed6cdb560b2c09": {
   "id": "idnes-6a9ff78d7bed6cdb560b2c09",
   "first_seen": "2026-09-08T18:49:57Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -21285,7 +22706,7 @@
   "electricity_estimated": false,
   "total_czk": 7490000,
   "price_czk_per_sqm": 159362,
-  "deal_pct": -22,
+  "deal_pct": -21,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -21294,7 +22715,7 @@
  "idnes-6aa0272c9c41ccdfa7015352": {
   "id": "idnes-6aa0272c9c41ccdfa7015352",
   "first_seen": "2026-09-08T18:49:57Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -21312,9 +22733,9 @@
   "street": "Sokolovská",
   "locality": "Sokolovská, Praha 8 - Karlín",
   "city_part": "Karlín",
-  "lat": 50.09971838072726,
-  "lon": 14.468854296826992,
-  "dist_km": 1.51,
+  "lat": 50.09967533529735,
+  "lon": 14.468589710835413,
+  "dist_km": 1.53,
   "pod_harfou": false,
   "price_czk": 19900,
   "fees_czk": 5600,
@@ -21324,7 +22745,7 @@
   "electricity_estimated": true,
   "total_czk": 27000,
   "price_czk_per_sqm": 771,
-  "deal_pct": 29,
+  "deal_pct": 31,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "garage": null,
@@ -21333,7 +22754,7 @@
  "idnes-6aa08c7921d1e2db660984a1": {
   "id": "idnes-6aa08c7921d1e2db660984a1",
   "first_seen": "2026-09-08T22:36:56Z",
-  "last_seen": "2026-09-09T04:29:28Z",
+  "last_seen": "2026-09-09T13:03:50Z",
   "gone_at": null,
   "price_history": [
    {
@@ -21351,9 +22772,9 @@
   "street": "Sokolovská",
   "locality": "Sokolovská, Praha 8 - Karlín",
   "city_part": "Karlín",
-  "lat": 50.09971838072726,
-  "lon": 14.468854296826992,
-  "dist_km": 1.51,
+  "lat": 50.09967533529735,
+  "lon": 14.468589710835413,
+  "dist_km": 1.53,
   "pod_harfou": false,
   "price_czk": 30000,
   "fees_czk": 4000,
@@ -21363,8 +22784,47 @@
   "electricity_estimated": true,
   "total_czk": 35500,
   "price_czk_per_sqm": 612,
-  "deal_pct": 2,
+  "deal_pct": 4,
   "deal_outlier": false,
+  "exclude_from_stats": false,
+  "garage": null,
+  "parking": null
+ },
+ "idnes-6aa154dd0e6f6db829057a7d": {
+  "id": "idnes-6aa154dd0e6f6db829057a7d",
+  "first_seen": "2026-09-09T13:03:50Z",
+  "last_seen": "2026-09-09T13:03:50Z",
+  "gone_at": null,
+  "price_history": [
+   {
+    "at": "2026-09-09",
+    "price_czk": 9050000,
+    "total_czk": 9050000
+   }
+  ],
+  "url": "https://reality.idnes.cz/detail/prodej/byt/praha/6aa154dd0e6f6db829057a7d/",
+  "source": "idnes",
+  "title": "Prodej bytu 2+kk 97 m²",
+  "transaction_type": "prodej",
+  "disposition": "2+kk",
+  "floor_area_sqm": 97.0,
+  "street": null,
+  "locality": "Praha 3 - Vysočany",
+  "city_part": "Vysočany",
+  "lat": null,
+  "lon": null,
+  "dist_km": null,
+  "pod_harfou": false,
+  "price_czk": 9050000,
+  "fees_czk": null,
+  "fees_missing": true,
+  "fees_source": null,
+  "electricity_czk": null,
+  "electricity_estimated": false,
+  "total_czk": 9050000,
+  "price_czk_per_sqm": 93299,
+  "deal_pct": -48,
+  "deal_outlier": true,
   "exclude_from_stats": false,
   "garage": null,
   "parking": null
