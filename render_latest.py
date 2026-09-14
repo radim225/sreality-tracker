@@ -1,7 +1,7 @@
 """Rebuild HTML from already collected data; no scrape, notification or pool writes.
 
-Uses the same optional OWN_* environment settings as scrape.py. Before publishing,
-provide the intended settings so the existing personal comparison card is retained.
+The published dashboard never includes the personal OWN_* comparison card.
+Those figures are private; GitHub Pages serves this HTML.
 """
 import json
 import shutil

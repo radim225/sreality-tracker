@@ -2506,23 +2506,18 @@ def rank_deals(comparables):
     return comparables
 
 
-# The flat the area's asking prices are read against on the dashboard. The price
-# is the flat alone: the garage and the storage unit are separate units on the
-# contract and no advert here quotes either, so folding them in would inflate
-# its Kč/m² against listings that don't include them. Deliberately no unit
-# number or project name -- this repo and its Pages site are public, and the
-# comparison works without naming which flat it is.
+# The flat the area's asking prices are read against. The price is the flat
+# alone: the garage and the storage unit are separate units on the contract and
+# no advert here quotes either, so folding them in would inflate its Kč/m²
+# against listings that don't include them. Deliberately no unit number or
+# project name -- this repo and its Pages site are public.
 #
 # The purchase price comes from the environment rather than sitting here: it is
-# a personal figure and this file is public (R-10.1). Without OWN_PRICE_CZK the
-# card simply does not render -- there is nothing to compare against, and a
-# card that quietly drops its own reference point would be worse than no card.
-#
-# NOTE, and it matters: keeping the number out of the source does NOT keep it
-# off the published page. The card prints it into dashboard.html, which is
-# committed to this public repo and served by Pages. Only removing the personal
-# marker from the card would do that; the secret alone moves the number from
-# the source into a build artefact.
+# a personal figure and this file is public (R-10.1). The helpers below still
+# compute the private card for tests and local inspection. render_dashboard
+# never writes it into dashboard.html / index.html: those files are the public
+# Pages artefact, and a GitHub Secret is not a privacy boundary once the number
+# is in them.
 OWN_PROPERTY = {
     "disposition": "1+kk",
     "floor_area_sqm": 29.6,
@@ -2564,9 +2559,9 @@ def own_equity_gap():
     """How much of his own money is still missing, or None.
 
     Not a stored constant: the LTV is a knob (the Finep app has it as an input
-    too) and the answer moves with it. At 80 % of 7 166 198 the bank lends
-    5 732 958, the deposits cover 1 294 929, and 138 311 has to come from
-    somewhere else."""
+    too) and the answer moves with it. Example: at 80 % LTV the bank lends
+    four fifths of the total, deposits cover most of the rest, and the gap is
+    whatever still has to come from somewhere else."""
     _units, total = own_units()
     if not total or OWN_DEPOSITS_CZK is None:
         return None
@@ -2650,13 +2645,8 @@ def own_property_stats(comparables):
     Returns None rather than a half-answer if too few comparables survive the
     filters -- a "percentile" out of three listings would read as a fact."""
     if not OWN_PROPERTY["price_czk"]:
-        # Loud rather than a missing card nobody notices: the reference flat is
-        # the reason half this dashboard exists.
-        print(
-            "::warning::OWN_PRICE_CZK není nastavené — karta „Tvůj byt\" se nevykreslí. "
-            "Nastav ho jako secret repa.",
-            file=sys.stderr,
-        )
+        # Expected on the public scrape: OWN_* must not be injected into a
+        # process that writes Pages HTML. Missing is not a misconfiguration.
         return None
     own_per_sqm = round(OWN_PROPERTY["price_czk"] / OWN_PROPERTY["floor_area_sqm"])
     lo, hi = OWN_SIZE_BAND_SQM
@@ -2992,7 +2982,11 @@ def render_own_property_card(own, gap=None, yields=None, garage_stats=None):
     A single number ("you paid X") says nothing without the spread it sits in,
     and a bare median hides how wide that spread is -- comparable 1+kk adverts
     in this circle run from about 149k to 328k per m². So the card draws the
-    p10-p90 band and puts his price on it as a line."""
+    p10-p90 band and puts his price on it as a line.
+
+    Private: this HTML must not be concatenated into the Pages artefact.
+    render_dashboard omits it; reject_own_finance_in_public_html is the
+    tripwire if that ever changes."""
     if not own:
         return ""
     lo, hi = own["p10"], own["p90"]
@@ -3587,6 +3581,20 @@ def script_json(value):
     return json.dumps(value, ensure_ascii=False).replace("<", "\\u003c").replace("\u2028", "\\u2028").replace("\u2029", "\\u2029")
 
 
+def reject_own_finance_in_public_html(document):
+    """Tripwire: GitHub Pages publishes dashboard.html / index.html.
+
+    OWN_* secrets used to be injected into this file, which made the secret
+    public. The public renderer must not emit the personal card, and this
+    check fails the build if it ever does — including after a future scrape.
+    """
+    if "id=\"ownCard\"" in document or "id='ownCard'" in document:
+        raise RuntimeError(
+            "Personal finance card (ownCard) leaked into public dashboard HTML. "
+            "OWN_* data must not be published to GitHub Pages."
+        )
+
+
 def render_dashboard(snapshot, changes, stats, history, estimate=None, histories=None):
     tracked_list = snapshot["tracked"]
     comparables = snapshot["comparables"]
@@ -3615,14 +3623,10 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
     changed_ids_json = script_json(list(changed_ids))
 
     tracked_cards_html = "\n".join(render_tracked_card(t) for t in tracked_list)
-    own_card_html = render_own_property_card(
-        own_property_stats(comparables),
-        gap=own_equity_gap(),
-        yields=own_gross_yield(
-            estimate, ((snapshot.get("garage_stats") or {}).get("pronajem") or {}).get("median_czk")
-        ),
-        garage_stats=(snapshot.get("garage_stats") or {}).get("pronajem"),
-    )
+    # Personal OWN_* finance (purchase price, deposits, LTV, yield on his
+    # units) is never concatenated into this document. GitHub Pages serves it;
+    # a secret in the scrape job is not a privacy boundary once the number is
+    # in dashboard.html. Card helpers stay for tests / local inspection.
     estimate_card_html = render_estimate_card(estimate)
 
     head_and_body = f"""<!DOCTYPE html>
@@ -3885,8 +3889,6 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
 </div>
 
 {estimate_card_html}
-
-{own_card_html}
 
 {garage_card_html}
 
@@ -4778,6 +4780,7 @@ initMap();
     # Not named `html`: that would shadow the stdlib module of the same name,
     # which this function's f-strings call for escaping.
     document = head_and_body + js + "</script>\n</body>\n</html>\n"
+    reject_own_finance_in_public_html(document)
     DASHBOARD_PATH.write_text(document, encoding="utf-8")
 
 
