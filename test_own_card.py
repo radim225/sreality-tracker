@@ -99,6 +99,22 @@ check("bez rozpadu jen byt", scrape.own_units()[1], 6556088)
 check("bez záloh žádný chybějící kapitál", scrape.own_equity_gap(), None)
 scrape.OWN_EXTRA_PRICES, scrape.OWN_DEPOSITS_CZK = saved
 
+# --- veřejný dashboard vs. soukromý renderer ---------------------------- #
+# Helper pořád umí kartu (lokální / testy). Do Pages HTML nesmí.
+own = {
+    "own_czk_per_sqm": 221489, "band_median": 200000, "band_count": 10,
+    "disposition_median": 190000, "disposition_count": 20,
+    "p10": 150000, "p90": 250000, "low": 140000, "high": 300000, "cheaper_pct": 40,
+}
+private_html = scrape.render_own_property_card(own)
+check("soukromý renderer pořád emituje ownCard", "id=\"ownCard\"" in private_html, True)
+try:
+    scrape.reject_own_finance_in_public_html(private_html)
+    failures.append("tripwire nepustil ownCard")
+    print("FAIL  tripwire chytí ownCard")
+except RuntimeError:
+    check("tripwire chytí ownCard", True, True)
+
 print()
 if failures:
     print(f"{len(failures)} FAILED:")

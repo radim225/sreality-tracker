@@ -114,10 +114,7 @@ o tom napíše warning):
 | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | Primární kanál. |
 | `NTFY_TOPIC`, `NTFY_TOKEN` | Náhrada. Token je povinný — veřejné téma by si mohl přečíst kdokoli. |
 | `MORTGAGE_PAYMENT_CZK` | Měsíční splátka pro výpočet pokrytí. **Jde jen do notifikace**, nikdy na dashboard ani do archivu. |
-| `OWN_PRICE_CZK` | Kupní cena referenčního bytu. Bez ní se karta „Tvůj byt" nevykreslí. ⚠️ Drží číslo mimo zdroják, **ne mimo publikovanou stránku** — karta ho vypisuje do `dashboard.html`, který je v tomhle veřejném repu. |
-| `OWN_EXTRA_PRICES_CZK` | Garáž a komora zvlášť, jedním secretem: `garaz=500000,komora=110110`. Bez něj karta ukazuje jen byt. |
-| `OWN_DEPOSITS_CZK` | Zaplacené zálohy. Bez nich se řádek „kolik vlastních ještě chybí" nevykreslí — špatné číslo by tu bylo horší než žádné. |
-| `OWN_LTV_PCT` | Kolik z ceny půjčí banka (výchozí 80). Mění, kolik vlastního kapitálu chybí. |
+| `OWN_PRICE_CZK`, `OWN_EXTRA_PRICES_CZK`, `OWN_DEPOSITS_CZK`, `OWN_LTV_PCT` | Osobní portfolio (kupní cena, garáž/komora, zálohy, LTV). **Scrape je do Pages neposílá** — karta „Tvůj byt“ se do `dashboard.html` / `index.html` negeneruje. Secrets můžou zůstat na repu pro lokální výpočet; workflow je neinjektuje. |
 
 Náhled zprávy bez odeslání: `python3 notify.py --dry-run --week 2026-W34`.
 
@@ -135,22 +132,22 @@ výchozích 60 za běh by se atributy doplňovaly týden a odhad by mezitím po�
 z poloprázdných dat.
 
 
-## Karta „Tvůj byt"
+## Karta „Tvůj byt" (soukromá, ne na Pages)
 
-Kč/m² se srovnává **jen za byt** — garáž ani komora v žádném zdejším inzerátu nejsou,
-takže vložit je do ceny za m² by ji uměle nafouklo proti nabídkám, které je neobsahují.
+Veřejný dashboard **kartu s osobními čísly neobsahuje**. GitHub Pages servíruje
+`index.html` z tohoto veřejného repa, takže nákupní cena, zálohy, LTV a výnos
+z vlastních jednotek tam nesmí být — ani když jsou `OWN_*` nastavené jako
+secrets. Workflow je do scrapu neposílá a renderer je do HTML nezapisuje.
 
-Pod srovnáním jsou tři rozpady, každý z jiného důvodu:
+Výpočet karty (srovnání Kč/m², rozpad jednotek, chybějící vlastní kapitál,
+hrubý výnos) zůstává v `scrape.py` pro testy a lokální kontrolu
+(`python test_own_card.py`). Veřejně dál platí odhad nájmu, inzeráty, override
+formulář a tržní statistiky.
 
-- **Co jsi koupil** — byt / garáž / komora zvlášť i celek. Pro hypotéku a výnos platí celek.
-- **Kolik vlastních chybí** — banka při `OWN_LTV_PCT` půjčí jen část ceny; zbytek minus
-  zaplacené zálohy je rozdíl, který musí přijít odjinud. Není to konstanta, mění se s LTV.
-- **Hrubý výnos** — roční nájem ÷ kupní cena, po aktivech i za celek. Záměrně **hrubý**:
-  hypotéka, poplatky, daně a neobsazenost jsou Radimovy soukromé finance a patří do
-  splátkové appky za PIN, ne na veřejnou stránku. Tahle karta srovnává **aktivum s trhem**.
-
-Komora se počítá do ceny celku, ale nájem za ni nikdo neinzeruje, takže celkový výnos je
-o ni mírně podhodnocený. Lepší než si pro ni číslo vymyslet.
+Kč/m² se srovnává **jen za byt** — garáž ani komora v žádném zdejším inzerátu
+nejsou, takže vložit je do ceny za m² by ji uměle nafouklo. Pro hypotéku a
+výnos platí celek. Hrubý výnos je záměrně bez hypotéky, poplatků, daní a
+neobsazenosti — ty patří do splátkové appky za PIN.
 
 ## Fronta neznámých poplatků
 
@@ -275,7 +272,7 @@ tokenu — používat jen fine-grained token pro tento repozitář.
 
 `python test_security.py` ověřuje renderer i shell quoting a běží v CI.
 `python render_latest.py` přegeneruje oba HTML soubory z uložených dat bez scrapu
-a notifikací; pro zachování osobní karty vyžaduje stejné `OWN_*` jako scraper.
+a notifikací. Osobní kartu „Tvůj byt“ do nich nezapisuje.
 
 ### Příkazy
 

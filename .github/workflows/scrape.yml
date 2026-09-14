@@ -135,15 +135,12 @@ jobs:
           # only the notification (R-5.6, R-10.1). Hence a secret rather than a
           # constant in this public repo.
           MORTGAGE_PAYMENT_CZK: ${{ secrets.MORTGAGE_PAYMENT_CZK }}
-          # Purchase price of the reference flat. Without it the "Tvůj byt"
-          # card does not render. See the note by OWN_PROPERTY: this keeps the
-          # figure out of the source, not off the published page.
-          OWN_PRICE_CZK: ${{ secrets.OWN_PRICE_CZK }}
-          # Garáž a komora zvlášť, jedním secretem: "garaz=500000,komora=110110".
-          OWN_EXTRA_PRICES_CZK: ${{ secrets.OWN_EXTRA_PRICES_CZK }}
-          # Zaplacené zálohy — bez nich se řádek o chybějícím vlastním kapitálu neukáže.
-          OWN_DEPOSITS_CZK: ${{ secrets.OWN_DEPOSITS_CZK }}
-          OWN_LTV_PCT: ${{ secrets.OWN_LTV_PCT }}
+          # OWN_* personal finance is intentionally NOT passed here. Those
+          # secrets used to be injected into scrape.py, which wrote ownCard
+          # into dashboard.html / index.html — the public Pages artefact.
+          # A GitHub Secret is not private once it is in a committed HTML file.
+          # The public dashboard keeps listings, overrides, estimates and
+          # market stats; the personal portfolio card does not publish.
           MAX_DETAIL_FETCHES: ${{ github.event.inputs.max_detail_fetches }}
           MAX_SOURCE_DETAIL_FETCHES: ${{ github.event.inputs.max_source_detail_fetches }}
           MAX_REENRICH: ${{ github.event.inputs.max_reenrich }}
@@ -152,6 +149,17 @@ jobs:
 
       - name: Mirror dashboard as Pages index
         run: cp dashboard.html index.html
+
+      - name: Guard public Pages against personal finance
+        run: |
+          if grep -E -q "id=['\"]ownCard['\"]" dashboard.html index.html; then
+            echo "::error::ownCard leaked into public dashboard HTML" >&2
+            exit 1
+          fi
+          if grep -E -q "OWN_(PRICE|EXTRA_PRICES|DEPOSITS|LTV)_" dashboard.html index.html latest_snapshot.json; then
+            echo "::error::OWN_* secret name leaked into a public artefact" >&2
+            exit 1
+          fi
 
       - name: Commit and push results
         run: |

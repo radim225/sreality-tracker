@@ -85,6 +85,55 @@ class Security(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     listing_id(url)
 
+    def test_workflow_does_not_inject_own_secrets_into_scrape(self):
+        workflow = Path('.github/workflows/scrape.yml').read_text()
+        for name in ('OWN_PRICE_CZK', 'OWN_EXTRA_PRICES_CZK', 'OWN_DEPOSITS_CZK', 'OWN_LTV_PCT'):
+            self.assertNotIn(f'{name}:', workflow)
+            self.assertNotIn(f'secrets.{name}', workflow)
+
+    def test_public_dashboard_omits_own_card_even_when_secrets_are_set(self):
+        snapshot = json.loads(Path('latest_snapshot.json').read_text())
+        marker_price = 918273645
+        marker_garage = 817263544
+        marker_deposit = 726354433
+        saved = (
+            scrape.OWN_PROPERTY['price_czk'],
+            dict(scrape.OWN_EXTRA_PRICES),
+            scrape.OWN_DEPOSITS_CZK,
+        )
+        scrape.OWN_PROPERTY['price_czk'] = marker_price
+        scrape.OWN_EXTRA_PRICES = {'garaz': marker_garage, 'komora': 110110}
+        scrape.OWN_DEPOSITS_CZK = marker_deposit
+        try:
+            target = Mock()
+            with patch.object(scrape, 'DASHBOARD_PATH', target):
+                scrape.render_dashboard(
+                    copy.deepcopy(snapshot),
+                    {'new': [], 'removed': [], 'price_changes': []},
+                    snapshot['stats'],
+                    [],
+                )
+            html = target.write_text.call_args.args[0]
+            self.assertNotIn('ownCard', html)
+            self.assertNotIn(str(marker_price), html)
+            self.assertNotIn(str(marker_garage), html)
+            self.assertNotIn(str(marker_deposit), html)
+            self.assertIn('id="manageCard"', html)
+            self.assertIn('id="dealsCard"', html)
+        finally:
+            scrape.OWN_PROPERTY['price_czk'], scrape.OWN_EXTRA_PRICES, scrape.OWN_DEPOSITS_CZK = saved
+
+    def test_own_finance_tripwire(self):
+        with self.assertRaises(RuntimeError):
+            scrape.reject_own_finance_in_public_html('<div class="card" id="ownCard"></div>')
+        scrape.reject_own_finance_in_public_html('<div class="card" id="estimateCard"></div>')
+
+    def test_committed_pages_html_has_no_own_card(self):
+        for name in ('dashboard.html', 'index.html'):
+            text = Path(name).read_text(encoding='utf-8')
+            self.assertNotIn('id="ownCard"', text, name)
+            self.assertNotIn("id='ownCard'", text, name)
+
 
 if __name__ == '__main__':
     unittest.main()
