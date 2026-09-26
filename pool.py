@@ -37,7 +37,10 @@ POOL_FIELDS = (
     "url", "source", "title",
     # classification
     "transaction_type", "disposition", "floor_area_sqm", "street", "locality",
-    "city_part", "lat", "lon", "dist_km", "pod_harfou",
+    "city_part", "lat", "lon", "dist_km", "pod_harfou", "area",
+    # A re-posted advert points at the one it replaced (relist.py), so the
+    # price path can be read across both ids.
+    "relist_of",
     # price
     "price_czk", "fees_czk", "fees_missing", "fees_source", "electricity_czk",
     "electricity_estimated", "total_czk", "price_czk_per_sqm", "price_old_czk",
@@ -301,8 +304,25 @@ def records_of(pool):
     return list(pool.values()) if isinstance(pool, dict) else list(pool)
 
 
-def window(pool, days=WINDOW_DAYS, now=None, end=None):
+# The area every statistic in market.py and report.py describes. Records from
+# before 26. 9. 2026 carry no `area`; they are all from this one.
+HOME_AREA = "vysocany"
+# Display names, for the write-up. Must list the same keys as scrape.AREAS
+# (test_areas.py checks it); pool.py cannot import scrape.
+AREA_LABELS = {"vysocany": "Vysočany", "jinonice": "Jinonice · Nové Butovice · Prokopské údolí"}
+
+
+def area_of(rec):
+    return rec.get("area") or HOME_AREA
+
+
+def window(pool, days=WINDOW_DAYS, now=None, end=None, area=HOME_AREA):
     """Records last seen inside the window (R-4.2).
+
+    Home area only unless asked otherwise: the rent estimate, the medians and
+    the weekly trend all describe Vysočany, and a Jinonice record in the window
+    would move them without anything in Vysočany having moved. `area=None`
+    means every area.
 
     `end` moves the window back in time so a past week can be recomputed on
     exactly the definition used live -- that is what makes the weekly series
@@ -311,6 +331,8 @@ def window(pool, days=WINDOW_DAYS, now=None, end=None):
     start_dt = end_dt - timedelta(days=days)
     out = []
     for rec in records_of(pool):
+        if area is not None and area_of(rec) != area:
+            continue
         seen = parse_ts(rec.get("last_seen"))
         if seen is None:
             continue

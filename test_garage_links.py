@@ -30,7 +30,10 @@ def status(url):
 
 def main():
     limit = int(sys.argv[1]) if len(sys.argv) > 1 else 8
-    garages = (json.loads(SNAP.read_text()).get("garages") or [])
+    # Jen živé: zmizelé garáže zůstávají ve snapshotu kvůli historii a jejich
+    # detail vrací 404 právem -- to by vypadalo jako chyba slugu.
+    garages = [g for g in (json.loads(SNAP.read_text()).get("garages") or [])
+               if not g.get("gone_at")]
     if not garages:
         print("Ve snapshotu nejsou žádné garáže — není co ověřovat.")
         return

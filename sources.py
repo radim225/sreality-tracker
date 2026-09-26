@@ -36,6 +36,9 @@ MAX_ADMIN_FEE_CZK = 5000
 # one implementation of fee parsing, shared by every source.
 AREA_CENTER = (50.0995, 14.4900)
 AREA_RADIUS_KM = 3.0
+# Every watched circle, key -> (centre, radius). Since 26. 9. there are two
+# (Vysočany and Jinonice); configure() fills this from scrape.AREAS.
+_AREAS = {"vysocany": (AREA_CENTER, AREA_RADIUS_KM)}
 TARGET_DISPOSITIONS = {"1+kk", "1+1", "2+kk", "2+1", "3+kk", "3+1"}
 _FEE_PARSER = None   # (cost_of_living_raw, description, rent) -> (fee, source, electricity, unsure)
 _COST_FN = None      # (price, fee, tx, electricity, fee_source) -> cost tuple
@@ -82,22 +85,30 @@ MAX_DETAIL_FETCHES = env_int("MAX_SOURCE_DETAIL_FETCHES", 200)  # per source, pe
 # filtered by the ward label its cards carry ("Kolmá, Praha 9 - Vysočany").
 # These are the wards the watched circle overlaps, and the district search paths
 # they live under.
-IDNES_WARDS = {"Vysočany", "Hrdlořezy", "Libeň", "Karlín", "Žižkov", "Malešice"}
+IDNES_WARDS_BY_AREA = {
+    "vysocany": {"Vysočany", "Hrdlořezy", "Libeň", "Karlín", "Žižkov", "Malešice"},
+    # Nové Butovice nejsou čtvrť, iDNES je píše pod Jinonice nebo Stodůlky.
+    "jinonice": {"Jinonice", "Radlice", "Košíře", "Stodůlky", "Hlubočepy"},
+}
+IDNES_WARDS = set().union(*IDNES_WARDS_BY_AREA.values())
 # Wards that lie wholly (or near enough) inside the circle, so an advert there
 # can be kept even when its street can't be placed. Žižkov and Malešice are
 # deliberately absent: both run far past the boundary, and Radim asked not to
 # drift outward.
-IDNES_CORE_WARDS = {"Vysočany", "Hrdlořezy", "Karlín"}
-IDNES_DISTRICTS = ("praha-9", "praha-8", "praha-3")
+# Jinonice and Radlice sit inside the Jinonice circle; Stodůlky, Košíře and
+# Hlubočepy run far outside it, same reasoning as Žižkov above.
+IDNES_CORE_WARDS = {"Vysočany", "Hrdlořezy", "Karlín", "Jinonice", "Radlice"}
+IDNES_DISTRICTS = ("praha-9", "praha-8", "praha-3", "praha-5", "praha-13")
 
 
 def configure(center, radius_km, dispositions, fee_parser, cost_fn,
               street_gps=None, prev_comparables=None, prev_fold_cache=None,
-              parser_version=None):
+              parser_version=None, areas=None):
     global AREA_CENTER, AREA_RADIUS_KM, TARGET_DISPOSITIONS, _FEE_PARSER, _COST_FN
-    global _STREET_GPS, _PREV_BY_ID, _PARSER_VERSION
+    global _STREET_GPS, _PREV_BY_ID, _PARSER_VERSION, _AREAS
     AREA_CENTER = center
     AREA_RADIUS_KM = radius_km
+    _AREAS = dict(areas) if areas else {"vysocany": (center, radius_km)}
     TARGET_DISPOSITIONS = set(dispositions)
     _FEE_PARSER, _COST_FN = fee_parser, cost_fn
     _STREET_GPS = street_gps or {}
@@ -247,19 +258,35 @@ def _finalize_costs(comp):
     return comp
 
 
-def _km_from_center(lat, lng):
+def _km_between(lat, lng, center):
     if lat is None or lng is None:
         return None
-    la1, lo1 = math.radians(AREA_CENTER[0]), math.radians(AREA_CENTER[1])
+    la1, lo1 = math.radians(center[0]), math.radians(center[1])
     la2, lo2 = math.radians(lat), math.radians(lng)
     dlat, dlon = la2 - la1, lo2 - lo1
     a = math.sin(dlat / 2) ** 2 + math.cos(la1) * math.cos(la2) * math.sin(dlon / 2) ** 2
     return 2 * 6371 * math.asin(math.sqrt(a))
 
 
+def _area_key(lat, lng):
+    for key, (center, radius) in _AREAS.items():
+        d = _km_between(lat, lng, center)
+        if d is not None and d <= radius:
+            return key
+    return None
+
+
+def _km_from_center(lat, lng):
+    """From the centre of whichever watched circle the point is in. scrape.py
+    re-stamps this with assign_area anyway; it is here so a source's record is
+    sensible on its own."""
+    key = _area_key(lat, lng)
+    center = _AREAS[key][0] if key else AREA_CENTER
+    return _km_between(lat, lng, center)
+
+
 def _in_area(lat, lng):
-    d = _km_from_center(lat, lng)
-    return d is not None and d <= AREA_RADIUS_KM
+    return _area_key(lat, lng) is not None
 
 
 # --------------------------------------------------------------------------- #
@@ -330,7 +357,7 @@ def _bez_parse_advert(a, img_map):
         "transaction_type": tx,
         "price_czk": price,
         "floor_area_sqm": surface,
-        "locality": (a.get("address") or "").strip() or "okolí Pod Harfou",
+        "locality": (a.get("address") or "").strip() or None,
         "city_part": (a.get("addressUserInput") or "").split(",")[-1].strip() or None,
         "street": None,
         "url": f"https://www.bezrealitky.cz/nemovitosti-byty-domy/{uri}" if uri else None,

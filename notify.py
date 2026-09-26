@@ -121,6 +121,16 @@ def build_message(meta, payment_czk=None):
         f"Podobné byty: +{meta['arrived_similar_n']} nových, "
         f"−{meta['left_similar_n']} zmizelých"
     )
+    if meta.get("arrived_relisted_n"):
+        lines.append(f"   (z nových {meta['arrived_relisted_n']} jen znovu vložených)")
+    for block in (meta.get("other_areas") or {}).values():
+        rent = block.get("pronajem") or {}
+        rent_txt = (f"nájem {report.czk(rent['median'])}/m² (n={rent['n']})"
+                    if rent.get("median") else "nájem: málo dat")
+        lines.append(
+            f"{block['label'].split(' · ')[0]}: {rent_txt}, "
+            f"+{block['arrived_n']} / −{block['left_n']} za týden"
+        )
     if meta.get("config_changed"):
         lines.append("⚠️ Tenhle týden se měnila naše konfigurace hledání — část pohybu je naše.")
     if est["base_total_per_sqm"]["too_small"]:

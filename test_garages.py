@@ -79,15 +79,16 @@ check("garáž má slug garaz", url_for("garaze").endswith("/ostatni/garaz/x/42"
 base = dict(garage_kind="Garáž", garage_slug="garaze", transaction_type="prodej",
             price_czk=600000, first_seen="2026-08-01T00:00:00Z", street="Budilova",
             city_part="Libeň", usable_area_sqm=13.0, features=[], url="https://x")
-card = scrape.garage_card(
-    [dict(base, id=1, gone_at=None),
-     dict(base, id=2, gone_at="2026-08-28T10:00:00Z", street="Jandova")],
-    {"pronajem": {"n": 0}, "prodej": {"n": 1, "median_czk": 600000,
-                                      "min_czk": 600000, "max_czk": 600000}})
-check("zmizelý je v kartě", "Jandova" in card, True)
-check("s datem zmizení", "2026-08-28" in card, True)
-check("a s datem prvního výskytu", "2026-08-01" in card, True)
-# "Zmizel" není totéž co "prodal se" -- N-7, stejná lekce jako u bytů.
+rows = [dict(base, id=1, gone_at=None),
+        dict(base, id=2, gone_at="2026-08-28T10:00:00Z", street="Jandova")]
+card = scrape.garage_card(rows)
+page = [scrape.garage_for_page(g) for g in rows]
+# Karta je od 26. 9. kostra a řádky kreslí JS z dat -- kontroluje se, že
+# data, ze kterých se kreslí, historii nesou.
+check("zmizelý je v datech karty", [g.get("street") for g in page], ["Budilova", "Jandova"])
+check("s datem zmizení", page[1].get("gone_at"), "2026-08-28T10:00:00Z")
+check("a s datem prvního výskytu", page[1].get("first_seen"), "2026-08-01T00:00:00Z")
+check("karta má tabulku zmizelých", 'id="tblGarGone"' in card, True)
 check("karta neříká, že se prodal", "Neznamená to, že se prodal" in card, True)
 
 print()

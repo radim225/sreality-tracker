@@ -17,10 +17,14 @@ from pathlib import Path
 
 import requests
 
+import geocode
+import gone_archive
 import market
 import notify
 import pool
+import relist
 import report
+import ribbon
 import sources
 
 ROOT = Path(__file__).parent
@@ -84,15 +88,53 @@ GARAGE_DETAIL_SLUG = {"garaze": "garaz", "garazova-stani": "garazove-stani"}
 #   Hrdlořezy (V Třešňovce/Nad Smetánkou) 0.9 · Podvinný mlýn 1.1
 #   Palmovka 1.1 · Pod Harfou 1.5 · Kolbenova east end 2.9 · Karlín 2.9
 #   -- excluded: Hloubětín metro 3.7 · Černý Most 6.9
-AREA_CENTER = (50.0995, 14.4900)
-AREA_RADIUS_KM = 3.0
-# Wards the circle overlaps. Free text, resolved server-side to a ward id;
-# a ward only contributes the listings that pass the radius test.
-SEARCH_WARDS = [
-    "Vysočany", "Hrdlořezy", "Libeň", "Karlín", "Žižkov", "Malešice", "Hloubětín",
-]
-# Radim's landmark streets, shown on the dashboard so the area stays legible.
-AREA_LANDMARKS = "Pod Harfou · Kolbenova · Hrdlořezy · Podvinný mlýn · Palmovka · Karlín"
+#
+# Od 26. 9. 2026 jsou oblasti dvě (Radim): k Vysočanům přibyly Jinonice,
+# Nové Butovice a okolí Prokopského údolí. Druhá oblast je ZVLÁŠŤ, ne
+# rozšířený kruh: medián Prahy 5 by posunul medián Prahy 9 a s ním odhad
+# nájmu bytu Pod Harfou. Každý inzerát proto nese `area` a všechno, co počítá
+# statistiku (medián, výhodné nabídky, pool, odhad, týdenní zápis), ji počítá
+# po oblastech -- a odhad nájmu jen na domácí oblasti. Změny (nové / zmizelé /
+# zlevněné) jdou do historie a alertů z obou.
+#
+# Jinonice: střed mezi Novými Butovicemi a Radlicemi. Vzdálenosti od středu:
+#   Jinonice (obec) 0.2 · Nové Butovice metro 1.2 · Radlice metro 1.5
+#   Jinonice metro 1.8 · Košíře (Klamovka) 1.8 · Hlubočepy u Prokopského údolí 2.3
+#   -- mimo: Anděl 3.1 · Stodůlky metro 4.4 · Barrandov 3.2
+# Motol a Smíchov se neprohledávají: do kruhu zasahují jen okrajem (1 z 20
+# inzerátů), a každá stránka hledání navíc je request na Sreality.
+AREAS = {
+    "vysocany": {
+        "label": "Vysočany",
+        "center": (50.0995, 14.4900),
+        "radius_km": 3.0,
+        # Wards the circle overlaps. Free text, resolved server-side to a ward
+        # id; a ward only contributes the listings that pass the radius test.
+        "wards": ["Vysočany", "Hrdlořezy", "Libeň", "Karlín", "Žižkov", "Malešice", "Hloubětín"],
+        # Radim's landmark streets, shown on the dashboard so the area stays legible.
+        "landmarks": "Pod Harfou · Kolbenova · Hrdlořezy · Podvinný mlýn · Palmovka · Karlín",
+    },
+    "jinonice": {
+        "label": "Jinonice",
+        "center": (50.0540, 14.3680),
+        "radius_km": 2.5,
+        # Ověřeno 26. 9. proti Sreality: všech pět jmen se rozpozná jako
+        # čtvrť. Nové Butovice samy čtvrť nejsou (leží v Jinonicích a
+        # Stodůlkách), Barrandov se hlásí jako Hlubočepy.
+        "wards": ["Jinonice", "Radlice", "Košíře", "Stodůlky", "Hlubočepy"],
+        "landmarks": "Jinonice · Nové Butovice · Radlice · Prokopské údolí",
+    },
+}
+# Domácí oblast: jen z ní se počítá odhad nájmu, karta Pod Harfou a týdenní
+# zápis. Inzerát bez `area` (všechno uložené před 26. 9.) patří sem.
+HOME_AREA = "vysocany"
+AREA_CENTER = AREAS[HOME_AREA]["center"]
+AREA_RADIUS_KM = AREAS[HOME_AREA]["radius_km"]
+AREA_LANDMARKS = AREAS[HOME_AREA]["landmarks"]
+# Every ward any circle touches, in a stable order.
+SEARCH_WARDS = [w for a in AREAS.values() for w in a["wards"]]
+# Ward name -> area, for the rare listing that has no GPS to place it by.
+WARD_AREA = {w: key for key, a in AREAS.items() for w in a["wards"]}
 
 
 MAX_IMAGES_PER_LISTING = 5
@@ -125,6 +167,8 @@ MAX_DETAIL_FETCHES_PER_RUN = sources.env_int("MAX_DETAIL_FETCHES", 300)
 # jednou a pak žijí z keše. Strop je tu pro první běh a pro případ, že by se
 # celá kategorie protočila naráz.
 MAX_GARAGE_DETAIL_FETCHES = sources.env_int("MAX_GARAGE_DETAIL_FETCHES", 40)
+# Ověření „zmizelé" garáže přes její detail (404 = pryč). Běžně 0–5 za běh.
+MAX_GARAGE_GONE_CHECKS = sources.env_int("MAX_GARAGE_GONE_CHECKS", 30)
 # How many clean reads an advert gets before "no fee stated" is accepted as the
 # answer rather than retried. Roughly a third of Sreality rentals never quote a
 # service charge anywhere.
@@ -278,15 +322,49 @@ def haversine_km(lat1, lon1, lat2, lon2):
     return 2 * 6371 * math.asin(math.sqrt(a))
 
 
-def km_from_center(lat, lon):
-    return haversine_km(lat, lon, AREA_CENTER[0], AREA_CENTER[1])
+def area_of(lat, lon):
+    """Key of the watched circle this point falls in, or None. Circles do not
+    overlap (Praha 9 and Praha 5 are 9 km apart), so the first hit is the only
+    one."""
+    for key, a in AREAS.items():
+        d = haversine_km(lat, lon, a["center"][0], a["center"][1])
+        if d is not None and d <= a["radius_km"]:
+            return key
+    return None
+
+
+def km_from_center(lat, lon, area=None):
+    """Distance from the centre of the listing's own area -- a Jinonice flat
+    measured from Palmovka would read "9.4 km" and mean nothing."""
+    key = area or area_of(lat, lon) or HOME_AREA
+    c = AREAS[key]["center"]
+    return haversine_km(lat, lon, c[0], c[1])
 
 
 def in_watched_area(lat, lon):
     """A listing with no GPS at all can't be placed, so it is kept -- dropping
     it would silently shrink the market. Enrichment usually fills the GPS in."""
-    d = km_from_center(lat, lon)
-    return True if d is None else d <= AREA_RADIUS_KM
+    if lat is None or lon is None:
+        return True
+    return area_of(lat, lon) is not None
+
+
+def listing_area(item):
+    """The area a stored listing belongs to. Records from before 26. 9. carry
+    no `area` and all of them are Vysočany -- that was the only area then."""
+    return item.get("area") or HOME_AREA
+
+
+def assign_area(item):
+    """Stamp `area` and `dist_km` on a listing. GPS decides; the ward name is
+    the fallback for a listing that has none, and home is the last resort."""
+    key = area_of(item.get("lat"), item.get("lon"))
+    if key is None:
+        key = WARD_AREA.get(item.get("city_part") or "") or item.get("area") or HOME_AREA
+    item["area"] = key
+    d = km_from_center(item.get("lat"), item.get("lon"), key)
+    item["dist_km"] = round(d, 2) if d is not None else None
+    return item
 
 
 def cdn_url(url):
@@ -1437,6 +1515,9 @@ ENRICHED_FIELDS = (
     "electricity_estimated", "total_czk", "garage", "parking",
     "price_czk_per_sqm", "floor_area_sqm", "lat", "lon", "cost_of_living_raw",
     "fee_attempts", "parser_version", "price_note_raw",
+    # Přesnost adresy z detailu (locality_precision). Plní se jen při čtení
+    # detailu, takže u starších inzerátů přibývá postupně, bez PARSER_VERSION.
+    "house_number", "locality_entity", "address_exact",
     # The attribute block (attributes_from_params). Carried forward like the
     # rest: these are static for the life of an advert, so a cached listing must
     # keep them or the 30-day pool would only ever know about this week's
@@ -1637,6 +1718,15 @@ def garage_features(description, note=None):
     return out
 
 
+# 2 = fotky + přesnost adresy (26. 9. 2026). Živé garáže uložené dřív se
+# dočtou znovu, postupně v rámci MAX_GARAGE_DETAIL_FETCHES.
+GARAGE_DETAIL_VERSION = 2
+GARAGE_DETAIL_FIELDS = (
+    "description", "features", "seller_name", "images", "thumb",
+    "house_number", "locality_entity", "address_exact", "detail_version",
+)
+
+
 def enrich_garage(g):
     """Dočte detail garáže kvůli popisu. Vrací True, když se něco změnilo."""
     next_data, status = fetch_next_data(g["url"])
@@ -1652,7 +1742,31 @@ def enrich_garage(g):
     g["features"] = garage_features(description, (data.get("params") or {}).get("note"))
     g["seller_name"] = ((data.get("seller") or {}).get("premise") or {}).get("name") \
         or (data.get("premise") or {}).get("name")
+    # Od verze 2: fotky a přesnost adresy. Obojí je po zmizení inzerátu
+    # nedohledatelné (detail vrací 404), takže se musí uložit, dokud žije --
+    # Radim chce u zmizelých garáží vidět náhled a kde přesně byly.
+    images = extract_images(data.get("images"))
+    if images:
+        g["images"] = images
+        g["thumb"] = extract_thumb(data.get("images")) or g.get("thumb")
+    g.update(locality_precision(data.get("locality")))
+    g["detail_version"] = GARAGE_DETAIL_VERSION
     return True
+
+
+def locality_precision(locality):
+    """Jak přesně Sreality inzerát umístila. `entityType` "address" znamená
+    konkrétní dům (a pak bývá i číslo), "street" jen ulici -- a GPS je pak
+    obvykle střed ulice, ne ten dům. Rozdíl, který musí být na stránce vidět,
+    jinak špendlík v mapě tvrdí přesnost, kterou nemá."""
+    locality = locality or {}
+    house = locality.get("houseNumber")
+    entity = locality.get("entityType")
+    return {
+        "house_number": str(house) if house not in (None, "") else None,
+        "locality_entity": entity,
+        "address_exact": bool(entity == "address" and house not in (None, "")),
+    }
 
 
 def fetch_garages(prev_garages=None):
@@ -1667,7 +1781,7 @@ def fetch_garages(prev_garages=None):
     raw_count = len(by_id)
     garages = [g for g in by_id.values() if in_watched_area(g.get("lat"), g.get("lon"))]
     for g in garages:
-        g["dist_km"] = round(km_from_center(g.get("lat"), g.get("lon")) or 0, 2)
+        assign_area(g)
     # Detaily se čtou kvůli popisu, ze kterého se dělá krátká charakteristika
     # ("1. PP", "parklift", "jen pro motocykl"). Kešuje se z minulého běhu:
     # popis inzerátu se prakticky nemění, takže po prvním načtení stojí
@@ -1687,10 +1801,39 @@ def fetch_garages(prev_garages=None):
         # Poslední viděná cena se drží i po zdražení, aby šlo poznat pohyb.
         prev_price = (prev or {}).get("price_czk")
         g["price_old_czk"] = prev_price if prev_price and prev_price != g.get("price_czk") else (prev or {}).get("price_old_czk")
+    verified = 0
     for gid, prev in cached.items():
         if gid in seen_now:
             continue
+        if not prev.get("gone_at") and verified >= MAX_GARAGE_GONE_CHECKS:
+            # Nad strop se neověřuje a tedy ani neprohlašuje za zmizelé --
+            # počká na příští běh, místo aby se odhadlo naslepo.
+            alive = dict(prev)
+            alive["missing_from_search"] = now
+            garages.append(alive)
+            continue
+        if not prev.get("gone_at"):
+            # Chybět ve výsledcích hledání neznamená zmizet -- u bytů to měřeně
+            # platilo 8 z 8 (stránkování se pod sweepem posouvá). Garáže to
+            # dřív nekontrolovaly, takže „Už není v nabídce" mohlo ukazovat
+            # živé inzeráty. Rozhoduje až 404 na detailu; cokoli jiného
+            # (200, 5xx, timeout) inzerát nechá v nabídce.
+            verified += 1
+            # Jeden krátký pokus bez retry: fetch_next_data by se u škrcení
+            # zdržel až ~97 s na inzerát. Nejistota (timeout, 5xx) znamená
+            # nechat živý a zkusit příště.
+            try:
+                status = SESSION.get(prev["url"], timeout=10).status_code
+            except Exception:  # noqa: BLE001 -- nejistota = nechat živý
+                status = None
+            time.sleep(0.3)
+            if status != 404:
+                alive = dict(prev)
+                alive["missing_from_search"] = now
+                garages.append(alive)
+                continue
         gone = dict(prev)
+        gone.pop("missing_from_search", None)
         # gone_at se zapíše jen jednou -- při druhém běhu už tam je a
         # přepsat ho na dnešek by z data odstranění udělalo datum posledního
         # běhu, což je přesně ten druh tichého posunu, co se špatně hledá.
@@ -1700,11 +1843,22 @@ def fetch_garages(prev_garages=None):
     fetched = 0
     for g in garages:
         prev = cached.get(str(g["id"]))
-        if prev and prev.get("features") is not None:
-            g["description"] = prev.get("description")
-            g["features"] = prev.get("features")
-            g["seller_name"] = prev.get("seller_name")
+        current = prev and prev.get("features") is not None and (
+            # Zmizelá garáž se už nedočte (404), tak se bere, co je.
+            g.get("gone_at") or (prev.get("detail_version") or 1) >= GARAGE_DETAIL_VERSION
+        )
+        if current:
+            for key in GARAGE_DETAIL_FIELDS:
+                if prev.get(key) is not None:
+                    g[key] = prev[key]
             continue
+        # Nejdřív to, co už víme: když dočtení selže (škrcení, timeout),
+        # garáž si ponechá popis, charakteristiku i prodejce -- bez nich by
+        # tenhle běh nespároval znovuvložení ani pár pronájem/prodej.
+        if prev:
+            for key in GARAGE_DETAIL_FIELDS:
+                if prev.get(key) is not None and g.get(key) is None:
+                    g[key] = prev[key]
         if fetched >= MAX_GARAGE_DETAIL_FETCHES:
             continue
         try:
@@ -1716,12 +1870,46 @@ def fetch_garages(prev_garages=None):
     if fetched:
         print(f"Garages: {fetched} detailů dočteno", file=sys.stderr)
 
+    # Zmizelé garáže z doby před 26. 9. oblast nemají -- a GPS mají, takže
+    # se dá dopočítat místo hádání „domácí".
+    for g in garages:
+        if not g.get("area"):
+            assign_area(g)
+    link_garage_relists(garages)
     garages.sort(key=lambda g: (g["transaction_type"], g.get("price_czk") or 0))
     print(
-        f"Garages: {len(garages)}/{raw_count} within {AREA_RADIUS_KM} km",
+        f"Garages: {len(active_garages(garages))} live inside the watched areas "
+        f"(of {raw_count} swept), {len(garages) - len(active_garages(garages))} kept as gone",
         file=sys.stderr,
     )
     return garages
+
+
+def link_garage_relists(garages):
+    """Spáruje zmizelé garáže s těmi, které se vrátily pod novým id, a živé
+    garáže, které tentýž prodejce nabízí k pronájmu i k prodeji.
+
+    Přepočítává se každý běh od nuly: obě strany páru ve snapshotu zůstávají
+    (zmizelé se nemažou) a popisy se nemění, takže výsledek je stabilní -- a
+    přepočet znamená, že oprava pravidla v relist.py se projeví hned, bez
+    migrace uložených vazeb."""
+    for g in garages:
+        for key in ("relist_of", "relisted_as", "pair_id"):
+            g.pop(key, None)
+    gone = [g for g in garages if g.get("gone_at")]
+    pairs = relist.match(gone, garages)
+    # Od nejstaršího nového: v řetězu A → B → C musí B znát A dřív, než se
+    # z B odvodí, odkdy je C v nabídce.
+    pairs.sort(key=lambda p: p[1].get("first_seen") or "")
+    for old, new, verdict, sim in pairs:
+        new["relist_of"] = relist.link_record(old, verdict, sim)
+        old["relisted_as"] = {"id": new["id"], "url": new.get("url"),
+                              "verdict": verdict, "text_similarity": sim}
+    live = [g for g in garages if not g.get("gone_at")]
+    for sale, rent in relist.rent_sale_pairs(live):
+        sale["pair_id"], rent["pair_id"] = rent["id"], sale["id"]
+    if pairs:
+        print(f"Garages: {len(pairs)} znovu vložených spárováno", file=sys.stderr)
 
 
 def active_garages(garages):
@@ -1730,14 +1918,16 @@ def active_garages(garages):
     return [g for g in garages if not g.get("gone_at")]
 
 
-def compute_garage_stats(garages):
+def compute_garage_stats(garages, area=HOME_AREA):
     """Medians per transaction type, and per kind where the sample allows.
 
     Reported with n on purpose. The sale side is a dozen adverts spanning
     245 000 to 3 000 000 Kc, so its median is a location on a very wide
     distribution, not a market price -- the dashboard has to say so."""
     out = {}
-    garages = active_garages(garages)
+    # Home by default: the own-flat yield reads the garage rent median, and a
+    # Jinonice garage says nothing about what his Vysočany one would fetch.
+    garages = [g for g in active_garages(garages) if listing_area(g) == area]
     for tx in ("pronajem", "prodej"):
         for slug in (None, *GARAGE_CATEGORIES):
             vals = sorted(
@@ -1789,11 +1979,11 @@ def fetch_comparables(prev_snapshot=None):
     comparables = [c for c in by_id.values() if in_watched_area(c.get("lat"), c.get("lon"))]
     print(
         f"Area filter: {len(comparables)}/{raw_count} listings within "
-        f"{AREA_RADIUS_KM} km of {AREA_CENTER}",
+        f"the watched areas ({', '.join(AREAS)})",
         file=sys.stderr,
     )
     for c in comparables:
-        c["dist_km"] = round(km_from_center(c.get("lat"), c.get("lon")) or 0, 2)
+        assign_area(c)
 
     # Adverts that dedup folded away last run are not in `comparables`, but they
     # were read, and their enrichment is remembered separately. Without this the
@@ -1853,7 +2043,7 @@ def fetch_comparables(prev_snapshot=None):
     if len(placed) != len(comparables):
         print(f"Dropping {len(comparables) - len(placed)} listing(s) placed outside the area by detail GPS", file=sys.stderr)
     for c in placed:
-        c["dist_km"] = round(km_from_center(c.get("lat"), c.get("lon")) or 0, 2)
+        assign_area(c)
     return placed
 
 
@@ -1954,6 +2144,7 @@ def enrich_comparable(comp):
     if comp.get("lat") is None and locality.get("latitude") is not None:
         comp["lat"] = locality.get("latitude")
         comp["lon"] = locality.get("longitude")
+    comp.update(locality_precision(locality))
     if not comp.get("floor_area_sqm") and params.get("floorArea"):
         comp["floor_area_sqm"] = params.get("floorArea")
     comp["floor_number"] = params.get("floorNumber")
@@ -2020,12 +2211,17 @@ def enrich_comparable(comp):
 
 
 def apply_approx_locations(comparables):
-    known = [(c["lat"], c["lon"]) for c in comparables if c.get("lat") and c.get("lon")]
-    if known:
-        centroid_lat = sum(p[0] for p in known) / len(known)
-        centroid_lon = sum(p[1] for p in known) / len(known)
-    else:
-        centroid_lat, centroid_lon = 50.1075, 14.5070  # Vysočany, Praha 9 fallback
+    # Per area: one centroid over Vysočany AND Jinonice would drop an unplaced
+    # listing somewhere around Vinohrady, in neither of them.
+    centroids = {}
+    for key, a in AREAS.items():
+        known = [(c["lat"], c["lon"]) for c in comparables
+                 if c.get("lat") and c.get("lon") and listing_area(c) == key]
+        centroids[key] = (
+            (sum(p[0] for p in known) / len(known), sum(p[1] for p in known) / len(known))
+            if known else a["center"]
+        )
+    centroid_lat, centroid_lon = centroids[HOME_AREA]
 
     pod_harfou_known = [
         (c["lat"], c["lon"])
@@ -2043,7 +2239,7 @@ def apply_approx_locations(comparables):
             if c.get("pod_harfou"):
                 c["lat"], c["lon"] = ph_lat, ph_lon
             else:
-                c["lat"], c["lon"] = centroid_lat, centroid_lon
+                c["lat"], c["lon"] = centroids.get(listing_area(c), (centroid_lat, centroid_lon))
             c["approx_location"] = True
 
 
@@ -2100,6 +2296,8 @@ def update_changes_history(changes):
 
     append_changes_log(new_events)
     history = (new_events + history)[:MAX_HISTORY_EVENTS]
+    # Starší události z doby před čištěním kontaktů se dočistí při průchodu.
+    scrub_contacts([e["item"] for e in history if isinstance(e.get("item"), dict)])
     CHANGES_HISTORY_PATH.write_text(json.dumps(history, ensure_ascii=False, indent=2))
     return history
 
@@ -2203,10 +2401,56 @@ def config_fingerprint():
     return {
         "center": list(AREA_CENTER),
         "radius_km": AREA_RADIUS_KM,
+        # The second area is part of what we look at: adding it must re-baseline
+        # silently, not announce every Jinonice flat as "new" at once.
+        "areas": {k: [list(a["center"]), a["radius_km"]] for k, a in sorted(AREAS.items())},
         "dispositions": sorted(DISPOSITION_CODES.values()),
         "wards": sorted(SEARCH_WARDS),
         "idnes_wards": sorted(sources.IDNES_WARDS),
     }
+
+
+def home_config(cfg):
+    """The fingerprint as the home area alone sees it.
+
+    The pool's config log marks weeks whose trend "cannot be read as market
+    movement" (R-6.5). The weekly write-up and the rent estimate only ever read
+    the home area, so switching on Jinonice must not mark a Vysočany week as
+    contaminated -- nothing about what Vysočany is measured on has changed.
+    Shaped exactly like the fingerprint from before the areas existed, so the
+    first run after the change compares equal."""
+    home = AREAS[HOME_AREA]
+    out = {k: v for k, v in (cfg or {}).items() if k != "areas"}
+    out["wards"] = sorted(home["wards"])
+    out["idnes_wards"] = sorted(sources.IDNES_WARDS_BY_AREA.get(HOME_AREA, ()))
+    return out
+
+
+def areas_added_only(prev_cfg, curr_cfg):
+    """The areas switched on since `prev_cfg`, when that is the ONLY change.
+
+    Adding Jinonice changes the fingerprint, and a changed fingerprint normally
+    re-baselines the whole run -- which would also swallow a run's worth of real
+    Vysočany news. When nothing but an added circle (and the wards it brought)
+    differs, returns the new area keys; otherwise an empty set."""
+    if not prev_cfg or not curr_cfg:
+        return set()
+    strip = ("areas", "wards", "idnes_wards")
+    prev_core = {k: v for k, v in prev_cfg.items() if k not in strip}
+    curr_core = {k: v for k, v in curr_cfg.items() if k not in strip}
+    if prev_core != curr_core:
+        return set()
+    # A fingerprint from before the areas existed described the home circle.
+    prev_areas = prev_cfg.get("areas") or {
+        HOME_AREA: [prev_cfg.get("center"), prev_cfg.get("radius_km")]
+    }
+    curr_areas = curr_cfg.get("areas") or {}
+    if any(curr_areas.get(k) != v for k, v in prev_areas.items()):
+        return set()
+    for key in ("wards", "idnes_wards"):
+        if not set(prev_cfg.get(key) or []) <= set(curr_cfg.get(key) or []):
+            return set()
+    return set(curr_areas) - set(prev_areas)
 
 
 def diff_snapshots(prev, curr):
@@ -2260,7 +2504,17 @@ def diff_snapshots(prev, curr):
     # the listing. Re-baseline silently instead of announcing a mass removal.
     # A snapshot predating this field (config is None) also counts as "changed":
     # it is exactly the snapshot taken before the area was widened.
-    if prev.get("config") != curr.get("config"):
+    fresh_areas = areas_added_only(prev.get("config"), curr.get("config"))
+    if fresh_areas:
+        # Only a new area was switched on. Everything already watched keeps its
+        # normal diff; the new area's listings are baseline, not news.
+        print(
+            f"New area(s) {', '.join(sorted(fresh_areas))} since the last snapshot -- "
+            "their listings are baselined silently, the rest diffs as usual.",
+            file=sys.stderr,
+        )
+        changes["baselined_areas"] = sorted(fresh_areas)
+    if prev.get("config") != curr.get("config") and not fresh_areas:
         print(
             "Search config changed since the last snapshot -- suppressing removal "
             "detection for this run and re-baselining.",
@@ -2285,7 +2539,7 @@ def diff_snapshots(prev, curr):
             # Same reasoning as removals, mirrored: widening the area surfaces
             # hundreds of listings that have been on the market for months.
             # Calling them "new" would bury the handful that really are.
-            if not changes.get("config_changed"):
+            if not changes.get("config_changed") and listing_area(new) not in fresh_areas:
                 changes["new_listings"].append({**new, "first_seen": changes["generated_at"]})
         else:
             # Compare on total cost (rent+fees+electricity for rentals), not
@@ -2460,6 +2714,13 @@ def fold_cache_records(cache):
     return out
 
 
+def deal_group(c):
+    """What a listing is ranked against: same area, transaction, disposition.
+    A Jinonice 2+kk against the Vysočany median is a statement about Prague 5
+    versus Prague 9, not about the flat."""
+    return (listing_area(c), c.get("transaction_type"), c.get("disposition"))
+
+
 def rank_deals(comparables):
     """Score every listing against the median Kč/m² of its own disposition and
     transaction type, so "cheap" means cheap for what it is rather than just
@@ -2483,13 +2744,13 @@ def rank_deals(comparables):
     for c in comparables:
         v = c.get("price_czk_per_sqm")
         if v and comparable_basis(c):
-            groups.setdefault((c.get("transaction_type"), c.get("disposition")), []).append(v)
+            groups.setdefault(deal_group(c), []).append(v)
     medians = {k: statistics.median(v) for k, v in groups.items() if len(v) >= 4}
 
     for c in comparables:
         c["deal_pct"] = None
         c["deal_ok"] = False
-        med = medians.get((c.get("transaction_type"), c.get("disposition")))
+        med = medians.get(deal_group(c))
         v = c.get("price_czk_per_sqm")
         if not med or not v:
             continue
@@ -3343,10 +3604,15 @@ DASHBOARD_DROP_IF_EMPTY = ("sale_extras", "price_history", "tx_suspect")
 
 
 def slim_for_dashboard(comp):
-    return {
+    out = {
         k: v for k, v in comp.items()
         if k not in DASHBOARD_OMIT_FIELDS and not (k in DASHBOARD_DROP_IF_EMPTY and not v)
     }
+    if out.get("description"):
+        out["description"] = gone_archive.strip_contacts(out["description"])
+    if out.get("seller_name"):
+        out["seller_name"] = gone_archive.strip_seller(out["seller_name"])
+    return out
 
 
 def fee_queue_card(queue):
@@ -3468,112 +3734,83 @@ def overrides_card(overrides, listings):
 </div>"""
 
 
-def garage_card(garages, gstats):
-    """The standalone garage/parking section.
+def garage_card(garages):
+    """The standalone garage/parking section: statistics per area, a map, the
+    live list and the ones that disappeared.
 
     Kept visually apart from the flat statistics because it IS apart: different
-    category, different area field, no disposition. Every number carries its n,
-    and the sale side carries a warning -- eleven adverts spanning 245 000 to
-    3 000 000 Kc have a median, but it is not a price."""
+    category, different area field, no disposition. Everything below the
+    skeleton is drawn by JS (renderGarages / initGarageMap), because the area
+    switch in the ribbon filters it the same way it filters the flats.
+
+    Every number carries its n, and the sale side carries a warning: a dozen
+    adverts spanning 245 000 to 3 000 000 Kč have a median, but it is not a
+    price."""
     if not garages:
         return ""
-    rent = gstats.get("pronajem") or {"n": 0}
-    sale = gstats.get("prodej") or {"n": 0}
-
-    def cell(st, unit):
-        if not st.get("n"):
-            return '<div class="stat"><div class="num">—</div><div class="lbl">bez dat</div></div>'
-        return (
-            f'<div class="stat"><div class="num">{fmt_czk(st["median_czk"])}</div>'
-            f'<div class="lbl">medián {unit} ({st["n"]})</div></div>'
-        )
-
-    def where(g):
-        """Ulice a část — Radim chce vidět, KDE to stání je, ne jen za kolik."""
-        bits = [b for b in (g.get("street"), g.get("city_part")) if b]
-        return html.escape(", ".join(bits))
-
-    def feats(g):
-        """Krátká charakteristika z popisu. Varování se barví, zbytek ne."""
-        out = []
-        for f in (g.get("features") or []):
-            cls = "gf warn" if f.startswith("⚠") else "gf"
-            out.append(f'<span class="{cls}">{html.escape(f)}</span>')
-        return " ".join(out)
-
-    live = active_garages(garages)
-    # Zmizelé se nemažou. Radim chce vidět, že se to stání nabízelo, kdy se
-    # objevilo, kdy zmizelo a za kolik naposledy -- jinak nabídka, na kterou
-    # minulý týden koukal, prostě není a nedá se říct, co se s ní stalo.
-    gone = sorted(
-        (g for g in garages if g.get("gone_at")),
-        key=lambda g: g.get("gone_at") or "", reverse=True,
-    )
-
-    def day(iso):
-        return (iso or "")[:10]
-
-    gone_rows = "".join(
-        f"<tr><td>{html.escape(g.get('garage_kind') or '')}</td>"
-        f"<td>{'pronájem' if g['transaction_type'] == 'pronajem' else 'prodej'}</td>"
-        f"<td>{where(g)}</td>"
-        f"<td>{g.get('usable_area_sqm') or ''}</td>"
-        f"<td>{fmt_czk(g.get('price_czk'))}</td>"
-        f'<td class="hint">{day(g.get("first_seen"))}</td>'
-        f'<td class="hint">{day(g.get("gone_at"))}</td></tr>'
-        for g in gone[:40]
-    )
-    gone_html = ""
-    if gone:
-        gone_html = f"""
-  <details style="margin-top:10px;">
+    return """<div class="card" id="garageCard">
+  <h2 style="margin-top:0;font-size:1rem;">🅿️ Garáže a stání samostatně</h2>
+  <div id="garageStats"></div>
+  <p class="hint" style="margin:6px 0 0;">Samostatně inzerované garáže a garážová stání —
+    vlastní kategorie Sreality, do statistiky bytů nevstupují.</p>
+  <div class="controls" style="margin:8px 0;">
+    <select id="garTx">
+      <option value="">Pronájem i prodej</option>
+      <option value="pronajem">Jen pronájem</option>
+      <option value="prodej">Jen prodej</option>
+    </select>
+    <input id="garSearch" type="text" placeholder="Hledat ulici / čtvrť / popis…">
+  </div>
+  <div id="garageMap" class="gmap"></div>
+  <div class="hint">🔵 pronájem · 🟠 prodej · ⚪ už není v nabídce · přerušovaný okraj = Sreality uvádí jen ulici,
+    špendlík je odhad. Klik na špendlík nebo řádek otevře detail.</div>
+  <div class="scroll" style="margin-top:8px;">
+  <table id="tblGar">
+    <thead><tr><th></th><th>Typ</th><th>Transakce</th><th>Kde</th><th>m²</th><th>Cena</th><th>Co to je</th><th></th></tr></thead>
+    <tbody></tbody>
+  </table>
+  </div>
+  <p class="hint">↳ pod řádkem = <b>tentýž prodejce nabízí totéž stání k pronájmu i k prodeji</b>
+    (stejná plocha, do 100 m). ↻ = inzerát byl smazán a vložen znovu pod novým číslem —
+    „v nabídce od" je datum prvního vložení.</p>
+  <details id="garGoneWrap" style="margin-top:10px;">
     <summary style="cursor:pointer;font-size:0.8rem;color:#bbb;">
-      Už není v nabídce ({len(gone)}) — poslední cena a data</summary>
-    <p class="hint" style="margin:6px 0;">Inzerát zmizel z nabídky. <b>Neznamená to, že se prodal</b> —
-      mohl být stažen nebo přeinzerován. Cena je ta poslední, kterou jsme viděli.</p>
+      Už není v nabídce (<span id="garGoneN">0</span>) — náhled, poslední cena, kde to bylo</summary>
+    <p class="hint" style="margin:6px 0;">Inzerát zmizel z nabídky (detail na Sreality vrací 404).
+      <b>Neznamená to, že se prodal</b> — mohl být stažen nebo vložen znovu; znovu vložené jsou
+      označené ↻ a vedou na nový inzerát. Cena je ta poslední, kterou jsme viděli; fotky a popis
+      jsou uložené z doby, kdy inzerát žil.</p>
     <div class="scroll">
-    <table>
-      <thead><tr><th>Typ</th><th>Transakce</th><th>Kde</th><th>m²</th>
-        <th>Poslední cena</th><th>Poprvé viděno</th><th>Zmizelo</th></tr></thead>
-      <tbody>{gone_rows}</tbody>
+    <table id="tblGarGone">
+      <thead><tr><th></th><th>Typ</th><th>Transakce</th><th>Kde</th><th>m²</th>
+        <th>Poslední cena</th><th>V nabídce</th><th>Co se stalo</th></tr></thead>
+      <tbody></tbody>
     </table>
     </div>
-  </details>"""
-
-    rows = "".join(
-        f"<tr><td>{html.escape(g.get('garage_kind') or '')}</td>"
-        f"<td>{'pronájem' if g['transaction_type'] == 'pronajem' else 'prodej'}</td>"
-        f"<td>{where(g)}</td>"
-        f"<td>{g.get('usable_area_sqm') or ''}</td>"
-        f"<td>{fmt_czk(g.get('price_czk'))}</td>"
-        f"<td>{feats(g)}</td>"
-        f'<td><a href="{html.escape(g["url"])}" target="_blank" rel="noopener">↗</a></td></tr>'
-        for g in live
-    )
-    sale_warn = ""
-    if sale.get("n"):
-        sale_warn = (
-            f'<p class="hint" style="margin:6px 0 0;color:#d9a3c0;">⚠ Prodej stojí na '
-            f'{sale["n"]} inzerátech v rozpětí {fmt_czk(sale["min_czk"])} – '
-            f'{fmt_czk(sale["max_czk"])}. Ten medián je poloha na velmi širokém '
-            f'rozdělení, ne tržní cena.</p>'
-        )
-    return f"""<div class="card" id="garageCard">
-  <h2 style="margin-top:0;font-size:1rem;">🅿️ Garáže a stání samostatně ({AREA_RADIUS_KM} km)</h2>
-  <div class="stats">
-    {cell(rent, "nájem Kč/měs")}
-    {cell(sale, "prodej Kč")}
-  </div>
-  <p class="hint" style="margin:6px 0 0;">Samostatně inzerované garáže a garážová stání —
-    vlastní kategorie Sreality, do statistiky bytů výš nevstupují.</p>
-  {sale_warn}
-  <div class="scroll" style="margin-top:8px;">
-  <table>
-    <thead><tr><th>Typ</th><th>Transakce</th><th>Kde</th><th>m²</th><th>Cena</th><th>Co to je</th><th></th></tr></thead>
-    <tbody>{rows}</tbody>
-  </table>
-  </div>{gone_html}
+  </details>
 </div>"""
+
+
+GARAGE_JS_FIELDS = (
+    "id", "title", "url", "garage_kind", "garage_slug", "transaction_type",
+    "price_czk", "price_old_czk", "usable_area_sqm", "price_czk_per_sqm",
+    "locality", "city_part", "street", "lat", "lon", "dist_km", "area", "thumb",
+    "images", "description", "features", "seller_name", "first_seen", "last_seen",
+    "gone_at", "missing_from_search", "relist_of", "relisted_as", "pair_id",
+    "house_number", "locality_entity", "address_exact", "address",
+)
+
+
+def garage_for_page(g):
+    """Only what the page draws. Scraped text is escaped client-side
+    (escapeHtml) at every point it reaches markup; contacts are stripped here
+    too, so a re-render of an old snapshot cannot republish them."""
+    out = {k: g[k] for k in GARAGE_JS_FIELDS if g.get(k) is not None}
+    if out.get("description"):
+        out["description"] = gone_archive.strip_contacts(out["description"])
+    if out.get("seller_name"):
+        out["seller_name"] = gone_archive.strip_seller(out["seller_name"])
+    return out
 
 
 def script_json(value):
@@ -3613,9 +3850,30 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
     fee_queue_card_html = fee_queue_card(build_fee_review_queue(comparables))
     overrides = load_overrides()
     overrides_card_html = overrides_card(overrides, list(comparables) + list(tracked_list))
-    garage_card_html = garage_card(
-        snapshot.get("garages") or [], snapshot.get("garage_stats") or {}
-    )
+    # Ribbon: výběr sekcí + žhavé nabídky. Počítá se z `generated_at`, ne
+    # z hodin, aby stejná data dala vždy stejný výběr.
+    hot_json = script_json(ribbon.hot_offers(
+        comparables, history, snapshot.get("garages") or [],
+        # Čas diffu, ne začátku běhu: události tohoto běhu nesou generated_at
+        # z diff_snapshots, které přichází až po sweepu garáží -- se starším
+        # "teď" by vypadaly jako z budoucnosti a do pásu by se nedostaly.
+        changes.get("generated_at") or snapshot["generated_at"]))
+    ribbon_css_str = ribbon.ribbon_css()
+    ribbon_html_str = ribbon.ribbon_html([
+        ("dealsCard", "🔥 Nejlepší"), ("garageCard", "🅿️ Garáže"), ("goneCard", "❌ Zmizelé"),
+        ("mapCard", "🗺️ Mapa"), ("areaStatsCard", "📊 Statistika"), ("podHarfouCard", "📍 Pod Harfou"),
+        ("historyCard", "📜 Historie"), ("tbl", "📋 Tabulka"), ("manageCard", "⚙️ Sledované"),
+    ])
+    gone_rows = gone_archive.dashboard_rows(gone_archive.load_archive(), snapshot["generated_at"], days=30)
+    gone_json = script_json(gone_rows)
+    garages = snapshot.get("garages") or []
+    garage_card_html = garage_card(garages)
+    garages_json = script_json([garage_for_page(g) for g in garages])
+    garage_stats_json = script_json(snapshot.get("garage_stats_by_area") or {
+        HOME_AREA: snapshot.get("garage_stats") or {}})
+    area_labels_json = script_json({k: a["label"] for k, a in AREAS.items()})
+    areas_line = html.escape(" | ".join(f"{a['radius_km']} km: {a['landmarks']}" for a in AREAS.values()))
+    area_stats_json = script_json(snapshot.get("area_stats") or {HOME_AREA: stats})
     data_json = script_json([slim_for_dashboard(c) for c in comparables])
     tracked_json = script_json(tracked_items)
     history_json = script_json(history)
@@ -3634,7 +3892,7 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sreality Tracker – Vysočany, Hrdlořezy, Libeň, Karlín</title>
+<title>Sreality Tracker – Vysočany a Jinonice</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
   :root {{ color-scheme: light dark; }}
@@ -3727,7 +3985,7 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
      --hdr is the header's measured height, set once at load; z-index stays
      below the header's 5 so the two never fight over the same pixels. */
   th {{ cursor: pointer; color: #aab; white-space: nowrap; position: sticky;
-        top: var(--hdr, 0px); z-index: 4; background: #1b1f29; }}
+        top: calc(var(--hdr, 0px) + var(--rib, 0px)); z-index: 4; background: #1b1f29; }}
   tr.changed td {{ background: #2a2410; }}
   tr.clickable-row {{ cursor: pointer; }}
   tr.clickable-row:hover td {{ background: #20242f; }}
@@ -3818,6 +4076,18 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
   .deal .dmeta {{ font-size: 0.7rem; color: #99a; margin-top: 2px; }}
   .deal .dpct {{ font-size: 1rem; font-weight: 700; color: #7CFFB2; flex-shrink: 0; }}
   .hint {{ font-size: 0.7rem; color: #888; margin: 6px 0 0; }}
+  .gmap {{ height: 320px; border-radius: 8px; position: relative; z-index: 0; }}
+  tr.pair-sub td {{ background: #1a2230; }}
+  tr.pair-sub td:nth-child(2) {{ padding-left: 14px; }}
+  .gf.relist {{ background: #1f3a2c; color: #8fe0b0; }}
+  .gf.relist.maybe {{ background: #3a351f; color: #e0d28f; }}
+  .gf.pair {{ background: #243049; color: #9fc0ff; }}
+  .prec {{ display: inline-block; font-size: 0.62rem; padding: 0 4px; border-radius: 4px; margin-left: 3px;
+          vertical-align: 1px; white-space: nowrap; }}
+  .prec-exact {{ background: #1e4620; color: #8f8; }}
+  .prec-text {{ background: #243049; color: #9fc0ff; }}
+  .prec-est {{ background: #4a3c1c; color: #fc6; }}
+  .prec-street {{ background: #333; color: #aaa; }}
   .pmove {{ font-size: 0.68rem; white-space: nowrap; padding: 1px 5px; border-radius: 10px; }}
   .pm-down {{ color: #7CFFB2; background: #14301f; }}
   .pm-up {{ color: #ff9a9a; background: #331a1a; }}
@@ -3834,13 +4104,15 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
   .card-toggle::before {{ content: attr(data-state); color: #7ab8ff; font-size: 0.8rem; width: 12px; }}
   .card.collapsed {{ padding-bottom: 10px; }}
   #ovPatInput {{ flex: 1 1 260px; }}
+{ribbon_css_str}
 </style>
 </head>
 <body>
 <header>
-  <h1>Sreality Tracker · Vysočany → Hrdlořezy → Karlín</h1>
-  <div class="updated">Last updated: {snapshot['generated_at']} · {AREA_RADIUS_KM} km kolem {AREA_LANDMARKS}</div>
+  <h1>Sreality Tracker · Vysočany + Jinonice</h1>
+  <div class="updated">Last updated: {snapshot['generated_at']} · {areas_line}</div>
 </header>
+{ribbon_html_str}
 
 {tracked_cards_html}
 
@@ -3896,15 +4168,38 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
 
 {fee_queue_card_html}
 
-<div class="card">
-  <h2 style="margin-top:0;font-size:1rem;">Statistika oblasti ({", ".join(DISPOSITION_CODES.values())} · {AREA_RADIUS_KM} km)</h2>
-  <div class="stats">
-    <div class="stat"><div class="num">{fmt_czk(stats['rent_median_czk_per_sqm'])}</div><div class="lbl">rent median Kč/m² total* ({stats['rent_count']})</div></div>
-    <div class="stat"><div class="num">{fmt_czk(stats['rent_avg_czk_per_sqm'])}</div><div class="lbl">rent avg Kč/m² total*</div></div>
-    <div class="stat"><div class="num">{fmt_czk(stats['sale_median_czk_per_sqm'])}</div><div class="lbl">sale median Kč/m² ({stats['sale_count']})</div></div>
-    <div class="stat"><div class="num">{fmt_czk(stats['sale_avg_czk_per_sqm'])}</div><div class="lbl">sale avg Kč/m²</div></div>
+<div class="card" id="areaStatsCard">
+  <h2 style="margin-top:0;font-size:1rem;">📊 Statistika oblastí ({", ".join(DISPOSITION_CODES.values())})</h2>
+  <div id="areaStats"></div>
+  <div class="cost-note">*nájem Kč/m² = nájem + poplatky + odhad elektřiny ({ELECTRICITY_ESTIMATE_CZK} Kč), ne holý nájem.
+    Každá oblast má vlastní medián; odhad nájmu a týdenní zápis počítají jen Vysočany.</div>
+</div>
+
+<div class="card" id="goneCard">
+  <h2 style="margin-top:0;font-size:1rem;">❌ Zmizelé byty (30 dní) <span id="goneCount" class="hint"></span></h2>
+  <div class="controls" style="margin:0 0 8px;">
+    <select id="goneTx">
+      <option value="">Prodej i pronájem</option>
+      <option value="pronajem">Jen pronájem</option>
+      <option value="prodej">Jen prodej</option>
+    </select>
+    <select id="goneMode">
+      <option value="">Všechny</option>
+      <option value="real">Jen opravdu zmizelé</option>
+      <option value="relist">Jen znovu vložené ↻</option>
+    </select>
+    <input id="goneSearch" type="text" placeholder="Hledat ulici / název / makléře…">
   </div>
-  <div class="cost-note">*rent Kč/m² = nájem + poplatky + odhad elektřiny ({ELECTRICITY_ESTIMATE_CZK} Kč), not base rent alone</div>
+  <div class="scroll">
+  <table id="tblGone">
+    <thead><tr><th></th><th>Inzerát</th><th>Typ</th><th>Kde</th><th>Poslední cena</th><th>V nabídce</th><th>Co se stalo</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  </div>
+  <p class="hint">Zmizelý inzerát = jeho stránka vrací 404 (ověřeno, ne jen chybí ve výsledcích). Klik otevře
+    uložené fotky, popis a adresu. ↻ = stejný byt se vrátil pod novým číslem: sedí typ, dispozice, patro,
+    plocha, cena ±10 %, poloha do 150 m <b>a</b> popis; „možná" = sedí vše kromě popisu, ale je to tentýž prodejce.
+    Adresa „odhad" je nejbližší dům k bodu, který uvádí Sreality — když zná jen ulici, může být vedle.</p>
 </div>
 
 <div class="card" id="historyCard">
@@ -3912,8 +4207,8 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
   <div id="historyList" class="history-list"></div>
 </div>
 
-<div class="card" style="position:relative;z-index:0;">
-  <h2 style="margin-top:0;font-size:1rem;">🗺️ Map</h2>
+<div class="card" id="mapCard" style="position:relative;z-index:0;">
+  <h2 style="margin-top:0;font-size:1rem;">🗺️ Mapa bytů</h2>
   <div id="map"></div>
   <div style="font-size:0.7rem;color:#888;margin-top:6px;">Solid pin = exact GPS · dashed/orange pin = approximate locality center</div>
 </div>
@@ -4024,6 +4319,12 @@ const ALL = [...TRACKED, ...DATA];
 const CHANGED_IDS = new Set(__CHANGED_IDS_JSON__);
 const ELECTRICITY_ESTIMATE_CZK = __ELECTRICITY_CZK__;
 const DEAL_THRESHOLD = __DEAL_THRESHOLD__;
+const GARAGES = __GARAGES_JSON__;
+const GARAGE_STATS = __GARAGE_STATS_JSON__;
+const AREA_LABELS = __AREA_LABELS_JSON__;
+const AREA_STATS = __AREA_STATS_JSON__;
+const GONE = __GONE_JSON__;
+const HOT = __HOT_JSON__;
 let sortKey = "price_czk_per_sqm", sortDir = 1;
 
 const PLACEHOLDER = "data:image/svg+xml;utf8," + encodeURIComponent(
@@ -4033,9 +4334,14 @@ const PLACEHOLDER = "data:image/svg+xml;utf8," + encodeURIComponent(
 );
 
 function fmtCzk(v) {
-  if (v === null || v === undefined) return "—";
+  // Jen čísla: řetězec by toLocaleString vrátil beze změny a bez escapování
+  // rovnou do innerHTML (security review 26. 9.).
+  if (typeof v !== "number" || !isFinite(v)) return "—";
   return v.toLocaleString("cs-CZ") + " Kč";
 }
+function numTxt(v) { return (typeof v === "number" && isFinite(v)) ? String(v) : ""; }
+// Obrázky jen z https -- jiné schéma by aspoň prozradilo IP čtenáře cizímu hostu.
+function safeImg(u) { return (typeof u === "string" && /^https:\/\//.test(u)) ? u : PLACEHOLDER; }
 
 function fmtTotal(r) {
   const v = r.total_czk ?? r.price_czk;
@@ -4414,6 +4720,10 @@ function buildModalHtml(item) {
     ${noteHtml}
     ${item.tx_suspect ? `<div class="modal-note">⚠ ${escapeHtml(item.tx_suspect)} — inzerát zůstává, jak ho portál vede, ale je mimo statistiku.</div>` : ""}
     ${item.override_note ? `<div class="modal-note">Oprava: ${escapeHtml(item.override_note)}</div>` : ""}
+    ${item.relist_of ? `<div class="modal-note">↻ ${item.relist_of.verdict === "maybe" ? "Možná znovu vložený" : "Znovu vložený"} inzerát —
+      tentýž byt byl v nabídce už od ${fmtDay(item.relist_of.listed_since || item.relist_of.first_seen)}${item.relist_of.price_czk ? ` za ${fmtCzk(item.relist_of.price_czk)}` : ""},
+      zmizel ${fmtDay(item.relist_of.gone_at)} a vrátil se pod novým číslem.
+      ${GONE_BY_ID.has(String(item.relist_of.id)) ? `<button class="linklike" data-gone-id="${escapeHtml(String(item.relist_of.id))}">Otevřít původní</button>` : ""}</div>` : ""}
     <div class="modal-gallery">${gallery}</div>
     ${costBreakdownHtml(item)}
     ${priceHistoryHtml(item)}
@@ -4424,6 +4734,7 @@ function buildModalHtml(item) {
       <div><b>Floor</b>${floorLine}</div>
       <div><b>Typ</b>${item.transaction_type === "pronajem" ? "pronájem" : "prodej"}</div>
       <div><b>Locality</b>${escapeHtml(item.locality || item.city_part || "—")}</div>
+      <div style="grid-column:1/-1;"><b>Adresa</b>${addressHtml(item)}<div class="hint">${mapLinksHtml(item.lat, item.lon)}</div></div>
       ${garageParkingHtml(item)}
       ${parkingStateHtml(item)}
       <div><b>Seller / agent</b>${escapeHtml(item.seller_name || "—")}</div>
@@ -4568,7 +4879,7 @@ function renderDeals() {
   // disposition+area+price collapses here and here only.
   const seen = new Set();
   const rows = DATA
-    .filter(r => r.deal_ok && (!tx || r.transaction_type === tx) && (!disp || r.disposition === disp))
+    .filter(r => r.deal_ok && areaOk(r) && (!tx || r.transaction_type === tx) && (!disp || r.disposition === disp))
     .sort((a, b) => a.deal_pct - b.deal_pct)
     .filter(r => {
       const k = [r.transaction_type, r.disposition, r.floor_area_sqm, r.price_czk].join("|");
@@ -4587,7 +4898,7 @@ function renderDeals() {
       <img class="thumb" src="${escapeHtml(r.thumb || PLACEHOLDER)}" loading="lazy" onerror="this.src=PLACEHOLDER">
       <div class="dtxt">
         <div class="dtitle">${escapeHtml(r.title || String(r.id))}</div>
-        <div class="dmeta">${escapeHtml(r.locality || r.city_part || "")} · ${r.disposition || "—"}
+        <div class="dmeta">${escapeHtml(r.locality || r.city_part || "")} · ${escapeHtml(areaLabel(r))} · ${r.disposition || "—"}
           · ${r.transaction_type === "pronajem" ? "pronájem" : "prodej"}${srcBadge(r.source)}${alsoBadges(r)}</div>
         <div class="dmeta">${fmtTotal(r)}${r.transaction_type === "pronajem" ? "/měs. vč. poplatků" : ""}
           · ${fmtCzk(r.price_czk_per_sqm)}/m²${r.old_price_czk ? ` · <span style="color:#7CFFB2;">zlevněno z ${fmtCzk(r.old_price_czk)}</span>` : ""}</div>
@@ -4604,6 +4915,7 @@ function render() {
   const feesOnly = document.getElementById("filterFees").checked;
   const q = document.getElementById("search").value.toLowerCase();
   let rows = DATA.filter(r => {
+    if (!areaOk(r)) return false;
     if (tx && r.transaction_type !== tx) return false;
     if (disp && r.disposition !== disp) return false;
     if (source && r.source !== source) return false;
@@ -4625,7 +4937,7 @@ function render() {
   tbody.innerHTML = rows.map(r => `
     <tr class="clickable-row ${CHANGED_IDS.has(r.id) ? 'changed' : ''}" onclick="openModal(${escapeHtml(JSON.stringify(r.id))})">
       <td><img class="thumb" src="${escapeHtml(r.thumb || PLACEHOLDER)}" loading="lazy" onerror="this.src=PLACEHOLDER"></td>
-      <td><button class="linklike" onclick="event.stopPropagation();openModal(${escapeHtml(JSON.stringify(r.id))})"><span class="clip" title="${escapeHtml(r.title || '')}">${escapeHtml(r.title) || '—'}</span></button>${overrideBadges(r)}</td>
+      <td><button class="linklike" onclick="event.stopPropagation();openModal(${escapeHtml(JSON.stringify(r.id))})"><span class="clip" title="${escapeHtml(r.title || '')}">${escapeHtml(r.title) || '—'}</span></button>${overrideBadges(r)}${relistBadge(r)}</td>
       <td>${r.transaction_type === 'pronajem' ? 'rent' : 'sale'}</td>
       <td>${r.disposition || '—'}</td>
       <td>${fmtCzk(r.price_czk)}${priceMoveBadge(r)}</td>
@@ -4640,11 +4952,431 @@ function render() {
     </tr>`).join("");
 }
 
+// ---------------------------------------------------------------------------
+// Oblasti. Přepínač v ribbonu nastaví window.AREA_FILTER a pošle "areachange";
+// každý seznam i mapa na stránce se podle něj filtruje. Záznam bez `area` je
+// z doby, kdy se sledovaly jen Vysočany.
+// ---------------------------------------------------------------------------
+function areaOf(x) { return (x && x.area) || "vysocany"; }
+function areaOk(x) { const f = window.AREA_FILTER || ""; return !f || areaOf(x) === f; }
+function areaLabel(x) { return AREA_LABELS[areaOf(x)] || areaOf(x); }
+
+function fmtDay(iso) {
+  if (!iso) return "—";
+  const [y, m, d] = String(iso).slice(0, 10).split("-");
+  return `${Number(d)}. ${Number(m)}. ${y}`;
+}
+function daysBetween(a, b) {
+  const t1 = Date.parse(a), t2 = b ? Date.parse(b) : Date.now();
+  return (isFinite(t1) && isFinite(t2)) ? Math.max(0, Math.round((t2 - t1) / 86400000)) : null;
+}
+
+// Odkazy do map se skládají jen z čísel -- souřadnice projdou Number(), takže
+// do href se nedostane nic, co by nebylo číslo.
+function mapLinksHtml(lat, lon) {
+  const la = Number(lat), lo = Number(lon);
+  if (!isFinite(la) || !isFinite(lo) || (la === 0 && lo === 0)) return "";
+  const x = lo.toFixed(6), y = la.toFixed(6);
+  // Mapy.cz neumí odkazem otevřít panorama v bodě (potřebuje id snímku),
+  // takže vede na bod v mapě a panorama je odtud jeden klik; přímo do
+  // pouličního pohledu vede jen Street View.
+  return `<a href="https://mapy.cz/zakladni?source=coor&id=${x}%2C${y}&x=${x}&y=${y}&z=19" target="_blank" rel="noopener">Mapy.cz</a>
+    · <a href="https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${y},${x}" target="_blank" rel="noopener">Street View</a>`;
+}
+
+// Adresa s přiznanou přesností. "Přesná" jen tam, kde Sreality inzerát
+// připnula ke konkrétnímu domu; jinde je to odhad a stránka to musí říct.
+const PRECISION = {
+  exact: ["přesná", "prec-exact", "Sreality uvádí konkrétní dům"],
+  text: ["z popisu", "prec-text", "Číslo domu vyčtené z textu inzerátu"],
+  estimate: ["odhad", "prec-est", "Nejbližší adresa k bodu, který Sreality uvádí — když Sreality zná jen ulici, je to odhad"],
+  street: ["jen ulice", "prec-street", "Sreality uvádí jen ulici, přesné místo neznáme"],
+};
+function addressHtml(x) {
+  const a = x.address;
+  let text, prec;
+  if (a && a.text) { text = a.text; prec = a.precision; }
+  else if (x.address_exact && x.street && x.house_number) { text = `${x.street} ${x.house_number}`; prec = "exact"; }
+  else { text = [x.street, x.city_part].filter(Boolean).join(", ") || x.locality || "—"; prec = "street"; }
+  const p = PRECISION[prec] || PRECISION.street;
+  const note = (a && a.note) || p[2];
+  return `${escapeHtml(text)} <span class="prec ${p[1]}" title="${escapeHtml(note)}">${p[0]}</span>`;
+}
+
+function relistBadge(x) {
+  const r = x.relist_of;
+  if (!r) return "";
+  const since = r.listed_since || r.first_seen;
+  const was = r.price_czk && r.price_czk !== x.price_czk ? `, tehdy ${fmtCzk(r.price_czk)}` : "";
+  const sim = r.text_similarity != null ? ` (shoda popisu ${Math.round(r.text_similarity * 100)} %)` : "";
+  if (r.verdict === "maybe") {
+    return `<span class="gf relist maybe" title="Stejný prodejce, místo, plocha a cena, ale popis se shoduje jen zčásti${escapeHtml(sim)}">↻? možná znovu vloženo (dřív od ${fmtDay(since)})</span>`;
+  }
+  return `<span class="gf relist" title="Smazaný inzerát vložený znovu pod novým číslem${escapeHtml(sim)}">↻ v nabídce od ${fmtDay(since)}${escapeHtml(was)}</span>`;
+}
+
+function kindTxt(g) { return escapeHtml(g.garage_kind || "garáž"); }
+function txTxt(x) { return x.transaction_type === "pronajem" ? "pronájem" : "prodej"; }
+function garFeats(g) {
+  return (g.features || []).map(f =>
+    `<span class="gf${String(f).startsWith("⚠") ? " warn" : ""}">${escapeHtml(f)}</span>`).join(" ");
+}
+function garPrice(g) {
+  const unit = g.transaction_type === "pronajem" ? "/měs" : "";
+  const moved = g.price_old_czk && g.price_old_czk !== g.price_czk
+    ? ` <span class="hint" title="Předchozí cena">(dřív ${fmtCzk(g.price_old_czk)})</span>` : "";
+  return `${fmtCzk(g.price_czk)}${unit}${moved}`;
+}
+
+const GARAGE_BY_ID = new Map(GARAGES.map(g => [String(g.id), g]));
+
+function garRow(g, sub) {
+  const idAttr = escapeHtml(String(g.id));
+  return `<tr class="clickable-row${sub ? " pair-sub" : ""}" data-gid="${idAttr}">
+    <td><img class="thumb" src="${escapeHtml(safeImg(g.thumb))}" loading="lazy" onerror="this.src=PLACEHOLDER"></td>
+    <td>${sub ? "↳ " : ""}${kindTxt(g)}</td>
+    <td>${txTxt(g)}</td>
+    <td>${addressHtml(g)}<div class="hint">${escapeHtml(areaLabel(g))}</div></td>
+    <td>${numTxt(g.usable_area_sqm)}</td>
+    <td>${garPrice(g)}</td>
+    <td>${garFeats(g)} ${relistBadge(g)}${sub ? ' <span class="gf pair">tentýž prodejce i k pronájmu</span>' : ""}</td>
+    <td>${/^https:\/\//.test(g.url || "") ? `<a href="${escapeHtml(g.url)}" target="_blank" rel="noopener" data-stop="1">↗</a>` : ""}</td>
+  </tr>`;
+}
+
+function garGoneRow(g) {
+  const idAttr = escapeHtml(String(g.id));
+  const days = daysBetween(g.first_seen, g.gone_at);
+  let fate = "zmizelo";
+  if (g.relisted_as) {
+    const nw = GARAGE_BY_ID.get(String(g.relisted_as.id));
+    fate = `<button class="linklike" data-gid="${escapeHtml(String(g.relisted_as.id))}">↻ ${g.relisted_as.verdict === "maybe" ? "možná " : ""}vloženo znovu${nw ? " za " + fmtCzk(nw.price_czk) : ""}</button>`;
+  }
+  return `<tr class="clickable-row" data-gid="${idAttr}">
+    <td><img class="thumb" src="${escapeHtml(safeImg(g.thumb))}" loading="lazy" onerror="this.src=PLACEHOLDER"></td>
+    <td>${kindTxt(g)}</td>
+    <td>${txTxt(g)}</td>
+    <td>${addressHtml(g)}<div class="hint">${escapeHtml(areaLabel(g))}</div></td>
+    <td>${numTxt(g.usable_area_sqm)}</td>
+    <td>${fmtCzk(g.price_czk)}</td>
+    <td class="hint">${fmtDay(g.first_seen)} → ${fmtDay(g.gone_at)}${days != null ? ` (${days} d)` : ""}</td>
+    <td>${fate}</td>
+  </tr>`;
+}
+
+function garageFilter(g) {
+  const tx = document.getElementById("garTx").value;
+  const q = document.getElementById("garSearch").value.toLowerCase();
+  if (!areaOk(g)) return false;
+  if (tx && g.transaction_type !== tx) return false;
+  if (q) {
+    const hay = [g.title, g.street, g.city_part, g.locality, g.description, g.seller_name,
+                 (g.address || {}).text, (g.features || []).join(" ")].join(" ").toLowerCase();
+    if (!hay.includes(q)) return false;
+  }
+  return true;
+}
+
+function renderAreaStats() {
+  const el = document.getElementById("areaStats");
+  if (!el) return;
+  const f = window.AREA_FILTER || "";
+  el.innerHTML = Object.keys(AREA_STATS).filter(k => !f || k === f).map(k => {
+    const st = AREA_STATS[k] || {};
+    const c = (v, lbl) => `<div class="stat"><div class="num">${fmtCzk(v)}</div><div class="lbl">${lbl}</div></div>`;
+    return `<div class="hint" style="margin:6px 0 2px;font-weight:600;color:#bbb;">${escapeHtml(AREA_LABELS[k] || k)}</div>
+      <div class="stats">
+        ${c(st.rent_median_czk_per_sqm, `nájem medián Kč/m²* (${st.rent_count ?? 0})`)}
+        ${c(st.rent_avg_czk_per_sqm, "nájem průměr Kč/m²*")}
+        ${c(st.sale_median_czk_per_sqm, `prodej medián Kč/m² (${st.sale_count ?? 0})`)}
+        ${c(st.sale_avg_czk_per_sqm, "prodej průměr Kč/m²")}
+      </div>`;
+  }).join("");
+}
+
+function renderGarageStats() {
+  const el = document.getElementById("garageStats");
+  if (!el) return;
+  const f = window.AREA_FILTER || "";
+  const keys = Object.keys(GARAGE_STATS).filter(k => !f || k === f);
+  const cell = (st, unit) => (st && st.n)
+    ? `<div class="stat"><div class="num">${fmtCzk(st.median_czk)}</div><div class="lbl">medián ${unit} (${st.n})</div></div>`
+    : `<div class="stat"><div class="num">—</div><div class="lbl">${unit}: bez dat</div></div>`;
+  el.innerHTML = keys.map(k => {
+    const st = GARAGE_STATS[k] || {};
+    const sale = st.prodej || {};
+    const warn = sale.n ? `<p class="hint" style="color:#d9a3c0;">⚠ Prodej: ${sale.n} inzerátů v rozpětí
+      ${fmtCzk(sale.min_czk)} – ${fmtCzk(sale.max_czk)}. Medián je poloha na širokém rozdělení, ne tržní cena.</p>` : "";
+    return `<div class="hint" style="margin:6px 0 2px;font-weight:600;color:#bbb;">${escapeHtml(AREA_LABELS[k] || k)}</div>
+      <div class="stats">${cell(st.pronajem, "nájem Kč/měs")}${cell(sale, "prodej Kč")}</div>${warn}`;
+  }).join("");
+}
+
+function renderGarages() {
+  const tbody = document.querySelector("#tblGar tbody");
+  if (!tbody) return;
+  renderGarageStats();
+  const live = GARAGES.filter(g => !g.gone_at && garageFilter(g))
+    .sort((a, b) => (a.transaction_type > b.transaction_type ? 1 : a.transaction_type < b.transaction_type ? -1 : 0)
+                    || (a.price_czk || 0) - (b.price_czk || 0));
+  const shown = new Set(live.map(g => String(g.id)));
+  const done = new Set();
+  const rows = [];
+  // Prodej a pod ním pronájem téhož stání od téhož prodejce. Pronájem se pak
+  // na svém místě v seznamu už neopakuje.
+  for (const g of live) {
+    const id = String(g.id);
+    if (done.has(id)) continue;
+    const pair = g.pair_id != null ? String(g.pair_id) : null;
+    if (g.transaction_type === "pronajem" && pair && shown.has(pair)) continue;
+    rows.push(garRow(g, false));
+    done.add(id);
+    if (g.transaction_type === "prodej" && pair && shown.has(pair)) {
+      rows.push(garRow(GARAGE_BY_ID.get(pair), true));
+      done.add(pair);
+    }
+  }
+  tbody.innerHTML = rows.join("") || `<tr><td colspan="8" class="hint">Nic neodpovídá filtru.</td></tr>`;
+
+  const gone = GARAGES.filter(g => g.gone_at && garageFilter(g))
+    .sort((a, b) => String(b.gone_at).localeCompare(String(a.gone_at)));
+  document.getElementById("garGoneN").textContent = gone.length;
+  document.querySelector("#tblGarGone tbody").innerHTML = gone.map(garGoneRow).join("");
+  drawGarageMarkers();
+}
+
+function garageModalHtml(g) {
+  const imgs = (g.images && g.images.length) ? g.images : (g.thumb ? [g.thumb] : []);
+  const gallery = imgs.length
+    ? imgs.map(u => `<img src="${escapeHtml(safeImg(u))}" loading="lazy" onerror="this.remove()">`).join("")
+    : `<img src="${PLACEHOLDER}">`;
+  const gone = !!g.gone_at;
+  const r = g.relist_of;
+  const relistHtml = r ? `<div class="modal-note">↻ ${r.verdict === "maybe" ? "Možná" : "Tentýž inzerát"} byl v nabídce už od
+      ${fmtDay(r.listed_since || r.first_seen)}${r.price_czk ? ` za ${fmtCzk(r.price_czk)}` : ""}, pak zmizel
+      ${fmtDay(r.gone_at)} a vrátil se pod novým číslem.
+      ${GARAGE_BY_ID.has(String(r.id)) ? `<button class="linklike" data-gid="${escapeHtml(String(r.id))}">Otevřít původní</button>` : ""}</div>` : "";
+  const ra = g.relisted_as;
+  const relistedHtml = ra ? `<div class="modal-note">↻ ${ra.verdict === "maybe" ? "Možná vloženo" : "Vloženo"} znovu jako nový inzerát.
+      ${GARAGE_BY_ID.has(String(ra.id)) ? `<button class="linklike" data-gid="${escapeHtml(String(ra.id))}">Otevřít nový</button>` : ""}</div>` : "";
+  const pair = g.pair_id != null ? GARAGE_BY_ID.get(String(g.pair_id)) : null;
+  const pairHtml = pair ? `<div class="modal-note">Tentýž prodejce nabízí totéž stání i
+      ${pair.transaction_type === "pronajem" ? "k pronájmu" : "k prodeji"} za ${fmtCzk(pair.price_czk)}.
+      <button class="linklike" data-gid="${escapeHtml(String(pair.id))}">Otevřít</button></div>` : "";
+  const goneHtml = gone ? `<div class="modal-note">❌ Už není v nabídce — zmizelo ${fmtDay(g.gone_at)}
+      po ${daysBetween(g.first_seen, g.gone_at) ?? "?"} dnech. Fotky a popis jsou uložené z doby, kdy inzerát žil.</div>` : "";
+  const link = /^https:\/\//.test(g.url || "")
+    ? `<a class="modal-link" href="${escapeHtml(g.url)}" target="_blank" rel="noopener">${gone ? "Původní inzerát (už nejspíš 404)" : "Otevřít na Sreality"} →</a>` : "";
+  return `
+    <button id="modalClose" onclick="closeModal()">&times;</button>
+    <h2>${escapeHtml(g.title || "Garáž")}</h2>
+    ${goneHtml}${relistHtml}${relistedHtml}${pairHtml}
+    <div class="modal-gallery">${gallery}</div>
+    <div class="modal-grid">
+      <div><b>Cena</b>${garPrice(g)}</div>
+      <div><b>m²</b>${numTxt(g.usable_area_sqm) || "—"}</div>
+      <div><b>Kč/m²</b>${fmtCzk(g.price_czk_per_sqm)}</div>
+      <div><b>Typ</b>${kindTxt(g)} · ${txTxt(g)}</div>
+      <div style="grid-column:1/-1;"><b>Kde</b>${addressHtml(g)}
+        <div class="hint">${mapLinksHtml(g.lat, g.lon)}</div></div>
+      <div><b>Oblast</b>${escapeHtml(areaLabel(g))}</div>
+      <div><b>V nabídce</b>${fmtDay((r && (r.listed_since || r.first_seen)) || g.first_seen)} → ${gone ? fmtDay(g.gone_at) : "dosud"}</div>
+      <div><b>Prodejce</b>${escapeHtml(g.seller_name || "—")}</div>
+      <div><b>Co to je</b>${garFeats(g) || "—"}</div>
+    </div>
+    <div class="modal-desc">${escapeHtml(g.description || "Popis nemáme.")}</div>
+    ${link}`;
+}
+
+function openGarage(id) {
+  const g = GARAGE_BY_ID.get(String(id));
+  if (!g) return;
+  document.getElementById("modalSheet").innerHTML = garageModalHtml(g);
+  document.getElementById("modalOverlay").classList.add("open");
+}
+
+// Jeden posluchač na celý dokument místo inline onclick: id z dat se nikdy
+// neskládá do JS kódu v atributu (tahle chyba už v repu jednou byla).
+document.addEventListener("click", ev => {
+  const stop = ev.target.closest("[data-stop]");
+  if (stop) return;
+  const el = ev.target.closest("[data-gid]");
+  if (!el) return;
+  ev.preventDefault();
+  openGarage(el.getAttribute("data-gid"));
+});
+
+let GMAP = null, GLAYER = null;
+function initGarageMap() {
+  const el = document.getElementById("garageMap");
+  if (!el || typeof L === "undefined") return;
+  GMAP = L.map("garageMap");
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19, attribution: "&copy; OpenStreetMap contributors",
+  }).addTo(GMAP);
+  GLAYER = L.layerGroup().addTo(GMAP);
+  drawGarageMarkers();
+}
+
+function drawGarageMarkers() {
+  if (!GMAP || !GLAYER) return;
+  GLAYER.clearLayers();
+  const pts = [];
+  for (const g of GARAGES) {
+    if (!garageFilter(g)) continue;
+    const la = Number(g.lat), lo = Number(g.lon);
+    if (!isFinite(la) || !isFinite(lo) || g.lat == null) continue;
+    const gone = !!g.gone_at;
+    const color = gone ? "#9aa0aa" : (g.transaction_type === "pronajem" ? "#7ab8ff" : "#ff9a4d");
+    const m = L.circleMarker([la, lo], {
+      radius: gone ? 5 : 7, color, weight: 2,
+      dashArray: g.address_exact ? null : "3,3",
+      fillColor: color, fillOpacity: gone ? 0.15 : 0.5,
+    });
+    m.bindPopup(`<div style="min-width:150px;">
+      <img class="popup-thumb" src="${escapeHtml(safeImg(g.thumb))}" onerror="this.src=PLACEHOLDER">
+      <div style="font-weight:600;font-size:0.85rem;">${escapeHtml(g.title || "Garáž")}</div>
+      <div style="font-size:0.8rem;">${garPrice(g)}${gone ? " · už není v nabídce" : ""}</div>
+      <button class="popup-btn" data-gid="${escapeHtml(String(g.id))}">Detail</button></div>`);
+    m.addTo(GLAYER);
+    pts.push([la, lo]);
+  }
+  if (pts.length) GMAP.fitBounds(pts, { padding: [20, 20], maxZoom: 16 });
+  else GMAP.setView([50.0995, 14.49], 13);
+}
+// ---------------------------------------------------------------------------
+// Zmizelé byty. Řádky (bez popisu a galerie) jsou vložené ve stránce; plný
+// záznam se dočte z gone_archive.json až na klik -- stovky popisů, které
+// nikdo neotevře, by stránku jen nafoukly.
+// ---------------------------------------------------------------------------
+let GONE_FULL = null;
+function loadGoneArchive() {
+  if (!GONE_FULL) {
+    GONE_FULL = fetch("gone_archive.json", { cache: "no-cache" })
+      .then(r => r.ok ? r.json() : {})
+      .catch(() => ({}));
+  }
+  return GONE_FULL;
+}
+const GONE_BY_ID = new Map(GONE.map(g => [String(g.id), g]));
+const ALL_BY_ID = new Map(ALL.map(r => [String(r.id), r]));
+
+function goneFate(g) {
+  const ra = g.relisted_as;
+  if (!ra) return "zmizelo";
+  const live = ALL_BY_ID.get(String(ra.id));
+  const label = `↻ ${ra.verdict === "maybe" ? "možná " : ""}vloženo znovu${live ? " za " + fmtTotal(live) : ""}`;
+  if (live) return `<button class="linklike" data-open-id="${escapeHtml(JSON.stringify(live.id))}">${label}</button>`;
+  if (GONE_BY_ID.has(String(ra.id))) return `<button class="linklike" data-gone-id="${escapeHtml(String(ra.id))}">${label} (i to zmizelo)</button>`;
+  return label;
+}
+
+function renderGone() {
+  const tbody = document.querySelector("#tblGone tbody");
+  if (!tbody) return;
+  const tx = document.getElementById("goneTx").value;
+  const mode = document.getElementById("goneMode").value;
+  const q = document.getElementById("goneSearch").value.toLowerCase();
+  const rows = GONE.filter(g => {
+    if (!areaOk(g)) return false;
+    if (tx && g.transaction_type !== tx) return false;
+    if (mode === "real" && g.relisted_as) return false;
+    if (mode === "relist" && !g.relisted_as) return false;
+    if (q && ![g.title, g.street, g.city_part, g.locality, g.seller_name, (g.address || {}).text]
+        .join(" ").toLowerCase().includes(q)) return false;
+    return true;
+  });
+  document.getElementById("goneCount").textContent = `(${rows.length})`;
+  tbody.innerHTML = rows.slice(0, goneShown).map(g => {
+    const days = daysBetween(g.first_seen, g.gone_at);
+    const price = g.transaction_type === "pronajem" ? fmtCzk(g.total_czk ?? g.last_price_czk) + "/měs" : fmtCzk(g.last_price_czk);
+    return `<tr class="clickable-row" data-gone-id="${escapeHtml(String(g.id))}">
+      <td><img class="thumb" src="${escapeHtml(safeImg(g.thumb))}" loading="lazy" onerror="this.src=PLACEHOLDER"></td>
+      <td><span class="clip" title="${escapeHtml(g.title || "")}">${escapeHtml(g.title || String(g.id))}</span></td>
+      <td>${txTxt(g)}</td>
+      <td>${addressHtml(g)}<div class="hint">${escapeHtml(areaLabel(g))}</div></td>
+      <td>${price}</td>
+      <td class="hint">${fmtDay(g.first_seen)} → ${fmtDay(g.gone_at)}${days != null ? ` (${days} d)` : ""}</td>
+      <td>${goneFate(g)}</td>
+    </tr>`;
+  }).join("") + (rows.length > goneShown
+    ? `<tr><td colspan="7"><button class="popup-btn" id="goneMore">Zobrazit dalších ${rows.length - goneShown}</button></td></tr>` : "");
+}
+let goneShown = 40;
+
+function goneModalHtml(g, full) {
+  const x = Object.assign({}, g, full || {});
+  const imgs = (x.images && x.images.length) ? x.images : (x.thumb ? [x.thumb] : []);
+  const gallery = imgs.length
+    ? imgs.map(u => `<img src="${escapeHtml(safeImg(u))}" loading="lazy" onerror="this.remove()">`).join("")
+    : `<img src="${PLACEHOLDER}">`;
+  const ra = x.relisted_as;
+  const live = ra ? ALL_BY_ID.get(String(ra.id)) : null;
+  const relHtml = ra ? `<div class="modal-note">↻ ${ra.verdict === "maybe" ? "Možná vloženo" : "Vloženo"} znovu pod novým číslem
+      ${ra.text_similarity != null ? `(shoda popisu ${Math.round(ra.text_similarity * 100)} %)` : ""}.
+      ${live ? `<button class="linklike" data-open-id="${escapeHtml(JSON.stringify(live.id))}">Otevřít nový inzerát</button>` : ""}</div>` : "";
+  const r = x.relist_of;
+  const prevHtml = r ? `<div class="modal-note">↻ Tenhle inzerát sám navazoval na starší, v nabídce od ${fmtDay(r.listed_since || r.first_seen)}.</div>` : "";
+  const price = x.transaction_type === "pronajem" ? fmtCzk(x.total_czk ?? x.last_price_czk) + "/měs celkem" : fmtCzk(x.last_price_czk);
+  return `
+    <button id="modalClose" onclick="closeModal()">&times;</button>
+    <span data-gone-modal="${escapeHtml(String(x.id))}" hidden></span>
+    <h2>${escapeHtml(x.title || "Byt")}</h2>
+    <div class="modal-note">❌ Už není v nabídce — zmizelo ${fmtDay(x.gone_at)}${daysBetween(x.first_seen, x.gone_at) != null ? ` po ${daysBetween(x.first_seen, x.gone_at)} dnech` : ""}.
+      Fotky a popis jsou uložené z doby, kdy inzerát žil. <b>Zmizení neznamená prodej</b>.</div>
+    ${relHtml}${prevHtml}
+    <div class="modal-gallery">${gallery}</div>
+    <div class="modal-grid">
+      <div><b>Poslední cena</b>${price}</div>
+      <div><b>Dispozice</b>${escapeHtml(x.disposition || "—")}</div>
+      <div><b>m²</b>${numTxt(x.floor_area_sqm) || "—"}</div>
+      <div><b>Patro</b>${numTxt(x.floor_number) || "—"}</div>
+      <div style="grid-column:1/-1;"><b>Kde</b>${addressHtml(x)}<div class="hint">${mapLinksHtml(x.lat, x.lon)}</div></div>
+      <div><b>Oblast</b>${escapeHtml(areaLabel(x))}</div>
+      <div><b>V nabídce</b>${fmtDay(x.first_seen)} → ${fmtDay(x.gone_at)}</div>
+      <div><b>Prodejce</b>${escapeHtml(x.seller_name || "—")}</div>
+    </div>
+    <div class="modal-desc">${full ? escapeHtml(x.description || "Popis nemáme.") : "Načítám popis…"}</div>
+    ${/^https:\/\//.test(x.url || "") ? `<a class="modal-link" href="${escapeHtml(x.url)}" target="_blank" rel="noopener">Původní inzerát (už nejspíš nefunguje) →</a>` : ""}`;
+}
+
+function openGone(id) {
+  const g = GONE_BY_ID.get(String(id));
+  if (!g) return;
+  const sheet = document.getElementById("modalSheet");
+  sheet.innerHTML = goneModalHtml(g, null);
+  document.getElementById("modalOverlay").classList.add("open");
+  loadGoneArchive().then(arch => {
+    // Jen když je pořád otevřený tentýž inzerát -- klik mezitím jinam vyhrává.
+    const open = sheet.querySelector("[data-gone-modal]");
+    if (!open || open.getAttribute("data-gone-modal") !== String(id)) return;
+    if (!document.getElementById("modalOverlay").classList.contains("open")) return;
+    sheet.innerHTML = goneModalHtml(g, arch[String(id)] || {});
+  });
+}
+
+document.addEventListener("click", ev => {
+  if (ev.target.closest("[data-stop]")) return;
+  const more = ev.target.closest("#goneMore");
+  if (more) { goneShown += 100; renderGone(); return; }
+  const op = ev.target.closest("[data-open-id]");
+  if (op) {
+    ev.preventDefault(); ev.stopPropagation();
+    try { openModal(JSON.parse(op.getAttribute("data-open-id"))); } catch (e) {}
+    return;
+  }
+  const el = ev.target.closest("[data-gone-id]");
+  if (!el) return;
+  ev.preventDefault();
+  openGone(el.getAttribute("data-gone-id"));
+});
+
 function initMap() {
   const center = TRACKED.find(t => t.lat != null) || DATA.find(d => d.lat != null);
   if (!center) return;
   const map = L.map("map").setView([center.lat, center.lon], 14);
   MAP = map;
+  FLAT_LAYER = L.layerGroup().addTo(map);
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
     attribution: "&copy; OpenStreetMap contributors",
@@ -4662,8 +5394,13 @@ function initMap() {
     </div>`;
   }
 
+  drawFlatMarkers = function () {
+  FLAT_LAYER.clearLayers();
+  const pts = [];
   ALL.forEach(item => {
     if (item.lat == null || item.lon == null) return;
+    if (!item.is_seed && !areaOk(item)) return;
+    pts.push([item.lat, item.lon]);
     let marker;
     if (item.approx_location) {
       marker = L.circleMarker([item.lat, item.lon], {
@@ -4680,9 +5417,15 @@ function initMap() {
       });
     }
     marker.bindPopup(popupHtml(item));
-    marker.addTo(map);
+    marker.addTo(FLAT_LAYER);
   });
+  // Po přepnutí oblasti mapa skočí na ni -- Jinonice jsou 9 km od Vysočan.
+  if (pts.length) map.fitBounds(pts, { padding: [20, 20], maxZoom: 15 });
+  };
+  drawFlatMarkers();
 }
+let FLAT_LAYER = null;
+let drawFlatMarkers = function () {};
 
 // Table headers stick under the page header, so the page has to know how tall
 // that header actually is -- it wraps to two lines on a phone.
@@ -4714,6 +5457,7 @@ function makeCollapsible() {
       body.hidden = collapsed;
       h.dataset.state = collapsed ? "▸" : "▾";
       if (!collapsed && MAP) MAP.invalidateSize();
+      if (!collapsed && GMAP) GMAP.invalidateSize();
     };
     let saved = null;
     try { saved = localStorage.getItem(key); } catch (e) {}
@@ -4765,17 +5509,39 @@ renderPodHarfou();
 renderHistory();
 renderTrackedList();
 initMap();
+document.getElementById("garTx")?.addEventListener("change", renderGarages);
+document.getElementById("garSearch")?.addEventListener("input", renderGarages);
+document.addEventListener("areachange", () => {
+  renderGarages(); render(); renderDeals(); drawFlatMarkers(); renderAreaStats(); renderGone();
+});
+initGarageMap();
+renderGarages();
+renderAreaStats();
+renderGone();
+["goneTx", "goneMode"].forEach(i => document.getElementById(i)?.addEventListener("change", renderGone));
+document.getElementById("goneSearch")?.addEventListener("input", renderGone);
 """
 
     js = (
-        re.sub(r"__(?:TRACKED_JSON|HISTORY_JSON|ELECTRICITY_CZK|DEAL_THRESHOLD|DATA_JSON|CHANGED_IDS_JSON)__",
+        re.sub(r"__(?:TRACKED_JSON|HISTORY_JSON|ELECTRICITY_CZK|DEAL_THRESHOLD|DATA_JSON|CHANGED_IDS_JSON"
+               r"|GARAGES_JSON|GARAGE_STATS_JSON|AREA_LABELS_JSON|AREA_STATS_JSON|GONE_JSON|HOT_JSON)__",
                lambda m: {
                    "__TRACKED_JSON__": tracked_json, "__HISTORY_JSON__": history_json,
                    "__ELECTRICITY_CZK__": str(ELECTRICITY_ESTIMATE_CZK),
                    "__DEAL_THRESHOLD__": str(DEAL_THRESHOLD_PCT),
                    "__DATA_JSON__": data_json, "__CHANGED_IDS_JSON__": changed_ids_json,
+                   "__GARAGES_JSON__": garages_json, "__GARAGE_STATS_JSON__": garage_stats_json,
+                   "__AREA_LABELS_JSON__": area_labels_json,
+                   "__AREA_STATS_JSON__": area_stats_json,
+                   "__GONE_JSON__": gone_json,
+                   "__HOT_JSON__": hot_json,
                }[m.group(0)], js_template)
     )
+
+    # The ribbon's script goes last and starts itself last: it fires the first
+    # "areachange" with the remembered area, and every list above must already
+    # be listening by then.
+    js += ribbon.ribbon_js() + "\ninitRibbon();\n"
 
     # Not named `html`: that would shadow the stdlib module of the same name,
     # which this function's f-strings call for escaping.
@@ -4856,8 +5622,12 @@ def update_pool_and_reports(snapshot, changes):
     now = snapshot["generated_at"]
     all_pool = pool.load_pool()
     state = pool.load_state()
-    config_changed = pool.note_config(state, snapshot["config"], now)
+    config_changed = pool.note_config(state, home_config(snapshot["config"]), now)
     counts = pool.update_from_snapshot(all_pool, snapshot, changes, at=now)
+    # Kdy se která oblast začala sledovat: report podle toho nepočítá její
+    # výchozí nabídku jako přírůstek. Zapíše se jen jednou.
+    for area in changes.get("baselined_areas") or []:
+        state.setdefault("area_since", {}).setdefault(area, now)
     # Re-apply on the pool so a gone listing still in the 30-day window keeps
     # the corrected m²/fee in the estimate, and a deleted override cannot stick
     # as exclude_from_stats on a record that is no longer in the snapshot.
@@ -4952,6 +5722,88 @@ def update_pool_and_reports(snapshot, changes):
     return estimate, notes, price_histories(all_pool)
 
 
+def scrub_contacts(*groups):
+    """Telefony a e-maily makléřů z textu, který jde do veřejného repa.
+
+    Snapshot, dashboard i archiv jsou veřejné (GitHub Pages) a popis inzerátu
+    je volný text, do kterého makléř píše „volejte 724 223 828". Na portálu je
+    to jeho věc; v našem veřejném repu by to bylo naše zveřejnění osobního
+    údaje. Security review 26. 9. našlo 6 takových popisů a 3 jména
+    kanceláří s e-mailem. Čistí se na místě, po parsování poplatků (ty
+    potřebují celý text) a před zápisem snapshotu."""
+    n = 0
+    for group in groups:
+        for item in group:
+            for key, fn in (("description", gone_archive.strip_contacts),
+                            ("seller_name", gone_archive.strip_seller)):
+                value = item.get(key)
+                if value:
+                    clean = fn(value)
+                    if clean != value:
+                        item[key] = clean
+                        n += 1
+    if n:
+        print(f"Kontakty skryty v {n} polích", file=sys.stderr)
+    return n
+
+
+def update_gone_archive(snapshot, changes):
+    """Náhled zmizelých bytů, znovu vložené inzeráty a adresy.
+
+    Zmizelý inzerát na Sreality vrací 404, takže fotky, popis a adresa jsou
+    pryč přesně ve chvíli, kdy je Radim chce vidět. Archiv je uloží z
+    posledního snapshotu, kde inzerát ještě žil, a spáruje ho s inzerátem,
+    který se pak vrátil pod novým číslem (relist.py).
+
+    Vedlejší cesta: selhání tady stojí archiv, nikdy běh. Snapshot bytů je
+    produkt; tohle je jeho doplněk."""
+    now = snapshot["generated_at"]
+    try:
+        archive = gone_archive.load_archive()
+        all_pool = pool.load_pool()
+        added = gone_archive.add_gone(archive, changes.get("newly_inactive", []), now, pool=all_pool)
+        live = snapshot["comparables"]
+        gone_archive.mark_returned(archive, [str(c["id"]) for c in live], at=now)
+
+        def first_seen(c):
+            return (all_pool.get(str(c["id"])) or {}).get("first_seen") or c.get("first_seen") or now
+
+        candidates = [{**c, "first_seen": first_seen(c)} for c in live]
+        # Znovu vložený inzerát mohl mezitím zase zmizet -- i on je kandidát,
+        # jinak se řetěz A -> B -> C přetrhne u B.
+        candidates += [e for e in archive.values() if not e.get("returned_at")]
+        linked = gone_archive.link_relists(archive, candidates, now)
+        relists = gone_archive.relist_map(archive)
+        for c in list(live) + list(changes.get("new_listings", [])):
+            link = relists.get(str(c["id"]))
+            if link:
+                c["relist_of"] = link
+        dropped = gone_archive.prune(archive, now)
+
+        # Adresy: garáže (i zmizelé) a byty zmizelé za posledních 30 dní.
+        # Živé byty ne -- mají funkční odkaz na portál a je jich 1 500.
+        cache = geocode.load_cache()
+        budget = geocode.MAX_LOOKUPS
+        garages = snapshot.get("garages") or []
+        spent = geocode.annotate([g for g in garages if not g.get("gone_at")], cache, budget)
+        spent += geocode.annotate([g for g in garages if g.get("gone_at")], cache, budget - spent)
+        recent = sorted(
+            (e for e in archive.values() if not e.get("returned_at")),
+            key=lambda e: e.get("gone_at") or "", reverse=True,
+        )
+        spent += geocode.annotate(recent, cache, max(0, budget - spent))
+        geocode.save_cache(cache)
+        gone_archive.save_archive(archive)
+        print(
+            f"Zmizelé byty: +{added} do archivu ({len(archive)} celkem), "
+            f"{len(linked)} nově spárovaných znovuvložení, {len(dropped)} starších "
+            f"{gone_archive.KEEP_DAYS} dní vyřazeno z náhledu · adresy: {spent} dotazů",
+            file=sys.stderr,
+        )
+    except Exception as exc:  # noqa: BLE001 -- deliberate: never fail the run
+        print(f"::warning::archiv zmizelých selhal: {exc}", file=sys.stderr)
+
+
 def main():
     SNAPSHOTS_DIR.mkdir(exist_ok=True)
     prev = load_latest_snapshot()
@@ -5007,9 +5859,12 @@ def main():
         prev_comparables=(prev or {}).get("comparables", []),
         prev_fold_cache=fold_cache_records((prev or {}).get("enrichment_cache")),
         parser_version=PARSER_VERSION,
+        areas={k: (a["center"], a["radius_km"]) for k, a in AREAS.items()},
     )
     comparables += sources.fetch_extra_comparables()
     comparables, folded = merge_cross_portal(comparables)
+    for c in comparables:
+        assign_area(c)
     # After enrich (fetch + extra sources) and fold, before rank / stats /
     # pool / estimate / dashboard. An override whose listing is not in this
     # run stays in overrides.json and is applied again when the same id returns.
@@ -5052,13 +5907,24 @@ def main():
         garages = fetch_garages((prev or {}).get("garages"))
         snapshot["garages"] = garages
         snapshot["garage_stats"] = compute_garage_stats(garages)
+        snapshot["garage_stats_by_area"] = {
+            key: compute_garage_stats(garages, area=key) for key in AREAS
+        }
     except Exception as exc:  # noqa: BLE001 -- deliberate: never fail the run
         print(f"::warning::garage sweep failed: {exc}", file=sys.stderr)
         snapshot["garages"] = (prev or {}).get("garages", [])
         snapshot["garage_stats"] = (prev or {}).get("garage_stats", {})
+        snapshot["garage_stats_by_area"] = (prev or {}).get("garage_stats_by_area", {})
 
     changes = diff_snapshots(prev, snapshot)
     verify_removals(changes, snapshot)
+    # Before the pool and the history: both record `relist_of`, so the stamp
+    # must already be on the listings when they are written.
+    update_gone_archive(snapshot, changes)
+    # Kopie v `changes` jdou do last_changes.json a changes_history.json --
+    # stejně veřejných jako snapshot (code review 26. 9.).
+    scrub_contacts(snapshot["comparables"], snapshot["tracked"], snapshot.get("garages") or [],
+                   *(changes.get(k) or [] for k in ("new_listings", "price_changes", "newly_inactive")))
     # Restored listings rejoin the set, so the medians and deal ranking are
     # recomputed over the final population rather than the pre-verification one.
     # The text passes are re-run for the same reason: a listing brought back by
@@ -5071,9 +5937,15 @@ def main():
     flag_transaction_mismatch(snapshot["comparables"])
     attach_sale_extras(snapshot["comparables"])
     comparables = rank_deals(snapshot["comparables"])
-    stats = compute_stats(comparables)
+    # `stats` stays the home area's, because everything already reading it
+    # (the stats card, the report, the own-flat card) means Vysočany.
+    home = [c for c in comparables if listing_area(c) == HOME_AREA]
+    stats = compute_stats(home)
     snapshot["stats"] = stats
-    snapshot["parking_stats"] = parking_price_stats(comparables)
+    snapshot["area_stats"] = {
+        key: compute_stats([c for c in comparables if listing_area(c) == key]) for key in AREAS
+    }
+    snapshot["parking_stats"] = parking_price_stats(home)
     fee_queue = build_fee_review_queue(comparables)
     FEE_QUEUE_PATH.write_text(json.dumps(fee_queue, ensure_ascii=False, indent=2))
     print(f"Fee review queue: {len(fee_queue)} adverts", file=sys.stderr)

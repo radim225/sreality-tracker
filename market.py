@@ -541,12 +541,15 @@ def similar_to_reference(rec):
     return sqm is not None and lo <= sqm <= hi
 
 
-def period_movement(all_records, start, end):
+def period_movement(all_records, start, end, area=poolmod.HOME_AREA):
     """What arrived and what left between two instants -- the two halves R-6.4
-    insists on keeping apart."""
+    insists on keeping apart. One area at a time (None = all), for the same
+    reason `pool.window` is."""
     start_dt, end_dt = parse_ts(start), parse_ts(end)
     arrived, left = [], []
     for rec in poolmod.records_of(all_records):
+        if area is not None and poolmod.area_of(rec) != area:
+            continue
         first = parse_ts(rec.get("first_seen"))
         if first and start_dt <= first <= end_dt:
             arrived.append(rec)

@@ -105,6 +105,9 @@ jobs:
       # Offline and fast. Run before the scrape so a broken parser or cache
       # stops the run instead of writing a snapshot full of wrong fees.
       - name: Run tests
+        env:
+          # Tests never touch Nominatim; geocode.py reads only its cache.
+          GEOCODE_DISABLED: "1"
         run: |
           python test_fees.py
           python test_fee_queue.py
@@ -120,6 +123,11 @@ jobs:
           python test_notify.py
           python test_security.py
           python test_sale_extras.py
+          python test_relist.py
+          python test_gone_archive.py
+          python test_geocode.py
+          python test_areas.py
+          python test_ribbon.py
 
       - name: Run scraper
         env:
@@ -167,6 +175,11 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add snapshots latest_snapshot.json last_changes.json changes_history.json dashboard.html index.html tracked.json overrides.json
           git add changes_log.jsonl pool reports fee_review_queue.json
+          # Jen když existují: chybějící soubor by git add shodil a s ním
+          # commit celého běhu (snapshot, pool, dashboard).
+          for f in gone_archive.json geocode_cache.json; do
+            if [ -e "$f" ]; then git add "$f"; fi
+          done
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else

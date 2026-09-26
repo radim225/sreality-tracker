@@ -200,9 +200,72 @@ def build_weekly(all_pool, state, week_key, as_of=None):
         "config_changed": poolmod.config_changed_between(state, start, end),
         "fee_coverage_pct": _fee_coverage(window),
         "electricity_estimated_pct": _electricity_estimated(window),
+        # A re-posted advert is not new supply; say how many of the arrivals
+        # were really a listing coming back (relist.py).
+        "arrived_relisted_n": sum(1 for r in arrived if r.get("relist_of")),
+        "other_areas": other_areas(all_pool, start, end, as_of, state),
     }
     meta["verdict"], meta["reasons"] = classify_week(meta, state)
     return meta
+
+
+def other_areas(all_pool, start, end, as_of, state=None):
+    """The areas watched besides home, as a short block of their own.
+
+    Deliberately kept out of everything above: the estimate, the trend and the
+    verdict describe Vysočany. A second area gets its level and its movement,
+    with n, and nothing it could move."""
+    out = {}
+    for key, label in poolmod.AREA_LABELS.items():
+        if key == poolmod.HOME_AREA:
+            continue
+        window = poolmod.window(all_pool, end=end, area=key)
+        if not window:
+            continue
+        arrived, left = market.period_movement(all_pool, start, end, area=key)
+        # Při zapnutí oblasti dostane celý její dosavadní trh first_seen =
+        # ten běh. To není přírůstek, ale začátek sledování -- bez tohohle by
+        # první zápis hlásil „+330 nových" v Jinonicích (code review 26. 9.).
+        since = ((state or {}).get("area_since") or {}).get(key)
+        started_now = bool(since and start <= (poolmod.parse_ts(since) or start) <= end)
+        if since:
+            arrived = [r for r in arrived if (r.get("first_seen") or "") > since]
+        out[key] = {
+            "label": label,
+            "window_n": len(window),
+            "pronajem": market.level(window, "pronajem", as_of),
+            "prodej": market.level(window, "prodej", as_of),
+            "arrived_n": len(arrived),
+            "left_n": len(left),
+            "relisted_n": sum(1 for r in arrived if r.get("relist_of")),
+            "started_this_week": started_now,
+        }
+    return out
+
+
+def _section_other_areas(meta):
+    areas = meta.get("other_areas") or {}
+    if not areas:
+        return []
+    lines = ["## Další sledované oblasti", "",
+             "*Mimo odhad i verdikt výš — ty popisují jen Vysočany.*", ""]
+    for block in areas.values():
+        def med(q):
+            return czk(q["median"]) + f" (n={q['n']})" if q and q.get("median") else "málo dat"
+        lines.append(f"### {block['label']}")
+        lines.append("")
+        lines.append(f"- Nájem Kč/m² celkem, medián: {med(block['pronajem'])}")
+        lines.append(f"- Prodej Kč/m², medián: {med(block['prodej'])}")
+        relisted = f", z toho {block['relisted_n']} znovu vložených" if block["relisted_n"] else ""
+        lines.append(
+            f"- Tento týden: +{block['arrived_n']} nových{relisted}, −{block['left_n']} zmizelých "
+            f"· v okně {block['window_n']} inzerátů"
+        )
+        if block.get("started_this_week"):
+            lines.append("- *Sledování oblasti začalo tento týden — dosavadní nabídka se "
+                         "nepočítá jako přírůstek.*")
+        lines.append("")
+    return lines
 
 
 def _fee_coverage(window):
@@ -259,6 +322,7 @@ def render_weekly(meta):
     lines += _section_market(meta, band)
     lines += _section_dynamics(meta)
     lines += _section_listings(meta)
+    lines += _section_other_areas(meta)
     lines += _section_method(meta)
     return "\n".join(lines) + "\n"
 
