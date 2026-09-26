@@ -41,7 +41,7 @@
  "1028513868": {
   "id": "1028513868",
   "first_seen": "2026-07-09T17:49:12Z",
-  "last_seen": "2026-09-26T19:15:16Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -81,7 +81,7 @@
   "floors_total": 3,
   "backfilled": true,
   "dist_km": 1.79,
-  "deal_pct": -19,
+  "deal_pct": -20,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -112,12 +112,13 @@
   "since": "2026-07-09",
   "parking_state": "priced",
   "parking_price_czk": 1050,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "area": "vysocany"
  },
  "1062527052": {
   "id": "1062527052",
   "first_seen": "2026-07-21T17:08:11Z",
-  "last_seen": "2026-09-26T19:15:16Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -152,7 +153,7 @@
   "floors_total": null,
   "backfilled": true,
   "dist_km": 1.32,
-  "deal_pct": -6,
+  "deal_pct": -8,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -186,7 +187,8 @@
   "exclude_from_stats": false,
   "gone_last_price_czk": 20000,
   "gone_last_total_czk": 24500,
-  "resurrected_at": "2026-09-24T13:39:09Z"
+  "resurrected_at": "2026-09-24T13:39:09Z",
+  "area": "vysocany"
  },
  "1074651212": {
   "id": "1074651212",
@@ -230,7 +232,7 @@
  "1085333580": {
   "id": "1085333580",
   "first_seen": "2026-07-16T17:02:42Z",
-  "last_seen": "2026-09-26T19:15:16Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -265,7 +267,7 @@
   "floors_total": 14,
   "backfilled": true,
   "dist_km": 2.0,
-  "deal_pct": 4,
+  "deal_pct": 3,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -296,12 +298,13 @@
   "since": "2026-07-16",
   "parking_state": "unpriced",
   "parking_price_czk": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "area": "vysocany"
  },
  "1089462348": {
   "id": "1089462348",
   "first_seen": "2026-07-08T10:06:28Z",
-  "last_seen": "2026-09-26T19:15:16Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -336,7 +339,7 @@
   "floors_total": null,
   "backfilled": true,
   "dist_km": 2.12,
-  "deal_pct": 3,
+  "deal_pct": 2,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -367,7 +370,8 @@
   "since": "2026-07-08",
   "parking_state": "none",
   "parking_price_czk": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "area": "vysocany"
  },
  "1179242572": {
   "id": "1179242572",
@@ -616,7 +620,7 @@
  "1381163084": {
   "id": "1381163084",
   "first_seen": "2026-07-14T17:03:16Z",
-  "last_seen": "2026-09-26T19:15:16Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -651,7 +655,7 @@
   "floors_total": null,
   "backfilled": true,
   "dist_km": 1.32,
-  "deal_pct": 13,
+  "deal_pct": 14,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -682,12 +686,13 @@
   "since": "2026-07-14",
   "parking_state": "none",
   "parking_price_czk": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "area": "vysocany"
  },
  "1446826060": {
   "id": "1446826060",
   "first_seen": "2026-07-31T10:28:26Z",
-  "last_seen": "2026-09-26T13:04:24Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1317,7 +1322,7 @@
  "1786699852": {
   "id": "1786699852",
   "first_seen": "2026-07-08T17:18:47Z",
-  "last_seen": "2026-09-26T19:15:16Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1362,7 +1367,7 @@
   "floors_total": 5,
   "backfilled": true,
   "dist_km": 1.98,
-  "deal_pct": 6,
+  "deal_pct": 5,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -1393,7 +1398,8 @@
   "since": "2026-07-08",
   "parking_state": "none",
   "parking_price_czk": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "area": "vysocany"
  },
  "1829393228": {
   "id": "1829393228",
@@ -1552,7 +1558,7 @@
  "1874382924": {
   "id": "1874382924",
   "first_seen": "2026-07-28T01:15:51Z",
-  "last_seen": "2026-09-26T19:15:16Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1587,7 +1593,7 @@
   "floors_total": 7,
   "backfilled": true,
   "dist_km": 1.42,
-  "deal_pct": 16,
+  "deal_pct": 15,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -1618,7 +1624,8 @@
   "since": "2026-07-27",
   "parking_state": "unpriced",
   "parking_price_czk": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "area": "vysocany"
  },
  "1917968460": {
   "id": "1917968460",
@@ -1935,7 +1942,7 @@
  "224321612": {
   "id": "224321612",
   "first_seen": "2026-07-09T01:27:57Z",
-  "last_seen": "2026-09-26T19:15:16Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1970,7 +1977,7 @@
   "floors_total": 5,
   "backfilled": true,
   "dist_km": 2.03,
-  "deal_pct": 76,
+  "deal_pct": 73,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -2001,7 +2008,8 @@
   "since": "2026-07-08",
   "parking_state": "none",
   "parking_price_czk": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "area": "vysocany"
  },
  "2273697868": {
   "id": "2273697868",
@@ -2357,7 +2365,7 @@
  "2523521100": {
   "id": "2523521100",
   "first_seen": "2026-07-03T17:11:28Z",
-  "last_seen": "2026-09-26T19:15:16Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2392,7 +2400,7 @@
   "backfilled": true,
   "source": "sreality",
   "dist_km": 1.72,
-  "deal_pct": 4,
+  "deal_pct": 3,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 9,
@@ -2423,7 +2431,8 @@
   "since": "2026-07-03",
   "parking_state": "none",
   "parking_price_czk": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "area": "vysocany"
  },
  "2605278028": {
   "id": "2605278028",
@@ -2623,7 +2632,7 @@
  "2665009228": {
   "id": "2665009228",
   "first_seen": "2026-07-27T17:29:31Z",
-  "last_seen": "2026-09-26T19:15:16Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2694,7 +2703,8 @@
   "since": "2026-07-27",
   "parking_state": "none",
   "parking_price_czk": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "area": "vysocany"
  },
  "2692145228": {
   "id": "2692145228",
@@ -2934,7 +2944,7 @@
  "2839470156": {
   "id": "2839470156",
   "first_seen": "2026-07-09T10:47:27Z",
-  "last_seen": "2026-09-26T19:15:16Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3010,7 +3020,8 @@
   "since": "2026-07-09",
   "parking_state": "none",
   "parking_price_czk": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "area": "vysocany"
  },
  "2901532748": {
   "id": "2901532748",
@@ -3825,7 +3836,7 @@
  "3311853644": {
   "id": "3311853644",
   "first_seen": "2026-07-22T10:13:56Z",
-  "last_seen": "2026-09-26T19:15:16Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3880,7 +3891,7 @@
   "floors_total": 6,
   "backfilled": true,
   "dist_km": 1.39,
-  "deal_pct": -7,
+  "deal_pct": -8,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -3914,7 +3925,8 @@
   "exclude_from_stats": false,
   "gone_last_price_czk": 10300000,
   "gone_last_total_czk": 10300000,
-  "resurrected_at": "2026-09-08T22:36:56Z"
+  "resurrected_at": "2026-09-08T22:36:56Z",
+  "area": "vysocany"
  },
  "3343048780": {
   "id": "3343048780",
@@ -4503,7 +4515,7 @@
  "36036684": {
   "id": "36036684",
   "first_seen": "2026-07-20T17:17:05Z",
-  "last_seen": "2026-09-26T19:15:16Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4574,7 +4586,8 @@
   "ownership_name": "Osobní",
   "views": 4449,
   "edited": "2026-09-18",
-  "since": "2026-07-20"
+  "since": "2026-07-20",
+  "area": "vysocany"
  },
  "3608141900": {
   "id": "3608141900",
@@ -4657,7 +4670,7 @@
  "3662205004": {
   "id": "3662205004",
   "first_seen": "2026-07-27T01:28:24Z",
-  "last_seen": "2026-09-26T19:15:16Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4741,7 +4754,8 @@
   "gone_last_price_czk": 22500,
   "gone_last_total_czk": 29500,
   "resurrected_at": "2026-08-30T19:21:39Z",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "area": "vysocany"
  },
  "3679051852": {
   "id": "3679051852",
@@ -5441,7 +5455,7 @@
  "4180140108": {
   "id": "4180140108",
   "first_seen": "2026-07-17T09:46:26Z",
-  "last_seen": "2026-09-26T19:15:16Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5491,7 +5505,7 @@
   "floors_total": null,
   "backfilled": true,
   "dist_km": 1.45,
-  "deal_pct": 0,
+  "deal_pct": 1,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -5522,7 +5536,8 @@
   "since": "2026-07-17",
   "parking_state": "unpriced",
   "parking_price_czk": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "area": "vysocany"
  },
  "4215136332": {
   "id": "4215136332",
@@ -6774,7 +6789,7 @@
  "882630732": {
   "id": "882630732",
   "first_seen": "2026-07-02T17:27:02Z",
-  "last_seen": "2026-09-26T19:15:16Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6845,7 +6860,8 @@
   "since": "2026-07-02",
   "parking_state": "unpriced",
   "parking_price_czk": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "area": "vysocany"
  },
  "927301708": {
   "id": "927301708",
@@ -6933,7 +6949,7 @@
  "960421964": {
   "id": "960421964",
   "first_seen": "2026-07-09T10:47:27Z",
-  "last_seen": "2026-09-26T19:15:16Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7009,7 +7025,8 @@
   "since": "2026-07-09",
   "parking_state": "none",
   "parking_price_czk": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "area": "vysocany"
  },
  "981061708": {
   "id": "981061708",
@@ -7128,7 +7145,7 @@
  "bez-1006128": {
   "id": "bez-1006128",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-09-26T13:04:24Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7173,7 +7190,7 @@
  "bez-1007550": {
   "id": "bez-1007550",
   "first_seen": "2026-07-17T09:46:26Z",
-  "last_seen": "2026-09-26T13:04:24Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7329,7 +7346,7 @@
  "bez-1014682": {
   "id": "bez-1014682",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-09-26T19:15:16Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7350,7 +7367,7 @@
   "disposition": "2+kk",
   "floor_area_sqm": 58,
   "street": null,
-  "locality": "okolí Pod Harfou",
+  "locality": null,
   "city_part": null,
   "lat": 50.1130683741,
   "lon": 14.5039858446,
@@ -7369,12 +7386,13 @@
   "dist_km": 1.81,
   "deal_pct": 1,
   "deal_outlier": false,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "area": "vysocany"
  },
  "bez-1015021": {
   "id": "bez-1015021",
   "first_seen": "2026-07-10T17:43:16Z",
-  "last_seen": "2026-09-26T19:15:16Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7395,7 +7413,7 @@
   "disposition": "2+kk",
   "floor_area_sqm": 52,
   "street": null,
-  "locality": "okolí Pod Harfou",
+  "locality": null,
   "city_part": null,
   "lat": 50.1130683741,
   "lon": 14.5039858446,
@@ -7413,8 +7431,9 @@
   "backfilled": true,
   "exclude_from_stats": false,
   "dist_km": 1.81,
-  "deal_pct": 13,
-  "deal_outlier": false
+  "deal_pct": 14,
+  "deal_outlier": false,
+  "area": "vysocany"
  },
  "bez-1017622": {
   "id": "bez-1017622",
@@ -7836,7 +7855,7 @@
  "bez-1029927": {
   "id": "bez-1029927",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-09-26T19:15:16Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7857,7 +7876,7 @@
   "disposition": "1+kk",
   "floor_area_sqm": 32,
   "street": null,
-  "locality": "okolí Pod Harfou",
+  "locality": null,
   "city_part": null,
   "lat": 50.1112854,
   "lon": 14.4980745,
@@ -7876,7 +7895,8 @@
   "exclude_from_stats": false,
   "dist_km": 1.43,
   "deal_pct": -4,
-  "deal_outlier": false
+  "deal_outlier": false,
+  "area": "vysocany"
  },
  "bez-1030415": {
   "id": "bez-1030415",
@@ -8066,7 +8086,7 @@
  "bez-1038187": {
   "id": "bez-1038187",
   "first_seen": "2026-07-26T16:45:54Z",
-  "last_seen": "2026-09-26T13:04:24Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9318,7 +9338,7 @@
  "bez-1050319": {
   "id": "bez-1050319",
   "first_seen": "2026-07-29T17:04:21Z",
-  "last_seen": "2026-09-26T13:04:24Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9357,7 +9377,7 @@
   "backfilled": true,
   "exclude_from_stats": false,
   "dist_km": 1.9,
-  "deal_pct": 63,
+  "deal_pct": 64,
   "deal_outlier": false
  },
  "bez-167754": {
@@ -9449,7 +9469,7 @@
  "bez-349115": {
   "id": "bez-349115",
   "first_seen": "2026-07-17T09:46:26Z",
-  "last_seen": "2026-09-26T19:15:16Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9465,7 +9485,7 @@
   "disposition": "2+kk",
   "floor_area_sqm": 65,
   "street": null,
-  "locality": "okolí Pod Harfou",
+  "locality": null,
   "city_part": null,
   "lat": 50.1046783,
   "lon": 14.4885408,
@@ -9483,8 +9503,9 @@
   "backfilled": true,
   "exclude_from_stats": false,
   "dist_km": 0.59,
-  "deal_pct": -2,
-  "deal_outlier": false
+  "deal_pct": -3,
+  "deal_outlier": false,
+  "area": "vysocany"
  },
  "bez-365575": {
   "id": "bez-365575",
@@ -9563,7 +9584,7 @@
  "bez-432379": {
   "id": "bez-432379",
   "first_seen": "2026-07-27T17:29:31Z",
-  "last_seen": "2026-09-26T13:04:24Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9981,7 +10002,7 @@
  "bez-754575": {
   "id": "bez-754575",
   "first_seen": "2026-07-17T09:46:26Z",
-  "last_seen": "2026-09-26T19:15:16Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10002,7 +10023,7 @@
   "disposition": "2+kk",
   "floor_area_sqm": 60,
   "street": null,
-  "locality": "okolí Pod Harfou",
+  "locality": null,
   "city_part": null,
   "lat": 50.10468,
   "lon": 14.48854,
@@ -10020,8 +10041,9 @@
   "backfilled": true,
   "exclude_from_stats": false,
   "dist_km": 0.59,
-  "deal_pct": -9,
-  "deal_outlier": false
+  "deal_pct": -10,
+  "deal_outlier": false,
+  "area": "vysocany"
  },
  "bez-764065": {
   "id": "bez-764065",
@@ -10369,7 +10391,7 @@
  "bez-834790": {
   "id": "bez-834790",
   "first_seen": "2026-07-19T01:18:15Z",
-  "last_seen": "2026-09-26T13:04:24Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10557,7 +10579,7 @@
  "bez-863730": {
   "id": "bez-863730",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-09-26T13:04:24Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10745,7 +10767,7 @@
  "bez-972132": {
   "id": "bez-972132",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-09-26T13:04:24Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10978,7 +11000,7 @@
  "bez-996941": {
   "id": "bez-996941",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-09-26T19:15:16Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10999,7 +11021,7 @@
   "disposition": "2+kk",
   "floor_area_sqm": 49,
   "street": null,
-  "locality": "okolí Pod Harfou",
+  "locality": null,
   "city_part": null,
   "lat": 50.1130683,
   "lon": 14.5039858,
@@ -11021,7 +11043,8 @@
   "deal_pct": 17,
   "deal_outlier": false,
   "resurrected_at": "2026-08-28T22:17:12Z",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "area": "vysocany"
  },
  "bez-999294": {
   "id": "bez-999294",
@@ -12710,7 +12733,7 @@
  "idnes-6a033bdd9c177f9bbf073fa6": {
   "id": "idnes-6a033bdd9c177f9bbf073fa6",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-09-26T19:15:16Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12745,7 +12768,8 @@
   "exclude_from_stats": false,
   "dist_km": 0.62,
   "deal_pct": 10,
-  "deal_outlier": false
+  "deal_outlier": false,
+  "area": "vysocany"
  },
  "idnes-6a0487732809b4d690046875": {
   "id": "idnes-6a0487732809b4d690046875",
@@ -13059,7 +13083,7 @@
  "idnes-6a0c59a72b5ffab24208d684": {
   "id": "idnes-6a0c59a72b5ffab24208d684",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-09-26T19:15:16Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -13093,8 +13117,9 @@
   "backfilled": true,
   "exclude_from_stats": false,
   "dist_km": 0.62,
-  "deal_pct": 2,
-  "deal_outlier": false
+  "deal_pct": 1,
+  "deal_outlier": false,
+  "area": "vysocany"
  },
  "idnes-6a0ff9fa54f27625af039b15": {
   "id": "idnes-6a0ff9fa54f27625af039b15",
@@ -13321,7 +13346,7 @@
  "idnes-6a1c18ee6d13c98fa102e4c8": {
   "id": "idnes-6a1c18ee6d13c98fa102e4c8",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-09-26T13:04:24Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -16044,7 +16069,7 @@
  "idnes-6a438d6133490f088d047b27": {
   "id": "idnes-6a438d6133490f088d047b27",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-09-26T13:04:24Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -16121,7 +16146,7 @@
  "idnes-6a439594f569466e5a03bda8": {
   "id": "idnes-6a439594f569466e5a03bda8",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-09-26T13:04:24Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -16383,7 +16408,7 @@
  "idnes-6a441eb67e9c9f047f0030a9": {
   "id": "idnes-6a441eb67e9c9f047f0030a9",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-09-26T13:04:24Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -18071,7 +18096,7 @@
  "idnes-6a47c72675144a80770a1117": {
   "id": "idnes-6a47c72675144a80770a1117",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-09-26T13:04:24Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -18111,7 +18136,7 @@
  "idnes-6a47c79167bcdc702f0311a9": {
   "id": "idnes-6a47c79167bcdc702f0311a9",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-09-26T13:04:24Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -18151,7 +18176,7 @@
  "idnes-6a47c81b5c875f13a00e56b4": {
   "id": "idnes-6a47c81b5c875f13a00e56b4",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-09-26T13:04:24Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -20304,7 +20329,7 @@
  "idnes-6a5a0d1b4db6b8b49c0c4268": {
   "id": "idnes-6a5a0d1b4db6b8b49c0c4268",
   "first_seen": "2026-07-17T14:55:13Z",
-  "last_seen": "2026-09-26T13:04:24Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -20537,7 +20562,7 @@
  "idnes-6a5cf1c4719f99fb6402761d": {
   "id": "idnes-6a5cf1c4719f99fb6402761d",
   "first_seen": "2026-07-20T01:20:55Z",
-  "last_seen": "2026-09-26T13:04:24Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -21312,7 +21337,7 @@
  "idnes-6a666b4e3f925565630a2ca7": {
   "id": "idnes-6a666b4e3f925565630a2ca7",
   "first_seen": "2026-07-27T01:28:24Z",
-  "last_seen": "2026-09-26T13:04:24Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
@@ -22045,7 +22070,7 @@
  "idnes-6a6c6db3aa82b71cb809da7c": {
   "id": "idnes-6a6c6db3aa82b71cb809da7c",
   "first_seen": "2026-07-31T10:28:26Z",
-  "last_seen": "2026-09-26T13:04:24Z",
+  "last_seen": "2026-09-26T20:38:36Z",
   "gone_at": null,
   "price_history": [
    {
