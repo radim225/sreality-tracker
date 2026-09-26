@@ -10,6 +10,7 @@ Offline, bez sítě. Run: python3 test_ribbon.py
 """
 import json
 import os
+import tempfile
 import re
 import shutil
 import subprocess
@@ -18,7 +19,9 @@ import sys
 import ribbon
 
 failures = []
-SCRATCH = "/private/tmp/claude-501/-Users-radimsoukal-Documents-Claude-Projects/d68ff62c-03b9-4dd3-960a-cf5a8405b97e/scratchpad"
+# Náhled se píše do dočasné složky -- pevná cesta z vývojového stroje na CI
+# runneru neexistuje a shodila celý běh (26. 9.).
+SCRATCH = os.environ.get("RIBBON_PREVIEW_DIR") or tempfile.mkdtemp(prefix="ribbon-")
 NOW = "2026-09-26T19:00:00Z"
 
 
