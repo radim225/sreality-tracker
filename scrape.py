@@ -2434,7 +2434,10 @@ def verify_removals(changes, curr):
         # pool i archiv ho uzavřou, historie změn a alerty ho vynechají. Kdo
         # prošel ověřením už novým kódem (má verified_live_at), je normální
         # čerstvé zmizení a hlásí se.
-        if comp.get("search_missed") and not comp.get("verified_live_at"):
+        # Jen Bezrealitky/iDNES: Sreality 404 poznávala vždycky, takže její
+        # zmizení je čerstvé i u inzerátu vráceného starým kódem.
+        if (comp.get("search_missed") and not comp.get("verified_live_at")
+                and comp.get("source") not in (None, "sreality")):
             comp["stale_ghost"] = True
             stale += 1
         confirmed.append(comp)

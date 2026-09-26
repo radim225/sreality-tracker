@@ -235,6 +235,8 @@ def update_from_snapshot(pool, snapshot, changes=None, at=None):
             # -- an older snapshot showing it alive says nothing about now.
             rec["resurrected_at"] = at
             rec["gone_at"] = None
+            # A comeback ends the old episode; a later removal is fresh news.
+            rec.pop("gone_stale", None)
             counts["resurrected"] += 1
         counts["updated"] += 1
 
@@ -243,9 +245,12 @@ def update_from_snapshot(pool, snapshot, changes=None, at=None):
         if rec is not None and not rec.get("gone_at"):
             rec["gone_at"] = at
             # Zombie uklizená 26. 9. (scrape.verify_removals): zemřela neznámo
-            # kdy, takže do "zmizelo tento týden" nepatří.
+            # kdy, takže do "zmizelo tento týden" ani do doby na trhu nepatří.
+            # Flag se nastavuje (i maže) při každém zmizení, ne jen přidává.
             if comp.get("stale_ghost"):
                 rec["gone_stale"] = True
+            else:
+                rec.pop("gone_stale", None)
             rec["gone_last_price_czk"] = rec.get("price_czk")
             rec["gone_last_total_czk"] = rec.get("total_czk")
             counts["gone"] += 1

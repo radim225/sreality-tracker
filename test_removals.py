@@ -66,7 +66,7 @@ asked = []
 def fake_gone(comp):
     asked.append(comp["id"])
     return {"dead-zombie": (True, None), "dead-fresh": (True, "2026-09-26"),
-            "sr-dead": (True, None)}.get(comp["id"], (False, None))
+            "sr-dead": (True, None), "sr-old": (True, None)}.get(comp["id"], (False, None))
 
 
 real = scrape.listing_is_gone
@@ -83,6 +83,9 @@ try:
          "verified_live_at": "2026-09-27T05:00:00Z"},
         {"id": "live", "source": "bezrealitky"},
         {"id": "sr-dead", "source": "sreality"},
+        # Sreality vrácená starým kódem: 404 poznávala vždycky, takže je to
+        # čerstvé zmizení, ne zombie.
+        {"id": "sr-old", "source": "sreality", "search_missed": True},
     ]
     changes = {"generated_at": NOW, "newly_inactive": [dict(c) for c in cands]}
     curr = {"comparables": []}
@@ -91,9 +94,10 @@ finally:
     scrape.listing_is_gone = real
 
 check("ověřená do 24 h se znovu neptá", "recent" in asked, False)
-check("ostatní se ptají", sorted(asked), ["dead-fresh", "dead-zombie", "live", "sr-dead"])
+check("ostatní se ptají", sorted(asked), ["dead-fresh", "dead-zombie", "live", "sr-dead", "sr-old"])
 gone = {c["id"]: c for c in changes["newly_inactive"]}
-check("potvrzeně pryč", sorted(gone), ["dead-fresh", "dead-zombie", "sr-dead"])
+check("potvrzeně pryč", sorted(gone), ["dead-fresh", "dead-zombie", "sr-dead", "sr-old"])
+check("Sreality vrácená starým kódem není zombie", gone["sr-old"].get("stale_ghost"), None)
 check("dávná zombie = stale_ghost", gone["dead-zombie"].get("stale_ghost"), True)
 check("čerstvé zmizení není zombie", gone["dead-fresh"].get("stale_ghost"), None)
 check("datum z iDNES", gone["dead-fresh"].get("removed_since"), "2026-09-26T00:00:00Z")
@@ -118,7 +122,7 @@ class _Sink:
 scrape.CHANGES_HISTORY_PATH = _Sink()
 scrape.update_changes_history(changes)
 check("historie hlásí jen čerstvé zmizení",
-      sorted(e["id"] for e in events if e["kind"] == "removed"), ["dead-fresh", "sr-dead"])
+      sorted(e["id"] for e in events if e["kind"] == "removed"), ["dead-fresh", "sr-dead", "sr-old"])
 
 recs = {}
 for cid in ("dead-zombie", "dead-fresh"):
@@ -128,6 +132,24 @@ check("pool zombii uzavře", recs["dead-zombie"].get("gone_at"), NOW)
 check("a označí ji", recs["dead-zombie"].get("gone_stale"), True)
 _, left = market.period_movement(recs, "2026-09-21T00:00:00Z", "2026-09-28T00:00:00Z")
 check("týdenní úbytek bez zombie", [r["id"] for r in left], ["dead-fresh"])
+
+# Zombie, která se vrátí a pak doopravdy zmizí, je čerstvá zpráva.
+recs["dead-zombie"]["price_czk"] = 1
+pool.update_from_snapshot(recs, {"comparables": [{"id": "dead-zombie", "price_czk": 1}]},
+                          {}, at="2026-10-01T00:00:00Z")
+check("návrat maže gone_stale", recs["dead-zombie"].get("gone_stale"), None)
+pool.update_from_snapshot(recs, {"comparables": []},
+                          {"newly_inactive": [{"id": "dead-zombie"}]}, at="2026-10-03T00:00:00Z")
+check("pozdější skutečné zmizení není stale", recs["dead-zombie"].get("gone_stale"), None)
+
+# Doba na trhu u prodejů: zombie by ji nafoukla (gone_at = den úklidu).
+sales = {
+    "z": {"id": "z", "transaction_type": "prodej", "since": "2026-01-01", "gone_at": NOW,
+          "gone_stale": True, "last_seen": NOW, "first_seen": "2026-01-01T00:00:00Z"},
+    "r": {"id": "r", "transaction_type": "prodej", "since": "2026-09-01", "gone_at": NOW,
+          "last_seen": NOW, "first_seen": "2026-09-01T00:00:00Z"},
+}
+check("prodané bez zombie", market.sale_dynamics(list(sales.values()), NOW)["gone_n"], 1)
 
 print()
 if failures:

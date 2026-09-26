@@ -499,7 +499,9 @@ def sale_dynamics(records, as_of=None):
     label is "last asking price when it vanished" (N-1)."""
     sales = [r for r in records if r.get("transaction_type") == "prodej"]
     live = [r for r in sales if not r.get("gone_at")]
-    gone = [r for r in sales if r.get("gone_at")]
+    # Uklizené zombie (gone_stale) mají gone_at = den úklidu, ne den zmizení,
+    # takže by nafoukly dobu na trhu i počet prodaných.
+    gone = [r for r in sales if r.get("gone_at") and not r.get("gone_stale")]
 
     dom = [d for d in (poolmod.days_on_market(r, as_of) for r in live) if d is not None]
     dom_gone = [d for d in (poolmod.days_on_market(r, as_of) for r in gone) if d is not None]
