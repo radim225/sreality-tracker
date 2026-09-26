@@ -596,6 +596,71 @@ def fetch_idnes(max_pages=8, sleep=0.4):
     return list(out.values())
 
 
+# --------------------------------------------------------------------------- #
+# Je inzerát pryč? Ani jeden z portálů na smazaný inzerát neodpoví 404.
+# --------------------------------------------------------------------------- #
+# Změřeno 26. 9. 2026 na vzorku „živých" inzerátů, které scrape.verify_removals
+# vracel do tabulky: 4 z 8 na Bezrealitkách a 3 z 8 na iDNES byly ve skutečnosti
+# smazané. Obě stránky odpovídají 200 s oznámením „již není v nabídce", takže
+# test na 404 je nikdy nepoznal a mrtvé inzeráty žily dál v tabulce, v mediánech
+# i v odhadu nájmu -- stovky „zombie", každý běh znovu ověřené a znovu vrácené.
+IDNES_INACTIVE_RE = re.compile(
+    r'class="b-intro__title"[^>]*>\s*Nabídka již není aktivní', re.S)
+IDNES_INACTIVE_SINCE_RE = re.compile(
+    r'Ode dne\s+(\d{1,2})\.(\d{1,2})\.(\d{4})\s+evidujeme nabídku jako neaktivní')
+
+
+def bez_inactive(html, advert_id):
+    """True/False podle `origAdvert` ve stránce, None když to nejde říct.
+
+    Čte se jen `origAdvert` -- inzerát, kterému stránka patří. Stránka nese i
+    podobné inzeráty s vlastním `active`, takže hledat "active":false kdekoli
+    v textu by zabilo živý inzerát kvůli mrtvému sousedovi."""
+    m = NEXT_DATA_RE.search(html or "")
+    if not m:
+        return None
+    try:
+        import json
+        advert = json.loads(m.group(1))["props"]["pageProps"]["origAdvert"]
+    except (ValueError, KeyError, TypeError):
+        return None
+    if not isinstance(advert, dict) or str(advert.get("id")) != str(advert_id):
+        return None
+    if advert.get("archived") is True or advert.get("active") is False:
+        return True
+    return False
+
+
+def idnes_inactive(html):
+    """(True, "YYYY-MM-DD" nebo None) pro neaktivní nabídku, jinak (False, None).
+
+    iDNES u neaktivní nabídky uvádí i den, od kdy -- ten je přesnější než
+    okamžik, kdy jsme si toho všimli, a jde do archivu jako datum zmizení."""
+    if not IDNES_INACTIVE_RE.search(html or ""):
+        return False, None
+    m = IDNES_INACTIVE_SINCE_RE.search(html)
+    since = f"{m.group(3)}-{int(m.group(2)):02d}-{int(m.group(1)):02d}" if m else None
+    return True, since
+
+
+def extra_listing_gone(comp):
+    """(gone, since) pro inzerát z Bezrealitek / iDNES. Nejistota = živý:
+    výjimka, 5xx nebo stránka, které nerozumíme, nikdy nic neprohlásí za pryč."""
+    url = comp.get("url")
+    if not url:
+        return False, None
+    resp = SESSION.get(url, timeout=20, allow_redirects=True)
+    if resp.status_code == 404:
+        return True, None
+    if resp.status_code != 200:
+        return False, None
+    if comp.get("source") == "bezrealitky":
+        return bool(bez_inactive(resp.text, str(comp.get("id", "")).split("-", 1)[-1])), None
+    if comp.get("source") == "idnes":
+        return idnes_inactive(resp.text)
+    return False, None
+
+
 def fetch_extra_comparables():
     """All non-Sreality comparables, best-effort: a failing source must not
     take the others (or the whole scrape) down."""

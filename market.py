@@ -554,6 +554,6 @@ def period_movement(all_records, start, end, area=poolmod.HOME_AREA):
         if first and start_dt <= first <= end_dt:
             arrived.append(rec)
         gone = parse_ts(rec.get("gone_at"))
-        if gone and start_dt <= gone <= end_dt:
+        if gone and start_dt <= gone <= end_dt and not rec.get("gone_stale"):
             left.append(rec)
     return arrived, left

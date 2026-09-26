@@ -242,6 +242,10 @@ def update_from_snapshot(pool, snapshot, changes=None, at=None):
         rec = pool.get(str(comp.get("id")))
         if rec is not None and not rec.get("gone_at"):
             rec["gone_at"] = at
+            # Zombie uklizená 26. 9. (scrape.verify_removals): zemřela neznámo
+            # kdy, takže do "zmizelo tento týden" nepatří.
+            if comp.get("stale_ghost"):
+                rec["gone_stale"] = True
             rec["gone_last_price_czk"] = rec.get("price_czk")
             rec["gone_last_total_czk"] = rec.get("total_czk")
             counts["gone"] += 1

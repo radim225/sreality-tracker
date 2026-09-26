@@ -128,6 +128,7 @@ jobs:
           python test_geocode.py
           python test_areas.py
           python test_ribbon.py
+          python test_removals.py
 
       - name: Run scraper
         env:

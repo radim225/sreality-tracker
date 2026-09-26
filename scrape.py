@@ -2292,6 +2292,9 @@ def update_changes_history(changes):
     for c in changes.get("new_listings", []):
         new_events.append({"at": at, "kind": "new", "id": c["id"], "item": c})
     for c in changes.get("newly_inactive", []):
+        # Zombie uklizené od 26. 9. nejsou zpráva: zemřely dávno (verify_removals).
+        if c.get("stale_ghost"):
+            continue
         new_events.append({"at": at, "kind": "removed", "id": c["id"], "item": c})
 
     append_changes_log(new_events)
@@ -2340,22 +2343,45 @@ def listing_is_gone(comp):
     ~60 paginated pages sorted by date while the underlying set keeps changing,
     so listings slip between page boundaries and vanish for a run -- eight of
     them on the run this was written for, every one still live when asked
-    directly. 404 is the one answer that means delisted (established upstream in
-    fetch_next_data); anything else, including an error, means "don't report".
+    directly. On Sreality 404 is the one answer that means delisted
+    (established upstream in fetch_next_data). Bezrealitky and iDNES never
+    answer 404 for a delisted advert -- they serve 200 with "již není v
+    nabídce", so they are read by sources.extra_listing_gone. Anything
+    uncertain, including an error, means "don't report".
 
-    Returns True only for a confirmed 404."""
+    Returns (gone, since): `since` is the portal's own delisting date when it
+    states one (iDNES does), else None."""
     url = comp.get("url")
     if not url:
-        return False
+        return False, None
     try:
         if comp.get("source") in (None, "sreality"):
             _data, status = fetch_next_data(url)
-            return status == 404
-        resp = SESSION.get(url, timeout=20, allow_redirects=True)
-        return resp.status_code == 404
+            return status == 404, None
+        return sources.extra_listing_gone(comp)
     except (TransientFetchError, requests.RequestException) as exc:
         print(f"  could not verify {comp.get('id')}, keeping it: {exc}", file=sys.stderr)
-        return False
+        return False, None
+
+
+# A listing the portal confirmed live is not asked again for this long. The
+# extra sources are read only 8 pages deep, so ~350 live Bezrealitky/iDNES
+# adverts drop out of every other run and used to be re-verified each time:
+# 5.5 of an 11.5 minute run (26. 9. 2026) spent re-learning the same answer.
+# The price is latency: such an advert that really goes is noticed up to a day
+# late -- on a board read once or twice a day, a fair trade.
+VERIFY_TTL_HOURS = 24
+# Bezrealitky and iDNES are separate hosts from Sreality and answer in ~0.8 s
+# each; four at a time turns ~5 minutes into ~1. Sreality stays sequential --
+# it throttles bursts, and fetch_next_data's backoff assumes one at a time.
+EXTRA_VERIFY_WORKERS = 4
+
+
+def _hours_since(iso, now):
+    then, current = pool.parse_ts(iso), pool.parse_ts(now)
+    if then is None or current is None:
+        return None
+    return (current - then).total_seconds() / 3600
 
 
 def verify_removals(changes, curr):
@@ -2365,14 +2391,53 @@ def verify_removals(changes, curr):
     candidates = changes.get("newly_inactive", [])
     if not candidates:
         return
-    print(f"Verifying {len(candidates)} candidate removal(s) against their own pages...", file=sys.stderr)
-    confirmed, resurrected = [], []
-    for comp in candidates:
-        if listing_is_gone(comp):
-            confirmed.append(comp)
-        else:
-            resurrected.append(comp)
+    now = changes.get("generated_at") or now_iso()
+
+    def recently_live(c):
+        hours = _hours_since(c.get("verified_live_at"), now)
+        return hours is not None and 0 <= hours < VERIFY_TTL_HOURS
+
+    to_check = [c for c in candidates if not recently_live(c)]
+    print(
+        f"Verifying {len(to_check)} candidate removal(s) against their own pages "
+        f"({len(candidates) - len(to_check)} confirmed live in the last "
+        f"{VERIFY_TTL_HOURS} h, not asked again)...",
+        file=sys.stderr,
+    )
+    results = {}
+    serial = [c for c in to_check if c.get("source") in (None, "sreality")]
+    parallel = [c for c in to_check if c.get("source") not in (None, "sreality")]
+    for comp in serial:
+        results[id(comp)] = listing_is_gone(comp)
         time.sleep(0.2)
+    if parallel:
+        from concurrent.futures import ThreadPoolExecutor
+        with ThreadPoolExecutor(max_workers=EXTRA_VERIFY_WORKERS) as executor:
+            for comp, res in zip(parallel, executor.map(listing_is_gone, parallel)):
+                results[id(comp)] = res
+
+    confirmed, resurrected, stale = [], [], 0
+    for comp in candidates:
+        gone, since = results.get(id(comp), (False, None))
+        if not gone:
+            if id(comp) in results:
+                comp["verified_live_at"] = now
+            resurrected.append(comp)
+            continue
+        if since:
+            comp["removed_since"] = f"{since}T00:00:00Z"
+        # Až do 26. 9. se mrtvé inzeráty Bezrealitek/iDNES vracely do tabulky
+        # jako „missed by the search", protože nikdy neodpověděly 404. Když
+        # takového teď poprvé poznáme jako mrtvého, zemřel neznámo kdy --
+        # ohlásit ho dnes jako „zmizelo" by v jednom běhu zaplavilo alerty
+        # stovkami falešně čerstvých zpráv. Takový záznam nese `stale_ghost`:
+        # pool i archiv ho uzavřou, historie změn a alerty ho vynechají. Kdo
+        # prošel ověřením už novým kódem (má verified_live_at), je normální
+        # čerstvé zmizení a hlásí se.
+        if comp.get("search_missed") and not comp.get("verified_live_at"):
+            comp["stale_ghost"] = True
+            stale += 1
+        confirmed.append(comp)
     changes["newly_inactive"] = confirmed
     if resurrected:
         known = {c["id"] for c in curr["comparables"]}
@@ -2382,11 +2447,11 @@ def verify_removals(changes, curr):
                             if k not in ("missing_since", "removed_since")}
                 restored["search_missed"] = True
                 curr["comparables"].append(restored)
-        print(
-            f"  {len(confirmed)} confirmed gone, {len(resurrected)} still live "
-            f"(missed by the search, kept)",
-            file=sys.stderr,
-        )
+    print(
+        f"  {len(confirmed)} confirmed gone ({stale} long-dead zombies cleaned up "
+        f"silently), {len(resurrected)} still live (missed by the search, kept)",
+        file=sys.stderr,
+    )
 
 
 def config_fingerprint():
@@ -5761,7 +5826,11 @@ def update_gone_archive(snapshot, changes):
     try:
         archive = gone_archive.load_archive()
         all_pool = pool.load_pool()
-        added = gone_archive.add_gone(archive, changes.get("newly_inactive", []), now, pool=all_pool)
+        # Uklizené zombie (stale_ghost) do náhledu zmizelých nejdou: datum
+        # zmizení neznáme a stovky jich naráz by kartu „Zmizelé byty" přebily.
+        added = gone_archive.add_gone(
+            archive, [c for c in changes.get("newly_inactive", []) if not c.get("stale_ghost")],
+            now, pool=all_pool)
         live = snapshot["comparables"]
         gone_archive.mark_returned(archive, [str(c["id"]) for c in live], at=now)
 
