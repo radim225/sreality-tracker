@@ -1,10 +1,11 @@
 {
  "1006514252": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Menclova, Libeň"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Menclova 2478/12, Libeň"
   },
   "approx_location": false,
   "city_part": "Libeň",
@@ -193,10 +194,11 @@
  },
  "1026830412": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Šaldova, Karlín"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Šaldova 533/2, Karlín"
   },
   "approx_location": false,
   "city_part": "Karlín",
@@ -927,10 +929,11 @@
  },
  "1121165388": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Šaldova, Karlín"
+   "distance_m": 1,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (1 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Šaldova 219/1, Karlín"
   },
   "approx_location": false,
   "city_part": "Karlín",
@@ -1288,6 +1291,12 @@
   "url": "https://www.sreality.cz/detail/pronajem/byt/1%2Bkk/x/1154478156"
  },
  "116334668": {
+  "address": {
+   "note": "jen ulice nejbližší k bodu Sreality — odhad",
+   "precision": "street",
+   "source": "nominatim",
+   "text": "Pernerova, Karlín"
+  },
   "approx_location": false,
   "city_part": "Karlín",
   "description": "Nabízíme k dlouhodobému pronájmu kompletně zařízený byt 1+kk v atraktivní lokalitě Praha 9 – Libeň. Byt je k nastěhování od 1. 11. 2026.\n\nVelkou předností bytu je kompletní vybavení, díky kterému se můžete nastěhovat prakticky bez nutnosti pořizovat vlastní nábytek či spotřebiče.\n\nK dispozici je:\n\n* kompletní nábytek,\n* plně vybavená kuchyň,\n* domácí spotřebiče,\n* myčka nádobí,\n* nádobí a veškeré základní kuchyňské potřeby,\n* internet.\n\nSoučástí vybavení je také praktická rozkládací postel, kterou lze jednoduše proměnit v plnohodnotné dvoulůžko. K dispozici je i druhá matrace.\n\nByt je proto vhodný jak pro jednotlivce, tak pro pár.\n\nLokalita a dopravní dostupnost\n\nLokalita Praha 9 – Libeň nabízí pohodlné spojení do centra města i kompletní občanskou vybavenost.\n\nStanice metra B – Palmovka je vzdálena přibližně 10 minut chůze V blízkém okolí se nachází tramvajové a autobusové zastávky, obchody, restaurace, kavárny, lékárny a další služby.\n\nPodmínky pronájmu\n\n* Nájemné: 25 900 Kč/měsíc – včetně služeb, energií a internetu\n* Vratná kauce: 25 900 Kč\n* Provize RK: 23.000 Kč\n* K nastěhování: od 1. 11. 2026\n\nV případě zájmu o více informací nebo sjednání prohlídky nás neváhejte kontaktovat",
@@ -1442,10 +1451,11 @@
  },
  "1178714188": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Gerstelova, Vysočany"
+   "distance_m": 25,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (25 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Gerstelova 1068/2, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -1672,10 +1682,11 @@
  },
  "120275788": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "V Předním Hloubětíně, Vysočany"
+   "distance_m": 9,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (9 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "V Předním Hloubětíně 655/10, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -1833,10 +1844,11 @@
  },
  "1235562572": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Olgy Havlové, Žižkov"
+   "distance_m": 2,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (2 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Olgy Havlové 2917/36, Žižkov"
   },
   "approx_location": false,
   "city_part": "Žižkov",
@@ -2079,10 +2091,11 @@
  },
  "1254835020": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "V Předním Hloubětíně, Vysočany"
+   "distance_m": 9,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (9 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "V Předním Hloubětíně 655/10, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -2313,6 +2326,13 @@
   "url": "https://www.sreality.cz/detail/pronajem/byt/1%2Bkk/x/126664780"
  },
  "1272217676": {
+  "address": {
+   "distance_m": 32,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (32 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Kotlaska 30/3, Praha 8"
+  },
   "approx_location": false,
   "city_part": "Libeň",
   "description": "Nabízíme k pronájmu byt 1+kk o výměře 26 m² v ulici Lihovarská, Praha 8  Libeň. Byt se nachází ve 4. nadzemním podlaží domu s výtahem.\r\n\r\nLokalita nabízí výbornou dopravní dostupnost. Stanice metra Českomoravská je vzdálena přibližně 5 minut chůze, tramvajová zastávka Balabenka 4 minuty chůze. V bezprostřední blízkosti se nachází obchodní centrum Galerie Harfa, restaurace, obchody i veškerá občanská vybavenost.\r\n\r\nByt je vhodný maximálně pro 12 osoby. Domácí mazlíčci nejsou povoleni.\r\n\r\nPřed nastěhováním proběhne v bytě drobná rekonstrukce. Nastěhování je možné od 10. 7. 2026, případně po dohodě v průběhu první poloviny července.\r\n\r\nMěsíční nájemné činí 18.500 Kč. Zálohy na služby jsou stanoveny ve výši 4.500 Kč měsíčně.\r\n\r\nPři podpisu nájemní smlouvy je požadována vratná kauce ve výši 37.000 Kč s možností rozložení platby po dohodě. Provize realitní kanceláře činí 20.000 Kč.\r\n\r\nPro více informací nebo sjednání prohlídky kontaktujte:\r\n\r\nYuliia Walterová\r\ntel.: [telefon skryt]",
@@ -2456,10 +2476,11 @@
  },
  "1295130700": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Sokolova, Karlín"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Sokolova 719/2, Karlín"
   },
   "approx_location": false,
   "city_part": "Karlín",
@@ -3227,10 +3248,11 @@
  },
  "139710540": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Pod Harfou, Vysočany"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Pod Harfou 1066/9, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -3461,10 +3483,11 @@
  },
  "1417662540": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Sokolovská, Karlín"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Sokolovská 725/111, Karlín"
   },
   "approx_location": false,
   "city_part": "Karlín",
@@ -3541,10 +3564,11 @@
  },
  "142221388": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Kolbenova, Vysočany"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Kolbenova 650/22, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -4282,10 +4306,11 @@
  },
  "1482801228": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Breitfeldova, Karlín"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Breitfeldova 704/5, Karlín"
   },
   "approx_location": false,
   "city_part": "Karlín",
@@ -6359,6 +6384,13 @@
   "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/1701150796"
  },
  "1707200588": {
+  "address": {
+   "distance_m": 32,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (32 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Kotlaska 30/3, Praha 8"
+  },
   "approx_location": false,
   "city_part": "Libeň",
   "description": " Nabízíme k prodeji světlý byt v osobním vlastnictví o dispozici 1+kk a celkové ploše 29 m², situovaný ve 3. nadzemním podlaží novostavby cihlového domu s výtahem v ulici S. K. Neumanna.\r\n\r\nByt je orientován na západ, díky čemuž je příjemně prosvětlený po většinu dne a nabízí volný výhled do ulice. Má užitnou plochu 29 m2. Dispozici tvoří prostorný obývací pokoj s kuchyňskou linkou, vstupní předsíň s úložným prostorem a koupelna se sprchovým koutem a WC. Součástí bytu je také balkon o výměře 4 m² orientovaný na jihozápad a zděný sklep o velikosti 2 m². Byt je ve velmi dobrém stavu a připraven k okamžitému nastěhování. \r\n\r\nLokalita nabízí výbornou dopravní dostupnost. Autobusová zastávka Kuchyňka se nachází jen pár kroků od domu a stanice metra C – Nádraží Holešovice je vzdálena přibližných 3 minut jízdy. V blízkosti vede cyklostezka podél Vltavy s rychlým přístupem do Stromovky, která nabízí ideální podmínky pro sport i odpočinek.\r\n\r\nByt je vhodný jak pro vlastní bydlení, tak jako investiční příležitost s potenciálem pronájmu.\r\n\r\nV případě zájmu o více informací nebo sjednání prohlídky nás neváhejte kontaktovat.",
@@ -7297,10 +7329,11 @@
  },
  "1787699276": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "U Stírky, Libeň"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "U Stírky 1800/7, Libeň"
   },
   "approx_location": false,
   "city_part": "Libeň",
@@ -7628,10 +7661,11 @@
  },
  "1801143116": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "V Předním Hloubětíně, Vysočany"
+   "distance_m": 9,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (9 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "V Předním Hloubětíně 655/10, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -7667,10 +7701,11 @@
  },
  "1802752076": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Matějkova, Libeň"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Matějkova 2443/13, Prosek"
   },
   "approx_location": false,
   "city_part": "Libeň",
@@ -7788,10 +7823,11 @@
  },
  "1811423308": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Olgy Havlové, Žižkov"
+   "distance_m": 28,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (28 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Olgy Havlové 2902/19, Žižkov"
   },
   "approx_location": false,
   "city_part": "Žižkov",
@@ -7836,6 +7872,12 @@
   "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/1811423308"
  },
  "1814483020": {
+  "address": {
+   "note": "jen ulice nejbližší k bodu Sreality — odhad",
+   "precision": "street",
+   "source": "nominatim",
+   "text": "Pernerova, Karlín"
+  },
   "approx_location": false,
   "city_part": "Karlín",
   "description": "Nabízíme k pronájmu moderní byt 2+kk s terasou v atraktivní lokalitě Karlín, Praha 8.\n\nByt 2+kk o rozloze 51 m² s prostornou terasou 13 m² se nachází v 5. patře moderního bytového domu s výtahem. Byt je částečně vybavený a připravený k okamžitému nastěhování. Dispozice zahrnuje obývací prostor s přímým vstupem na terasu, moderní kuchyňskou linku vybavenou myčkou, troubou, indukční varnou deskou a mikrovlnnou troubou, jídelní kout se stolem a židlemi, sedačku v obývací části, ložnici s manželskou postelí, vestavěné skříně s dostatkem úložného prostoru. Byt je dále vybaven pračkou a sušičkou. Bytový dům byl kolaudován v prosinci 2023 a nabízí současné technologické standardy včetně centrálního vytápění, rekuperace pro neustálý přísun čerstvého vzduchu a podlahového topení. \n\nK bytu náleží sklep o velikosti 4 m² a jedno garážová stání v objektu. Vytápění je napojeno na horkovod a v suterénu se nachází předávací stanice tepla. Železobetonová konstrukce zajišťuje skvělou izolaci a stabilitu, a výtah usnadňuje přístup do bytu.\n\nKarlín patří k nejvyhledávanějším pražským čtvrtím díky své unikátní atmosféře a bohaté nabídce služeb i volnočasových aktivit. Tato dynamická lokalita se může po",
@@ -8508,10 +8550,11 @@
  },
  "1872154700": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Přistoupimská, Malešice"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Přistoupimská 391/18, Malešice"
   },
   "approx_location": false,
   "city_part": "Malešice",
@@ -8630,10 +8673,11 @@
  },
  "1898627148": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Přistoupimská, Malešice"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Přistoupimská 391/18, Malešice"
   },
   "approx_location": false,
   "city_part": "Malešice",
@@ -10350,10 +10394,11 @@
  },
  "2060132428": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Pitterova, Žižkov"
+   "distance_m": 16,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (16 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Pitterova 2855/11, Žižkov"
   },
   "approx_location": false,
   "city_part": "Žižkov",
@@ -10510,10 +10555,11 @@
  },
  "2082463820": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Poděbradská, Hloubětín"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Poděbradská 1158/49, Vysočany"
   },
   "approx_location": false,
   "city_part": "Hloubětín",
@@ -10666,10 +10712,11 @@
  },
  "2102865996": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Na Břehu, Vysočany"
+   "distance_m": 15,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (15 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Na Břehu 298/25, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -10921,10 +10968,11 @@
  },
  "2138411084": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "V Třešňovce, Hrdlořezy"
+   "distance_m": 8,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (8 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "V Třešňovce 419/7, Hrdlořezy"
   },
   "approx_location": false,
   "city_part": "Hrdlořezy",
@@ -11195,10 +11243,11 @@
  },
  "2161897548": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Pod Harfou, Vysočany"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Pod Harfou 1066/9, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -11234,10 +11283,11 @@
  },
  "2177581900": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "V Předním Hloubětíně, Vysočany"
+   "distance_m": 9,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (9 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "V Předním Hloubětíně 655/10, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -11680,10 +11730,11 @@
  },
  "2226901068": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "K náhonu, Hloubětín"
+   "distance_m": 14,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (14 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "K Náhonu 987/6, Vysočany"
   },
   "approx_location": false,
   "city_part": "Hloubětín",
@@ -11720,10 +11771,11 @@
  },
  "2227913548": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "V Předním Hloubětíně, Vysočany"
+   "distance_m": 9,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (9 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "V Předním Hloubětíně 655/10, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -13254,10 +13306,11 @@
  },
  "2420670540": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "U invalidovny, Karlín"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "U Invalidovny 549/5, Karlín"
   },
   "approx_location": false,
   "city_part": "Karlín",
@@ -13544,10 +13597,11 @@
  },
  "2473050188": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Svatošových, Vysočany"
+   "distance_m": 3,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (3 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Svatošových 1018/11, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -13914,10 +13968,11 @@
  },
  "2522800204": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Olgy Havlové, Žižkov"
+   "distance_m": 28,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (28 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Olgy Havlové 2902/19, Žižkov"
   },
   "approx_location": false,
   "city_part": "Žižkov",
@@ -14349,10 +14404,11 @@
  },
  "2564370508": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Sokolova, Karlín"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Sokolova 719/2, Karlín"
   },
   "approx_location": false,
   "city_part": "Karlín",
@@ -14479,10 +14535,11 @@
  },
  "2569650252": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "U Sluncové, Karlín"
+   "distance_m": 5,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (5 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "U Sluncové 609/15, Karlín"
   },
   "approx_location": false,
   "city_part": "Karlín",
@@ -14759,10 +14816,11 @@
  },
  "25964620": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Sokolova, Karlín"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Sokolova 720/5, Karlín"
   },
   "approx_location": false,
   "city_part": "Karlín",
@@ -15106,10 +15164,11 @@
  },
  "2630566732": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "V Předním Hloubětíně, Vysočany"
+   "distance_m": 9,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (9 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "V Předním Hloubětíně 655/10, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -15425,10 +15484,11 @@
  },
  "2687189836": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "V Předním Hloubětíně, Vysočany"
+   "distance_m": 9,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (9 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "V Předním Hloubětíně 655/10, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -15672,10 +15732,11 @@
  },
  "2702885452": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Olgy Havlové, Žižkov"
+   "distance_m": 2,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (2 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Olgy Havlové 2917/36, Žižkov"
   },
   "approx_location": false,
   "city_part": "Žižkov",
@@ -16047,10 +16108,11 @@
  },
  "274673740": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Pod Harfou, Vysočany"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Pod Harfou 1066/9, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -16170,10 +16232,11 @@
  },
  "2761405260": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "V Třešňovce, Hrdlořezy"
+   "distance_m": 8,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (8 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "V Třešňovce 419/7, Hrdlořezy"
   },
   "approx_location": false,
   "city_part": "Hrdlořezy",
@@ -16298,10 +16361,11 @@
  },
  "2778673228": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Kolbenova, Vysočany"
+   "distance_m": 20,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (20 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Kolbenova 923/34a, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -16591,10 +16655,11 @@
  },
  "2819498060": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Budovcova, Žižkov"
+   "distance_m": 23,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (23 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Budovcova 2938/4, Žižkov"
   },
   "approx_location": false,
   "city_part": "Žižkov",
@@ -16631,10 +16696,11 @@
  },
  "2824974412": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Pobřežní, Karlín"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Pobřežní 655/54, Karlín"
   },
   "approx_location": false,
   "city_part": "Karlín",
@@ -17279,10 +17345,11 @@
  },
  "2894082124": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "náměstí Dr. Václava Holého, Libeň"
+   "distance_m": 5,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (5 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "náměstí Dr. Václava Holého 1057/16, Praha 8"
   },
   "approx_location": false,
   "city_part": "Libeň",
@@ -17684,10 +17751,11 @@
  },
  "2926964812": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Sokolovská, Libeň"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Sokolovská 1253/232, Prosek"
   },
   "approx_location": false,
   "city_part": "Libeň",
@@ -17804,10 +17872,11 @@
  },
  "2951069772": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Turnovská, Libeň"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Turnovská 441/8, Praha 8"
   },
   "approx_location": false,
   "city_part": "Libeň",
@@ -18215,10 +18284,11 @@
  },
  "298111052": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Nepilova, Vysočany"
+   "distance_m": 18,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (18 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Nepilova 903/3, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -19008,10 +19078,11 @@
  },
  "3089843020": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "V Předním Hloubětíně, Vysočany"
+   "distance_m": 9,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (9 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "V Předním Hloubětíně 655/10, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -19088,10 +19159,11 @@
  },
  "3120439372": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Modrého, Hloubětín"
+   "distance_m": 6,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (6 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Modrého 1104/3, Vysočany"
   },
   "approx_location": false,
   "city_part": "Hloubětín",
@@ -19369,6 +19441,12 @@
   "url": "https://www.sreality.cz/detail/pronajem/byt/1%2Bkk/x/314888268"
  },
  "3153010764": {
+  "address": {
+   "note": "jen ulice nejbližší k bodu Sreality — odhad",
+   "precision": "street",
+   "source": "nominatim",
+   "text": "Pernerova, Karlín"
+  },
   "approx_location": false,
   "city_part": "Karlín",
   "description": "Nabízíme k pronájmu kompletně zařízený byt 2kk v atraktivní lokalitě Praha 8 – Karlín, mezi Florencí a Karlínským náměstím.\n\nByt má ložnici s manželskou postelí, plně vybavenou kuchyň, koupelnu se sprchou a WC. K dispozici je také pračka se sušičkou, myčka, lednice s mrazákem, trouba, varná deska, mikrovlnná trouba, rychlovarná konvice, nádobí, pracovní stůl a další vybavení. Byt se nachází ve 2. patře s výtahem.\n\nLokalita\n\nVýborná dopravní dostupnost – tramvajová a autobusová zastávka je přibližně 2 minuty chůze, stanice metra Florenc (B/C) je v blízkosti. Do centra Prahy se dostanete tramvají přibližně za 5 minut.\n\nV okolí je kompletní občanská vybavenost – restaurace, kavárny, obchody, lékárny, banky, Tesco, Billa, Albert, Starbucks a další služby.\n\nNájemné: 31.900Kč, včetně služeb, energií a internetu \nKauce: 31.900Kč\nProvize: 27.000Kč\n\n\n* Při pobytu kratším než 3 měsíce: kauce 50 % měsíčního nájmu\n\nByt je vhodný zejména pro maximálně 2 osoby\n\nNastěhování od 1.11\n\nV případě zájmu o více informací nebo sjednání prohlídky nás neváhejte kontaktovat.",
@@ -19914,10 +19992,11 @@
  },
  "3211448396": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Pod Harfou, Vysočany"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Pod Harfou 1066/9, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -20237,10 +20316,11 @@
  },
  "3253964876": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Kolčavka, Libeň"
+   "distance_m": 20,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (20 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Kolčavka 75/3, Prosek"
   },
   "approx_location": false,
   "city_part": "Libeň",
@@ -20324,10 +20404,11 @@
  },
  "3265802316": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Chotutická, Malešice"
+   "distance_m": 1,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (1 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Chotutická 501/1, Praha 10"
   },
   "approx_location": false,
   "city_part": "Malešice",
@@ -20848,10 +20929,11 @@
  },
  "3325935692": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Breitfeldova, Karlín"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Breitfeldova 704/5, Karlín"
   },
   "approx_location": false,
   "city_part": "Karlín",
@@ -21085,10 +21167,11 @@
  },
  "3381706828": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "U Mlýnského kanálu, Karlín"
+   "distance_m": 13,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (13 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "U Mlýnského kanálu 687/3, Karlín"
   },
   "approx_location": false,
   "city_part": "Karlín",
@@ -21485,10 +21568,11 @@
  },
  "341778508": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Pod Harfou, Vysočany"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Pod Harfou 1066/9, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -21646,10 +21730,11 @@
  },
  "3430256716": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "V Třešňovce, Hrdlořezy"
+   "distance_m": 8,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (8 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "V Třešňovce 419/7, Hrdlořezy"
   },
   "approx_location": false,
   "city_part": "Hrdlořezy",
@@ -21900,10 +21985,11 @@
  },
  "3463106636": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Pod Harfou, Vysočany"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Pod Harfou 1066/9, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -22105,10 +22191,11 @@
  },
  "3478569036": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Ivana Hlinky, Vysočany"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Ivana Hlinky 814/5, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -22301,10 +22388,11 @@
  },
  "3497365580": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "V Třešňovce, Hrdlořezy"
+   "distance_m": 8,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (8 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "V Třešňovce 419/7, Hrdlořezy"
   },
   "approx_location": false,
   "city_part": "Hrdlořezy",
@@ -22506,10 +22594,11 @@
  },
  "3511496780": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "U libeňského pivovaru, Libeň"
+   "distance_m": 15,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (15 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "U Libeňského pivovaru 1077/13, Libeň"
   },
   "approx_location": false,
   "city_part": "Libeň",
@@ -23153,10 +23242,11 @@
  },
  "3548958796": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Kolbenova, Vysočany"
+   "distance_m": 20,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (20 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Kolbenova 923/34a, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -23322,10 +23412,11 @@
  },
  "356892748": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Saarinenova, Hloubětín"
+   "distance_m": 4,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (4 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Saarinenova 1140/4, Praha 9"
   },
   "approx_location": false,
   "city_part": "Hloubětín",
@@ -23369,10 +23460,11 @@
  },
  "3579494476": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Olgy Havlové, Žižkov"
+   "distance_m": 28,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (28 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Olgy Havlové 2902/19, Žižkov"
   },
   "approx_location": false,
   "city_part": "Žižkov",
@@ -23489,6 +23581,13 @@
   "url": "https://www.sreality.cz/detail/prodej/byt/1%2Bkk/x/3606044748"
  },
  "3606257740": {
+  "address": {
+   "distance_m": 32,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (32 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Kotlaska 30/3, Praha 8"
+  },
   "approx_location": false,
   "city_part": "Libeň",
   "description": "Nabízím k prodeji moderní obytný hausbot o rozměrech 12 × 3 m, aktuálně umístěný s kotvištěm v Praze 8\n\nCena je bez DPH \nMakléři, nevolat!\n\nNejde o klasický starší hausbot nebo rekreační loď, ale o plnohodnotné moderní bydlení na vodě, navržené pro celoroční provoz díky velmi dobrému zateplení, klimatizaci, nezávislému energetickému systému a kompletnímu technickému zázemí je možné jej komfortně využívat po celý rok - bezproblémově i v zimě.\nLze prodat i bez kotviště (cena dohodou)\n\n- rozměry 12 × 3 m\n- robustní konstrukce na ocelových pontonech - opravdu velmi silné\n- moderní interiér\n- velké francouzské okno + další velké prosklené plochy\n- žaluzie, závěsy, plisé žaluzie\n- čtyři 2x1m okna\n- plně vybaven\n- možnost off grid, ostrovní systém\n- nebo přípojky na vodu i elektřinu (Zajištěno na kotevním stání)\n- plnohodnotná kuchyň (el, deska, myčka, lednice, pračka)\n- vynikající tepelné izolace\n- split klimatizace\n- nezávislé vytápění Webasto (back-up)\n- kompletní koupelna a obytná část\n- vlastní zásoba vody a systém odpadních vod\n- plnohodnotný ostrovní solární systém\n- příprava pro řízení a instalaci závěsného motoru\n\nHausbot jsem oproti původnímu provedení doplnil o výkonný ostrovní",
@@ -23522,10 +23621,11 @@
  },
  "360697932": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Sokolovská, Karlín"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Sokolovská 725/111, Karlín"
   },
   "approx_location": false,
   "city_part": "Karlín",
@@ -23769,10 +23869,11 @@
  },
  "3623773004": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Basilejské náměstí, Žižkov"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Basilejské náměstí 97/8, Žižkov"
   },
   "approx_location": false,
   "city_part": "Žižkov",
@@ -24239,10 +24340,11 @@
  },
  "3684180044": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Gerstelova, Vysočany"
+   "distance_m": 25,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (25 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Gerstelova 1068/2, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -24398,10 +24500,11 @@
  },
  "3717263436": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "V Předním Hloubětíně, Vysočany"
+   "distance_m": 9,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (9 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "V Předním Hloubětíně 655/10, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -24813,10 +24916,11 @@
  },
  "3754640204": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "V Předním Hloubětíně, Vysočany"
+   "distance_m": 9,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (9 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "V Předním Hloubětíně 655/10, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -25093,10 +25197,11 @@
  },
  "3782656076": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Vysočanská, Vysočany"
+   "distance_m": 35,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (35 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Vysočanská ev.22/15, Prosek"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -25493,10 +25598,11 @@
  },
  "3834703948": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "V Předním Hloubětíně, Vysočany"
+   "distance_m": 9,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (9 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "V Předním Hloubětíně 655/10, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -25616,10 +25722,11 @@
  },
  "3844817740": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "V Předním Hloubětíně, Vysočany"
+   "distance_m": 9,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (9 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "V Předním Hloubětíně 655/10, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -26132,10 +26239,11 @@
  },
  "3898295116": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "V Předním Hloubětíně, Vysočany"
+   "distance_m": 9,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (9 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "V Předním Hloubětíně 655/10, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -26376,10 +26484,11 @@
  },
  "3912351820": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "V Třešňovce, Hrdlořezy"
+   "distance_m": 8,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (8 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "V Třešňovce 419/7, Hrdlořezy"
   },
   "approx_location": false,
   "city_part": "Hrdlořezy",
@@ -26416,10 +26525,11 @@
  },
  "3920674892": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Sokolova, Karlín"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Sokolova 720/5, Karlín"
   },
   "approx_location": false,
   "city_part": "Karlín",
@@ -26780,10 +26890,11 @@
  },
  "3951095884": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Šaldova, Karlín"
+   "distance_m": 1,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (1 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Šaldova 219/1, Karlín"
   },
   "approx_location": false,
   "city_part": "Karlín",
@@ -27486,10 +27597,11 @@
  },
  "4011077708": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Hájkova, Žižkov"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Hájkova 1165/15, Žižkov"
   },
   "approx_location": false,
   "city_part": "Žižkov",
@@ -27527,10 +27639,11 @@
  },
  "4017930316": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Matějkova, Libeň"
+   "distance_m": 1,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (1 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Matějkova 2121/7, Prosek"
   },
   "approx_location": false,
   "city_part": "Libeň",
@@ -27566,10 +27679,11 @@
  },
  "4019253324": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "V Předním Hloubětíně, Vysočany"
+   "distance_m": 9,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (9 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "V Předním Hloubětíně 655/10, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -27694,10 +27808,11 @@
  },
  "4043513932": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Poděbradská, Vysočany"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Poděbradská 339/20, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -27816,10 +27931,11 @@
  },
  "4058304588": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Olgy Havlové, Žižkov"
+   "distance_m": 28,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (28 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Olgy Havlové 2902/19, Žižkov"
   },
   "approx_location": false,
   "city_part": "Žižkov",
@@ -28220,10 +28336,11 @@
  },
  "4114358348": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Moravcových, Vysočany"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Moravcových 1015/8, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -28405,10 +28522,11 @@
  },
  "4127613516": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Olgy Havlové, Žižkov"
+   "distance_m": 2,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (2 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Olgy Havlové 2917/36, Žižkov"
   },
   "approx_location": false,
   "city_part": "Žižkov",
@@ -28480,10 +28598,11 @@
  },
  "4136693836": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "V Předním Hloubětíně, Vysočany"
+   "distance_m": 9,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (9 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "V Předním Hloubětíně 655/10, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -28868,10 +28987,11 @@
  },
  "4155387980": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Křižíkova, Karlín"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Křižíkova 710/30, Karlín"
   },
   "approx_location": false,
   "city_part": "Karlín",
@@ -29069,6 +29189,13 @@
   "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/4174307404"
  },
  "4177182796": {
+  "address": {
+   "distance_m": 32,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (32 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Kotlaska 30/3, Praha 8"
+  },
   "approx_location": false,
   "city_part": "Libeň",
   "description": "Moderní 2+kk s prostornou lodžií v klidné části Prahy v bezprostřední blízkosti stanice metra Palmovka.\nNabízíme k pronájmu stylový a kompletně vybavený byt 2+kk o ploše 55 m², situovaný ve 2. patře moderní designové novostavby s výtahem a bezbariérovým přístupem.\nByt nabízí komfortní a příjemné bydlení s důrazem na praktičnost a moderní vybavení. Dominantou interiéru je prostorný obývací pokoj s plně vybavenou kuchyňskou linkou a přímým vstupem na 5 m² velkou lodžii, ideální pro ranní kávu nebo večerní relaxaci.\nLožnice disponuje velkou vestavěnou skříní a pohodlnou postelí s kvalitní matrací. K dispozici je také pračka, sušička, jídelní stůl se židlemi, TV, rozkládací pohovka a další vybavení pro pohodlné bydlení.\nSoučástí bytu je sklep o velikosti cca 3 m². Po dohodě je možné zajistit také parkovací stání v podzemní garáži.\n\nKlidná lokalita s výbornou dostupností MHD i autobusového spojení. Do centra Prahy i dalších částí města se pohodlně dostanete během krátké doby. V okolí je kompletní občanská vybavenost.\n\nNájemné: 29 900 Kč / měsíc\nPoplatky: 5 200 Kč / měsíc\nElektřina: hradí nájemce samostatně\nVratná kauce: 60 000 Kč\nSklep: v ceně\nParkovací stání: možnost pronájmu po dohodě",
@@ -31237,10 +31364,11 @@
  },
  "531570764": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Františka Kadlece, Libeň"
+   "distance_m": 2,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (2 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Františka Kadlece 2547/44, Libeň"
   },
   "approx_location": false,
   "city_part": "Libeň",
@@ -31357,10 +31485,11 @@
  },
  "543940684": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "U Mlýnského kanálu, Karlín"
+   "distance_m": 13,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (13 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "U Mlýnského kanálu 687/3, Karlín"
   },
   "approx_location": false,
   "city_part": "Karlín",
@@ -31579,10 +31708,11 @@
  },
  "561852492": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Olgy Havlové, Žižkov"
+   "distance_m": 28,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (28 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Olgy Havlové 2902/19, Žižkov"
   },
   "approx_location": false,
   "city_part": "Žižkov",
@@ -32365,10 +32495,11 @@
  },
  "635879500": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Kolčavka, Libeň"
+   "distance_m": 20,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (20 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Kolčavka 75/3, Prosek"
   },
   "approx_location": false,
   "city_part": "Libeň",
@@ -32718,10 +32849,11 @@
  },
  "667103308": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Granitova, Hloubětín"
+   "distance_m": 27,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (27 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Waltariho 1196/2, Praha 9"
   },
   "approx_location": false,
   "city_part": "Hloubětín",
@@ -32910,10 +33042,11 @@
  },
  "682655820": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Pod Harfou, Vysočany"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Pod Harfou 1066/9, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -33236,10 +33369,11 @@
  },
  "725561420": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Poděbradská, Hloubětín"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Poděbradská 1158/49, Vysočany"
   },
   "approx_location": false,
   "city_part": "Hloubětín",
@@ -33853,10 +33987,11 @@
  },
  "807260236": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "V Předním Hloubětíně, Vysočany"
+   "distance_m": 9,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (9 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "V Předním Hloubětíně 655/10, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -34095,10 +34230,11 @@
  },
  "816394316": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Sokolovská, Karlín"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Sokolovská 86/97, Karlín"
   },
   "approx_location": false,
   "city_part": "Karlín",
@@ -34136,10 +34272,11 @@
  },
  "818643020": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Gerstelova, Vysočany"
+   "distance_m": 25,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (25 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Gerstelova 1068/2, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -34912,10 +35049,11 @@
  },
  "880791628": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Sokolovská, Karlín"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Sokolovská 725/111, Karlín"
   },
   "approx_location": false,
   "city_part": "Karlín",
@@ -35033,10 +35171,11 @@
  },
  "894423116": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Sokolovská, Karlín"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Sokolovská 725/111, Karlín"
   },
   "approx_location": false,
   "city_part": "Karlín",
@@ -35348,10 +35487,11 @@
  },
  "925089868": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Sokolovská, Karlín"
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Sokolovská 725/111, Karlín"
   },
   "approx_location": false,
   "city_part": "Karlín",
@@ -35428,10 +35568,11 @@
  },
  "936067916": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "V Předním Hloubětíně, Vysočany"
+   "distance_m": 9,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (9 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "V Předním Hloubětíně 655/10, Vysočany"
   },
   "approx_location": false,
   "city_part": "Vysočany",
@@ -35588,10 +35729,11 @@
  },
  "95146060": {
   "address": {
-   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
-   "precision": "street",
-   "source": "sreality-ulice",
-   "text": "Olgy Havlové, Žižkov"
+   "distance_m": 28,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (28 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Olgy Havlové 2902/19, Žižkov"
   },
   "approx_location": false,
   "city_part": "Žižkov",
@@ -36379,6 +36521,13 @@
   "url": "https://www.bezrealitky.cz/nemovitosti-byty-domy/1068900-nabidka-pronajem-bytu-strnadovych-praha"
  },
  "bez-1071000": {
+  "address": {
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Poděbradská 1158/49, Vysočany"
+  },
   "approx_location": false,
   "description": "Pronájem 2+kk, 55 m² | Praha 9 – Vysočany\n\nNabízíme k pronájmu kompletně vybavený byt 2+kk o výměře 55 m² s garažovym stání. \n\nByt je připravený k nastěhování a nabízí moderní vybavení a komfortní bydlení.\n\nVýborná dopravní dostupnost a kompletní občanská vybavenost v okolí.\n\nFinanční podmínky:\n\nNájemné: 30 000 Kč / měsíc\nPoplatky: 6 700 Kč / měsíc\nKauce: 2 měsíční nájmy\nProvize RK: bez provize\n\nPro více informací nebo domluvení prohlídky nás kontaktujte.",
   "disposition": "2+kk",
