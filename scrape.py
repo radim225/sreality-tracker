@@ -21,6 +21,7 @@ import geocode
 import gone_archive
 import market
 import notify
+import novostavby
 import pool
 import relist
 import report
@@ -1956,6 +1957,237 @@ def compute_garage_stats(garages, area=HOME_AREA):
                 "p75_czk": rank(0.75),
             }
     return out
+
+
+# ---------------------------------------------------------------------------
+# Novostavby 4+kk / 5+kk kolem U Kříže. Logika (baseline, sloučení, dny na
+# trhu, alert, karta) je v novostavby.py; tady je jen HTTP, protože potřebuje
+# fetch_next_data s jeho retry a sémantikou 404. Stejná pravidla jako garáže:
+# vlastní klíč ve snapshotu, selhání neshodí běh, zmizelé jen po 404 detailu.
+# ---------------------------------------------------------------------------
+# Detail se čte jednou na inzerát (kvůli `since` a potvrzení stavu); běžně
+# 0–3 za běh, strop je pro první běh.
+MAX_NOVOSTAVBY_DETAIL_FETCHES = sources.env_int("MAX_NOVOSTAVBY_DETAIL_FETCHES", 40)
+MAX_NOVOSTAVBY_GONE_CHECKS = sources.env_int("MAX_NOVOSTAVBY_GONE_CHECKS", 30)
+
+
+def search_ward_novostavby(ward, tx_type):
+    """Novostavby 4+kk/5+kk v jedné čtvrti, filtrované na serveru (velikost +
+    stav). Prázdný výsledek Sreality vrací jako 404 s tělem (total 0), stejně
+    jako u garáží -- proto parse_on_404.
+
+    Filtr se ověřuje v odpovědi: queryKey musí nést buildingCondition [6],
+    naše dispozice a čtvrť. Kdyby Sreality parametr `stav` jednou přestala
+    číst, vrátila by bez varování všechny 4+kk/5+kk -- a karta by tiše
+    začala míchat staré byty mezi novostavby."""
+    found = []
+    page = 1
+    seen_offsets = set()
+    while True:
+        next_data, status = fetch_next_data(
+            f"https://www.sreality.cz/hledani/{tx_type}/byty",
+            params={"region": ward, "velikost": novostavby.VELIKOST,
+                    "stav": novostavby.STAV_SLUG, "strana": page},
+            parse_on_404=True,
+        )
+        if next_data is None:
+            if status == 404 and page > 1:
+                return found     # stránka za koncem (výsledků ubylo během sweepu)
+            raise TransientFetchError(
+                f"novostavby {tx_type}/{ward} strana {page}: no __NEXT_DATA__ (HTTP {status})")
+        data, key = get_query_data(next_data, "estatesSearch")
+        if data is None:
+            raise TransientFetchError(f"novostavby {tx_type}/{ward}: estatesSearch chybí")
+        key = key or {}
+        if (key.get("buildingCondition") != [novostavby.CONDITION_CODE]
+                or sorted(key.get("categorySubCb") or []) != sorted(novostavby.DISPOSITIONS)
+                or key.get("localityEntityType") != "ward"):
+            raise TransientFetchError(
+                f"novostavby {tx_type}/{ward}: Sreality nepoužila filtr "
+                f"(buildingCondition={key.get('buildingCondition')}, "
+                f"categorySubCb={key.get('categorySubCb')}, locality={key.get('localityEntityType')})")
+        pagination = data.get("pagination") or {}
+        total = pagination.get("total") or 0
+        offset = pagination.get("offset")
+        if offset in seen_offsets:
+            break
+        seen_offsets.add(offset)
+        results = data.get("results") or []
+        if not results:
+            break
+        for r in results:
+            if (r.get("categorySubCb") or {}).get("value") not in novostavby.DISPOSITIONS:
+                continue
+            found.append(parse_novostavba(r, tx_type))
+        limit = pagination.get("limit") or len(results) or 22
+        if page * limit >= total:
+            break
+        page += 1
+        time.sleep(0.3)
+    return found
+
+
+def parse_novostavba(r, tx_type):
+    """Jeden záznam z výsledku hledání. Dispozice z kódu, nikdy z názvu."""
+    locality = r.get("locality") or {}
+    disposition = novostavby.DISPOSITIONS[(r.get("categorySubCb") or {}).get("value")]
+    price = r.get("priceCzk") or None          # 0 = „cena na dotaz"
+    sqm = area_from_title(r.get("name"))
+    per_sqm = r.get("priceCzkPerSqM") or None
+    if not per_sqm and price and sqm:
+        per_sqm = round(price / sqm)
+    lat, lon = locality.get("latitude"), locality.get("longitude")
+    tx = "pronajem" if tx_type == "pronajem" else "prodej"
+    return {
+        "id": r["id"],
+        "title": r.get("name"),
+        "disposition": disposition,
+        "transaction_type": tx,
+        "price_czk": price,
+        "floor_area_sqm": sqm,
+        "price_czk_per_sqm": per_sqm,
+        "locality": format_locality(locality),
+        "city_part": locality.get("cityPart"),
+        "street": locality.get("street"),
+        "lat": lat,
+        "lon": lon,
+        "km": novostavby.km_from_center(lat, lon),
+        "url": (f"https://www.sreality.cz/detail/{tx}/byt/"
+                f"{urllib.parse.quote(disposition)}/x/{r['id']}"),
+        "thumb": extract_thumb(r.get("images")),
+    }
+
+
+def _novostavba_detail(rec):
+    """(data, status) detailu, nebo (None, status)."""
+    next_data, status = fetch_next_data(rec["url"])
+    if next_data is None:
+        return None, status
+    data, _ = get_query_data(next_data, "estate")
+    return data, status
+
+
+def _novostavba_matches(data):
+    """False, když detail říká, že to není novostavba 4+kk/5+kk. Neuvedené
+    (kód 0 / chybí) se bere jako shoda -- hledání to vrátilo s filtrem."""
+    params = data.get("params") or {}
+    code, _ = enum_param(params, "buildingCondition")
+    sub = (data.get("categorySubCb") or {}).get("value")
+    if code is not None and code != novostavby.CONDITION_CODE:
+        return False
+    if sub is not None and sub not in novostavby.DISPOSITIONS:
+        return False
+    return True
+
+
+def enrich_novostavba(rec):
+    """Dočte detail jednou: `since` (datum vložení na Sreality), užitnou plochu,
+    přesnost adresy a jestli se inzerát hlásí k Waltrovce. Popis se NEUKLÁDÁ
+    (kontakty makléřů) -- jen se z něj přečte ten jeden příznak.
+    Vrací "ok", "mismatch" (detail stav/dispozici nepotvrdil) nebo "skip"."""
+    data, _status = _novostavba_detail(rec)
+    if not data:
+        return "skip"
+    params = data.get("params") or {}
+    code, _ = enum_param(params, "buildingCondition")
+    rec["building_condition"] = code
+    rec["since"] = params.get("since")
+    area = params.get("usableArea")
+    if isinstance(area, (int, float)) and area > 0:
+        rec["detail_area_sqm"] = area
+        if not rec.get("floor_area_sqm"):
+            rec["floor_area_sqm"] = float(area)
+            if rec.get("price_czk") and not rec.get("price_czk_per_sqm"):
+                rec["price_czk_per_sqm"] = round(rec["price_czk"] / area)
+    rec["mentions_waltrovka"] = "waltrovk" in normalize_text(data.get("description") or "").lower()
+    rec["address_exact"] = locality_precision(data.get("locality"))["address_exact"]
+    rec["detail_read"] = True
+    return "ok" if _novostavba_matches(data) else "mismatch"
+
+
+def verify_novostavba(rec):
+    """Chybí ve výsledcích hledání -- co na to detail? Jen 404 je „gone".
+    Detail, který žije, ale už není novostavba 4+kk/5+kk, je „left_filter"
+    (prodejce změnil stav/dispozici); cokoli nejistého je „unknown" = nechat
+    živý a zkusit příště."""
+    try:
+        data, status = _novostavba_detail(rec)
+    except (TransientFetchError, requests.RequestException):
+        return "unknown"
+    if data is None:
+        return "gone" if status == 404 else "unknown"
+    return "live" if _novostavba_matches(data) else "left_filter"
+
+
+def fetch_novostavby(prev_snapshot=None):
+    """Celá kolekce: hledání → nadmnožina → detail nových → sloučení.
+    Vrací (records, events, meta). Výjimka = kolekce se tento běh nepovedla;
+    main() pak drží minulý stav a běh pokračuje."""
+    prev = prev_snapshot or {}
+    prev_records = prev.get("novostavby")
+    prev_meta = prev.get("novostavby_meta") or {}
+    cfg = novostavby.fingerprint()
+    first_run = prev_records is None
+    config_changed = not first_run and prev.get("novostavby_config") != cfg
+    baseline = first_run or config_changed
+
+    by_id = {}
+    for ward in novostavby.WARDS:
+        for tx in novostavby.TRANSACTIONS:
+            for rec in search_ward_novostavby(ward, tx):
+                by_id.setdefault(str(rec["id"]), rec)
+            time.sleep(0.3)
+    no_gps = [r for r in by_id.values() if r.get("km") is None]
+    seen = [r for r in by_id.values() if novostavby.in_superset(r)]
+
+    prev_by_id = {str(r["id"]): r for r in prev_records or []}
+    fetched, mismatched = 0, []
+    for rec in list(seen):
+        p = prev_by_id.get(str(rec["id"]))
+        if p and p.get("detail_read"):
+            continue
+        if fetched >= MAX_NOVOSTAVBY_DETAIL_FETCHES:
+            continue
+        fetched += 1
+        try:
+            verdict = enrich_novostavba(rec)
+        except Exception as exc:  # noqa: BLE001 -- detail je doplněk
+            print(f"::warning::novostavba {rec['id']}: detail se nenačetl ({exc})", file=sys.stderr)
+            continue
+        if verdict == "mismatch":
+            # Hledání s filtrem to vrátilo, detail to popírá. Detail je
+            # autorita (je to přímo stav inzerátu); do kolekce to nejde.
+            seen.remove(rec)
+            mismatched.append(rec["id"])
+        time.sleep(0.3)
+
+    now = now_iso()
+    records, events = novostavby.merge(
+        prev_records, seen, now, baseline=baseline,
+        verify=verify_novostavba, max_checks=MAX_NOVOSTAVBY_GONE_CHECKS,
+    )
+    meta = {
+        "baseline_at": prev_meta.get("baseline_at") or now,
+        "config_changed_at": now if config_changed else prev_meta.get("config_changed_at"),
+        "last_run_at": now,
+        "baseline_run": baseline,
+        "swept": len(by_id),
+        "in_superset": len(seen),
+        "no_gps": len(no_gps),
+        "detail_mismatch_ids": mismatched,
+        "events": [{"kind": e["kind"], "id": e["rec"]["id"], "price_czk": e["rec"].get("price_czk"),
+                    "old_price_czk": e.get("old_price")} for e in events],
+    }
+    live = [r for r in records if novostavby.is_live(r) and not r.get("out_of_scope")]
+    print(
+        f"Novostavby: {len(live)} živých do {novostavby.SUPERSET_KM} km (z {len(by_id)} nalezených, "
+        f"{len(no_gps)} bez GPS vynecháno), {sum(1 for r in records if r.get('gone_at'))} zmizelých; "
+        f"detail {fetched}×, {len(mismatched)} nepotvrzeno detailem; "
+        + ("tichá baseline" + (" (změna konfigurace)" if config_changed else "")
+           if baseline else f"události: {len(events)}"),
+        file=sys.stderr,
+    )
+    return records, events, meta
 
 
 def fetch_comparables(prev_snapshot=None):
@@ -3928,7 +4160,8 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
         changes.get("generated_at") or snapshot["generated_at"]))
     ribbon_css_str = ribbon.ribbon_css()
     ribbon_html_str = ribbon.ribbon_html([
-        ("dealsCard", "🔥 Nejlepší"), ("garageCard", "🅿️ Garáže"), ("goneCard", "❌ Zmizelé"),
+        ("dealsCard", "🔥 Nejlepší"), ("garageCard", "🅿️ Garáže"), ("novCard", "🏗️ Novostavby"),
+        ("goneCard", "❌ Zmizelé"),
         ("mapCard", "🗺️ Mapa"), ("areaStatsCard", "📊 Statistika"), ("podHarfouCard", "📍 Pod Harfou"),
         ("historyCard", "📜 Historie"), ("tbl", "📋 Tabulka"), ("manageCard", "⚙️ Sledované"),
     ])
@@ -3939,6 +4172,13 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
     garages_json = script_json([garage_for_page(g) for g in garages])
     garage_stats_json = script_json(snapshot.get("garage_stats_by_area") or {
         HOME_AREA: snapshot.get("garage_stats") or {}})
+    # None = kolekce ještě neběžela (snapshot z doby před ní): žádná karta.
+    nov_records = snapshot.get("novostavby")
+    nov_card_html = novostavby.card_html(
+        nov_records, (snapshot.get("novostavby_meta") or {}).get("baseline_at"))
+    nov_json = script_json(
+        novostavby.page_payload(nov_records, snapshot["generated_at"]) if nov_records is not None else None)
+    nov_css = novostavby.CSS
     area_labels_json = script_json({k: a["label"] for k, a in AREAS.items()})
     areas_line = html.escape(" | ".join(f"{a['radius_km']} km: {a['landmarks']}" for a in AREAS.values()))
     area_stats_json = script_json(snapshot.get("area_stats") or {HOME_AREA: stats})
@@ -4172,6 +4412,7 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
   .card-toggle::before {{ content: attr(data-state); color: #7ab8ff; font-size: 0.8rem; width: 12px; }}
   .card.collapsed {{ padding-bottom: 10px; }}
   #ovPatInput {{ flex: 1 1 260px; }}
+{nov_css}
 {ribbon_css_str}
 </style>
 </head>
@@ -4231,6 +4472,8 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
 {estimate_card_html}
 
 {garage_card_html}
+
+{nov_card_html}
 
 {overrides_card_html}
 
@@ -5526,6 +5769,7 @@ function makeCollapsible() {
       h.dataset.state = collapsed ? "▸" : "▾";
       if (!collapsed && MAP) MAP.invalidateSize();
       if (!collapsed && GMAP) GMAP.invalidateSize();
+      if (!collapsed && window.novOnShow) window.novOnShow();
     };
     let saved = null;
     try { saved = localStorage.getItem(key); } catch (e) {}
@@ -5609,6 +5853,8 @@ document.getElementById("goneSearch")?.addEventListener("input", renderGone);
     # The ribbon's script goes last and starts itself last: it fires the first
     # "areachange" with the remembered area, and every list above must already
     # be listening by then.
+    # Novostavby: vlastní IIFE, před ribbonem (ten startuje poslední).
+    js += novostavby.page_js(nov_json)
     js += ribbon.ribbon_js() + "\ninitRibbon();\n"
 
     # Not named `html`: that would shadow the stdlib module of the same name,
@@ -5988,6 +6234,24 @@ def main():
         snapshot["garage_stats"] = (prev or {}).get("garage_stats", {})
         snapshot["garage_stats_by_area"] = (prev or {}).get("garage_stats_by_area", {})
 
+    # Novostavby 4+kk/5+kk u U Kříže: stejné pravidlo jako garáže -- vlastní
+    # klíče, selhání stojí jen tuhle kolekci. Při selhání se nese minulý stav
+    # VČETNĚ config otisku, jinak by příští běh viděl „změnu konfigurace" a
+    # spolkl by skutečné události tichou baseline.
+    nov_events = []
+    try:
+        nov_records, nov_events, nov_meta = fetch_novostavby(prev)
+        snapshot["novostavby"] = nov_records
+        snapshot["novostavby_config"] = novostavby.fingerprint()
+        snapshot["novostavby_meta"] = nov_meta
+        snapshot["novostavby_stats"] = novostavby.compute_stats(nov_records, snapshot["generated_at"])
+    except Exception as exc:  # noqa: BLE001 -- deliberate: never fail the run
+        print(f"::warning::novostavby sweep failed: {exc}", file=sys.stderr)
+        nov_events = []
+        for key in ("novostavby", "novostavby_config", "novostavby_meta", "novostavby_stats"):
+            if (prev or {}).get(key) is not None:
+                snapshot[key] = prev[key]
+
     changes = diff_snapshots(prev, snapshot)
     verify_removals(changes, snapshot)
     # Before the pool and the history: both record `relist_of`, so the stamp
@@ -5996,6 +6260,7 @@ def main():
     # Kopie v `changes` jdou do last_changes.json a changes_history.json --
     # stejně veřejných jako snapshot (code review 26. 9.).
     scrub_contacts(snapshot["comparables"], snapshot["tracked"], snapshot.get("garages") or [],
+                   snapshot.get("novostavby") or [],
                    *(changes.get(k) or [] for k in ("new_listings", "price_changes", "newly_inactive")))
     # Restored listings rejoin the set, so the medians and deal ranking are
     # recomputed over the final population rather than the pre-verification one.
@@ -6028,6 +6293,14 @@ def main():
     snapshot_path.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2))
     LATEST_SNAPSHOT_PATH.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2))
     CHANGES_PATH.write_text(json.dumps(changes, ensure_ascii=False, indent=2))
+
+    # Alert novostaveb: po zápisu snapshotu, aby odeslané události odpovídaly
+    # uloženému stavu. Tichá baseline žádné události nemá; send_alert nikdy
+    # nevyhodí výjimku a bez secrets jen zaloguje. NOVOSTAVBY_ALERT_DRY_RUN=1
+    # zprávu jen vypíše.
+    novostavby.send_alert(nov_events, snapshot["generated_at"],
+                          dry_run=os.environ.get("NOVOSTAVBY_ALERT_DRY_RUN") == "1",
+                          dashboard_url=report.PAGES_URL)
 
     # The snapshot is on disk before anything downstream runs, so a bug in the
     # pool or the write-up costs a report, never a run's worth of scraping.

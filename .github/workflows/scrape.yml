@@ -129,6 +129,7 @@ jobs:
           python test_areas.py
           python test_ribbon.py
           python test_removals.py
+          python test_novostavby.py
 
       - name: Run scraper
         env:

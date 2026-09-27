@@ -5,6 +5,8 @@ Those figures are private; GitHub Pages serves this HTML.
 """
 import json
 import shutil
+import sys
+from pathlib import Path
 
 import market
 import pool
@@ -12,7 +14,10 @@ import scrape
 
 
 def main():
-    snapshot = json.loads(scrape.LATEST_SNAPSHOT_PATH.read_text())
+    # Volitelně jiný snapshot (lokální kopie s ručně doběhnutou kolekcí,
+    # viz fetch_novostavby.py) -- bez argumentu latest_snapshot.json.
+    path = Path(sys.argv[1]) if len(sys.argv) > 1 else scrape.LATEST_SNAPSHOT_PATH
+    snapshot = json.loads(path.read_text())
     changes = json.loads(scrape.CHANGES_PATH.read_text())
     history = json.loads(scrape.CHANGES_HISTORY_PATH.read_text())
     now = snapshot['generated_at']

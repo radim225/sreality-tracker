@@ -315,6 +315,26 @@ def notify(meta, dry_run=False, kind="weekly"):
     return None
 
 
+def send_text(text, dry_run=False, what="Zpráva"):
+    """Hotový text stejnou cestou (Telegram, pak ntfy). Pro alerty, které si
+    zprávu skládají samy (novostavby.py). Na rozdíl od týdenního zápisu tu
+    chybějící kanál není chyba ani varování, jen řádek v logu: alert je
+    doplněk a běh bez secrets je legitimní (lokální vývoj). Odmítnutí
+    nakonfigurovaným kanálem vyhodí NotifyError -- volající rozhoduje, jestli
+    to smí shodit běh."""
+    if dry_run:
+        print(text)
+        print("\n--- jako plain text (ntfy) ---")
+        print(to_plain(text))
+        return "dry-run"
+    for name, send in (("telegram", send_telegram), ("ntfy", send_ntfy)):
+        if send(text):
+            print(f"{what}: odesláno kanálem {name}.", file=sys.stderr)
+            return name
+    print(f"{what}: žádný notifikační kanál není nastavený, přeskakuji.", file=sys.stderr)
+    return None
+
+
 def main():
     """Standalone use: `python3 notify.py --dry-run` prints what would go out
     for the most recent weekly report."""
