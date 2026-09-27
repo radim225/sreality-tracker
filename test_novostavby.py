@@ -238,6 +238,10 @@ check("…nové dostanou baseline", all(r["baseline"] for r in recs_c if r["id"]
 check("…a meta to zaznamená", (meta_c["baseline_run"], bool(meta_c["config_changed_at"])), (True, True))
 check("baseline_at se drží z prvního běhu", meta_c["baseline_at"], meta_a["baseline_at"])
 
+(recs_null, ev_null, meta_null), _ = run_fetch(dict(snap, novostavby_config=None), found)
+check("null konfigurace ze starého snapshotu = tichá baseline",
+      (len(recs_null), ev_null, meta_null["baseline_run"]), (5, [], True))
+
 old_center = nov.CENTER
 try:
     nov.CENTER = (50.0600, 14.3700)

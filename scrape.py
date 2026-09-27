@@ -2223,7 +2223,7 @@ def fetch_novostavby(prev_snapshot=None):
     first_run = prev_records is None
     config_changed = not first_run and prev.get("novostavby_config") != cfg
     baseline = first_run or config_changed
-    if config_changed and prev.get("novostavby_config", {}).get("center") != cfg["center"]:
+    if config_changed and (prev.get("novostavby_config") or {}).get("center") != cfg["center"]:
         # `km` je odvozené od středu, takže starý snapshot nesmí filtrovat ani
         # vykreslovat vzdálenost podle dřívější konfigurace.
         prev_records = [dict(r, km=novostavby.km_from_center(r.get("lat"), r.get("lon")))
