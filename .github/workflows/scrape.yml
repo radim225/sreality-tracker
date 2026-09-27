@@ -130,6 +130,7 @@ jobs:
           python test_ribbon.py
           python test_removals.py
           python test_novostavby.py
+          python test_timeline.py
 
       - name: Run scraper
         env:

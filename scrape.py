@@ -26,6 +26,7 @@ import pool
 import relist
 import report
 import ribbon
+import timeline
 import sources
 
 ROOT = Path(__file__).parent
@@ -4261,11 +4262,14 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
     ribbon_html_str = ribbon.ribbon_html([
         ("dealsCard", "🔥 Nejlepší"), ("garageCard", "🅿️ Garáže"), ("novCard", "🏗️ Novostavby"),
         ("goneCard", "❌ Zmizelé"),
+        ("tlCard", "📈 Vývoj cen"),
         ("mapCard", "🗺️ Mapa"), ("areaStatsCard", "📊 Statistika"), ("podHarfouCard", "📍 Pod Harfou"),
         ("historyCard", "📜 Historie"), ("tbl", "📋 Tabulka"), ("manageCard", "⚙️ Sledované"),
     ])
     gone_rows = gone_archive.dashboard_rows(gone_archive.load_archive(), snapshot["generated_at"], days=30)
     gone_json = script_json(gone_rows)
+    # Vývoj cen a doba na trhu (timeline.py); None = karta se nevykreslí.
+    tl_payload = timeline.payload_from_disk(snapshot)
     garages = snapshot.get("garages") or []
     garage_card_html = garage_card(garages)
     garages_json = script_json([garage_for_page(g) for g in garages])
@@ -4533,6 +4537,7 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
   .ov-status.info {{ color: #fc6; }}
   .ov-status a {{ color: #7ab8ff; }}
   .badge.warn {{ background: #1c2f4a; color: #7ab8ff; }}
+{timeline.CSS}
 {ribbon_css_str}
 </style>
 </head>
@@ -4605,6 +4610,8 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
   <div class="cost-note">*nájem Kč/m² = nájem + poplatky + odhad elektřiny ({ELECTRICITY_ESTIMATE_CZK} Kč), ne holý nájem.
     Každá oblast má vlastní medián; odhad nájmu a týdenní zápis počítají jen Vysočany.</div>
 </div>
+
+{timeline.card_html(tl_payload)}
 
 <div class="card" id="goneCard">
   <h2 style="margin-top:0;font-size:1rem;">❌ Zmizelé byty (30 dní) <span id="goneCount" class="hint"></span></h2>
@@ -6138,6 +6145,7 @@ document.getElementById("goneSearch")?.addEventListener("input", renderGone);
     # be listening by then.
     # Novostavby: vlastní IIFE, před ribbonem (ten startuje poslední).
     js += novostavby.page_js(nov_json)
+    js += timeline.page_js(script_json(tl_payload))
     js += ribbon.ribbon_js() + "\ninitRibbon();\n"
 
     # Not named `html`: that would shadow the stdlib module of the same name,
