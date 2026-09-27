@@ -1054,9 +1054,12 @@ function uxPrepDrops() {
 }
 
 function uxRerender() {
-  try { render(); } catch (e) {}
-  try { renderPodHarfou(); } catch (e) {}
-  try { renderGarages(); } catch (e) {}
+  // Jedna rozbitá tabulka nesmí zastavit překreslení ostatních, ale chyba
+  // se nesmí ztratit: tichý úspěch je v tomhle projektu nejčastější vada.
+  for (const [name, fn] of [["render", () => render()], ["renderPodHarfou", () => renderPodHarfou()],
+                            ["renderGarages", () => renderGarages()]]) {
+    try { fn(); } catch (e) { console.error(`uxRerender: ${name} selhal`, e); }
+  }
 }
 
 // ---- jeden posluchač pro všechno (capture: hvězda nesmí otevřít řádek) --------
