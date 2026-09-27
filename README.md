@@ -262,10 +262,11 @@ a karta to říká nahlas.
 Kromě sledovaných inzerátů (Sreality) tahá dashboard srovnávací byty pro
 Vysočany a Jinonice z více portálů přes `sources.py`:
 
-- **Sreality** – `/hledani/` (robots povoluje).
-- **Bezrealitky** – jen robots-povolené `/vypis/` lokalitní výpisy (nikdy
-  `/vyhledat` ani API, oboje `Disallow`), parsuje `__NEXT_DATA__`, filtr Praha 9
-  dle GPS boxu.
+- **Sreality** – `/hledani/`. [Aktuální robots.txt](https://www.sreality.cz/robots.txt)
+  pro obecné roboty uvádí `Disallow: /`; rozhodnutí o dalším sběru čeká
+  na Radima v [issue #10](https://github.com/radim225/sreality-tracker/issues/10).
+- **Bezrealitky** – lokalitní výpisy `/vypis/`, parsuje `__NEXT_DATA__`
+  a filtruje podle sledovaných oblastí.
 - **iDNES** – robots-povolené `/s/` výsledky vyhledávání, parsuje karty.
 
 Na dashboardu je filtr zdroje a barevný odznak (SR/BR/iD). Když jeden zdroj
@@ -286,18 +287,14 @@ byty a výstavbu ve výchozím okruhu. Baseline běh žádný alert neposílá.
 ### Testy jako v CI
 
 Po `pip install -r requirements.txt` spusť testovací soubory ve stejném pořadí
-jako krok „Run tests“ v `scrape.yml` (na systému s příkazem `python3` nahraď
-`python` za `python3`):
+jako krok „Run tests“ v `scrape.yml`. Seznam se čte přímo z workflow, takže
+zahrne i nové testy (na systému s příkazem `python3` nahraď `python` za
+`python3`):
 
 ```bash
 export GEOCODE_DISABLED=1
-for t in \
-  test_fees test_fee_queue test_overrides test_parking test_own_card \
-  test_search_paging test_garages test_cache test_pool test_market \
-  test_report test_notify test_security test_sale_extras test_relist \
-  test_gone_archive test_geocode test_areas test_ribbon test_removals \
-  test_novostavby test_timeline test_developers; do
-  python "$t.py" || exit 1
+for test_file in $(sed -n '/name: Run tests/,/name: Run scraper/p' .github/workflows/scrape.yml | grep -oE 'test_[a-z_]+\.py'); do
+  python "$test_file" || exit 1
 done
 ```
 
