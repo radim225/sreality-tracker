@@ -132,6 +132,7 @@ jobs:
           python test_novostavby.py
           python test_timeline.py
           python test_developers.py
+          python test_pages.py
 
       - name: Run scraper
         env:
@@ -173,6 +174,13 @@ jobs:
             echo "::error::OWN_* secret name leaked into a public artefact" >&2
             exit 1
           fi
+
+      # Pages publikuje kořen repa a web smí mít nejvýš 1 GB; snapshots/ je
+      # proto vyřazený v _config.yml. Tady jen varování, když se web k limitu
+      # zase blíží -- běh kvůli tomu nepadá, data se musí commitnout.
+      - name: Report GitHub Pages size
+        continue-on-error: true
+        run: python pages_size.py
 
       - name: Commit and push results
         run: |

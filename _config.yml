@@ -1,0 +1,12 @@
+# GitHub Pages (Jekyll) -- co se z repa publikuje na radim225.github.io.
+#
+# Pages publikuje kořen repa celý. snapshots/ je 96,5 % toho objemu (27. 9.:
+# 956 MB z 991 MB) a roste s každým během, přitom stránka z něj nic nečte.
+# Publikovaný web smí mít nejvýš 1 GB (GitHub Pages limits), takže bez tohohle
+# by nasazení dashboardu brzy přestalo projít.
+#
+# Stránka za běhu čte gone_archive.json a README odkazuje na
+# changes_history.json -- ty tu být NESMÍ (hlídá test_pages.py).
+# Snapshoty zůstávají v repu; na GitHubu jsou dál k dispozici.
+exclude:
+  - snapshots/

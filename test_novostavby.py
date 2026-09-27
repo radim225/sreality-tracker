@@ -6,6 +6,7 @@ Bez vnější sítě: HTTP je podvržené nebo běží na lokálním testovacím
 
 Run: python3 test_novostavby.py
 """
+import re
 import sys
 import tempfile
 import time
@@ -443,6 +444,15 @@ card = nov.card_html([], "2026-09-27T09:00:00Z")
 check("karta: mapa, posuvník, reset, tabulka",
       all(x in card for x in ('id="novMap"', 'id="novR"', 'id="novReset"', 'id="tblNov"')), True)
 check("karta říká, že alerty jsou pro výchozí kruh", "Alerty chodí pro výchozí okruh 1,2 km" in card, True)
+# Radim 27. 9.: kruh se mění jen v režimu úprav a ukládá se tlačítkem, aby ho
+# zoom nebo klik do mapy nezměnil omylem. Chování ověřeno v headless Chromiu;
+# tady jen, že se výchozí stav stránky nevrátí k „vždy upravitelné".
+check("karta: Upravit polohu / Uložit / Zrušit",
+      all(x in card for x in ('id="novEdit"', 'id="novSave"', 'id="novCancel"')), True)
+check("posuvník je bez režimu úprav zamčený", bool(re.search(r'<input type="range" id="novR"[^>]*\bdisabled\b', card)), True)
+check("klik do mapy mimo úpravy nic nedělá", 'NM.on("click", e => {\n      if (!editing) return;' in nov.page_js("null"), True)
+check("✚ se bez úprav netáhne", "draggable: false" in nov.page_js("null") and "dragging.enable()" in nov.page_js("null"), True)
+check("hidden vyhraje nad display tlačítek", ".nov-ctl [hidden] { display: none !important; }" in nov.CSS, True)
 pp = nov.page_payload([dict(ev_rec, url="javascript:alert(1)"), dict(ev_rec, id=9, out_of_scope=True)], T2)
 check("payload: bez out_of_scope, bez ne-https URL", ([r["id"] for r in pp["records"]], "url" in pp["records"][0]),
       ([500], False))

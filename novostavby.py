@@ -886,8 +886,10 @@ def card_html(records, baseline_at=None):
     <b>dokončené {NEW_FROM_YEAR}+</b> (rok kolaudace ≥ {NEW_FROM_YEAR}, nebo štítek „novostavba" bez roku),
     <b>ve výstavbě / projekt</b> a <b>starší</b> (kolaudace před {NEW_FROM_YEAR}, nebo bez roku a bez štítku
     novostavba; rok rekonstrukce se nepočítá). Důvod je ve sloupci Typ.
-    Kruh je <b>jen filtr zobrazení</b> — táhni středem ✚ (nebo klepni do mapy) a posuvníkem měň poloměr;
-    statistika, tabulka i mapa se přepočítají. Alerty chodí pro výchozí okruh {r_alert} km a jen pro dokončené
+    Kruh je <b>jen filtr zobrazení</b>. Pro změnu klikni na <b>Upravit polohu</b>: pak táhni středem ✚
+    (nebo klepni do mapy) a posuvníkem měň poloměr, statistika, tabulka i mapa se průběžně přepočítají.
+    Uloží se až tlačítkem <b>Uložit</b>, <b>Zrušit</b> vrátí uložený kruh. Mimo úpravu klik ani zoom
+    do mapy kruh nemění. Alerty chodí pro výchozí okruh {r_alert} km a jen pro dokončené
     a ve výstavbě; posuvník ani přepínače typu je nemění.</p>
   <div class="nov-ctl" id="novKinds" role="group" aria-label="Typ">
     <label class="nov-k"><input type="checkbox" data-kind="dokoncena"> Dokončené {NEW_FROM_YEAR}+</label>
@@ -896,9 +898,12 @@ def card_html(records, baseline_at=None):
     <label class="nov-k" id="novKindUnk" hidden><input type="checkbox" data-kind="neurceno"> Typ neověřen</label>
   </div>
   <div class="nov-ctl">
-    <label class="nov-r">Poloměr <input type="range" id="novR" min="0.2" max="{SUPERSET_KM}" step="0.05">
+    <button type="button" class="popup-btn" id="novEdit">✎ Upravit polohu</button>
+    <label class="nov-r">Poloměr <input type="range" id="novR" min="0.2" max="{SUPERSET_KM}" step="0.05" disabled>
       <b id="novRv"></b></label>
-    <button type="button" class="popup-btn" id="novReset">Reset na výchozí ({r_def} km)</button>
+    <button type="button" class="popup-btn" id="novSave" hidden>Uložit</button>
+    <button type="button" class="popup-btn" id="novCancel" hidden>Zrušit</button>
+    <button type="button" class="popup-btn" id="novReset" hidden>Výchozí ({r_def} km)</button>
     <select id="novTx">
       <option value="">Prodej i pronájem</option>
       <option value="prodej">Jen prodej</option>
@@ -934,13 +939,21 @@ CSS = """
   #novStats th { cursor: default; }
   #tblNov tbody tr.clickable-row td { vertical-align: top; }
   .nov-ctl { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 0 0 8px; }
+  /* Atribut hidden tu musí vyhrát nad display z .popup-btn / .nov-k -- jinak
+     jsou tlačítka režimu úprav i čip „Typ neověřen" vidět pořád. */
+  .nov-ctl [hidden] { display: none !important; }
   .nov-ctl .nov-r { display: flex; gap: 6px; align-items: center; font-size: 0.8rem; flex: 1 1 220px; }
   .nov-ctl .nov-r input { flex: 1; min-width: 100px; padding: 0; }
   .nov-lbl { background: rgba(20,22,30,.85); color: #e6d6ff; border: 1px solid #6b4fa0;
              font-size: 0.66rem; padding: 0 4px; box-shadow: none; }
   .nov-lbl::before { display: none; }
   .nov-center { color: #7CFFB2; font-size: 20px; line-height: 22px; text-align: center;
-                font-weight: 700; text-shadow: 0 0 3px #000; cursor: move; }
+                font-weight: 700; text-shadow: 0 0 3px #000; cursor: default; }
+  /* Režim úprav kruhu: je vidět, že klik do mapy teď kruh posune. */
+  .nov-editing .nov-center { cursor: move; }
+  .nov-editing #novMap { outline: 2px dashed #7CFFB2; outline-offset: 2px; cursor: crosshair; }
+  .nov-ctl .nov-r input:disabled { opacity: 0.45; }
+  #novSave { background: #1f5c3a; }
   tr.nov-out td { opacity: 0.45; }
   .nov-star { color: #fc6; }
   .nov-k { display: inline-flex; gap: 4px; align-items: center; font-size: 0.8rem;
@@ -988,8 +1001,22 @@ def page_js(payload_json):
     } catch (e) {}
     return { ...DEF };
   }
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(circ)); } catch (e) {} }
+  // `circ` je kruh, podle kterého se kreslí; `saved` ten uložený. Mimo režim
+  // úprav jsou stejné. Radim: zoom a klik do mapy nesmí kruh změnit omylem,
+  // proto se mění jen po „Upravit polohu" a do localStorage jde až „Uložit".
+  function save() {
+    saved = { ...circ };
+    // Výchozí kruh se neukládá: po změně výchozího v kódu ho má i uživatel,
+    // který dal „Výchozí" a Uložit (stejně jako dřívější Reset).
+    const isDef = saved.lat === DEF.lat && saved.lon === DEF.lon && saved.r === DEF.r;
+    try {
+      if (isDef) localStorage.removeItem(KEY);
+      else localStorage.setItem(KEY, JSON.stringify(saved));
+    } catch (e) {}
+  }
   let circ = load();
+  let saved = { ...circ };
+  let editing = false;
 
   // Typy: výchozí jen dokončené (Radim: „hlavně už ty dokončené"). Neověřené
   // (detail zatím nenačten) jsou vidět, dokud je nevypne -- nic se tiše neschová.
@@ -1268,7 +1295,7 @@ def page_js(payload_json):
         .addTo(NM);
     }
     centerM = L.marker([circ.lat, circ.lon], {
-      draggable: true, zIndexOffset: 1000, title: "Střed kruhu — táhni",
+      draggable: false, zIndexOffset: 1000, title: "Střed kruhu",
       icon: L.divIcon({ className: "nov-center", html: "✚", iconSize: [22, 22], iconAnchor: [11, 11] }),
     }).addTo(NM);
     centerM.on("drag", e => {
@@ -1276,8 +1303,13 @@ def page_js(payload_json):
       circ.lat = ll.lat; circ.lon = ll.lng;
       circleL.setLatLng(ll);
     });
-    centerM.on("dragend", () => { save(); refresh(false); });
-    NM.on("click", e => { circ.lat = e.latlng.lat; circ.lon = e.latlng.lng; save(); refresh(false); });
+    centerM.on("dragend", () => refresh(false));
+    NM.on("click", e => {
+      if (!editing) return;
+      circ.lat = e.latlng.lat; circ.lon = e.latlng.lng;
+      refresh(false);
+    });
+    applyEditing();
     moveCircle(true);
     drawMarkers();
   }
@@ -1290,20 +1322,45 @@ def page_js(payload_json):
     try { moveCircle(fit); drawMarkers(); } catch (e) { console.error(e); }
   }
   const slider = document.getElementById("novR");
+  const btnEdit = document.getElementById("novEdit");
+  const btnSave = document.getElementById("novSave");
+  const btnCancel = document.getElementById("novCancel");
+  const btnReset = document.getElementById("novReset");
   slider.value = String(circ.r);
+  function applyEditing() {
+    slider.disabled = !editing;
+    btnEdit.hidden = editing;
+    btnSave.hidden = btnCancel.hidden = btnReset.hidden = !editing;
+    card.classList.toggle("nov-editing", editing);
+    if (centerM && centerM.dragging) {
+      if (editing) centerM.dragging.enable(); else centerM.dragging.disable();
+    }
+  }
+  function endEditing(keep) {
+    if (keep) save(); else circ = { ...saved };
+    editing = false;
+    slider.value = String(circ.r);
+    applyEditing();
+    refresh(false);
+  }
+  btnEdit.addEventListener("click", () => { editing = true; applyEditing(); });
+  btnSave.addEventListener("click", () => endEditing(true));
+  btnCancel.addEventListener("click", () => endEditing(false));
   slider.addEventListener("input", () => {
+    if (!editing) return;
     const v = Number(slider.value);
     if (!isFinite(v)) return;
     circ.r = Math.min(NOV.superset_km, Math.max(0.2, v));
-    save();
     refresh(false);
   });
-  document.getElementById("novReset").addEventListener("click", () => {
+  // Jen návrh: uloží se až tlačítkem Uložit, Zrušit ho vrátí.
+  btnReset.addEventListener("click", () => {
+    if (!editing) return;
     circ = { ...DEF };
     slider.value = String(circ.r);
-    try { localStorage.removeItem(KEY); } catch (e) {}
     refresh(true);
   });
+  applyEditing();
   document.getElementById("novTx").addEventListener("change", () => refresh(false));
   document.getElementById("novKindUnk").hidden = !hasUnk;
   for (const cb of document.querySelectorAll("#novKinds input[data-kind]")) {
