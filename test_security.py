@@ -2,6 +2,7 @@
 import copy
 import json
 import os
+import shutil
 from html.parser import HTMLParser
 from pathlib import Path
 import subprocess
@@ -33,6 +34,17 @@ class Scripts(HTMLParser):
 
 
 class Security(unittest.TestCase):
+    @unittest.skipUnless(shutil.which('node'), 'Node.js není k dispozici')
+    def test_fmt_day_rejects_markup_in_listed_since(self):
+        source = Path('scrape.py').read_text()
+        fn = source.split('function fmtDay(iso) {', 1)[1].split('function daysBetween', 1)[0]
+        script = ('function fmtDay(iso) {' + fn + '\n'
+                  'process.stdout.write(JSON.stringify(['
+                  'fmtDay("2026-09-27T15:00:00Z"), fmtDay("<b>xx</b>")]))')
+        result = subprocess.run([shutil.which('node'), '-e', script], capture_output=True,
+                                text=True, check=True)
+        self.assertEqual(json.loads(result.stdout), ['27. 9. 2026', '—'])
+
     def test_json_roundtrip(self):
         value = {'text': '</ScRiPt><script>marker()</script>\u2028\u2029 & česky'}
         encoded = scrape.script_json(value)

@@ -5568,7 +5568,10 @@ function areaLabel(x) { return AREA_LABELS[areaOf(x)] || areaOf(x); }
 
 function fmtDay(iso) {
   if (!iso) return "—";
-  const [y, m, d] = String(iso).slice(0, 10).split("-");
+  const date = String(iso).slice(0, 10);
+  // listed_since a další data jsou scrapovaná; HTML smí dostat jen číslice.
+  if (!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(date)) return "—";
+  const [y, m, d] = date.split("-");
   return `${Number(d)}. ${Number(m)}. ${y}`;
 }
 function daysBetween(a, b) {
