@@ -500,6 +500,68 @@ check("JS: klik na řádek přes data-nid, ne inline id", ('data-nid="${escapeHt
                                                         "onclick=\"openNov" in js2), (True, False))
 
 
+# --- dokončení z popisu (27. 9. večer) --------------------------------------- #
+cfd = nov.completion_from_description
+check("Q4/2027", cfd("Předpokládaný termín dokončení Q4/2027.  Přehlednou dispozici"),
+      {"year": 2027, "month": 10, "text": "dokončení Q4/2027"})
+check("předpokládaná kolaudace 2027", cfd("Předpokládaná kolaudace 2027.")["year"], 2027)
+check("nastěhování v roce 2028", cfd("Nastěhování v roce 2028.")["text"], "Nastěhování v roce 2028")
+check("na jaře 2028 (Leitzova)", cfd("byty budou dokončeny k nastěhování na jaře 2028.  V ceně")["month"], 3)
+check("rok před slovem ve stejné větě", cfd("V roce 2027 bude dům dokončen.")["year"], 2027)
+check("pronájem: nastěhování = volnost bytu, ne dokončení",
+      cfd("Nastěhování v roce 2027.", rental=True), None)
+check("nastěhování od přesného data se nebere", cfd("Byt je volný, nastěhování od 1.11.2027."), None)
+check("pronájem: kolaudace 2027 platí dál", cfd("Předpokládaná kolaudace 2027.", rental=True)["year"], 2027)
+check("dům je aktuálně ve výstavbě", cfd("Dům je aktuálně ve výstavbě."), {"year": None, "month": None, "text": "ve výstavbě"})
+for label, txt in [("rekonstrukce 2027", "Plánovaná rekonstrukce 2027."), ("sleva do 2027", "Sleva platí do 2027."),
+                   ("při koupi do 30. 9. 2026", "Při koupi do 30. 9. 2026 s nabídkou stání."),
+                   ("rok v jiné větě", "Dům byl dokončen. Sleva platí do 2027."),
+                   ("škola ve výstavbě v okolí", "V okolí je ve výstavbě nová škola."),
+                   ("volný od 1.10.2026", "Z roku 2020. Byt je volný od 1.10.2026."),
+                   ("dokončení bez roku", "Doplatek až po dokončení stavby a kolaudaci projektu.")]:
+    check(f"nic: {label}", cfd(txt), None)
+NOW = "2026-09-27T00:00:00Z"
+check("štítek novostavba + popis Q4/2027 → výstavba",
+      cls(building_condition=6, desc_completion={"year": 2027, "month": 10, "text": "dokončení Q4/2027"}),
+      ("vystavba", "popis: dokončení Q4/2027", False))
+check("…letos s pozdějším čtvrtletím → výstavba",
+      cls(building_condition=6, desc_completion={"year": 2026, "month": 10, "text": "dokončení Q4/2026"})[0], "vystavba")
+check("…letos, dřívější čtvrtletí → dokončená",
+      cls(building_condition=6, desc_completion={"year": 2026, "month": 7, "text": "dokončení Q3/2026"})[0], "dokoncena")
+check("…letos bez období → dokončená",
+      cls(building_condition=6, desc_completion={"year": 2026, "month": None, "text": "kolaudace 2026"})[0], "dokoncena")
+check("…minulý rok nic nepřeklápí",
+      cls(building_condition=6, desc_completion={"year": 2021, "month": None, "text": "kolaudace 2021"})[0], "dokoncena")
+check("…„ve výstavbě“ bez roku → výstavba",
+      cls(building_condition=6, desc_completion={"year": None, "month": None, "text": "ve výstavbě"})[1], "popis: ve výstavbě")
+check("rok kolaudace v datech má přednost před popisem",
+      cls(building_condition=6, acceptance_year=2024,
+          desc_completion={"year": 2027, "month": 10, "text": "dokončení Q4/2027"})[0], "dokoncena")
+check("jen štítek novostavba se popisem překlápí (velmi dobrý ne)",
+      cls(building_condition=1, desc_completion={"year": 2027, "month": 10, "text": "dokončení Q4/2027"})[0], "starsi")
+check("desc_completion se nese mezi běhy", "desc_completion" in nov.DETAIL_FIELDS, True)
+check("otisk konfigurace se nemění (bez baseline)", nov.fingerprint()["classifier"], 1)
+# Přetřídění dokončená → výstavba u sledovaného inzerátu se zaznamená, nehlásí.
+hut = dict(scrape.parse_novostavba(result(960), "prodej"), detail_read=True, building_condition=6,
+           detail_version=nov.DETAIL_VERSION, detail_read_at=T0)
+h1, _ = nov.merge(None, [hut], T0, baseline=True)
+check("před: dokončená", h1[0]["kind"], "dokoncena")
+h2, evh = nov.merge(h1, [dict(hut, detail_fresh=True, desc_completion={"year": 2027, "month": 10,
+                                                                         "text": "dokončení Q4/2027"})], T1, baseline=False)
+check("po: výstavba, zaznamenáno, bez události", (h2[0]["kind"], h2[0]["kind_before"], evh), ("vystavba", "dokoncena", []))
+orig_detail = scrape._novostavba_detail
+try:
+    scrape._novostavba_detail = lambda rec: ({
+        "params": {"buildingCondition": {"name": "Novostavba", "value": 6}}, "categorySubCb": {"value": 8},
+        "description": "Předpokládaný termín dokončení Q4/2027. Volejte 724 223 828."}, 200)
+    eh = dict(scrape.parse_novostavba(result(961), "prodej"))
+    scrape.enrich_novostavba(eh)
+    check("enrich uloží desc_completion", eh["desc_completion"], {"year": 2027, "month": 10, "text": "dokončení Q4/2027"})
+finally:
+    scrape._novostavba_detail = orig_detail
+check("JS: submitOverride najde novostavbu", "window.novItem" in nov.page_js("null"), True)
+
+
 # --- celkový limit na request (fetch_next_data) ----------------------------- #
 # Lokální server na 127.0.0.1: jedna cesta odpoví hned, druhá posílá tělo po
 # kouscích -- každý kousek pod read timeoutem, dohromady přes limit. Přesně

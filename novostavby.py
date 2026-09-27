@@ -111,6 +111,13 @@ KIND_LABELS = {"dokoncena": "dokončená 2020+", "vystavba": "ve výstavbě / pr
 ALERT_KINDS = ("dokoncena", "vystavba")
 # Verze klasifikace -- je v otisku konfigurace, takže její změna proběhne
 # jako tichá baseline, ne jako záplava „nových" inzerátů.
+#
+# 27. 9. večer: štítek „novostavba" bez roku + budoucí dokončení v popisu =
+# výstavba (desc_completion). Verze ZÁMĚRNĚ zůstává 1: přetřídění už
+# sledovaného inzerátu se jen zaznamená (kind_changed_at), nikdy nehlásí, a
+# obě dotčené třídy (dokončená, výstavba) jsou v ALERT_KINDS -- záplava
+# nehrozí. Zvýšení by naopak udělalo z příštího běhu tichou baseline a
+# spolklo by skutečně nové inzeráty z toho běhu.
 CLASSIFIER_VERSION = 1
 
 # Pojmenovaná místa -- špendlíky na mapě a vlajka u řádku tabulky.
@@ -234,8 +241,121 @@ def classify(rec, now):
         label = " (štítek novostavba)" if cond == CONDITION_NEW else ""
         return "starsi", f"kolaudace {year}{label}" + tail, False
     if cond == CONDITION_NEW:
+        # Štítek „novostavba" bez roku kolaudace, ale popis říká, že dům
+        # teprve stojí (Na Hutmance 27. 9.: „Předpokládaný termín dokončení
+        # Q4/2027"). Popis je tu jediný zdroj data -- a mluví o budoucnosti.
+        comp = rec.get("desc_completion")
+        if isinstance(comp, dict) and comp.get("text") and (
+                comp.get("year") is None or completion_is_future(comp, t)):
+            return "vystavba", f"popis: {comp['text']}" + tail, False
         return "dokoncena", "stav: novostavba, rok neuveden" + tail, True
     return "starsi", f"stav: {cond_txt or 'neuveden'}, rok neuveden" + tail, False
+
+
+# --- Dokončení z popisu ------------------------------------------------------ #
+# Konzervativně: rok se bere JEN v téže větě hned za (nebo těsně před)
+# slovem o dokončení/kolaudaci/nastěhování -- ne jakýkoli rok v textu
+# („rekonstrukce 2027", „sleva do 2027" ani „při koupi do 30. 9. 2026" nic
+# neznamenají). Rozhoduje až classify() podle data běhu, takže uložená
+# zmínka „Q4/2027" sama zestárne v dokončenou, až to období přijde.
+_COMPLETION_KW = re.compile(
+    r"\b(?:dokonč\w*|zkolaudov\w*|kolaudac\w*|kolaudov\w*|nastěhov\w*|"
+    r"předání\s+(?:bytu|bytů|jednotek|klíčů)|předán\w*\s+(?:bytu|bytů|klíčů))", re.I)
+# „Dům je ve výstavbě" -- bez roku, ale s podmětem nebo příslovcem „teď";
+# holé „ve výstavbě" (škola v okolí, metro) se nepočítá.
+_UNDER_CONSTRUCTION = re.compile(
+    r"\b(?:(?:dům|budova|projekt|objekt|stavba|rezidence|byt)\s+(?:je\s+)?"
+    r"(?:(?:aktuálně|momentálně|nyní|teprve|stále|právě)\s+)?ve\s+výstavbě"
+    r"|(?:aktuálně|momentálně|nyní|teprve|v\s+současné\s+době)\s+ve\s+výstavbě)", re.I)
+_SENTENCE_END = re.compile(r"[.!?]\s+(?=[A-ZÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ])|\n")
+_DAY_DATE = re.compile(r"(?<!\d)\d{1,2}\.\s*\d{1,2}\.\s*20\d\d")
+_YEAR = re.compile(r"(?<!\d)(20[2-4]\d)(?!\d)")
+_MONTH_STEMS = [("led", 1), ("únor", 2), ("břez", 3), ("dub", 4), ("květ", 5), ("červenc", 7),
+                ("červn", 6), ("červen", 6), ("srp", 8), ("září", 9), ("říj", 10),
+                ("listopad", 11), ("prosin", 12),
+                ("jař", 3), ("jar", 3), ("lét", 6), ("léto", 6), ("podzim", 9), ("zim", 12)]
+
+
+def _period_month(before):
+    """Měsíc (první měsíc období) z textu těsně před rokem, nebo None."""
+    tail = before[-25:].lower()
+    m = re.search(r"q\s*([1-4])\s*[/.\-]?\s*(?:roku\s+)?$", tail)
+    if m:
+        return (int(m.group(1)) - 1) * 3 + 1
+    m = re.search(r"([1-4])\.\s*(?:čtvrtlet\w*|kvartál\w*)\s*(?:roku\s+)?$", tail)
+    if m:
+        return (int(m.group(1)) - 1) * 3 + 1
+    m = re.search(r"(?<!\d)(\d{1,2})\s*[./]\s*$", tail)
+    if m and 1 <= int(m.group(1)) <= 12:
+        return int(m.group(1))
+    m = re.search(r"(\w+)\s+(?:roku\s+|r\.\s*)?$", tail)
+    if m:
+        word = m.group(1)
+        for stem, month in _MONTH_STEMS:
+            if word.startswith(stem):
+                return month
+    return None
+
+
+def completion_from_description(text, rental=False):
+    """Nejpozdější zmínka o dokončení v popisu: {"year", "month", "text"},
+    {"year": None, "month": None, "text": "ve výstavbě"} pro „dům je ve
+    výstavbě" bez roku, nebo None. Nezávislé na datu -- ukládá se k záznamu.
+
+    „Nastěhování" je u pronájmu termín volnosti bytu („nastěhování od
+    1.11.2026"), ne dokončení domu -- u pronájmu se proto nebere vůbec a
+    jinde ne s přesným datem dne."""
+    text = str(text or "")
+    found = []
+    for kw in _COMPLETION_KW.finditer(text):
+        move_in = kw.group(0).lower().startswith("nastěhov")
+        if move_in and rental:
+            continue
+        after = text[kw.end():kw.end() + 60]
+        cut = _SENTENCE_END.search(after)
+        if cut:
+            after = after[:cut.start()]
+        if move_in and _DAY_DATE.search(after):
+            continue
+        y = _YEAR.search(after)
+        if y:
+            start, end = kw.start(), kw.end() + y.end()
+            before = after[:y.start()]
+        else:
+            # „v roce 2027 bude dokončen": rok těsně před slovem, v téže větě.
+            pre_start = max(0, kw.start() - 40)
+            pre = text[pre_start:kw.start()]
+            cuts = list(_SENTENCE_END.finditer(pre))
+            if cuts:
+                pre_start += cuts[-1].end()
+                pre = text[pre_start:kw.start()]
+            ys = list(_YEAR.finditer(pre))
+            if not ys:
+                continue
+            y = ys[-1]
+            before = pre[:y.start()]
+            start, end = pre_start + y.start(), kw.end()
+        year = int(y.group(1))
+        snippet = " ".join(text[start:end].split())
+        if len(snippet) > 60:
+            snippet = f"{kw.group(0)} … {year}"
+        found.append({"year": year, "month": _period_month(before), "text": snippet})
+    if found:
+        return max(found, key=lambda c: (c["year"], c["month"] or 0))
+    if _UNDER_CONSTRUCTION.search(text):
+        return {"year": None, "month": None, "text": "ve výstavbě"}
+    return None
+
+
+def completion_is_future(comp, t):
+    """Leží zmínka po datu běhu `t`? Rok > letošní, nebo letos s pozdějším
+    měsícem/čtvrtletím. Letošní rok bez období ani minulé roky nic nepřeklápí."""
+    if t is None or not isinstance(comp.get("year"), int):
+        return False
+    if comp["year"] > t.year:
+        return True
+    month = comp.get("month")
+    return comp["year"] == t.year and isinstance(month, int) and month > t.month
 
 
 def parse_iso(s):
@@ -319,9 +439,11 @@ def days_on_market(rec, now):
 DETAIL_FIELDS = ("since", "detail_area_sqm", "mentions_waltrovka", "address_exact",
                  "building_condition", "acceptance_year", "reconstruction_year",
                  "desc_mentions_new", "detail_read", "detail_read_at", "detail_version",
-                 "description", "images", "seller_name", "floor_number", "floors_total")
+                 "description", "images", "seller_name", "floor_number", "floors_total",
+                 "desc_completion")
 # 2 = rok kolaudace/rekonstrukce a zmínka „novostavba" v popisu (27. 9.).
-# 3 = popis, fotky, prodejce a patro pro detail inzerátu na stránce (27. 9.).
+# 3 = popis, fotky, prodejce a patro pro detail inzerátu na stránce, a
+#     `desc_completion` (plánované dokončení z popisu, viz classify) (27. 9.).
 #     Záznamy z verze 2 se tím jednou přečtou znovu -- v rámci běžného stropu
 #     MAX_NOVOSTAVBY_DETAIL_FETCHES (60; dnes 39 záznamů, tedy jeden běh).
 #     Otisk konfigurace se nemění, takže žádná baseline ani alerty: opětovné
@@ -1017,6 +1139,9 @@ def page_js(payload_json):
       ${url ? `<a class="modal-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">${r.gone_at ? "Původní inzerát (už nejspíš 404)" : "Otevřít na Sreality"} →</a>` : ""}
       ${overrideFooterHtml(r)}`;
   }
+  // Pro submitOverride (scrape.py): po uložení opravy obnoví odznak
+  // „čeká na zpracování" i u novostavby.
+  window.novItem = id => BY_ID.get(String(id)) || null;
   function openNov(id) {
     const r = BY_ID.get(String(id));
     if (!r) return;

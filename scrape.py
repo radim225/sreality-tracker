@@ -2178,6 +2178,13 @@ def enrich_novostavba(rec):
         rec["thumb"] = extract_thumb(data.get("images")) or rec.get("thumb")
     rec["floor_number"] = params.get("floorNumber")
     rec["floors_total"] = params.get("floors")
+    # Plánované dokončení z CELÉHO popisu (ne z uložených 1200 znaků);
+    # rozhoduje o něm až novostavby.classify podle data běhu.
+    comp = novostavby.completion_from_description(
+        data.get("description"), rental=rec.get("transaction_type") == "pronajem")
+    if comp:
+        comp["text"] = gone_archive.strip_contacts(comp["text"])
+    rec["desc_completion"] = comp
     rec["mentions_waltrovka"] = "waltrovk" in desc.lower()
     rec["desc_mentions_new"] = bool(NEW_IN_DESC_RE.search(desc))
     rec["address_exact"] = locality_precision(data.get("locality"))["address_exact"]
@@ -5217,7 +5224,9 @@ async function submitOverride(id, inputs, entry) {
   if (r.ok) {
     setOvPending(id, entry);
     const badge = document.getElementById("ovBadge");
-    const item = ALL.find(x => String(x.id) === id);
+    // Novostavby žijí mimo ALL -- jejich karta vystaví vlastní vyhledání.
+    const item = ALL.find(x => String(x.id) === id)
+      || (typeof window.novItem === "function" ? window.novItem(id) : null);
     if (badge && item) badge.innerHTML = ovBadgeHtml(overrideState(item));
     setOvStatus("ok", (entry.op === "delete" ? "Smazání opravy zařazeno" : "Uloženo")
       + " do fronty — projeví se po doběhnutí běhu (~5–15 min), pak obnov stránku. "
