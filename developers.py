@@ -515,7 +515,7 @@ NOT_COVERED = {
 # --- Stav a rozdíl ----------------------------------------------------------- #
 # Pole jednotky, která se berou z posledního zdravého stažení (vše kromě
 # sledovacích polí níže).
-TRACK_FIELDS = ("first_seen", "last_seen", "last_change_at", "gone_at", "returned_at",
+TRACK_FIELDS = ("first_seen", "last_change_at", "gone_at", "returned_at",
                 "last_price_czk", "last_price_at", "price_hidden_at", "baseline")
 
 
@@ -614,7 +614,9 @@ def merge(prev_state, fetched, at, slug):
             if u.get("last_price_czk") != u["price_czk"]:
                 u["last_price_at"] = at
             u["last_price_czk"] = u["price_czk"]
-        u["last_seen"] = at
+        # Žádné `last_seen` na jednotce: živá jednotka je vidět v posledním
+        # zdravém stažení (`last_ok_at` projektu). Časové razítko na každé
+        # z ~1 200 jednotek by každý den přepsalo celé soubory v gitu.
         units[uid] = u
     for uid, old in prev_units.items():
         if uid in units:
@@ -734,16 +736,17 @@ def _event_line(e, states):
     area_ = u.get("area_sqm") or e.get("area_sqm")
     head = f"{html.escape(e['unit'])} {html.escape(e.get('disposition') or '?')}"
     if area_:
-        head += f" {str(area_).replace('.', ',')} m²"
+        head += f" {float(area_):g} m²".replace(".", ",")
     t = e["type"]
     if t == "price":
         pct = (e["new"] - e["old"]) / e["old"] * 100
-        what = f"💰 {_czk(e['old'])} → {_czk(e['new'])} ({pct:+.1f} %)".replace(".", ",", 1)
+        what = f"💰 {_czk(e['old'])} → {_czk(e['new'])} ({pct:+.1f} %)".replace(".", ",")
     elif t == "status":
         what = (f"🔁 {STATUS_LABELS.get(e.get('old'), e.get('old'))} → "
                 f"{STATUS_LABELS.get(e.get('new'), e.get('new'))}")
         if e.get("price_czk"):
-            what += f" · cena {_czk(e['price_czk'])}"
+            label = "cena" if u.get("price_czk") else "naposledy"
+            what += f" · {label} {_czk(e['price_czk'])}"
     elif t == "gone":
         meaning = st.get("gone_means") or "zmizelo z ceníku"
         what = f"❌ {html.escape(meaning)} · naposledy {_czk(e.get('price_czk'))}"
@@ -782,7 +785,7 @@ def build_alert(events, states, dashboard_url=PAGES_URL):
         last = None
         for e in focus[:MAX_ALERT_DETAIL_LINES]:
             if e["project"] != last:
-                lines.append(f"<i>{name(e['project'])}</i>")
+                lines.append(f"📍 {name(e['project'])}")
                 last = e["project"]
             lines.append(_event_line(e, states))
         if len(focus) > MAX_ALERT_DETAIL_LINES:
@@ -792,7 +795,7 @@ def build_alert(events, states, dashboard_url=PAGES_URL):
         last = None
         for e in other[:MAX_ALERT_OTHER_LINES]:
             if e["project"] != last:
-                lines.append(f"<i>{name(e['project'])}</i>")
+                lines.append(f"📍 {name(e['project'])}")
                 last = e["project"]
             lines.append(_event_line(e, states))
         rest = other[MAX_ALERT_OTHER_LINES:]

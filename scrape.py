@@ -17,6 +17,7 @@ from pathlib import Path
 
 import requests
 
+import developers_card
 import geocode
 import gone_archive
 import market
@@ -4260,7 +4261,7 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
         changes.get("generated_at") or snapshot["generated_at"]))
     ribbon_css_str = ribbon.ribbon_css()
     ribbon_html_str = ribbon.ribbon_html([
-        ("dealsCard", "🔥 Nejlepší"), ("garageCard", "🅿️ Garáže"), ("novCard", "🏗️ Novostavby"),
+        ("dealsCard", "🔥 Nejlepší"), ("garageCard", "🅿️ Garáže"), ("novCard", "🏗️ Novostavby"), ("devCard", "💼 Ceníky"),
         ("goneCard", "❌ Zmizelé"),
         ("tlCard", "📈 Vývoj cen"),
         ("mapCard", "🗺️ Mapa"), ("areaStatsCard", "📊 Statistika"), ("podHarfouCard", "📍 Pod Harfou"),
@@ -4283,6 +4284,7 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
         novostavby.page_payload(nov_records, snapshot["generated_at"], overrides)
         if nov_records is not None else None)
     nov_css = novostavby.CSS
+    dev_card_html = developers_card.card_html(snapshot)  # ceníky developerů (developers/)
     area_labels_json = script_json({k: a["label"] for k, a in AREAS.items()})
     areas_line = html.escape(" | ".join(f"{a['radius_km']} km: {a['landmarks']}" for a in AREAS.values()))
     area_stats_json = script_json(snapshot.get("area_stats") or {HOME_AREA: stats})
@@ -4599,6 +4601,8 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
 {garage_card_html}
 
 {nov_card_html}
+
+{dev_card_html}
 
 {overrides_card_html}
 
@@ -6146,6 +6150,7 @@ document.getElementById("goneSearch")?.addEventListener("input", renderGone);
     # Novostavby: vlastní IIFE, před ribbonem (ten startuje poslední).
     js += novostavby.page_js(nov_json)
     js += timeline.page_js(script_json(tl_payload))
+    js += developers_card.page_js()
     js += ribbon.ribbon_js() + "\ninitRibbon();\n"
 
     # Not named `html`: that would shadow the stdlib module of the same name,

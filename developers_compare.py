@@ -10,9 +10,13 @@ Tři věci, všechny čisté (bez sítě, bez disku):
      * plocha sedí na ±3 m² nebo ±3 % (stačí jedno z toho),
      * patro sedí, pokud je známé na obou stranách,
      * a kandidát je JEDINÝ (napříč všemi projekty). Víc kandidátů =
-       nespárováno, ukáže se jen jejich počet. Jediná výjimka: mezi kandidáty,
-       kteří prošli pravidly výše, rozhodne přesná shoda ceny, pokud ji má
-       právě jeden -- pravidla se tím nerozšiřují, jen se vybírá uvnitř nich.
+       nespárováno, ukáže se jen jejich počet. Jediná výjimka (PRICE_TIEBREAK):
+       mezi kandidáty, kteří prošli pravidly výše, rozhodne přesná shoda ceny
+       na korunu, pokud ji má právě jeden -- pravidla se tím nerozšiřují, jen
+       se vybírá uvnitř nich. Takový pár má `tier: "cena"` a rozdíl ceny 0
+       z definice; stránka ho značí zvlášť. Bez toho by se na stejně
+       řezaných bytech nad sebou (Hutmanka 4+kk 100,31 m² ve 4 patrech,
+       inzerát bez patra) nespárovalo skoro nic.
    U každého páru se ukládá důvod (vzdálenost, rozdíl plochy, patro).
 
 2. Srovnatelná sada pro jednotku (benchmark). Prodejní inzeráty Sreality se
@@ -43,6 +47,7 @@ BENCH_CENTER = novostavby.CENTER
 BENCH_CENTER_LABEL = novostavby.CENTER_LABEL
 BENCH_RADIUS_KM = novostavby.DEFAULT_RADIUS_KM
 MIN_N = 3
+PRICE_TIEBREAK = True
 KIND_LABELS = {"dokoncena": "dokončené 2020+", "vystavba": "ve výstavbě",
                "starsi": "starší"}
 
@@ -148,7 +153,7 @@ def match_listings(listings, projects):
             chosen = cands[0]
         elif len(cands) > 1:
             same_price = [c for c in cands if unit_price(c[1]) == x["price_czk"]]
-            if len(same_price) == 1:
+            if PRICE_TIEBREAK and len(same_price) == 1:
                 chosen, tie = same_price[0], True
         if chosen is None:
             unmatched[x["id"]] = len(cands)
@@ -169,8 +174,28 @@ def match_listings(listings, projects):
             "diff_czk": x["price_czk"] - up if up else None,
             "diff_pct": round((x["price_czk"] - up) / up * 100, 1) if up else None,
             "reason": ", ".join(why), "candidates": len(cands),
+            # "pravidla" = jediný kandidát; "cena" = víc kandidátů a vybrala
+            # přesná shoda ceny (rozdíl ceny je pak z definice 0).
+            "tier": "cena" if tie else "pravidla",
         })
     return links, unmatched
+
+
+def apply_project_kinds(listings, projects):
+    """Inzerát, který je kandidátem na jednotku ceníku, dostane `kind`
+    projektu (když všichni jeho kandidáti leží v projektech jednoho druhu).
+    Štítek na Sreality lže: Hutmanka (dokončení Q4 2027) má na Sreality
+    „Novostavba" a novostavby.classify ji bere jako dokončenou -- ceník
+    developera ví, v jaké fázi stavba je, líp než inzerát."""
+    for x in listings:
+        kinds = {projects[c[0]].get("kind") for c in candidates(x, projects)}
+        kinds.discard(None)
+        if len(kinds) == 1:
+            k = kinds.pop()
+            if k != x["kind"]:
+                x["kind_sreality"] = x["kind"]
+                x["kind"] = k
+    return listings
 
 
 def own_listing_ids(slug, listings, projects):
@@ -248,7 +273,7 @@ def project_summary(slug, st, listings, exclude_ids=()):
 def compare(projects, snapshot):
     """Všechno pro kartu: {"links", "unmatched", "bench", "summary", "meta"}.
     `bench` a `links` jsou klíčované "slug|unit"."""
-    listings = sreality_listings(snapshot)
+    listings = apply_project_kinds(sreality_listings(snapshot), projects)
     links, unmatched = match_listings(listings, projects)
     bench, summary = {}, {}
     for slug, st in projects.items():
