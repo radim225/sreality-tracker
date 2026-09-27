@@ -252,6 +252,68 @@ RETRY_STATUSES = {429, 500, 502, 503, 504}
 RETRY_BACKOFF_SECONDS = (2, 5, 10)
 
 
+# `timeout=20` v requests je limit na JEDNO čtení ze socketu, ne na celý
+# request: server, který posílá stránku po kouscích (každý do 20 s), drží
+# běh libovolně dlouho. Tohle je strop na celý request (hlavičky + tělo).
+# Překročení je requests.Timeout, takže ho fetch_next_data bere jako každý
+# jiný timeout -- přechodné selhání, retry podle RETRY_BACKOFF_SECONDS.
+REQUEST_READ_TIMEOUT_S = 20
+REQUEST_DEADLINE_S = 60
+_DEADLINE_CHUNK = 64 * 1024
+
+
+def _iter_available(resp):
+    """Tělo po kouscích TAK, JAK PŘICHÁZÍ. iter_content(n) čeká, až bude
+    celých n bajtů, takže server posílající po bajtu by limit obešel mezi
+    dvěma kontrolami. urllib3 2.x má read1 (vrátí, co je k dispozici); výjimky
+    se převádějí stejně jako v requests.iter_content, aby volající viděl
+    přesně tytéž typy jako dřív bez stream."""
+    raw = resp.raw
+    if not hasattr(raw, "read1"):          # urllib3 1.x: nejlepší, co jde
+        yield from resp.iter_content(1024)
+        return
+    from urllib3.exceptions import DecodeError, ProtocolError, ReadTimeoutError, SSLError
+    while True:
+        try:
+            data = raw.read1(_DEADLINE_CHUNK, decode_content=True)
+        except ProtocolError as e:
+            raise requests.exceptions.ChunkedEncodingError(e)
+        except DecodeError as e:
+            raise requests.exceptions.ContentDecodingError(e)
+        except ReadTimeoutError as e:
+            raise requests.ConnectionError(e)
+        except SSLError as e:
+            raise requests.exceptions.SSLError(e)
+        if not data:
+            return
+        yield data
+
+
+def _get_with_deadline(url, params=None, deadline_s=None, session=None):
+    """SESSION.get se stropem na celkový čas. Vrací Response s už načteným
+    tělem (resp.text/.content fungují jako bez stream), jinak se chová
+    stejně: stejná session, hlavičky, přesměrování, read timeout."""
+    deadline_s = REQUEST_DEADLINE_S if deadline_s is None else deadline_s
+    session = session or SESSION
+    start = time.monotonic()
+    resp = session.get(url, params=params, timeout=REQUEST_READ_TIMEOUT_S, stream=True)
+    try:
+        chunks = []
+        for chunk in _iter_available(resp):
+            chunks.append(chunk)
+            if time.monotonic() - start > deadline_s:
+                raise requests.Timeout(f"{url}: celkový limit {deadline_s} s překročen")
+        if time.monotonic() - start > deadline_s:
+            raise requests.Timeout(f"{url}: celkový limit {deadline_s} s překročen")
+    except BaseException:
+        resp.close()
+        raise
+    # Tělo je celé přečtené; zpřístupnit ho jako u requestu bez stream.
+    resp._content = b"".join(chunks)
+    resp._content_consumed = True
+    return resp
+
+
 def fetch_next_data(url, params=None, parse_on_404=False):
     """Returns (next_data, status). Raises TransientFetchError once the retries
     are exhausted, so a flaky response can never be mistaken for a missing
@@ -269,7 +331,7 @@ def fetch_next_data(url, params=None, parse_on_404=False):
     last_failure = None
     for backoff in (*RETRY_BACKOFF_SECONDS, None):
         try:
-            resp = SESSION.get(url, params=params, timeout=20)
+            resp = _get_with_deadline(url, params)
         except (requests.Timeout, requests.ConnectionError) as exc:
             last_failure = f"{type(exc).__name__}: {exc}"
         else:
@@ -1965,29 +2027,31 @@ def compute_garage_stats(garages, area=HOME_AREA):
 # fetch_next_data s jeho retry a sémantikou 404. Stejná pravidla jako garáže:
 # vlastní klíč ve snapshotu, selhání neshodí běh, zmizelé jen po 404 detailu.
 # ---------------------------------------------------------------------------
-# Detail se čte jednou na inzerát (kvůli `since` a potvrzení stavu); běžně
-# 0–3 za běh, strop je pro první běh.
-MAX_NOVOSTAVBY_DETAIL_FETCHES = sources.env_int("MAX_NOVOSTAVBY_DETAIL_FETCHES", 40)
+# Detail je u téhle kolekce povinný -- jen z něj se pozná, jestli je byt nový
+# (rok kolaudace, stav). Čte se u nového inzerátu a pak jednou za týden
+# (novostavby.DETAIL_TTL_DAYS); v ustáleném stavu ~1–3 za běh. Strop je pro
+# první běh po změně (27. 9.: 39 inzerátů do 2 km, všechny k přečtení).
+MAX_NOVOSTAVBY_DETAIL_FETCHES = sources.env_int("MAX_NOVOSTAVBY_DETAIL_FETCHES", 60)
 MAX_NOVOSTAVBY_GONE_CHECKS = sources.env_int("MAX_NOVOSTAVBY_GONE_CHECKS", 30)
 
 
 def search_ward_novostavby(ward, tx_type):
-    """Novostavby 4+kk/5+kk v jedné čtvrti, filtrované na serveru (velikost +
-    stav). Prázdný výsledek Sreality vrací jako 404 s tělem (total 0), stejně
-    jako u garáží -- proto parse_on_404.
+    """Všechny 4+kk/5+kk v jedné čtvrti. Filtr stavu se od 27. 9. na server
+    NEPOSÍLÁ -- štítek „Novostavba" lže oběma směry a třídí se až podle
+    detailu (novostavby.classify). Prázdný výsledek Sreality vrací jako 404
+    s tělem (total 0), stejně jako u garáží -- proto parse_on_404.
 
-    Filtr se ověřuje v odpovědi: queryKey musí nést buildingCondition [6],
-    naše dispozice a čtvrť. Kdyby Sreality parametr `stav` jednou přestala
-    číst, vrátila by bez varování všechny 4+kk/5+kk -- a karta by tiše
-    začala míchat staré byty mezi novostavby."""
+    Filtr dispozice se ověřuje v odpovědi: queryKey musí nést naše
+    categorySubCb a čtvrť (ne fulltext). Kdyby Sreality `velikost` jednou
+    přestala číst, vrátila by všechny byty v čtvrti -- belt-and-braces kontrola
+    kódu u výsledku by je sice vyřadila, ale stránek by bylo desetkrát víc."""
     found = []
     page = 1
     seen_offsets = set()
     while True:
         next_data, status = fetch_next_data(
             f"https://www.sreality.cz/hledani/{tx_type}/byty",
-            params={"region": ward, "velikost": novostavby.VELIKOST,
-                    "stav": novostavby.STAV_SLUG, "strana": page},
+            params={"region": ward, "velikost": novostavby.VELIKOST, "strana": page},
             parse_on_404=True,
         )
         if next_data is None:
@@ -1999,13 +2063,11 @@ def search_ward_novostavby(ward, tx_type):
         if data is None:
             raise TransientFetchError(f"novostavby {tx_type}/{ward}: estatesSearch chybí")
         key = key or {}
-        if (key.get("buildingCondition") != [novostavby.CONDITION_CODE]
-                or sorted(key.get("categorySubCb") or []) != sorted(novostavby.DISPOSITIONS)
+        if (sorted(key.get("categorySubCb") or []) != sorted(novostavby.DISPOSITIONS)
                 or key.get("localityEntityType") != "ward"):
             raise TransientFetchError(
                 f"novostavby {tx_type}/{ward}: Sreality nepoužila filtr "
-                f"(buildingCondition={key.get('buildingCondition')}, "
-                f"categorySubCb={key.get('categorySubCb')}, locality={key.get('localityEntityType')})")
+                f"(categorySubCb={key.get('categorySubCb')}, locality={key.get('localityEntityType')})")
         pagination = data.get("pagination") or {}
         total = pagination.get("total") or 0
         offset = pagination.get("offset")
@@ -2068,29 +2130,32 @@ def _novostavba_detail(rec):
 
 
 def _novostavba_matches(data):
-    """False, když detail říká, že to není novostavba 4+kk/5+kk. Neuvedené
-    (kód 0 / chybí) se bere jako shoda -- hledání to vrátilo s filtrem."""
-    params = data.get("params") or {}
-    code, _ = enum_param(params, "buildingCondition")
+    """False, když detail říká, že to už není 4+kk/5+kk. Stav objektu se tu
+    nekontroluje -- kolekce bere všechny stavy a třídí je."""
     sub = (data.get("categorySubCb") or {}).get("value")
-    if code is not None and code != novostavby.CONDITION_CODE:
-        return False
-    if sub is not None and sub not in novostavby.DISPOSITIONS:
-        return False
-    return True
+    return not (sub is not None and sub not in novostavby.DISPOSITIONS)
+
+
+# „novostavb" v popisu: jen příznak do důvodu klasifikace (Kohoutových 5+kk
+# se štítkem „Velmi dobrý" píše „ve 3. patře novostavby"). Rozhodovat podle
+# něj nejde -- „v blízkosti nové novostavby" by udělalo z paneláku novostavbu.
+NEW_IN_DESC_RE = re.compile(r"novostavb", re.I)
 
 
 def enrich_novostavba(rec):
-    """Dočte detail jednou: `since` (datum vložení na Sreality), užitnou plochu,
-    přesnost adresy a jestli se inzerát hlásí k Waltrovce. Popis se NEUKLÁDÁ
-    (kontakty makléřů) -- jen se z něj přečte ten jeden příznak.
-    Vrací "ok", "mismatch" (detail stav/dispozici nepotvrdil) nebo "skip"."""
+    """Přečte detail: stav objektu, rok kolaudace (`acceptanceYear`) a
+    rekonstrukce (`reconstructionYear`), `since`, užitnou plochu, přesnost
+    adresy, zmínky o Waltrovce / novostavbě. Popis se NEUKLÁDÁ (kontakty
+    makléřů) -- jen se z něj přečtou dva příznaky.
+    Vrací "ok", "mismatch" (detail dispozici nepotvrdil) nebo "skip"."""
     data, _status = _novostavba_detail(rec)
     if not data:
         return "skip"
     params = data.get("params") or {}
     code, _ = enum_param(params, "buildingCondition")
     rec["building_condition"] = code
+    rec["acceptance_year"] = params.get("acceptanceYear")
+    rec["reconstruction_year"] = params.get("reconstructionYear")
     rec["since"] = params.get("since")
     area = params.get("usableArea")
     if isinstance(area, (int, float)) and area > 0:
@@ -2099,17 +2164,23 @@ def enrich_novostavba(rec):
             rec["floor_area_sqm"] = float(area)
             if rec.get("price_czk") and not rec.get("price_czk_per_sqm"):
                 rec["price_czk_per_sqm"] = round(rec["price_czk"] / area)
-    rec["mentions_waltrovka"] = "waltrovk" in normalize_text(data.get("description") or "").lower()
+    desc = normalize_text(data.get("description") or "")
+    rec["mentions_waltrovka"] = "waltrovk" in desc.lower()
+    rec["desc_mentions_new"] = bool(NEW_IN_DESC_RE.search(desc))
     rec["address_exact"] = locality_precision(data.get("locality"))["address_exact"]
     rec["detail_read"] = True
+    rec["detail_read_at"] = now_iso()
+    rec["detail_version"] = novostavby.DETAIL_VERSION
+    # Čerstvý detail přebíjí uložené hodnoty i svým None (merge to ví).
+    rec["detail_fresh"] = True
     return "ok" if _novostavba_matches(data) else "mismatch"
 
 
 def verify_novostavba(rec):
     """Chybí ve výsledcích hledání -- co na to detail? Jen 404 je „gone".
-    Detail, který žije, ale už není novostavba 4+kk/5+kk, je „left_filter"
-    (prodejce změnil stav/dispozici); cokoli nejistého je „unknown" = nechat
-    živý a zkusit příště."""
+    Detail, který žije, ale už není 4+kk/5+kk, je „left_filter" (prodejce
+    změnil dispozici); cokoli nejistého je „unknown" = nechat živý a zkusit
+    příště."""
     try:
         data, status = _novostavba_detail(rec)
     except (TransientFetchError, requests.RequestException):
@@ -2120,9 +2191,9 @@ def verify_novostavba(rec):
 
 
 def fetch_novostavby(prev_snapshot=None):
-    """Celá kolekce: hledání → nadmnožina → detail nových → sloučení.
-    Vrací (records, events, meta). Výjimka = kolekce se tento běh nepovedla;
-    main() pak drží minulý stav a běh pokračuje."""
+    """Celá kolekce: hledání → nadmnožina → detail (nové, pak zastaralé) →
+    sloučení a klasifikace. Vrací (records, events, meta). Výjimka = kolekce
+    se tento běh nepovedla; main() pak drží minulý stav a běh pokračuje."""
     prev = prev_snapshot or {}
     prev_records = prev.get("novostavby")
     prev_meta = prev.get("novostavby_meta") or {}
@@ -2141,12 +2212,14 @@ def fetch_novostavby(prev_snapshot=None):
     seen = [r for r in by_id.values() if novostavby.in_superset(r)]
 
     prev_by_id = {str(r["id"]): r for r in prev_records or []}
-    fetched, mismatched = 0, []
-    for rec in list(seen):
-        p = prev_by_id.get(str(rec["id"]))
-        if p and p.get("detail_read"):
-            continue
+    now = now_iso()
+    # Nové inzeráty nejdřív: bez detailu nemají typ a nemohou do alertu.
+    due = [r for r in seen if novostavby.needs_detail(r, prev_by_id.get(str(r["id"])), now)]
+    due.sort(key=lambda r: (str(r["id"]) in prev_by_id, r.get("km") or 99))
+    fetched, mismatched, skipped = 0, [], 0
+    for rec in due:
         if fetched >= MAX_NOVOSTAVBY_DETAIL_FETCHES:
+            skipped += 1
             continue
         fetched += 1
         try:
@@ -2155,17 +2228,18 @@ def fetch_novostavby(prev_snapshot=None):
             print(f"::warning::novostavba {rec['id']}: detail se nenačetl ({exc})", file=sys.stderr)
             continue
         if verdict == "mismatch":
-            # Hledání s filtrem to vrátilo, detail to popírá. Detail je
-            # autorita (je to přímo stav inzerátu); do kolekce to nejde.
+            # Hledání s filtrem dispozice to vrátilo, detail to popírá.
+            # Detail je autorita; do kolekce to nejde.
             seen.remove(rec)
             mismatched.append(rec["id"])
         time.sleep(0.3)
 
-    now = now_iso()
     records, events = novostavby.merge(
         prev_records, seen, now, baseline=baseline,
         verify=verify_novostavba, max_checks=MAX_NOVOSTAVBY_GONE_CHECKS,
     )
+    live = [r for r in records if novostavby.is_live(r) and not r.get("out_of_scope")]
+    by_kind = collections.Counter(r.get("kind") for r in live)
     meta = {
         "baseline_at": prev_meta.get("baseline_at") or now,
         "config_changed_at": now if config_changed else prev_meta.get("config_changed_at"),
@@ -2174,15 +2248,19 @@ def fetch_novostavby(prev_snapshot=None):
         "swept": len(by_id),
         "in_superset": len(seen),
         "no_gps": len(no_gps),
+        "detail_fetched": fetched,
+        "detail_deferred": skipped,
         "detail_mismatch_ids": mismatched,
-        "events": [{"kind": e["kind"], "id": e["rec"]["id"], "price_czk": e["rec"].get("price_czk"),
-                    "old_price_czk": e.get("old_price")} for e in events],
+        "live_by_kind": dict(by_kind),
+        "events": [{"kind": e["kind"], "id": e["rec"]["id"], "type": e["rec"].get("kind"),
+                    "price_czk": e["rec"].get("price_czk"), "old_price_czk": e.get("old_price")}
+                   for e in events],
     }
-    live = [r for r in records if novostavby.is_live(r) and not r.get("out_of_scope")]
     print(
-        f"Novostavby: {len(live)} živých do {novostavby.SUPERSET_KM} km (z {len(by_id)} nalezených, "
+        f"Novostavby: {len(live)} živých 4+kk/5+kk do {novostavby.SUPERSET_KM} km "
+        f"({', '.join(f'{k} {n}' for k, n in sorted(by_kind.items()))}; z {len(by_id)} nalezených, "
         f"{len(no_gps)} bez GPS vynecháno), {sum(1 for r in records if r.get('gone_at'))} zmizelých; "
-        f"detail {fetched}×, {len(mismatched)} nepotvrzeno detailem; "
+        f"detail {fetched}× (+{skipped} odloženo), {len(mismatched)} nepotvrzeno detailem; "
         + ("tichá baseline" + (" (změna konfigurace)" if config_changed else "")
            if baseline else f"události: {len(events)}"),
         file=sys.stderr,

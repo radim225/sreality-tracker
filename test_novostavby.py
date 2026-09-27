@@ -65,13 +65,22 @@ try:
     scrape.fetch_next_data = lambda url, params=None, parse_on_404=False: (fake_page([], total=0), 404)
     check("prázdná čtvrť (404 s tělem) = []", scrape.search_ward_novostavby("Radlice", "pronajem"), [])
 
+    sent_params = []
+
+    def no_stav(url, params=None, parse_on_404=False):
+        sent_params.append(dict(params or {}))
+        return fake_page([result(10)], {"buildingCondition": None}), 200
+    scrape.fetch_next_data = no_stav
+    check("bez filtru stavu: výsledek projde", [g["id"] for g in scrape.search_ward_novostavby("Jinonice", "prodej")], [10])
+    check("filtr stavu se na server neposílá", "stav" in sent_params[0], False)
+
     scrape.fetch_next_data = lambda url, params=None, parse_on_404=False: (
-        fake_page([result(10)], {"buildingCondition": None}), 200)
+        fake_page([result(10)], {"categorySubCb": None}), 200)
     try:
         scrape.search_ward_novostavby("Jinonice", "prodej")
-        check("ignorovaný filtr stav = chyba", "no error", "TransientFetchError")
+        check("ignorovaný filtr dispozice = chyba", "no error", "TransientFetchError")
     except scrape.TransientFetchError:
-        check("ignorovaný filtr stav = chyba", "TransientFetchError", "TransientFetchError")
+        check("ignorovaný filtr dispozice = chyba", "TransientFetchError", "TransientFetchError")
 finally:
     scrape.fetch_next_data = orig_fetch
 
@@ -160,7 +169,9 @@ try:
     check("jiný status → unknown", scrape.verify_novostavba({"url": "https://x"}), "unknown")
     scrape._novostavba_detail = lambda rec: ({"params": {"buildingCondition": {"name": "Very good", "value": 1}},
                                               "categorySubCb": {"value": 8}}, 200)
-    check("žije, stav 1 → left_filter", scrape.verify_novostavba({"url": "https://x"}), "left_filter")
+    check("žije, stav 1 → live (stav se třídí, nefiltruje)", scrape.verify_novostavba({"url": "https://x"}), "live")
+    scrape._novostavba_detail = lambda rec: ({"params": {}, "categorySubCb": {"value": 9}}, 200)
+    check("žije, ale 4+1 → left_filter", scrape.verify_novostavba({"url": "https://x"}), "left_filter")
     scrape._novostavba_detail = lambda rec: ({"params": {"buildingCondition": {"name": "Novostavba", "value": 6}},
                                               "categorySubCb": {"value": 10}}, 200)
     check("žije, novostavba 5+kk → live", scrape.verify_novostavba({"url": "https://x"}), "live")
@@ -207,6 +218,47 @@ check("…nové dostanou baseline", all(r["baseline"] for r in recs_c if r["id"]
 check("…a meta to zaznamená", (meta_c["baseline_run"], bool(meta_c["config_changed_at"])), (True, True))
 check("baseline_at se drží z prvního běhu", meta_c["baseline_at"], meta_a["baseline_at"])
 
+# Přechod ze serverového filtru „novostavba" na třídění (27. 9.) je změna
+# konfigurace: otisk z doby filtru (condition 6, bez classifier) -> tichá baseline.
+filter_era = {k: v for k, v in nov.fingerprint().items() if k not in ("classifier", "new_from_year")}
+filter_era["condition"] = 6
+(recs_d, ev_d, meta_d), _ = run_fetch(dict(snap, novostavby_config=filter_era), more)
+check("přechod z filtru na třídění: tichý", (ev_d, meta_d["baseline_run"]), ([], True))
+
+
+# Detaily: nové první, strop drží, zbytek počká (a nemá typ, takže do alertu nesmí).
+def run_fetch_detail(prev_snapshot, found, cap):
+    o_search, o_detail, o_cap = scrape.search_ward_novostavby, scrape._novostavba_detail, \
+        scrape.MAX_NOVOSTAVBY_DETAIL_FETCHES
+    reads = []
+
+    def fake_detail(rec):
+        reads.append(rec["id"])
+        return {"params": {"buildingCondition": {"name": "Novostavba", "value": 6},
+                           "acceptanceYear": 2024}, "categorySubCb": {"value": 8}}, 200
+    scrape.search_ward_novostavby = lambda ward, tx: (
+        [dict(x) for x in found if x["transaction_type"] == tx] if ward == "Jinonice" else [])
+    scrape._novostavba_detail = fake_detail
+    scrape.MAX_NOVOSTAVBY_DETAIL_FETCHES = cap
+    try:
+        return scrape.fetch_novostavby(prev_snapshot), reads
+    finally:
+        scrape.search_ward_novostavby, scrape._novostavba_detail = o_search, o_detail
+        scrape.MAX_NOVOSTAVBY_DETAIL_FETCHES = o_cap
+
+
+five = [scrape.parse_novostavba(result(i), "prodej") for i in range(800, 805)]
+(rd, _e, md), reads = run_fetch_detail(None, five, cap=3)
+check("strop detailů", (len(reads), md["detail_deferred"]), (3, 2))
+check("přečtené mají typ, odložené neurčeno",
+      sorted(r["kind"] for r in rd), ["dokoncena"] * 3 + ["neurceno"] * 2)
+snap_d = {"novostavby": rd, "novostavby_config": nov.fingerprint(), "novostavby_meta": md}
+(rd2, ev_d2, _m), reads2 = run_fetch_detail(snap_d, five, cap=60)
+check("další běh dočte jen zbylé 2", len(reads2), 2)
+(rd3, _e3, _m3), reads3 = run_fetch_detail({"novostavby": rd2, "novostavby_config": nov.fingerprint(),
+                                            "novostavby_meta": md}, five, cap=60)
+check("ustálený stav: 0 detailů", len(reads3), 0)
+
 
 # --- statistika ------------------------------------------------------------- #
 S = [
@@ -220,24 +272,88 @@ S = [
     {"id": 4, "transaction_type": "prodej", "disposition": "4+kk", "price_czk": 99_000_000,
      "lat": 50.0541, "lon": 14.3950, "first_seen": T0},
 ]
-st = nov.compute_stats(S, T2)["prodej_4+kk"]
+st = nov.compute_stats(S, T2, kinds=None)["prodej_4+kk"]
 check("živé jen v kruhu, bez zmizelých", st["live_n"], 2)
 check("medián ceny", st["median_price_czk"], 22_000_000)
 check("zmizelé: n, dny, dolní mez, poslední cena",
       (st["gone_n"], st["median_days_to_gone"], st["days_lower_bound"], st["gone_last_prices_czk"]),
       (1, 10, True, [18_000_000]))
-check("prázdná skupina", nov.compute_stats(S, T2)["pronajem_5+kk"]["live_n"], 0)
+check("prázdná skupina", nov.compute_stats(S, T2, kinds=None)["pronajem_5+kk"]["live_n"], 0)
+S[0]["kind"], S[1]["kind"] = "dokoncena", "starsi"
+check("výchozí statistika jen z dokončených", nov.compute_stats(S, T2)["prodej_4+kk"]["live_n"], 1)
+
+
+# --- klasifikace ------------------------------------------------------------ #
+def cls(**kw):
+    return nov.classify(dict({"detail_read": True}, **kw), "2026-09-27T00:00:00Z")
+
+
+# Skutečné případy z 27. 9. (do 2 km od U Kříže):
+check("U Kříže: dobrý, kolaudace 2000 → starší", cls(building_condition=2, acceptance_year=2000),
+      ("starsi", "kolaudace 2000", False))
+check("Kohoutových: velmi dobrý, bez roku, popis „novostavba“ → starší s poznámkou",
+      cls(building_condition=1, desc_mentions_new=True),
+      ("starsi", "stav: velmi dobrý, rok neuveden · popis zmiňuje novostavbu", False))
+check("Bochovská: panel, velmi dobrý, bez roku → starší", cls(building_condition=1)[0], "starsi")
+check("Na Hutmance: štítek novostavba bez roku → dokončená, rok neuveden",
+      cls(building_condition=6), ("dokoncena", "stav: novostavba, rok neuveden", True))
+check("U Komína: novostavba, kolaudace 2025 → dokončená", cls(building_condition=6, acceptance_year=2025),
+      ("dokoncena", "kolaudace 2025", False))
+check("Naskové: štítek novostavba, kolaudace 2019 → starší", cls(building_condition=6, acceptance_year=2019),
+      ("starsi", "kolaudace 2019 (štítek novostavba)", False))
+check("Radlická: kolaudace 2029 → výstavba", cls(building_condition=6, acceptance_year=2029),
+      ("vystavba", "kolaudace plánována 2029", False))
+check("ve výstavbě", cls(building_condition=4), ("vystavba", "stav: ve výstavbě", False))
+check("projekt", cls(building_condition=5)[0], "vystavba")
+check("velmi dobrý + kolaudace 2022 → dokončená", cls(building_condition=1, acceptance_year=2022)[0], "dokoncena")
+check("rekonstrukce 2025 se nepočítá", cls(building_condition=1, reconstruction_year=2025),
+      ("starsi", "stav: velmi dobrý, rok neuveden · rekonstrukce 2025", False))
+check("nesmyslný rok se ignoruje", cls(building_condition=1, acceptance_year=20225)[0], "starsi")
+check("bez detailu = neurčeno", nov.classify({}, T0)[0], "neurceno")
+
+# Detail: nový hned, starší verze znovu, jinak po týdnu.
+check("detail: nový", nov.needs_detail({}, None, T0), True)
+check("detail: stará verze", nov.needs_detail({}, {"detail_read": True, "detail_read_at": T0}, T0), True)
+fresh = {"detail_read": True, "detail_read_at": T0, "detail_version": nov.DETAIL_VERSION}
+check("detail: čerstvý ne", nov.needs_detail({}, fresh, T1), False)
+check("detail: po 7 dnech ano", nov.needs_detail({}, fresh, "2026-09-08T00:00:00Z"), True)
+
+# Čerstvý detail přebíjí i svým None; nečerstvý záznam si nese staré.
+old = dict(scrape.parse_novostavba(result(700), "prodej"), detail_read=True, building_condition=6,
+           acceptance_year=2025, detail_version=2, detail_read_at=T0)
+m1, _ = nov.merge(None, [old], T0, baseline=True)
+check("merge nastaví typ", (m1[0]["kind"], m1[0]["kind_reason"]), ("dokoncena", "kolaudace 2025"))
+m2, _ = nov.merge(m1, [dict(scrape.parse_novostavba(result(700), "prodej"))], T1, baseline=False)
+check("bez nového detailu se typ nese", m2[0]["kind"], "dokoncena")
+re_read = dict(scrape.parse_novostavba(result(700), "prodej"), detail_read=True, detail_fresh=True,
+               building_condition=4, acceptance_year=None, detail_version=2, detail_read_at=T1)
+m3, ev3b = nov.merge(m2, [re_read], T2, baseline=False)
+check("čerstvý detail přebije rok i stav", (m3[0]["kind"], m3[0].get("acceptance_year")), ("vystavba", None))
+check("změna typu se zaznamená, nehlásí", (m3[0]["kind_before"], m3[0]["kind_changed_at"], ev3b),
+      ("dokoncena", T2, []))
+check("detail_fresh se neukládá", "detail_fresh" in m3[0], False)
 
 
 # --- alert ------------------------------------------------------------------ #
 ev_rec = dict(scrape.parse_novostavba(result(500, street="U kříže <b>x</b>"), "prodej"),
-              first_seen=T0, baseline=False)
+              first_seen=T0, baseline=False, detail_read=True, building_condition=6, acceptance_year=2023)
 ev_rec["named_place"] = nov.named_place(ev_rec)
+ev_rec["kind"], ev_rec["kind_reason"], _ = nov.classify(ev_rec, T2)
 gone_rec = dict(ev_rec, id=501, gone_at=T2, baseline=True, street="Bochovská")
 far_rec = dict(ev_rec, id=502, lat=50.0541, lon=14.3950, km=1.9)
 text = nov.build_alert([{"kind": "new", "rec": ev_rec}, {"kind": "gone", "rec": gone_rec},
                         {"kind": "new", "rec": far_rec}], T2, "https://example.github.io/x/")
 check("ulice escapovaná", "<b>x</b>" in text, False)
+check("řádek nese typ", "[dokončená · kolaudace 2023]" in text, True)
+U = "https://www.sreality.cz/detail/prodej/byt/4%2Bkk/x/"
+old_rec = dict(ev_rec, id=503, url=U + "503", kind="starsi", kind_reason="kolaudace 2000")
+bld_rec = dict(ev_rec, id=504, url=U + "504", kind="vystavba", kind_reason="stav: ve výstavbě")
+unk_rec = dict(ev_rec, id=505, url=U + "505", kind="neurceno")
+t2 = nov.build_alert([{"kind": "new", "rec": r} for r in (old_rec, bld_rec, unk_rec)], T2)
+check("starší ani neověřené se nehlásí, výstavba ano",
+      ("/x/503" in t2, "/x/505" in t2, "/x/504" in t2, "[výstavba · stav: ve výstavbě]" in t2),
+      (False, False, True, True))
+check("jen starší = žádná zpráva", nov.build_alert([{"kind": "new", "rec": old_rec}], T2), None)
 check("nový s odkazem", '🆕 4+kk prodej' in text and 'href="https://www.sreality.cz/detail/prodej/byt/4%2Bkk/x/500"' in text, True)
 check("zmizelý s dny (≥ u baseline)", "na trhu ≥ 10 d" in text, True)
 check("mimo alertový kruh se nehlásí", "/x/502" in text, False)
@@ -288,6 +404,73 @@ check("plocha z detailu přežije další běh", (m2[0]["floor_area_sqm"], m2[0]
 js = nov.page_js(scrape.script_json(pp))
 check("JS: payload vložen, žádný placeholder", "__NOV_JSON__" in js, False)
 check("script_json nenechá '<' v datech", "<b>" in scrape.script_json(pp), False)
+
+# --- celkový limit na request (fetch_next_data) ----------------------------- #
+# Lokální server na 127.0.0.1: jedna cesta odpoví hned, druhá posílá tělo po
+# kouscích -- každý kousek pod read timeoutem, dohromady přes limit. Přesně
+# ten případ, který `timeout=` v requests nechytí.
+import http.server
+import threading
+
+import requests
+
+PAGE = ('<html><script id="__NEXT_DATA__" type="application/json">{"ok": "ž"}</script></html>').encode()
+_wait = threading.Event().wait      # time.sleep je v testu vypnutý
+
+
+class H(http.server.BaseHTTPRequestHandler):
+    def log_message(self, *a):
+        pass
+
+    def do_GET(self):
+        if self.path.startswith("/missing"):
+            self.send_response(404)
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return
+        self.send_response(200)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        if self.path.startswith("/slow"):
+            self.send_header("Content-Length", str(len(PAGE) + 40))
+            self.end_headers()
+            try:
+                for _ in range(40):          # 40 × 0,1 s = 4 s, limit 1 s
+                    self.wfile.write(b" ")
+                    self.wfile.flush()
+                    _wait(0.1)
+                self.wfile.write(PAGE)
+            except (BrokenPipeError, ConnectionResetError):
+                pass
+            return
+        self.send_header("Content-Length", str(len(PAGE)))
+        self.end_headers()
+        self.wfile.write(PAGE)
+
+
+srv = http.server.ThreadingHTTPServer(("127.0.0.1", 0), H)
+threading.Thread(target=srv.serve_forever, daemon=True).start()
+base = f"http://127.0.0.1:{srv.server_address[1]}"
+orig_deadline, orig_backoff = scrape.REQUEST_DEADLINE_S, scrape.RETRY_BACKOFF_SECONDS
+try:
+    scrape.REQUEST_DEADLINE_S = 1
+    scrape.RETRY_BACKOFF_SECONDS = ()
+    check("rychlá stránka: stejné chování", scrape.fetch_next_data(base + "/ok"), ({"ok": "ž"}, 200))
+    check("404 beze změny", scrape.fetch_next_data(base + "/missing"), (None, 404))
+    t0 = time.monotonic()
+    try:
+        scrape.fetch_next_data(base + "/slow")
+        check("pomalé tělo nad limit = přechodná chyba", "no error", "TransientFetchError")
+    except scrape.TransientFetchError as exc:
+        check("pomalé tělo nad limit = přechodná chyba", "celkový limit" in str(exc), True)
+    check("…a skončí brzy po limitu, ne za 4 s", time.monotonic() - t0 < 2.5, True)
+    try:
+        scrape._get_with_deadline(base + "/slow", deadline_s=0.3, session=requests.Session())
+        check("_get_with_deadline vyhodí requests.Timeout", "no error", "Timeout")
+    except requests.Timeout:
+        check("_get_with_deadline vyhodí requests.Timeout", "Timeout", "Timeout")
+finally:
+    scrape.REQUEST_DEADLINE_S, scrape.RETRY_BACKOFF_SECONDS = orig_deadline, orig_backoff
+    srv.shutdown()
 
 time.sleep = orig_sleep
 print()

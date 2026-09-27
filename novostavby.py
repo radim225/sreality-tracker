@@ -12,10 +12,11 @@ bytů, do poolu i do odhadu nájmu. Vlastní klíč ve snapshotu (`novostavby`),
 vlastní karta, vlastní alert.
 
 Rozdělení práce:
-  * scrape.py sbírá (hledání po čtvrtích, detail jednou na inzerát, ověření
-    zmizení přes 404) -- potřebuje jeho HTTP vrstvu s retry.
+  * scrape.py sbírá (hledání po čtvrtích, detail nového inzerátu a pak jednou
+    za týden, ověření zmizení přes 404) -- potřebuje jeho HTTP vrstvu s retry.
   * tady je všechno ostatní a je to čisté: sloučení s minulým během, baseline,
-    dny na trhu, statistika, text alertu, karta a JS. Testovatelné bez sítě.
+    třídění dokončené/výstavba/starší, dny na trhu, statistika, text alertu,
+    karta a JS. Testovatelné bez sítě.
 
 Modul záměrně neimportuje scrape.py (scrape.py importuje jeho).
 
@@ -71,14 +72,44 @@ TRANSACTIONS = ("prodej", "pronajem")
 # anglicky a „4+kk" pak přijde jako „4+kt").
 DISPOSITIONS = {8: "4+kk", 10: "5+kk"}
 VELIKOST = "4+kk,5+kk"
-# Stav objektu „Novostavba" = buildingCondition 6 (stejný kód jako
-# NEW_BUILDING_CODE v scrape.py). Filtr jde na server: URL parametr `stav`
-# s hodnotou „novostavby" (codebook z JS bundlu Sreality; „novostavba" i
-# „stav-objektu" server tiše ignoruje -- ověřeno, dávají plný výsledek).
-# Že filtr opravdu platí, je vidět v queryKey odpovědi: buildingCondition [6],
-# a Jinonice 4+kk/5+kk na prodej spadnou ze 14 na 9.
-CONDITION_CODE = 6
-STAV_SLUG = "novostavby"
+# --- Co je „nové" ------------------------------------------------------------ #
+# Do 27. 9. odpoledne se filtrovalo na serveru štítkem „Novostavba"
+# (stav=novostavby). Ukázalo se, že štítek lže oběma směry: Kohoutových 5+kk
+# píše v popisu „novostavba", ale štítek má „Velmi dobrý"; Naskové 4+kk má
+# štítek „Novostavba" a kolaudaci 2019. Radim: „ideálně dostavěné v roce 2020+
+# a možnost vidět filtr. Novostavba z roku 2000 opravdu není. Klidně i ve
+# výstavbě, ale hlavně už ty dokončené, které se tváří jako novostavba."
+#
+# Sbírá se proto KAŽDÝ 4+kk/5+kk v nadmnožině a z detailu se určí `kind`:
+#   dokoncena  rok kolaudace ≥ 2020 (a ne v budoucnu), nebo štítek Novostavba
+#              bez uvedeného roku (`year_unknown`, „rok neuveden")
+#   vystavba   štítek „Ve výstavbě" / „Projekt", nebo kolaudace v budoucnu
+#   starsi     všechno ostatní -- kolaudace < 2020 (i se štítkem Novostavba),
+#              „velmi dobrý"/„dobrý"/panel bez roku ≥ 2020
+#
+# Rok: Sreality má v detailu jen dvě roková pole (ověřeno 27. 9. na všech 39
+# inzerátech 4+kk/5+kk do 2 km): `acceptanceYear` = rok kolaudace a
+# `reconstructionYear` = rok rekonstrukce. „Rok výstavby" jako pole neexistuje.
+# Rekonstrukce se za novost NEPOČÍTÁ (Průchova: „velmi dobrý", rekonstrukce
+# 2025 -- starý dům). Kolaudace 2029 u Radlické se štítkem Novostavba je
+# plánovaná -- dům stojí teprve ve výstavbě.
+# Kódy buildingCondition (estatesFilterPage): 1 velmi dobrý, 2 dobrý,
+# 3 špatný, 4 ve výstavbě, 5 projekt, 6 novostavba, 7 k demolici,
+# 8 před rekonstrukcí, 9 po rekonstrukci, 10 v rekonstrukci.
+NEW_FROM_YEAR = 2020
+CONDITION_NEW = 6
+CONDITIONS_BUILDING = {4: "ve výstavbě", 5: "projekt"}
+CONDITION_LABELS = {1: "velmi dobrý", 2: "dobrý", 3: "špatný", 4: "ve výstavbě", 5: "projekt",
+                    6: "novostavba", 7: "k demolici", 8: "před rekonstrukcí",
+                    9: "po rekonstrukci", 10: "v rekonstrukci"}
+KINDS = ("dokoncena", "vystavba", "starsi")
+KIND_LABELS = {"dokoncena": "dokončená 2020+", "vystavba": "ve výstavbě / projekt",
+               "starsi": "starší"}
+# Alert jen pro tyhle; starší byty Radima nezajímají.
+ALERT_KINDS = ("dokoncena", "vystavba")
+# Verze klasifikace -- je v otisku konfigurace, takže její změna proběhne
+# jako tichá baseline, ne jako záplava „nových" inzerátů.
+CLASSIFIER_VERSION = 1
 
 # Pojmenovaná místa -- špendlíky na mapě a vlajka u řádku tabulky.
 LANDMARKS = [
@@ -154,10 +185,55 @@ def fingerprint():
         "center": list(CENTER),
         "superset_km": SUPERSET_KM,
         "dispositions": sorted(DISPOSITIONS.values()),
-        "condition": CONDITION_CODE,
+        # Od 27. 9. se sbírá bez filtru stavu a třídí se až tady; změna
+        # pravidel třídění mění, co je „nové", takže patří do otisku.
+        "condition": None,
+        "classifier": CLASSIFIER_VERSION,
+        "new_from_year": NEW_FROM_YEAR,
         "wards": sorted(WARDS),
         "transactions": sorted(TRANSACTIONS),
     }
+
+
+def _year(v, now_year):
+    """Rok z detailu, nebo None. Sreality občas vrátí nesmysl (0, 20225)."""
+    if isinstance(v, bool) or not isinstance(v, (int, float)):
+        return None
+    v = int(v)
+    return v if 1800 <= v <= now_year + 15 else None
+
+
+def classify(rec, now):
+    """(kind, reason, year_unknown) podle detailu. Záznam bez načteného detailu
+    je „neurceno" -- hádat z titulku nejde a do alertu nesmí."""
+    if not rec.get("detail_read"):
+        return "neurceno", "detail zatím nenačten", False
+    t = parse_iso(now)
+    now_year = t.year if t else datetime.now().year
+    cond = rec.get("building_condition")
+    cond_txt = CONDITION_LABELS.get(cond)
+    year = _year(rec.get("acceptance_year"), now_year)
+    recon = _year(rec.get("reconstruction_year"), now_year)
+    extra = []
+    if recon:
+        extra.append(f"rekonstrukce {recon}")
+    if rec.get("desc_mentions_new") and cond != CONDITION_NEW:
+        extra.append("popis zmiňuje novostavbu")
+    tail = (" · " + ", ".join(extra)) if extra else ""
+
+    if cond in CONDITIONS_BUILDING:
+        reason = f"stav: {cond_txt}" + (f", kolaudace {year}" if year else "")
+        return "vystavba", reason + tail, False
+    if year is not None:
+        if year > now_year:
+            return "vystavba", f"kolaudace plánována {year}" + tail, False
+        if year >= NEW_FROM_YEAR:
+            return "dokoncena", f"kolaudace {year}" + tail, False
+        label = " (štítek novostavba)" if cond == CONDITION_NEW else ""
+        return "starsi", f"kolaudace {year}{label}" + tail, False
+    if cond == CONDITION_NEW:
+        return "dokoncena", "stav: novostavba, rok neuveden" + tail, True
+    return "starsi", f"stav: {cond_txt or 'neuveden'}, rok neuveden" + tail, False
 
 
 def parse_iso(s):
@@ -197,9 +273,26 @@ def days_on_market(rec, now):
 
 
 # --- Sloučení s minulým během ------------------------------------------------ #
-# Pole, která přišla z detailu (čte se jednou) a nesou se dál beze změny.
+# Pole, která přišla z detailu a nesou se dál, dokud se detail nepřečte znovu
+# (scrape.py ho čte u nového inzerátu a pak jednou za DETAIL_TTL_DAYS).
 DETAIL_FIELDS = ("since", "detail_area_sqm", "mentions_waltrovka", "address_exact",
-                 "building_condition", "detail_read")
+                 "building_condition", "acceptance_year", "reconstruction_year",
+                 "desc_mentions_new", "detail_read", "detail_read_at", "detail_version")
+# 2 = rok kolaudace/rekonstrukce a zmínka „novostavba" v popisu (27. 9.).
+DETAIL_VERSION = 2
+# Stav stavby se mění (výstavba -> hotovo, prodejce opraví rok), takže živý
+# inzerát se jednou za týden přečte znovu. ~40 inzerátů / 42 běhů týdně = ~1
+# detail za běh.
+DETAIL_TTL_DAYS = 7
+
+
+def needs_detail(rec, prev, now):
+    """Číst detail teď? Nový, starší verze detailu, nebo po DETAIL_TTL_DAYS."""
+    src = prev or {}
+    if not src.get("detail_read") or (src.get("detail_version") or 1) < DETAIL_VERSION:
+        return True
+    age = days_between(src.get("detail_read_at"), now)
+    return age is None or age >= DETAIL_TTL_DAYS
 
 
 def merge(prev_records, seen, now, *, baseline, verify=None, max_checks=30):
@@ -229,9 +322,17 @@ def merge(prev_records, seen, now, *, baseline, verify=None, max_checks=30):
             rec["first_seen"] = prev.get("first_seen") or now
             rec["baseline"] = bool(prev.get("baseline"))
             history = list(prev.get("price_history") or [])
-            for k in DETAIL_FIELDS:
-                if rec.get(k) is None and prev.get(k) is not None:
+            # Čerstvě přečtený detail je autorita -- i jeho None (prodejce
+            # rok smazal) má přebít starou hodnotu.
+            if not rec.get("detail_fresh"):
+                for k in DETAIL_FIELDS:
+                    if rec.get(k) is None and prev.get(k) is not None:
+                        rec[k] = prev[k]
+            for k in ("kind_changed_at", "kind_before"):
+                if prev.get(k) is not None:
                     rec[k] = prev[k]
+            if prev.get("kind") and prev.get("kind") != "neurceno":
+                rec["_prev_kind"] = prev["kind"]
             # Plocha z detailu (titulek ji nemá) -- detail se čte jen jednou,
             # takže bez tohohle by m² a Kč/m² od druhého běhu zmizely.
             area = rec.get("detail_area_sqm")
@@ -297,8 +398,8 @@ def merge(prev_records, seen, now, *, baseline, verify=None, max_checks=30):
             if not baseline:
                 events.append({"kind": "gone", "rec": rec})
         elif verdict == "left_filter":
-            # Inzerát žije, ale už není novostavba 4+kk/5+kk (prodejce změnil
-            # stav nebo dispozici). Není to zmizení a do dní na trhu nepatří.
+            # Inzerát žije, ale už není 4+kk/5+kk (prodejce změnil
+            # dispozici). Není to zmizení a do dní na trhu nepatří.
             rec["left_filter_at"] = now
             rec.pop("missing_from_search", None)
         else:
@@ -311,6 +412,15 @@ def merge(prev_records, seen, now, *, baseline, verify=None, max_checks=30):
         else:
             rec.pop("days_on_market", None)
         rec["named_place"] = named_place(rec)
+        kind, reason, year_unknown = classify(rec, now)
+        prev_kind = rec.pop("_prev_kind", None)
+        if prev_kind and kind != "neurceno" and kind != prev_kind:
+            # Zaznamená se, ale nehlásí: výstavba -> dokončená je změna štítku
+            # u inzerátu, který Radim už viděl, ne nová nabídka.
+            rec["kind_changed_at"] = now
+            rec["kind_before"] = prev_kind
+        rec["kind"], rec["kind_reason"], rec["year_unknown"] = kind, reason, year_unknown
+        rec.pop("detail_fresh", None)
     out.sort(key=lambda r: (r.get("gone_at") is not None, r.get("transaction_type") or "",
                             r.get("disposition") or "", r.get("km") or 0))
     return out, events
@@ -322,12 +432,14 @@ def in_circle(rec, center, radius_km):
     return d is not None and d <= radius_km + 1e-9
 
 
-def compute_stats(records, now, center=CENTER, radius_km=DEFAULT_RADIUS_KM):
-    """Po transakci × dispozici, jen uvnitř kruhu. Stejný výpočet dělá JS na
-    stránce pro kruh, který si Radim nastaví; tady je pro výchozí kruh (do
-    snapshotu a pro testy)."""
+def compute_stats(records, now, center=CENTER, radius_km=DEFAULT_RADIUS_KM, kinds=("dokoncena",)):
+    """Po transakci × dispozici, jen uvnitř kruhu a jen zvolených typů. Stejný
+    výpočet dělá JS na stránce pro kruh a typy, které si Radim nastaví; tady
+    je pro výchozí nastavení (dokončené 2020+, 1,2 km) -- do snapshotu a pro
+    testy. `kinds=None` = všechny."""
     out = {}
-    recs = [r for r in records if not r.get("out_of_scope") and in_circle(r, center, radius_km)]
+    recs = [r for r in records if not r.get("out_of_scope") and in_circle(r, center, radius_km)
+            and (kinds is None or r.get("kind") in kinds)]
     for tx in TRANSACTIONS:
         for disp in DISPOSITIONS.values():
             group = [r for r in recs if r.get("transaction_type") == tx and r.get("disposition") == disp]
@@ -374,8 +486,18 @@ def _safe_url(u):
 
 
 def alert_events(events):
-    """Jen události uvnitř výchozího (alertového) kruhu."""
-    return [e for e in events if in_circle(e["rec"], ALERT_CENTER, ALERT_RADIUS_KM)]
+    """Jen události uvnitř výchozího (alertového) kruhu a jen dokončené 2020+
+    a ve výstavbě. Starší byty ani neověřené („neurceno") se nehlásí nikdy."""
+    return [e for e in events if in_circle(e["rec"], ALERT_CENTER, ALERT_RADIUS_KM)
+            and e["rec"].get("kind") in ALERT_KINDS]
+
+
+def kind_tag(rec):
+    """Krátký štítek typu do alertu: [dokončená · kolaudace 2025]."""
+    kind = rec.get("kind")
+    label = {"dokoncena": "dokončená", "vystavba": "výstavba"}.get(kind, kind or "?")
+    reason = rec.get("kind_reason") or ""
+    return f"[{label}" + (f" · {reason.split(' · ')[0]}" if reason else "") + "]"
 
 
 def build_alert(events, now, dashboard_url=None):
@@ -390,7 +512,7 @@ def build_alert(events, now, dashboard_url=None):
     order = {"new": 0, "price": 1, "gone": 2}
     events = sorted(events, key=lambda e: (order[e["kind"]], e["rec"].get("km") or 0))
     radius = f"{ALERT_RADIUS_KM:.1f}".replace(".", ",")
-    lines = [f"<b>🏗️ Novostavby 4+kk / 5+kk · {CENTER_LABEL} ≤ {radius} km</b>"]
+    lines = [f"<b>🏗️ Nové byty 4+kk / 5+kk · {CENTER_LABEL} ≤ {radius} km</b>"]
     for e in events[:MAX_ALERT_LINES]:
         r = e["rec"]
         unit = "/měs" if r.get("transaction_type") == "pronajem" else ""
@@ -407,7 +529,8 @@ def build_alert(events, now, dashboard_url=None):
         else:
             price = f"{_czk(r.get('price_czk'))}{unit}"
             icon = "🆕"
-        parts = [f"{icon} {html.escape(r.get('disposition') or '?')} {_tx(r)}", where, price]
+        parts = [f"{icon} {html.escape(r.get('disposition') or '?')} {_tx(r)} {html.escape(kind_tag(r))}",
+                 where, price]
         if r.get("price_czk_per_sqm"):
             parts.append(f"{_czk(r['price_czk_per_sqm'])}/m²")
         parts.append(_km(r.get("km")))
@@ -447,6 +570,7 @@ PAGE_FIELDS = (
     "price_czk_per_sqm", "floor_area_sqm", "street", "city_part", "locality", "lat", "lon",
     "km", "url", "thumb", "first_seen", "last_seen", "gone_at", "baseline", "price_history",
     "since", "named_place", "missing_from_search", "left_filter_at", "returned_at",
+    "kind", "kind_reason", "year_unknown", "kind_changed_at", "kind_before",
 )
 
 
@@ -488,10 +612,20 @@ def card_html(records, baseline_at=None):
     since = f" ({t.day}. {t.month}. {t.year})" if t is not None else ""
     return f"""<div class="card" id="novCard">
   <h2 style="margin-top:0;font-size:1rem;">🏗️ Novostavby 4+kk / 5+kk — {html.escape(CENTER_LABEL)}</h2>
-  <p class="hint" style="margin:0 0 8px;">Byty 4+kk a 5+kk ve stavu <b>novostavba</b> (dle Sreality), prodej i pronájem.
-    Sbírá se vše do <b>{r_sup} km</b> od {html.escape(CENTER_LABEL)} (přerušovaná hranice). Kruh je
-    <b>jen filtr zobrazení</b> — táhni středem ✚ (nebo klepni do mapy) a posuvníkem měň poloměr;
-    statistika i tabulka se přepočítají. Alerty chodí pro výchozí okruh {r_alert} km, posuvník je nemění.</p>
+  <p class="hint" style="margin:0 0 8px;">Všechny byty 4+kk a 5+kk do <b>{r_sup} km</b> od {html.escape(CENTER_LABEL)}
+    (přerušovaná hranice), prodej i pronájem, roztříděné podle detailu na Sreality:
+    <b>dokončené {NEW_FROM_YEAR}+</b> (rok kolaudace ≥ {NEW_FROM_YEAR}, nebo štítek „novostavba" bez roku),
+    <b>ve výstavbě / projekt</b> a <b>starší</b> (kolaudace před {NEW_FROM_YEAR}, nebo bez roku a bez štítku
+    novostavba; rok rekonstrukce se nepočítá). Důvod je ve sloupci Typ.
+    Kruh je <b>jen filtr zobrazení</b> — táhni středem ✚ (nebo klepni do mapy) a posuvníkem měň poloměr;
+    statistika, tabulka i mapa se přepočítají. Alerty chodí pro výchozí okruh {r_alert} km a jen pro dokončené
+    a ve výstavbě; posuvník ani přepínače typu je nemění.</p>
+  <div class="nov-ctl" id="novKinds" role="group" aria-label="Typ">
+    <label class="nov-k"><input type="checkbox" data-kind="dokoncena"> Dokončené {NEW_FROM_YEAR}+</label>
+    <label class="nov-k"><input type="checkbox" data-kind="vystavba"> Ve výstavbě / projekt</label>
+    <label class="nov-k"><input type="checkbox" data-kind="starsi"> Starší</label>
+    <label class="nov-k" id="novKindUnk" hidden><input type="checkbox" data-kind="neurceno"> Typ neověřen</label>
+  </div>
   <div class="nov-ctl">
     <label class="nov-r">Poloměr <input type="range" id="novR" min="0.2" max="{SUPERSET_KM}" step="0.05">
       <b id="novRv"></b></label>
@@ -512,7 +646,7 @@ def card_html(records, baseline_at=None):
     (nebo když jsme rozšířili sběr), skutečné stáří neznáme — číslo je dolní mez. Zmizení neznamená prodej.</p>
   <div class="scroll" style="margin-top:8px;">
   <table id="tblNov">
-    <thead><tr><th>Dispozice</th><th>Transakce</th><th>Ulice</th><th>m²</th><th>Cena</th><th>Kč/m²</th>
+    <thead><tr><th>Dispozice</th><th>Typ</th><th>Transakce</th><th>Ulice</th><th>m²</th><th>Cena</th><th>Kč/m²</th>
       <th title="Vzdušná vzdálenost od {html.escape(CENTER_LABEL)}">km od {html.escape(CENTER_LABEL)}</th>
       <th>Na trhu</th><th>Stav</th><th></th></tr></thead>
     <tbody></tbody>
@@ -533,6 +667,15 @@ CSS = """
                 font-weight: 700; text-shadow: 0 0 3px #000; cursor: move; }
   tr.nov-out td { opacity: 0.45; }
   .nov-star { color: #fc6; }
+  .nov-k { display: inline-flex; gap: 4px; align-items: center; font-size: 0.8rem;
+           background: #11141b; border-radius: 12px; padding: 3px 10px; cursor: pointer; }
+  .nov-k input { margin: 0; padding: 0; }
+  .nov-kind { display: inline-block; font-size: 0.66rem; padding: 1px 6px; border-radius: 8px;
+              white-space: nowrap; }
+  .nov-kind.dokoncena { background: #1e4620; color: #8f8; }
+  .nov-kind.vystavba { background: #4a3c1c; color: #fc6; }
+  .nov-kind.starsi { background: #333; color: #aaa; }
+  .nov-kind.neurceno { background: #2b2b2b; color: #888; }
 """
 
 
@@ -572,6 +715,33 @@ def page_js(payload_json):
   function save() { try { localStorage.setItem(KEY, JSON.stringify(circ)); } catch (e) {} }
   let circ = load();
 
+  // Typy: výchozí jen dokončené (Radim: „hlavně už ty dokončené"). Neověřené
+  // (detail zatím nenačten) jsou vidět, dokud je nevypne -- nic se tiše neschová.
+  const KINDS_KEY = "novKinds:v1";
+  const KIND_DEF = { dokoncena: true, vystavba: false, starsi: false, neurceno: true };
+  const KIND_TXT = { dokoncena: "dokončená", vystavba: "výstavba", starsi: "starší", neurceno: "neověřeno" };
+  function loadKinds() {
+    try {
+      const s = JSON.parse(localStorage.getItem(KINDS_KEY) || "null");
+      if (s && typeof s === "object") {
+        const out = { ...KIND_DEF };
+        for (const k of Object.keys(KIND_DEF)) if (typeof s[k] === "boolean") out[k] = s[k];
+        return out;
+      }
+    } catch (e) {}
+    return { ...KIND_DEF };
+  }
+  let kinds = loadKinds();
+  const kindOf = r => (KIND_DEF.hasOwnProperty(r.kind) ? r.kind : "neurceno");
+  const kindOk = r => !!kinds[kindOf(r)];
+  const hasUnk = NOV.records.some(r => kindOf(r) === "neurceno");
+  function kindBadge(r) {
+    const k = kindOf(r);
+    const changed = r.kind_changed_at && r.kind_before && KIND_TXT[r.kind_before]
+      ? `<div class="hint">dřív ${KIND_TXT[r.kind_before]} (do ${fmtDay(r.kind_changed_at)})</div>` : "";
+    return `<span class="nov-kind ${k}">${KIND_TXT[k]}</span><div class="hint">${escapeHtml(r.kind_reason || "")}</div>${changed}`;
+  }
+
   const num = v => (typeof v === "number" && isFinite(v)) ? v : null;
   const kmTxt = v => num(v) == null ? "—" : v.toFixed(2).replace(".", ",");
   const safeUrl = u => (typeof u === "string" && /^https:\/\//.test(u)) ? u : "";
@@ -607,7 +777,7 @@ def page_js(payload_json):
 
   function renderStats() {
     const tx = txSel();
-    const recs = NOV.records.filter(inCircle);
+    const recs = NOV.records.filter(r => inCircle(r) && kindOk(r));
     const rows = [];
     for (const t of ["prodej", "pronajem"]) {
       if (tx && tx !== t) continue;
@@ -630,14 +800,16 @@ def page_js(payload_json):
           <td>${last.length ? last.map(v => fmtCzk(v) + u).join(", ") : "—"}</td></tr>`);
       }
     }
+    const on = Object.keys(KIND_DEF).filter(k => kinds[k] && (k !== "neurceno" || hasUnk)).map(k => KIND_TXT[k]);
     document.getElementById("novStats").innerHTML =
+      `<caption class="hint" style="text-align:left;caption-side:top;">Typy: ${on.join(", ") || "žádný"}</caption>` +
       `<thead><tr><th></th><th>Živé</th><th>Medián ceny</th><th>Medián Kč/m²</th><th>Zmizelo</th>` +
       `<th>Do zmizení (medián, rozsah)</th><th>Poslední ceny zmizelých</th></tr></thead><tbody>${rows.join("")}</tbody>`;
   }
 
   function stateTxt(r) {
     if (r.gone_at) return `<span class="deal-bad">zmizel ${fmtDay(r.gone_at)}</span>`;
-    if (r.left_filter_at) return `<span class="hint">už není novostavba 4+kk/5+kk (${fmtDay(r.left_filter_at)})</span>`;
+    if (r.left_filter_at) return `<span class="hint">už není 4+kk/5+kk (${fmtDay(r.left_filter_at)})</span>`;
     const miss = r.missing_from_search ? ` <span class="hint" title="Ve výsledcích hledání chybí, ale detail inzerátu žije">(mimo hledání)</span>` : "";
     return `<span class="deal-good">živý</span>${miss}`;
   }
@@ -648,7 +820,7 @@ def page_js(payload_json):
   }
   function renderTable() {
     const tx = txSel();
-    const recs = NOV.records.filter(r => (!tx || r.transaction_type === tx));
+    const recs = NOV.records.filter(r => (!tx || r.transaction_type === tx) && kindOk(r));
     recs.sort((a, b) => (live(b) - live(a)) || (inCircle(b) - inCircle(a)) ||
       String(a.transaction_type).localeCompare(String(b.transaction_type)) || ((a.km || 0) - (b.km || 0)));
     const rows = recs.map(r => {
@@ -660,6 +832,7 @@ def page_js(payload_json):
       const url = safeUrl(r.url);
       return `<tr class="${inside ? "" : "nov-out"}">
         <td>${escapeHtml(r.disposition || "")}</td>
+        <td>${kindBadge(r)}</td>
         <td>${TXL[r.transaction_type] || ""}</td>
         <td>${escapeHtml(r.street || r.city_part || "—")}${star}<div class="hint">${escapeHtml(r.city_part || "")}</div></td>
         <td>${numTxt(r.floor_area_sqm)}</td>
@@ -673,7 +846,7 @@ def page_js(payload_json):
     });
     const tb = document.querySelector("#tblNov tbody");
     tb.innerHTML = rows.length ? rows.join("")
-      : `<tr><td colspan="10" class="hint">Zatím žádná novostavba 4+kk / 5+kk v nabídce.</td></tr>`;
+      : `<tr><td colspan="11" class="hint">Pro zvolené typy tu zatím nic není.</td></tr>`;
   }
 
   let NM = null, circleL = null, centerM = null, markL = null;
@@ -686,7 +859,7 @@ def page_js(payload_json):
     markL.clearLayers();
     const tx = txSel();
     for (const r of NOV.records) {
-      if (tx && r.transaction_type !== tx) continue;
+      if ((tx && r.transaction_type !== tx) || !kindOk(r)) continue;
       const la = num(r.lat), lo = num(r.lon);
       if (la == null || lo == null) continue;
       const inside = inCircle(r), lv = live(r), c = color(r);
@@ -769,6 +942,16 @@ def page_js(payload_json):
     refresh(true);
   });
   document.getElementById("novTx").addEventListener("change", () => refresh(false));
+  document.getElementById("novKindUnk").hidden = !hasUnk;
+  for (const cb of document.querySelectorAll("#novKinds input[data-kind]")) {
+    const k = cb.getAttribute("data-kind");
+    cb.checked = !!kinds[k];
+    cb.addEventListener("change", () => {
+      kinds[k] = cb.checked;
+      try { localStorage.setItem(KINDS_KEY, JSON.stringify(kinds)); } catch (e) {}
+      refresh(false);
+    });
+  }
   // Karta může být při načtení sbalená: Leaflet v skrytém kontejneru má nulovou
   // velikost, takže se po rozbalení musí přeměřit a znovu vycentrovat.
   window.novOnShow = () => { if (NM) { NM.invalidateSize(); moveCircle(true); } };
