@@ -2,12 +2,14 @@
 """Novostavby 4+kk / 5+kk u U Kříže: parsování, nadmnožina, zmizení jen po
 404, baseline jako dolní mez, dny na trhu, tichá změna konfigurace, alert.
 
-Bez sítě: všechno HTTP je podvržené. Nic se nezapisuje na disk.
+Bez vnější sítě: HTTP je podvržené nebo běží na lokálním testovacím serveru.
 
 Run: python3 test_novostavby.py
 """
 import sys
+import tempfile
 import time
+from pathlib import Path
 
 import notify
 import novostavby as nov
@@ -149,6 +151,24 @@ check("zlevnění = událost price", [(e["kind"], e["old_price"], e["rec"]["pric
 check("historie ceny", len(next(x for x in recs6 if x["id"] == 100)["price_history"]), 2)
 check("baseline příznak se nese", next(x for x in recs6 if x["id"] == 100)["baseline"], True)
 
+# Cena na dotaz nesmí smazat poslední známou cenu pro příští alert.
+unknown = dict(a2, price_czk=None, price_czk_per_sqm=None)
+recs_unknown, ev_unknown = nov.merge(recs6, [unknown], "2026-09-14T00:00:00Z", baseline=False)
+check("na dotaz = bez cenového alertu", ev_unknown, [])
+back = dict(a2, price_czk=18_000_000)
+_, ev_back = nov.merge(recs_unknown, [back], "2026-09-15T00:00:00Z", baseline=False)
+check("návrat ceny porovná poslední známou", [(e["old_price"], e["rec"]["price_czk"]) for e in ev_back],
+      [(19_000_000, 18_000_000)])
+
+# Návrat po potvrzeném 404 je nová nabídka a nový úsek dní na trhu.
+returned, ev_returned = nov.merge(recs3, [a, b], "2026-09-21T00:00:00Z", baseline=False)
+rb_returned = next(x for x in returned if x["id"] == 101)
+check("návrat po 404 = alert", [e["kind"] for e in ev_returned], ["returned"])
+check("návrat = dny od opětovného výskytu", nov.days_on_market(rb_returned, "2026-09-25T00:00:00Z")["days"], 4)
+still_returned, _ = nov.merge(returned, [a, b], "2026-09-25T00:00:00Z", baseline=False)
+check("další běh zachová začátek obnovené nabídky",
+      nov.days_on_market(next(x for x in still_returned if x["id"] == 101), "2026-09-25T00:00:00Z")["days"], 4)
+
 # Detail žije, ale už to není novostavba -> left_filter, ne zmizení.
 recs7, ev7 = nov.merge(recs6, [a2], "2026-09-14T00:00:00Z", baseline=False, verify=lambda rec: "left_filter")
 rc7 = next(x for x in recs7 if x["id"] == 102)
@@ -218,6 +238,16 @@ check("…nové dostanou baseline", all(r["baseline"] for r in recs_c if r["id"]
 check("…a meta to zaznamená", (meta_c["baseline_run"], bool(meta_c["config_changed_at"])), (True, True))
 check("baseline_at se drží z prvního běhu", meta_c["baseline_at"], meta_a["baseline_at"])
 
+old_center = nov.CENTER
+try:
+    nov.CENTER = (50.0600, 14.3700)
+    (recentered, _, _), _ = run_fetch(snap, found)
+    check("změna středu přepočítá uložené km",
+          next(r for r in recentered if r["id"] == 300)["km"],
+          nov.km_from_center(found[0]["lat"], found[0]["lon"]))
+finally:
+    nov.CENTER = old_center
+
 # Přechod ze serverového filtru „novostavba" na třídění (27. 9.) je změna
 # konfigurace: otisk z doby filtru (condition 6, bez classifier) -> tichá baseline.
 filter_era = {k: v for k, v in nov.fingerprint().items() if k not in ("classifier", "new_from_year")}
@@ -258,6 +288,14 @@ check("další běh dočte jen zbylé 2", len(reads2), 2)
 (rd3, _e3, _m3), reads3 = run_fetch_detail({"novostavby": rd2, "novostavby_config": nov.fingerprint(),
                                             "novostavby_meta": md}, five, cap=60)
 check("ustálený stav: 0 detailů", len(reads3), 0)
+
+empty_snap = {"novostavby": [], "novostavby_config": nov.fingerprint(), "novostavby_meta": {}}
+(pending, first_events, _), _ = run_fetch_detail(empty_snap, five, cap=3)
+check("nové bez detailu zatím bez alertu", len(nov.alert_events(first_events)), 3)
+(completed, delayed_events, _), _ = run_fetch_detail(
+    {"novostavby": pending, "novostavby_config": nov.fingerprint(), "novostavby_meta": {}}, five, cap=60)
+check("odložené nové po dočtení alertují", sorted(e["rec"]["id"] for e in nov.alert_events(delayed_events)),
+      [803, 804])
 
 
 # --- statistika ------------------------------------------------------------- #
@@ -360,6 +398,21 @@ check("mimo alertový kruh se nehlásí", "/x/502" in text, False)
 check("Kč/m² a km v řádku", "200 000 Kč/m²" in text and "km" in text, True)
 check("nic k hlášení = None", nov.build_alert([], T2), None)
 check("jen mimo kruh = None", nov.build_alert([{"kind": "new", "rec": far_rec}], T2), None)
+check("návrat je srozumitelný v alertu",
+      "znovu v nabídce" in nov.build_alert([{"kind": "returned", "rec": ev_rec}], T2), True)
+
+with tempfile.TemporaryDirectory() as tmp:
+    pending_path = Path(tmp) / "alert.txt"
+    check("příprava vytvoří alert", nov.stage_alert([{"kind": "new", "rec": ev_rec}], T2, pending_path), True)
+    check("příprava neodesílá", pending_path.exists(), True)
+    check("odeslání připraveného alertu jen dry-run",
+          nov.send_staged_alert(pending_path, dry_run=True), "dry-run")
+    nov.stage_alert([], T2, pending_path)
+    check("tichý běh odstraní starý alert", pending_path.exists(), False)
+
+workflow = (Path(__file__).parent / ".github/workflows/scrape.yml").read_text()
+check("produkční odeslání následuje až po pushi",
+      workflow.index("run: python send_novostavby_alert.py") > workflow.index("git push"), True)
 
 # Dry-run neposílá a vrací "dry-run"; selhání kanálu neshodí běh.
 orig_send = notify.send_telegram

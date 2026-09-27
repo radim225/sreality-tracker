@@ -157,6 +157,7 @@ jobs:
           MAX_SOURCE_DETAIL_FETCHES: ${{ github.event.inputs.max_source_detail_fetches }}
           MAX_REENRICH: ${{ github.event.inputs.max_reenrich }}
           MAX_GARAGE_DETAIL_FETCHES: ${{ github.event.inputs.max_garage_detail_fetches }}
+          NOVOSTAVBY_ALERT_PATH: ${{ runner.temp }}/novostavby-alert.txt
         run: python scrape.py
 
       - name: Mirror dashboard as Pages index
@@ -202,3 +203,12 @@ jobs:
               git pull --rebase -X theirs origin main
             done
           fi
+
+      - name: Send novostavby alert after push
+        env:
+          NOVOSTAVBY_ALERT_PATH: ${{ runner.temp }}/novostavby-alert.txt
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          NTFY_TOKEN: ${{ secrets.NTFY_TOKEN }}
+        run: python send_novostavby_alert.py
