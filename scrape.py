@@ -2145,8 +2145,11 @@ NEW_IN_DESC_RE = re.compile(r"novostavb", re.I)
 def enrich_novostavba(rec):
     """Přečte detail: stav objektu, rok kolaudace (`acceptanceYear`) a
     rekonstrukce (`reconstructionYear`), `since`, užitnou plochu, přesnost
-    adresy, zmínky o Waltrovce / novostavbě. Popis se NEUKLÁDÁ (kontakty
-    makléřů) -- jen se z něj přečtou dva příznaky.
+    adresy, zmínky o Waltrovce / novostavbě. Od 27. 9. (DETAIL_VERSION 3) i
+    popis, fotky, prodejce a patro -- pro detail inzerátu na stránce, stejně
+    jako u bytů. Popis a prodejce se ukládají už BEZ kontaktů makléřů
+    (gone_archive.strip_*): stránka i snapshot jsou veřejné, a scrub_contacts
+    v main() je až druhá pojistka.
     Vrací "ok", "mismatch" (detail dispozici nepotvrdil) nebo "skip"."""
     data, _status = _novostavba_detail(rec)
     if not data:
@@ -2165,6 +2168,16 @@ def enrich_novostavba(rec):
             if rec.get("price_czk") and not rec.get("price_czk_per_sqm"):
                 rec["price_czk_per_sqm"] = round(rec["price_czk"] / area)
     desc = normalize_text(data.get("description") or "")
+    raw_desc = (data.get("description") or "")[:MAX_DESCRIPTION_CHARS]
+    rec["description"] = gone_archive.strip_contacts(raw_desc) if raw_desc else None
+    seller = (data.get("seller") or {}).get("name") or (data.get("premise") or {}).get("name")
+    rec["seller_name"] = gone_archive.strip_seller(seller) if seller else None
+    images = extract_images(data.get("images"))
+    rec["images"] = images or None
+    if images:
+        rec["thumb"] = extract_thumb(data.get("images")) or rec.get("thumb")
+    rec["floor_number"] = params.get("floorNumber")
+    rec["floors_total"] = params.get("floors")
     rec["mentions_waltrovka"] = "waltrovk" in desc.lower()
     rec["desc_mentions_new"] = bool(NEW_IN_DESC_RE.search(desc))
     rec["address_exact"] = locality_precision(data.get("locality"))["address_exact"]
@@ -4227,7 +4240,8 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
 
     fee_queue_card_html = fee_queue_card(build_fee_review_queue(comparables))
     overrides = load_overrides()
-    overrides_card_html = overrides_card(overrides, list(comparables) + list(tracked_list))
+    overrides_card_html = overrides_card(overrides, list(comparables) + list(tracked_list)
+                                         + list(snapshot.get("novostavby") or []))
     # Ribbon: výběr sekcí + žhavé nabídky. Počítá se z `generated_at`, ne
     # z hodin, aby stejná data dala vždy stejný výběr.
     hot_json = script_json(ribbon.hot_offers(
@@ -4255,7 +4269,8 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
     nov_card_html = novostavby.card_html(
         nov_records, (snapshot.get("novostavby_meta") or {}).get("baseline_at"))
     nov_json = script_json(
-        novostavby.page_payload(nov_records, snapshot["generated_at"]) if nov_records is not None else None)
+        novostavby.page_payload(nov_records, snapshot["generated_at"], overrides)
+        if nov_records is not None else None)
     nov_css = novostavby.CSS
     area_labels_json = script_json({k: a["label"] for k, a in AREAS.items()})
     areas_line = html.escape(" | ".join(f"{a['radius_km']} km: {a['landmarks']}" for a in AREAS.values()))
@@ -4314,8 +4329,15 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
   .est-basis {{ font-size: 0.66rem; color: #777; margin-top: 8px; }}
   .est-scroll {{ overflow-x: auto; }}
   .est-table {{ width: 100%; border-collapse: collapse; font-size: 0.75rem; margin-top: 8px; }}
+  /* position: static -- the global `th` below is sticky at top = header +
+     ribbon (~115 px). An .est-table sits in .est-scroll (overflow-x: auto),
+     which is a scrollport on BOTH axes, so that offset was measured against
+     the small box and pushed the header row ~115 px down over its own data
+     rows (novostavby stats and the rent-estimate attribute table, 27. 9.).
+     These tables are a few rows long; nothing here needs to stick. */
   .est-table th {{ text-align: left; color: #9aa; font-weight: 500; font-size: 0.68rem;
-                   border-bottom: 1px solid #2a2f3a; padding: 4px 8px 4px 0; white-space: nowrap; }}
+                   border-bottom: 1px solid #2a2f3a; padding: 4px 8px 4px 0; white-space: nowrap;
+                   position: static; }}
   .est-table td {{ padding: 4px 8px 4px 0; border-bottom: 1px solid #20242f; white-space: nowrap; }}
   .own-head {{ display: flex; gap: 14px; align-items: baseline; flex-wrap: wrap; }}
   .own-big {{ font-size: 1.7rem; font-weight: 700; color: #fc6; line-height: 1.1; }}
@@ -6496,7 +6518,8 @@ def main():
         snapshot["novostavby"] = nov_records
         snapshot["novostavby_config"] = novostavby.fingerprint()
         snapshot["novostavby_meta"] = nov_meta
-        snapshot["novostavby_stats"] = novostavby.compute_stats(nov_records, snapshot["generated_at"])
+        snapshot["novostavby_stats"] = novostavby.compute_stats(
+            novostavby.with_overrides(nov_records, load_overrides()), snapshot["generated_at"])
     except Exception as exc:  # noqa: BLE001 -- deliberate: never fail the run
         print(f"::warning::novostavby sweep failed: {exc}", file=sys.stderr)
         nov_events = []

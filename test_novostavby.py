@@ -405,6 +405,101 @@ js = nov.page_js(scrape.script_json(pp))
 check("JS: payload vložen, žádný placeholder", "__NOV_JSON__" in js, False)
 check("script_json nenechá '<' v datech", "<b>" in scrape.script_json(pp), False)
 
+# --- dny na trhu podle data Sreality (27. 9.) -------------------------------- #
+# Baseline z 27. 9. psala u všech „≥ 0 d". Když detail uvádí `since`, počítá se
+# od něj (a není to dolní mez); ≥ jen tam, kde datum Sreality chybí.
+BL = "2026-09-27T14:26:01Z"
+bl_since = {"first_seen": BL, "baseline": True, "since": "2026-04-27"}
+d = nov.days_on_market(bl_since, "2026-09-28T00:00:00Z")
+check("since dřív než baseline: dny od since, ne dolní mez", (d["days"], d["lower_bound"], d["source"]),
+      (154, False, "sreality"))
+d = nov.days_on_market({"first_seen": BL, "baseline": True}, "2026-09-28T00:00:00Z")
+check("bez since: baseline = dolní mez", (d["days"], d["lower_bound"], d["source"]), (0, True, "baseline"))
+d = nov.days_on_market({"first_seen": BL, "baseline": True, "since": "2026-02-30"}, "2026-09-28T00:00:00Z")
+check("nesmyslné since se ignoruje", (d["lower_bound"], d["source"]), (True, "baseline"))
+d = nov.days_on_market({"first_seen": BL, "baseline": True, "since": "<img>"}, "2026-09-28T00:00:00Z")
+check("ne-datum since se ignoruje", d["source"], "baseline")
+# since POZDĚJI než náš první výskyt (inzerát smazán a vložen znovu, Sreality
+# datum vynulovala): platí dřívější důkaz, tedy náš first_seen.
+d = nov.days_on_market({"first_seen": "2026-09-01T00:00:00Z", "baseline": False, "since": "2026-09-20",
+                        "gone_at": "2026-09-21T00:00:00Z"}, "2026-09-28T00:00:00Z")
+check("since po first_seen: počítá se od first_seen", (d["days"], d["source"], d["lower_bound"]), (20, "ours", False))
+S2 = [dict(S[2], kind="dokoncena", since="2026-08-22"),        # zmizel T2, baseline, since známé
+      dict(S[0], id=11, kind="dokoncena", exclude_from_stats=True)]
+st2 = nov.compute_stats(S2, T2)["prodej_4+kk"]
+check("statistika: do zmizení od since, bez ≥", (st2["median_days_to_gone"], st2["days_lower_bound"]), (20, False))
+check("statistika: „mimo statistiku“ se nepočítá", st2["live_n"], 0)
+gone_since = dict(gone_rec, since="2026-08-22")
+t3 = nov.build_alert([{"kind": "gone", "rec": gone_since}], T2)
+check("alert: dny podle Sreality", "na trhu 20 d (podle Sreality)" in t3, True)
+
+# --- detail inzerátu: popis, fotky, prodejce (27. 9.) ----------------------- #
+orig_detail = scrape._novostavba_detail
+try:
+    scrape._novostavba_detail = lambda rec: ({
+        "params": {"buildingCondition": {"name": "Novostavba", "value": 6}, "acceptanceYear": 2024,
+                   "since": "2026-04-27", "floorNumber": 3, "floors": 6},
+        "categorySubCb": {"value": 8},
+        "description": "Krásný byt u Waltrovky. Volejte 724 223 828 nebo pis@makler.cz.",
+        "seller": {"name": "Makléř s.r.o. info@makler.cz"},
+        "images": [{"url": "//d18-a.sdn.cz/d_18/c_img_A/abc.jpeg"}],
+    }, 200)
+    er = dict(scrape.parse_novostavba(result(900), "prodej"))
+    check("enrich: verdikt", scrape.enrich_novostavba(er), "ok")
+    check("enrich: popis uložen bez kontaktů",
+          ("724 223 828" in er["description"], "pis@makler.cz" in er["description"], "Waltrovky" in er["description"]),
+          (False, False, True))
+    check("enrich: prodejce bez e-mailu", er["seller_name"], "Makléř s.r.o.")
+    check("enrich: fotky, patro, verze", (len(er["images"]) >= 1, er["images"][0].startswith("https://"),
+                                          er["floor_number"], er["floors_total"], er["detail_version"]),
+          (True, True, 3, 6, nov.DETAIL_VERSION))
+finally:
+    scrape._novostavba_detail = orig_detail
+
+# Nová pole se k uloženým záznamům dostanou přes DETAIL_VERSION v rámci
+# běžného stropu -- bez baseline, bez alertů.
+old_v = [dict(r, detail_version=2) for r in rd3]
+(rv, ev_v, mv), reads_v = run_fetch_detail({"novostavby": old_v, "novostavby_config": nov.fingerprint(),
+                                            "novostavby_meta": md}, five, cap=3)
+check("verze 2 → přečíst znovu, strop drží", (len(reads_v), mv["detail_deferred"]), (3, 2))
+check("…žádné události ani baseline", (ev_v, mv["baseline_run"]), ([], False))
+check("…odložené si nesou starý typ", sorted(r["kind"] for r in rv), ["dokoncena"] * 5)
+(rv2, _e, _m), reads_v2 = run_fetch_detail({"novostavby": rv, "novostavby_config": nov.fingerprint(),
+                                            "novostavby_meta": md}, five, cap=60)
+check("…další běh dočte zbylé 2", len(reads_v2), 2)
+check("pole detailu se nesou dál (merge)", all(k in nov.DETAIL_FIELDS for k in
+      ("description", "images", "seller_name", "floor_number")), True)
+m_d1, _ = nov.merge(None, [dict(er, detail_read_at=T0)], T0, baseline=True)
+m_d2, _ = nov.merge(m_d1, [dict(scrape.parse_novostavba(result(900), "prodej"))], T1, baseline=False)
+check("popis a fotky přežijí běh bez detailu", (bool(m_d2[0].get("description")), bool(m_d2[0].get("images"))),
+      (True, True))
+
+# --- stránka: detail, opravy, since ----------------------------------------- #
+pr = dict(ev_rec, id=950, description="Tel. 724 223 828", seller_name="X y@z.cz",
+          images=["https://d18-a.sdn.cz/a.jpeg", "javascript:alert(1)"], since="2026-04-27",
+          baseline=True, first_seen=BL)
+before = dict(pr)
+pp3 = nov.page_payload([pr], "2026-09-28T00:00:00Z",
+                       {"950": {"id": "950", "floor_area_sqm": 125.0, "exclude_from_stats": True, "note": "ověřeno"}})
+p0 = pp3["records"][0]
+check("payload: popis bez telefonu, prodejce bez e-mailu",
+      ("724" in p0["description"], p0["seller_name"]), (False, "X"))
+check("payload: jen https fotky", p0["images"], ["https://d18-a.sdn.cz/a.jpeg"])
+check("payload: začátek podle Sreality", (p0["market_start"], p0["market_source"], p0["days_lower_bound"]),
+      ("2026-04-27T00:00:00Z", "sreality", False))
+check("payload: oprava plochy → Kč/m² přepočtené",
+      (p0["floor_area_sqm"], p0["price_czk_per_sqm"], p0["floor_area_source"]), (125.0, 160_000, "override"))
+check("payload: mimo statistiku + poznámka", (p0["exclude_from_stats"], p0["override_note"]), (True, "ověřeno"))
+check("oprava nemění uložený záznam", pr, before)
+check("bez oprav payload beze změny plochy", nov.page_payload([pr], T2)["records"][0]["floor_area_sqm"],
+      pr["floor_area_sqm"])
+card2 = nov.card_html([], None)
+check("karta: poznámka o datu Sreality a vynulování", "podle Sreality" in card2 and "vynuluje" in card2, True)
+js2 = nov.page_js(scrape.script_json(pp3))
+check("JS: klik na řádek přes data-nid, ne inline id", ('data-nid="${escapeHtml(String(r.id))}"' in js2,
+                                                        "onclick=\"openNov" in js2), (True, False))
+
+
 # --- celkový limit na request (fetch_next_data) ----------------------------- #
 # Lokální server na 127.0.0.1: jedna cesta odpoví hned, druhá posílá tělo po
 # kouscích -- každý kousek pod read timeoutem, dohromady přes limit. Přesně

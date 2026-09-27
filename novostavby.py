@@ -32,6 +32,8 @@ import sys
 import unicodedata
 from datetime import datetime
 
+import gone_archive
+
 # --- Kde --------------------------------------------------------------------- #
 # Geokódováno 27. 9. 2026 přes Nominatim (OSM), včetně geometrie ulic, aby šlo
 # říct, jak daleko je NEJVZDÁLENĚJŠÍ bod každého místa, ne jen jeho střed.
@@ -257,18 +259,57 @@ def is_live(rec):
     return not rec.get("gone_at") and not rec.get("left_filter_at")
 
 
-def days_on_market(rec, now):
-    """{"days", "lower_bound", "live"}.
+_DAY_RE = re.compile(r"^(\d{4})-(\d{2})-(\d{2})")
 
-    first_seen → gone_at u zmizelého, first_seen → teď u živého. U záznamu
-    z baseline (byl v nabídce už při prvním běhu) nevíme, kdy se objevil, a
-    číslo je jen dolní mez -- stránka ho píše jako „≥ N dní"."""
+
+def since_iso(rec):
+    """`since` (datum vložení podle Sreality, „2026-04-27") jako ISO půlnoc
+    UTC, nebo None. Nic jiného než tvar YYYY-MM-DD se nebere -- je to
+    scrapovaný řetězec."""
+    m = _DAY_RE.match(str(rec.get("since") or ""))
+    if not m:
+        return None
+    try:
+        datetime(int(m.group(1)), int(m.group(2)), int(m.group(3)))
+    except ValueError:
+        return None
+    return f"{m.group(1)}-{m.group(2)}-{m.group(3)}T00:00:00Z"
+
+
+def market_start(rec):
+    """(start, source) -- odkdy se počítají dny na trhu.
+
+    Radim (27. 9.): „≥ 0 d" u všech řádků po baseline nic neříká. Sreality
+    v detailu uvádí vlastní datum vložení (`since`); je to nejlepší, co máme,
+    i když se může vynulovat, když makléř inzerát smaže a vloží znovu (pak je
+    číslo spíš podhodnocené). Bere se DŘÍVĚJŠÍ z `since` a našeho prvního
+    výskytu -- oba jsou důkaz, že inzerát v tu chvíli žil.
+      "sreality"  start je `since`
+      "ours"      start je náš first_seen a inzerát jsme viděli přibýt
+      "baseline"  start je first_seen z baseline -- skutečné stáří neznáme,
+                  číslo je jen dolní mez („≥")"""
+    first = rec.get("first_seen")
+    since = since_iso(rec)
+    t_first, t_since = parse_iso(first), parse_iso(since)
+    if t_since is not None and (t_first is None or t_since <= t_first):
+        return since, "sreality"
+    return first, ("baseline" if rec.get("baseline") else "ours")
+
+
+def days_on_market(rec, now):
+    """{"days", "lower_bound", "live", "source"}.
+
+    Od market_start() do gone_at u zmizelého, do teď u živého. Dolní mez
+    (`lower_bound`, stránka píše „≥ N d") jen tehdy, když start je baseline
+    a Sreality datum neuvádí."""
     live = is_live(rec)
     end = rec.get("gone_at") if rec.get("gone_at") else now
+    start, source = market_start(rec)
     return {
-        "days": days_between(rec.get("first_seen"), end),
-        "lower_bound": bool(rec.get("baseline")),
+        "days": days_between(start, end),
+        "lower_bound": source == "baseline",
         "live": live,
+        "source": source,
     }
 
 
@@ -277,9 +318,15 @@ def days_on_market(rec, now):
 # (scrape.py ho čte u nového inzerátu a pak jednou za DETAIL_TTL_DAYS).
 DETAIL_FIELDS = ("since", "detail_area_sqm", "mentions_waltrovka", "address_exact",
                  "building_condition", "acceptance_year", "reconstruction_year",
-                 "desc_mentions_new", "detail_read", "detail_read_at", "detail_version")
+                 "desc_mentions_new", "detail_read", "detail_read_at", "detail_version",
+                 "description", "images", "seller_name", "floor_number", "floors_total")
 # 2 = rok kolaudace/rekonstrukce a zmínka „novostavba" v popisu (27. 9.).
-DETAIL_VERSION = 2
+# 3 = popis, fotky, prodejce a patro pro detail inzerátu na stránce (27. 9.).
+#     Záznamy z verze 2 se tím jednou přečtou znovu -- v rámci běžného stropu
+#     MAX_NOVOSTAVBY_DETAIL_FETCHES (60; dnes 39 záznamů, tedy jeden běh).
+#     Otisk konfigurace se nemění, takže žádná baseline ani alerty: opětovné
+#     čtení detailu mění nanejvýš typ, a ten se jen zaznamená.
+DETAIL_VERSION = 3
 # Stav stavby se mění (výstavba -> hotovo, prodejce opraví rok), takže živý
 # inzerát se jednou za týden přečte znovu. ~40 inzerátů / 42 běhů týdně = ~1
 # detail za běh.
@@ -439,7 +486,7 @@ def compute_stats(records, now, center=CENTER, radius_km=DEFAULT_RADIUS_KM, kind
     testy. `kinds=None` = všechny."""
     out = {}
     recs = [r for r in records if not r.get("out_of_scope") and in_circle(r, center, radius_km)
-            and (kinds is None or r.get("kind") in kinds)]
+            and (kinds is None or r.get("kind") in kinds) and not r.get("exclude_from_stats")]
     for tx in TRANSACTIONS:
         for disp in DISPOSITIONS.values():
             group = [r for r in recs if r.get("transaction_type") == tx and r.get("disposition") == disp]
@@ -447,8 +494,8 @@ def compute_stats(records, now, center=CENTER, radius_km=DEFAULT_RADIUS_KM, kind
             gone = [r for r in group if r.get("gone_at")]
             prices = sorted(r["price_czk"] for r in live if r.get("price_czk"))
             per_sqm = sorted(r["price_czk_per_sqm"] for r in live if r.get("price_czk_per_sqm"))
-            gone_days = [days_on_market(r, now)["days"] for r in gone]
-            gone_days = [d for d in gone_days if d is not None]
+            gone_dom = [days_on_market(r, now) for r in gone]
+            gone_days = [d["days"] for d in gone_dom if d["days"] is not None]
             out[f"{tx}_{disp}"] = {
                 "live_n": len(live),
                 "median_price_czk": round(statistics.median(prices)) if prices else None,
@@ -457,8 +504,9 @@ def compute_stats(records, now, center=CENTER, radius_km=DEFAULT_RADIUS_KM, kind
                 "median_days_to_gone": round(statistics.median(gone_days)) if gone_days else None,
                 "min_days_to_gone": min(gone_days) if gone_days else None,
                 "max_days_to_gone": max(gone_days) if gone_days else None,
-                # Kterýkoli zmizelý z baseline dělá z mediánu dolní mez.
-                "days_lower_bound": any(r.get("baseline") for r in gone),
+                # Kterýkoli zmizelý bez známého začátku (baseline bez data
+                # Sreality) dělá z mediánu dolní mez.
+                "days_lower_bound": any(d["lower_bound"] for d in gone_dom),
                 "gone_last_prices_czk": [r.get("price_czk") for r in
                                          sorted(gone, key=lambda r: r.get("gone_at") or "", reverse=True)
                                          if r.get("price_czk")][:5],
@@ -504,8 +552,8 @@ def build_alert(events, now, dashboard_url=None):
     """Jedna seskupená zpráva (Telegram HTML), nebo None, když není co hlásit.
 
     Každý scrapovaný řetězec projde html.escape -- Telegram HTML je markup a
-    ulice s „<" by zprávu rozbila (nebo hůř). Kontakty tu nejsou: záznam nemá
-    popis ani prodejce, jen ulici, cenu a odkaz."""
+    ulice s „<" by zprávu rozbila (nebo hůř). Kontakty tu nejsou: zpráva popis ani
+    prodejce nepoužívá, jen ulici, cenu a odkaz."""
     events = alert_events(events)
     if not events:
         return None
@@ -537,7 +585,8 @@ def build_alert(events, now, dashboard_url=None):
         if e["kind"] == "gone":
             dom = days_on_market(r, now)
             if dom["days"] is not None:
-                parts.append(f"na trhu {'≥ ' if dom['lower_bound'] else ''}{dom['days']} d")
+                src = " (podle Sreality)" if dom["source"] == "sreality" else ""
+                parts.append(f"na trhu {'≥ ' if dom['lower_bound'] else ''}{dom['days']} d{src}")
         url = _safe_url(r.get("url"))
         line = " · ".join(parts)
         if url:
@@ -564,19 +613,56 @@ def send_alert(events, now, *, dry_run=False, dashboard_url=None):
         return None
 
 
-# --- Stránka ----------------------------------------------------------------- #
+# --- Stránka ---------------------------------------------------------------- #
 PAGE_FIELDS = (
     "id", "title", "disposition", "transaction_type", "price_czk", "price_old_czk",
     "price_czk_per_sqm", "floor_area_sqm", "street", "city_part", "locality", "lat", "lon",
     "km", "url", "thumb", "first_seen", "last_seen", "gone_at", "baseline", "price_history",
     "since", "named_place", "missing_from_search", "left_filter_at", "returned_at",
     "kind", "kind_reason", "year_unknown", "kind_changed_at", "kind_before",
+    # Detail inzerátu (modal): stejné pole jako u bytů, aby šly sdílet
+    # pomocné funkce stránky (addressHtml, priceHistoryHtml, formulář oprav).
+    "description", "images", "seller_name", "floor_number", "floors_total", "address_exact",
+    "acceptance_year", "reconstruction_year", "building_condition",
+    "override", "override_note", "exclude_from_stats", "floor_area_source",
 )
+MAX_PAGE_IMAGES = 5
 
 
-def page_payload(records, generated_at):
-    recs = []
+def with_overrides(records, overrides):
+    """Kopie záznamů s ručními opravami z overrides.json (stejný soubor a
+    stejný formulář jako u bytů). Uložené záznamy se NEMĚNÍ -- oprava se
+    uplatní jen na pohled (stránka, statistika), takže smazaná oprava zmizí
+    hned příštím renderem a nic po ní v kolekci nezůstane.
+
+    Z opravy se tu uplatní plocha (a z ní Kč/m²), „mimo statistiku" a
+    poznámka. Poplatky se u novostaveb nikde nepočítají -- formulář je na
+    stránce skrývá."""
+    overrides = overrides or {}
+    out = []
     for r in records or []:
+        ov = overrides.get(str(r.get("id")))
+        if not ov:
+            out.append(r)
+            continue
+        r = dict(r)
+        r["override"] = ov
+        if ov.get("note"):
+            r["override_note"] = ov["note"]
+        area = ov.get("floor_area_sqm")
+        if isinstance(area, (int, float)) and not isinstance(area, bool) and area > 0:
+            r["floor_area_sqm"] = float(area)
+            r["floor_area_source"] = "override"
+            r["price_czk_per_sqm"] = round(r["price_czk"] / area) if r.get("price_czk") else None
+        if ov.get("exclude_from_stats"):
+            r["exclude_from_stats"] = True
+        out.append(r)
+    return out
+
+
+def page_payload(records, generated_at, overrides=None):
+    recs = []
+    for r in with_overrides(records, overrides):
         if r.get("out_of_scope"):
             continue
         rec = {k: r[k] for k in PAGE_FIELDS if r.get(k) is not None}
@@ -586,6 +672,20 @@ def page_payload(records, generated_at):
         # escapování -- na stránku jen tvar YYYY-MM-DD.
         if not re.match(r"^\d{4}-\d{2}-\d{2}", str(rec.get("since") or "")):
             rec.pop("since", None)
+        # Stránka je veřejná: kontakty makléřů ven i tady, ne jen při zápisu
+        # snapshotu (re-render starého snapshotu je nesmí znovu zveřejnit).
+        if rec.get("description"):
+            rec["description"] = gone_archive.strip_contacts(str(rec["description"]))
+        if rec.get("seller_name"):
+            rec["seller_name"] = gone_archive.strip_seller(str(rec["seller_name"]))
+        imgs = [u for u in (rec.get("images") or []) if _safe_url(u)][:MAX_PAGE_IMAGES]
+        if imgs:
+            rec["images"] = imgs
+        else:
+            rec.pop("images", None)
+        dom = days_on_market(r, generated_at)
+        rec["market_start"], rec["market_source"] = market_start(r)
+        rec["days_lower_bound"] = dom["lower_bound"]
         recs.append(rec)
     return {
         "records": recs,
@@ -641,11 +741,15 @@ def card_html(records, baseline_at=None):
   <div class="hint">🟠 prodej · 🔵 pronájem · ⚪ zmizelo · ✚ střed kruhu · 🟣 Radimova místa ·
     bledé = mimo kruh.</div>
   <div class="est-scroll" style="margin-top:10px;"><table class="est-table" id="novStats"></table></div>
-  <p class="hint">„Do zmizení" = od prvního výskytu do ověřeného zmizení (detail na Sreality vrací 404;
-    kontrola každé ~4 h). <b>≥</b> = inzerát byl v nabídce už při prvním běhu sledování{since}
-    (nebo když jsme rozšířili sběr), skutečné stáří neznáme — číslo je dolní mez. Zmizení neznamená prodej.</p>
+  <p class="hint">„Na trhu" a „Do zmizení" se počítají od <b>data vložení podle Sreality</b> („na Sreality od …"),
+    když ho detail uvádí a je dřívější než náš první výskyt; jinak od prvního výskytu u nás. Konec je ověřené
+    zmizení (detail na Sreality vrací 404; kontrola každé ~4 h). Pozor: Sreality datum vynuluje, když makléř
+    inzerát smaže a vloží znovu — číslo pak může být podhodnocené. <b>≥</b> = datum Sreality chybí a inzerát byl
+    v nabídce už při prvním běhu sledování{since} (nebo když jsme rozšířili sběr), skutečné stáří neznáme —
+    číslo je dolní mez. Zmizení neznamená prodej. Klik na řádek (nebo „Detail" v mapě) otevře fotky, popis
+    a historii ceny.</p>
   <div class="scroll" style="margin-top:8px;">
-  <table id="tblNov">
+  <table id="tblNov" class="nov-list">
     <thead><tr><th>Dispozice</th><th>Typ</th><th>Transakce</th><th>Ulice</th><th>m²</th><th>Cena</th><th>Kč/m²</th>
       <th title="Vzdušná vzdálenost od {html.escape(CENTER_LABEL)}">km od {html.escape(CENTER_LABEL)}</th>
       <th>Na trhu</th><th>Stav</th><th></th></tr></thead>
@@ -657,6 +761,9 @@ def card_html(records, baseline_at=None):
 
 
 CSS = """
+  /* Hlavička statistiky se nelepí (viz .est-table th ve scrape.py) a netřídí. */
+  #novStats th { cursor: default; }
+  #tblNov tbody tr.clickable-row td { vertical-align: top; }
   .nov-ctl { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 0 0 8px; }
   .nov-ctl .nov-r { display: flex; gap: 6px; align-items: center; font-size: 0.8rem; flex: 1 1 220px; }
   .nov-ctl .nov-r input { flex: 1; min-width: 100px; padding: 0; }
@@ -755,9 +862,25 @@ def page_js(payload_json):
     const s = [...a].sort((x, y) => x - y), m = s.length >> 1;
     return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
   }
+  // Začátek počítá server (novostavby.market_start): dřívější z data
+  // vložení podle Sreality a našeho prvního výskytu. "baseline" = datum
+  // Sreality chybí a inzerát byl v nabídce už při prvním běhu -> dolní mez.
   function dom(r) {
-    const d = daysBetween(r.first_seen, r.gone_at || null);
-    return { d, lb: !!r.baseline };
+    const src = r.market_source || (r.baseline ? "baseline" : "ours");
+    const d = daysBetween(r.market_start || r.first_seen, r.gone_at || null);
+    return { d, lb: src === "baseline", src };
+  }
+  function domTxt(r) {
+    const x = dom(r);
+    if (x.d == null) return "—";
+    return `${x.lb ? "≥ " : ""}${x.d} d`;
+  }
+  function domHint(r) {
+    const x = dom(r);
+    if (x.src === "sreality") return `podle Sreality (od ${fmtDay(r.since)})`;
+    const since = r.since ? `; na Sreality od ${fmtDay(r.since)}` : "";
+    if (x.src === "baseline") return `od prvního běhu sledování — dolní mez${since}`;
+    return `od prvního výskytu u nás (${fmtDay(r.first_seen)})${since}`;
   }
   function txSel() { return document.getElementById("novTx").value; }
   function unit(r) { return r.transaction_type === "pronajem" ? "/měs" : ""; }
@@ -777,7 +900,8 @@ def page_js(payload_json):
 
   function renderStats() {
     const tx = txSel();
-    const recs = NOV.records.filter(r => inCircle(r) && kindOk(r));
+    // Ručně vyřazené („mimo statistiku") zůstanou v tabulce, ne v číslech.
+    const recs = NOV.records.filter(r => inCircle(r) && kindOk(r) && !r.exclude_from_stats);
     const rows = [];
     for (const t of ["prodej", "pronajem"]) {
       if (tx && tx !== t) continue;
@@ -787,7 +911,7 @@ def page_js(payload_json):
         const pr = lv.map(r => num(r.price_czk)).filter(v => v);
         const psm = lv.map(r => num(r.price_czk_per_sqm)).filter(v => v);
         const gd = gone.map(r => dom(r).d).filter(v => v != null);
-        const lb = gone.some(r => r.baseline) ? "≥ " : "";
+        const lb = gone.some(r => dom(r).lb) ? "≥ " : "";
         const md = median(gd);
         const last = [...gone].sort((a, b) => String(b.gone_at).localeCompare(String(a.gone_at)))
           .map(r => num(r.price_czk)).filter(v => v).slice(0, 4);
@@ -824,30 +948,96 @@ def page_js(payload_json):
     recs.sort((a, b) => (live(b) - live(a)) || (inCircle(b) - inCircle(a)) ||
       String(a.transaction_type).localeCompare(String(b.transaction_type)) || ((a.km || 0) - (b.km || 0)));
     const rows = recs.map(r => {
-      const d = dom(r);
       const inside = inCircle(r);
-      const days = d.d == null ? "—" : `${d.lb ? "≥ " : ""}${d.d} d`;
-      const since = r.since ? `<div class="hint">na Sreality od ${fmtDay(r.since)}</div>` : "";
       const star = r.named_place ? ` <span class="nov-star" title="${escapeHtml(r.named_place)}">⭐</span>` : "";
       const url = safeUrl(r.url);
-      return `<tr class="${inside ? "" : "nov-out"}">
-        <td>${escapeHtml(r.disposition || "")}</td>
+      // Id jen jako data-atribut (escapeHtml), klik obslouží jeden posluchač
+      // na dokumentu -- žádné id v inline JS.
+      return `<tr class="clickable-row${inside ? "" : " nov-out"}" data-nid="${escapeHtml(String(r.id))}">
+        <td>${escapeHtml(r.disposition || "")}${overrideBadges(r)}</td>
         <td>${kindBadge(r)}</td>
         <td>${TXL[r.transaction_type] || ""}</td>
         <td>${escapeHtml(r.street || r.city_part || "—")}${star}<div class="hint">${escapeHtml(r.city_part || "")}</div></td>
-        <td>${numTxt(r.floor_area_sqm)}</td>
+        <td>${fmtArea(r)}</td>
         <td>${priceTxt(r)}</td>
         <td>${num(r.price_czk_per_sqm) ? fmtCzk(r.price_czk_per_sqm) : "—"}</td>
         <td>${kmTxt(r.km)}${inside ? "" : ' <span class="hint">mimo kruh</span>'}</td>
-        <td>${days}${since}</td>
+        <td>${domTxt(r)}<div class="hint">${domHint(r)}</div></td>
         <td>${stateTxt(r)}</td>
-        <td>${url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">↗</a>` : ""}</td>
+        <td>${url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" data-stop title="Otevřít na Sreality">↗</a>` : ""}</td>
       </tr>`;
     });
     const tb = document.querySelector("#tblNov tbody");
     tb.innerHTML = rows.length ? rows.join("")
       : `<tr><td colspan="11" class="hint">Pro zvolené typy tu zatím nic není.</td></tr>`;
   }
+
+  // ---- Detail inzerátu: stejný modal jako u bytů (galerie, historie ceny,
+  // parametry, popis, odkaz, ruční oprava) ----
+  const BY_ID = new Map(NOV.records.map(r => [String(r.id), r]));
+  function novModalHtml(r) {
+    const imgs = (r.images && r.images.length) ? r.images : (r.thumb ? [r.thumb] : []);
+    const gallery = imgs.length
+      ? imgs.map(u => `<img src="${escapeHtml(safeImg(u))}" loading="lazy" onerror="this.remove()">`).join("")
+      : `<img src="${PLACEHOLDER}">`;
+    const x = dom(r);
+    const goneHtml = r.gone_at ? `<div class="modal-note">❌ Už není v nabídce — zmizel ${fmtDay(r.gone_at)}
+        po ${x.lb ? "≥ " : ""}${x.d ?? "?"} dnech. Fotky a popis jsou z doby, kdy inzerát žil.</div>` : "";
+    const leftHtml = r.left_filter_at ? `<div class="modal-note">Inzerát žije, ale od ${fmtDay(r.left_filter_at)}
+        už není 4+kk/5+kk — ze sledování vypadl.</div>` : "";
+    const url = safeUrl(r.url);
+    const floor = num(r.floor_number) != null ? `${r.floor_number}/${num(r.floors_total) ?? "?"}` : "—";
+    const title = r.title || `${r.disposition || ""} · ${TXL[r.transaction_type] || ""}`;
+    return `
+      <button id="modalClose" onclick="closeModal()">&times;</button>
+      <h2>${escapeHtml(title)} ${overrideBadges(r)}</h2>
+      ${goneHtml}${leftHtml}
+      ${r.override_note ? `<div class="modal-note">Oprava: ${escapeHtml(r.override_note)}</div>` : ""}
+      <div class="modal-gallery">${gallery}</div>
+      ${priceHistoryHtml(r)}
+      <div class="modal-grid">
+        <div><b>Cena</b>${priceTxt(r)}</div>
+        <div><b>Kč/m²</b>${fmtCzk(r.price_czk_per_sqm)}</div>
+        <div><b>Dispozice</b>${escapeHtml(r.disposition || "—")}</div>
+        <div><b>m²</b>${fmtArea(r)}</div>
+        <div><b>Patro</b>${floor}</div>
+        <div><b>Transakce</b>${TXL[r.transaction_type] || "—"}</div>
+        <div style="grid-column:1/-1;"><b>Typ</b>${kindBadge(r)}</div>
+        <div style="grid-column:1/-1;"><b>Adresa</b>${addressHtml(r)}
+          <div class="hint">${kmTxt(r.km)} km od ${escapeHtml(NOV.center_label)} · ${mapLinksHtml(r.lat, r.lon)}</div></div>
+        <div><b>Na trhu</b>${domTxt(r)}<div class="hint">${domHint(r)}</div></div>
+        <div><b>Stav</b>${stateTxt(r)}</div>
+        <div><b>Prodejce</b>${escapeHtml(r.seller_name || "—")}</div>
+      </div>
+      <div class="modal-desc">${escapeHtml(r.description ||
+        "Popis zatím nemáme — načte se při dalším čtení detailu (nové inzeráty hned, ostatní do týdne).")}</div>
+      <div class="modal-note">U novostaveb se z ruční opravy použije plocha (a z ní Kč/m²), „mimo statistiku"
+        a poznámka — v této kartě, po doběhnutí dalšího běhu.</div>
+      ${overrideFormHtml(r)}
+      ${url ? `<a class="modal-link" href="${escapeHtml(url)}" target="_blank" rel="noopener">${r.gone_at ? "Původní inzerát (už nejspíš 404)" : "Otevřít na Sreality"} →</a>` : ""}
+      ${overrideFooterHtml(r)}`;
+  }
+  function openNov(id) {
+    const r = BY_ID.get(String(id));
+    if (!r) return;
+    document.getElementById("modalSheet").innerHTML = novModalHtml(r);
+    // Poplatky se u novostaveb nikde nepočítají -- pole by slibovalo opravu,
+    // která nic nezmění. Skryté (ne smazané): saveOverride ho čte.
+    const fees = document.getElementById("ovFees");
+    if (fees) {
+      fees.style.display = "none";
+      const lbl = fees.previousElementSibling;
+      if (lbl && lbl.tagName === "LABEL") lbl.style.display = "none";
+    }
+    document.getElementById("modalOverlay").classList.add("open");
+  }
+  document.addEventListener("click", ev => {
+    if (ev.target.closest("[data-stop]")) return;
+    const el = ev.target.closest("[data-nid]");
+    if (!el) return;
+    ev.preventDefault();
+    openNov(el.getAttribute("data-nid"));
+  });
 
   let NM = null, circleL = null, centerM = null, markL = null;
   function color(r) {
@@ -873,6 +1063,7 @@ def page_js(payload_json):
         <div style="font-weight:600;font-size:0.85rem;">${escapeHtml(r.disposition || "")} · ${TXL[r.transaction_type] || ""}</div>
         <div style="font-size:0.8rem;">${escapeHtml(r.street || "")} · ${priceTxt(r)}</div>
         <div style="font-size:0.75rem;">${stateTxt(r)} · ${kmTxt(r.km)} km</div>
+        <button class="popup-btn" data-nid="${escapeHtml(String(r.id))}">Detail</button>
         ${url ? `<a class="popup-btn" href="${escapeHtml(url)}" target="_blank" rel="noopener">Sreality ↗</a>` : ""}</div>`);
       m.addTo(markL);
     }
