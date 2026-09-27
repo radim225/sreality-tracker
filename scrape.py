@@ -2223,11 +2223,17 @@ def fetch_novostavby(prev_snapshot=None):
     first_run = prev_records is None
     config_changed = not first_run and prev.get("novostavby_config") != cfg
     baseline = first_run or config_changed
+    if config_changed and (prev.get("novostavby_config") or {}).get("center") != cfg["center"]:
+        # `km` je odvozené od středu, takže starý snapshot nesmí filtrovat ani
+        # vykreslovat vzdálenost podle dřívější konfigurace.
+        prev_records = [dict(r, km=novostavby.km_from_center(r.get("lat"), r.get("lon")))
+                        for r in prev_records]
 
     by_id = {}
     for ward in novostavby.WARDS:
         for tx in novostavby.TRANSACTIONS:
             for rec in search_ward_novostavby(ward, tx):
+                rec["km"] = novostavby.km_from_center(rec.get("lat"), rec.get("lon"))
                 by_id.setdefault(str(rec["id"]), rec)
             time.sleep(0.3)
     no_gps = [r for r in by_id.values() if r.get("km") is None]
@@ -6594,13 +6600,14 @@ def main():
     LATEST_SNAPSHOT_PATH.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2))
     CHANGES_PATH.write_text(json.dumps(changes, ensure_ascii=False, indent=2))
 
-    # Alert novostaveb: po zápisu snapshotu, aby odeslané události odpovídaly
-    # uloženému stavu. Tichá baseline žádné události nemá; send_alert nikdy
-    # nevyhodí výjimku a bez secrets jen zaloguje. NOVOSTAVBY_ALERT_DRY_RUN=1
-    # zprávu jen vypíše.
-    novostavby.send_alert(nov_events, snapshot["generated_at"],
-                          dry_run=os.environ.get("NOVOSTAVBY_ALERT_DRY_RUN") == "1",
-                          dashboard_url=report.PAGES_URL)
+    # Zpráva se připraví mimo repo. GitHub Action ji odešle až po úspěšném
+    # commit+push; při neúspěšném pushi by další běh události opakoval.
+    alert_path = os.environ.get("NOVOSTAVBY_ALERT_PATH")
+    if alert_path:
+        novostavby.stage_alert(nov_events, snapshot["generated_at"], Path(alert_path),
+                              dashboard_url=report.PAGES_URL)
+    elif novostavby.alert_events(nov_events):
+        print("::warning::alert novostaveb čeká na NOVOSTAVBY_ALERT_PATH", file=sys.stderr)
 
     # The snapshot is on disk before anything downstream runs, so a bug in the
     # pool or the write-up costs a report, never a run's worth of scraping.

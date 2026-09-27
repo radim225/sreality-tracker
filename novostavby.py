@@ -399,6 +399,7 @@ def since_iso(rec):
 def market_start(rec):
     """(start, source) -- odkdy se počítají dny na trhu.
 
+    Po potvrzeném zmizení a návratu začíná nový souvislý úsek `returned_at`.
     Radim (27. 9.): „≥ 0 d" u všech řádků po baseline nic neříká. Sreality
     v detailu uvádí vlastní datum vložení (`since`); je to nejlepší, co máme,
     i když se může vynulovat, když makléř inzerát smaže a vloží znovu (pak je
@@ -408,6 +409,10 @@ def market_start(rec):
       "ours"      start je náš first_seen a inzerát jsme viděli přibýt
       "baseline"  start je first_seen z baseline -- skutečné stáří neznáme,
                   číslo je jen dolní mez („≥")"""
+    # Po potvrzeném 404 začíná nový souvislý úsek nabídky. Staré `since`
+    # může Sreality zachovat, ale nedokazuje dostupnost během výpadku.
+    if rec.get("returned_at"):
+        return rec["returned_at"], "ours"
     first = rec.get("first_seen")
     since = since_iso(rec)
     t_first, t_since = parse_iso(first), parse_iso(since)
@@ -509,13 +514,15 @@ def merge(prev_records, seen, now, *, baseline, verify=None, max_checks=30):
                 rec["floor_area_sqm"] = float(area)
                 if rec.get("price_czk") and not rec.get("price_czk_per_sqm"):
                     rec["price_czk_per_sqm"] = round(rec["price_czk"] / area)
-            old = prev.get("price_czk")
+            old = prev.get("price_czk") or prev.get("last_known_price_czk")
             new = rec.get("price_czk")
+            if new:
+                rec["last_known_price_czk"] = new
+            elif old:
+                rec["last_known_price_czk"] = old
             if new != old and new:
                 history.append({"at": now, "price_czk": new})
                 rec["price_old_czk"] = old
-                # Zdražení/zlevnění živého inzerátu je zpráva; návrat zmizelého
-                # (404 a pak zase ve výsledcích) ne -- ten se jen zaznamená.
                 if old and is_live(prev) and not baseline:
                     events.append({"kind": "price", "rec": rec, "old_price": old})
             else:
@@ -524,6 +531,11 @@ def merge(prev_records, seen, now, *, baseline, verify=None, max_checks=30):
             if prev.get("gone_at"):
                 rec["returned_at"] = now
                 rec["gone_before_at"] = prev["gone_at"]
+                if not baseline:
+                    events.append({"kind": "returned", "rec": rec})
+            elif prev.get("returned_at"):
+                rec["returned_at"] = prev["returned_at"]
+                rec["gone_before_at"] = prev.get("gone_before_at")
         else:
             rec["first_seen"] = now
             rec["baseline"] = bool(baseline)
@@ -589,6 +601,15 @@ def merge(prev_records, seen, now, *, baseline, verify=None, max_checks=30):
             rec["kind_changed_at"] = now
             rec["kind_before"] = prev_kind
         rec["kind"], rec["kind_reason"], rec["year_unknown"] = kind, reason, year_unknown
+        prev = prev_by_id.get(str(rec["id"]))
+        if (prev and prev.get("kind") == "neurceno" and not prev.get("detail_read")
+                and not prev.get("baseline") and not baseline and kind in ALERT_KINDS
+                and is_live(rec)):
+            # První výskyt už byl zapsaný, ale strop detailů nedovolil
+            # rozhodnout typ. Zpráva se pošle teprve teď, při prvním ověření;
+            # případná změna ceny patří do téhož oznámení o nové nabídce.
+            events = [e for e in events if e["rec"]["id"] != rec["id"] or e["kind"] != "price"]
+            events.append({"kind": "new", "rec": rec})
         rec.pop("detail_fresh", None)
     out.sort(key=lambda r: (r.get("gone_at") is not None, r.get("transaction_type") or "",
                             r.get("disposition") or "", r.get("km") or 0))
@@ -679,7 +700,7 @@ def build_alert(events, now, dashboard_url=None):
     events = alert_events(events)
     if not events:
         return None
-    order = {"new": 0, "price": 1, "gone": 2}
+    order = {"new": 0, "returned": 1, "price": 2, "gone": 3}
     events = sorted(events, key=lambda e: (order[e["kind"]], e["rec"].get("km") or 0))
     radius = f"{ALERT_RADIUS_KM:.1f}".replace(".", ",")
     lines = [f"<b>🏗️ Nové byty 4+kk / 5+kk · {CENTER_LABEL} ≤ {radius} km</b>"]
@@ -696,6 +717,9 @@ def build_alert(events, now, dashboard_url=None):
         elif e["kind"] == "gone":
             price = f"naposledy {_czk(r.get('price_czk'))}{unit}"
             icon = "❌"
+        elif e["kind"] == "returned":
+            price = f"znovu v nabídce · {_czk(r.get('price_czk'))}{unit}"
+            icon = "🔄"
         else:
             price = f"{_czk(r.get('price_czk'))}{unit}"
             icon = "🆕"
@@ -731,6 +755,29 @@ def send_alert(events, now, *, dry_run=False, dashboard_url=None):
         import notify
         return notify.send_text(text, dry_run=dry_run, what="Alert novostaveb")
     except Exception as exc:  # noqa: BLE001 -- deliberate: never fail the run
+        print(f"::warning::alert novostaveb se neodeslal: {exc}", file=sys.stderr)
+        return None
+
+
+def stage_alert(events, now, path, dashboard_url=None):
+    """Připraví zprávu mimo repo; odeslat ji smí až krok po úspěšném pushi."""
+    text = build_alert(events, now, dashboard_url)
+    if text:
+        path.write_text(text, encoding="utf-8")
+    else:
+        path.unlink(missing_ok=True)
+    return bool(text)
+
+
+def send_staged_alert(path, *, dry_run=False):
+    """Odešle připravenou zprávu; volá se pouze po úspěšném pushi."""
+    if not path.exists():
+        return None
+    try:
+        import notify
+        return notify.send_text(path.read_text(encoding="utf-8"), dry_run=dry_run,
+                                what="Alert novostaveb")
+    except Exception as exc:  # noqa: BLE001 -- doplňkový alert neblokuje scrape
         print(f"::warning::alert novostaveb se neodeslal: {exc}", file=sys.stderr)
         return None
 
