@@ -1,8 +1,10 @@
 # Sreality Tracker
 
-Automatický sledovač konkrétních inzerátů na [Sreality.cz](https://www.sreality.cz).
-Každých 8 hodin zkontroluje sledované byty, zaznamená změny (nový / zmizelý / změna ceny)
-a publikuje dashboard + log změn přes GitHub Pages.
+Sledovač inzerátů a nabídkových cen bydlení v Praze. GitHub Action má plán
+každé **4 hodiny**: stáhne vybrané inzeráty, srovnávací byty a garáže, uloží
+snapshot a publikuje dashboard přes GitHub Pages. Sleduje dvě oblasti,
+**Vysočany** a **Jinonice**. Samostatná sekce novostaveb pokrývá byty 4+kk/5+kk
+u U Kříže; denní workflow archivuje ceníky developerů a porovnává je se Sreality.
 
 **Živý dashboard:** <https://radim225.github.io/sreality-tracker/>
 
@@ -11,22 +13,35 @@ a publikuje dashboard + log změn přes GitHub Pages.
 ## Co to dělá
 
 - Sleduje **konkrétní inzeráty** vyjmenované v [`tracked.json`](tracked.json)
-  (aktuálně 1+kk a 2+kk v lokalitě *Praha-Vysočany „Pod Harfou"*).
+  a srovnávací nabídky ze Sreality, Bezrealitek a iDNES.
 - Při každém běhu stáhne aktuální stav a porovná ho s posledním snapshotem.
 - Detekuje tři typy událostí: **🆕 nový inzerát**, **❌ zmizelý / pronajatý / prodaný**
-  (uloží poslední známou cenu) a **💰 změna ceny**.
+  (až po potvrzení nedostupnosti detailu; uloží poslední známou cenu) a
+  **💰 změna ceny**. Zmizelý inzerát není důkazem prodeje.
+- Dashboard zobrazuje byty, garáže, novostavby, historii změn, vývoj cen a
+  dobu na trhu. Novostavby mají vlastní alerty pro dokončené byty a výstavbu
+  ve výchozím okruhu 1,2 km; sbíraná oblast má poloměr 2 km.
 - Výsledky publikuje jako statický dashboard a strojově čitelný log změn.
 
 ## Jak to běží (automatizace)
 
 GitHub Action [`.github/workflows/scrape.yml`](.github/workflows/scrape.yml):
 
-- **Cron** `0 */8 * * *` → spouští se každých 8 hodin.
+- **Cron** `0 */4 * * *` → plán každé 4 hodiny (skutečný start může GitHub
+  Actions posunout).
 - **Ruční spuštění** (`workflow_dispatch`) → volitelný vstup `add_url` přidá nový inzerát
-  do `tracked.json` ještě před scrapem. Stejně `override_set` / `override_delete`
-  zapíšou nebo smažou ruční opravu v `overrides.json`.
+  do `tracked.json` ještě před scrapem; `remove_url` ho odebere. Vstupy
+  `override_set` / `override_delete` spravují opravy v `overrides.json`.
+- Nejprve běží offline testy, potom scrape a kontrola, že veřejné HTML neobsahuje
+  osobní finanční kartu.
 - Po scrapu zkopíruje `dashboard.html` → `index.html`, commitne a pushne do `main`.
   Push do `main` automaticky přebuildí GitHub Pages, takže se aktualizuje stejný odkaz.
+
+Workflow [`.github/workflows/developers.yml`](.github/workflows/developers.yml)
+spouští ceníky developerů denně v **05:30 UTC**, otestuje parsery a uloží jejich
+snapshoty do `developers/`.
+
+Pravidla pro souběžnou práci agentů, větve a review jsou v [AGENTS.md](AGENTS.md).
 
 ## Jak přidat sledovaný inzerát
 
@@ -65,15 +80,21 @@ Symetricky k přidání:
 | `pool.py` | Trvalý pool inzerátů: jeden záznam = jeden inzerát, co kdy byl viděn. |
 | `pool/` | Shardy poolu po měsících + `state.json` (změny konfigurace, sledování vzorku pro tvrdé filtry). |
 | `market.py` | Deterministické statistiky nad poolem — odhad nájmu, úroveň, trend, pásmo šumu, dynamika prodejů. |
+| `novostavby.py`, `fetch_novostavby.py` | Samostatná kolekce a lokální ověření novostaveb 4+kk/5+kk u U Kříže. |
+| `developers.py`, `developers_compare.py`, `developers_card.py` | Ceníky developerů, srovnání s nabídkami a karta dashboardu. |
+| `timeline.py` | Grafy vývoje cen a doby na trhu. |
+| `relist.py`, `gone_archive.py`, `geocode.py` | Párování znovuvložených inzerátů, archiv zmizelých a odhad polohy. |
+| `ribbon.py` | Horní navigace, oblasti a žhavé nabídky. |
 | `report.py` | Týdenní zápis a měsíční souhrn (markdown). |
 | `reports/` | Archiv zápisů: `YYYY-Www.md` a `YYYY-MM-souhrn.md`. |
 | `notify.py` | Odeslání týdenního verdiktu na mobil (Telegram, ntfy jako náhrada). |
 | `backfill_pool.py` | Jednorázové přehrání archivu snapshotů do poolu. |
 | `fee_review_queue.json` | Pronájmy, u kterých parser odmítl hádat poplatek — k ručnímu projití. |
-| `test_fees.py`, `test_fee_queue.py`, `test_overrides.py`, `test_parking.py`, `test_cache.py`, `test_pool.py`, `test_market.py`, `test_report.py`, `test_notify.py` | Testy, běží v CI před scrapem. |
+| `test_*.py` | Offline testy; přesný seznam a pořadí je v kroku „Run tests“ workflow `scrape.yml`. |
 | `dashboard.html` / `index.html` | Statický dashboard (GitHub Pages servíruje `index.html`). |
 | `snapshots/` | Historické snapshoty jednotlivých běhů. |
 | `.github/workflows/scrape.yml` | Naplánovaná automatizace. |
+| `.github/workflows/developers.yml` | Denní archiv ceníků developerů. |
 
 ## Odhad nájmu a týdenní zápis
 
@@ -238,8 +259,8 @@ a karta to říká nahlas.
 
 ## Zdroje comparables
 
-Kromě sledovaných inzerátů (Sreality) tahá dashboard srovnávací byty (Praha 9,
-1+kk/2+kk) z více portálů přes `sources.py`:
+Kromě sledovaných inzerátů (Sreality) tahá dashboard srovnávací byty pro
+Vysočany a Jinonice z více portálů přes `sources.py`:
 
 - **Sreality** – `/hledani/` (robots povoluje).
 - **Bezrealitky** – jen robots-povolené `/vypis/` lokalitní výpisy (nikdy
@@ -254,12 +275,58 @@ nízkoobjemové použití.
 
 ## Napojení na upozornění
 
-Samostatná rutina „sreality-change-alerts" čte
+Samostatná rutina mimo tento repozitář „sreality-change-alerts" čte
 [`changes_history.json`](https://radim225.github.io/sreality-tracker/changes_history.json)
-každých 8 h a pošle zprávu **jen když se něco změní** (prioritně lokalita *Pod Harfou*).
-Tento repozitář se stará jen o scrape a publikaci; upozorňování je oddělené.
+a pošle zprávu **jen když se něco změní** (prioritně lokalita *Pod Harfou*).
+Vedle této rutiny posílá samotný scraper alerty **novostaveb** pro dokončené
+byty a výstavbu ve výchozím okruhu. Baseline běh žádný alert neposílá.
 
 ## Lokální spuštění
+
+### Testy jako v CI
+
+Po `pip install -r requirements.txt` spusť testovací soubory ve stejném pořadí
+jako krok „Run tests“ v `scrape.yml` (na systému s příkazem `python3` nahraď
+`python` za `python3`):
+
+```bash
+export GEOCODE_DISABLED=1
+for t in \
+  test_fees test_fee_queue test_overrides test_parking test_own_card \
+  test_search_paging test_garages test_cache test_pool test_market \
+  test_report test_notify test_security test_sale_extras test_relist \
+  test_gone_archive test_geocode test_areas test_ribbon test_removals \
+  test_novostavby test_timeline test_developers; do
+  python "$t.py" || exit 1
+done
+```
+
+Testy používají podvržené HTTP odpovědi; test celkového timeoutu otevírá jen
+lokální HTTP server. Telegram při lokálním ověření pouštěj pouze s `--dry-run`
+nebo `NOVOSTAVBY_ALERT_DRY_RUN=1`.
+
+### Mapy v prohlížeči
+
+Leaflet závisí na rozměrech a událostech skutečného prohlížeče; pád při
+spuštění celé stránky v jsdom sám o sobě neprokazuje chybu mapy. Ověření:
+
+```bash
+python -m http.server 8765
+```
+
+V Chrome otevři `http://127.0.0.1:8765/dashboard.html`, v DevTools sleduj
+Console a zkontroluj hlavní mapu, mapu garáží a mapu novostaveb včetně
+načtených dlaždic a bodů. V headless Chrome 27. 9. 2026 se všechny tři
+vykreslily bez JavaScriptové výjimky; lokální server vracel jen nesouvisející
+404 pro `favicon.ico`.
+
+### Co necommitovat
+
+Scrape a render vytvářejí `dashboard.html`, `index.html`,
+`latest_snapshot.json`, `changes_history.json`, `last_changes.json`,
+`changes_log.jsonl` a `snapshots/`. Tyto výstupy do feature PR nepatří;
+produkční běh si je generuje a commituje sám. Další pravidla viz
+[AGENTS.md](AGENTS.md).
 
 ### Bezpečnostní opravy 6. 9. 2026
 
@@ -280,8 +347,7 @@ a notifikací. Osobní kartu „Tvůj byt“ do nich nezapisuje.
 pip install -r requirements.txt
 python scrape.py
 
-# testy (běží v sekundách, v CI před scrapem)
-for t in test_fees test_cache test_pool test_market test_report test_notify test_overrides; do python "$t.py" || break; done
+# úplný sled testů je v sekci „Testy jako v CI“ výše
 
 # jednorázové naplnění poolu z archivu snapshotů
 python backfill_pool.py
