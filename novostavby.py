@@ -25,6 +25,7 @@ výchozí kruh -- server localStorage prohlížeče nevidí.
 """
 import html
 import math
+import re
 import statistics
 import sys
 import unicodedata
@@ -231,6 +232,13 @@ def merge(prev_records, seen, now, *, baseline, verify=None, max_checks=30):
             for k in DETAIL_FIELDS:
                 if rec.get(k) is None and prev.get(k) is not None:
                     rec[k] = prev[k]
+            # Plocha z detailu (titulek ji nemá) -- detail se čte jen jednou,
+            # takže bez tohohle by m² a Kč/m² od druhého běhu zmizely.
+            area = rec.get("detail_area_sqm")
+            if not rec.get("floor_area_sqm") and isinstance(area, (int, float)) and area > 0:
+                rec["floor_area_sqm"] = float(area)
+                if rec.get("price_czk") and not rec.get("price_czk_per_sqm"):
+                    rec["price_czk_per_sqm"] = round(rec["price_czk"] / area)
             old = prev.get("price_czk")
             new = rec.get("price_czk")
             if new != old and new:
@@ -450,6 +458,10 @@ def page_payload(records, generated_at):
         rec = {k: r[k] for k in PAGE_FIELDS if r.get(k) is not None}
         if not _safe_url(rec.get("url")):
             rec.pop("url", None)
+        # `since` je scrapovaný řetězec a fmtDay() v JS z něj bere rok bez
+        # escapování -- na stránku jen tvar YYYY-MM-DD.
+        if not re.match(r"^\d{4}-\d{2}-\d{2}", str(rec.get("since") or "")):
+            rec.pop("since", None)
         recs.append(rec)
     return {
         "records": recs,

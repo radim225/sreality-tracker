@@ -273,6 +273,18 @@ check("karta říká, že alerty jsou pro výchozí kruh", "Alerty chodí pro v�
 pp = nov.page_payload([dict(ev_rec, url="javascript:alert(1)"), dict(ev_rec, id=9, out_of_scope=True)], T2)
 check("payload: bez out_of_scope, bez ne-https URL", ([r["id"] for r in pp["records"]], "url" in pp["records"][0]),
       ([500], False))
+pp2 = nov.page_payload([dict(ev_rec, since="<svg onload=x>"), dict(ev_rec, id=8, since="2026-09-09")], T2)
+check("payload: since jen jako YYYY-MM-DD", [r.get("since") for r in pp2["records"]], [None, "2026-09-09"])
+
+# Plocha z detailu (titulek bez m²) se nese i do dalších běhů -- detail se
+# podruhé nečte (review 27. 9.).
+no_area = dict(scrape.parse_novostavba(result(600, name="Prodej bytu 4+kk"), "prodej"))
+enriched = dict(no_area, floor_area_sqm=110.0, price_czk_per_sqm=181818, detail_area_sqm=110, detail_read=True)
+m1, _ = nov.merge(None, [enriched], T0, baseline=True)
+m2, _ = nov.merge(m1, [dict(no_area)], T1, baseline=False)
+check("plocha z detailu přežije další běh", (m2[0]["floor_area_sqm"], m2[0]["price_czk_per_sqm"]),
+      (110.0, 181818))
+
 js = nov.page_js(scrape.script_json(pp))
 check("JS: payload vložen, žádný placeholder", "__NOV_JSON__" in js, False)
 check("script_json nenechá '<' v datech", "<b>" in scrape.script_json(pp), False)
