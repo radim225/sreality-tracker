@@ -29,6 +29,7 @@ import report
 import ribbon
 import timeline
 import sources
+import ux
 
 ROOT = Path(__file__).parent
 SNAPSHOTS_DIR = ROOT / "snapshots"
@@ -4267,7 +4268,7 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
         changes.get("generated_at") or snapshot["generated_at"]))
     ribbon_css_str = ribbon.ribbon_css()
     ribbon_html_str = ribbon.ribbon_html([
-        ("dealsCard", "🔥 Nejlepší"), ("garageCard", "🅿️ Garáže"), ("novCard", "🏗️ Novostavby"), ("devCard", "💼 Ceníky"),
+        ("favCard", "★ Oblíbené"), ("dealsCard", "🔥 Nejlepší"), ("garageCard", "🅿️ Garáže"), ("novCard", "🏗️ Novostavby"), ("devCard", "💼 Ceníky"),
         ("goneCard", "❌ Zmizelé"),
         ("tlCard", "📈 Vývoj cen"),
         ("mapCard", "🗺️ Mapa"), ("areaStatsCard", "📊 Statistika"), ("podHarfouCard", "📍 Pod Harfou"),
@@ -4547,14 +4548,18 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
   .badge.warn {{ background: #1c2f4a; color: #7ab8ff; }}
 {timeline.CSS}
 {ribbon_css_str}
+{ux.CSS}
 </style>
 </head>
 <body>
 <header>
   <h1>Sreality Tracker · Vysočany + Jinonice</h1>
   <div class="updated">Last updated: {snapshot['generated_at']} · {areas_line}</div>
+  {ux.header_html()}
 </header>
+{ux.banner_html()}
 {ribbon_html_str}
+{ux.fav_card_html()}
 
 {tracked_cards_html}
 
@@ -4724,6 +4729,7 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
     <input type="checkbox" id="filterFees" style="width:auto;"> Jen se známými poplatky
   </label>
   <input id="search" type="text" placeholder="Hledat název / ulici / lokalitu…">
+  {ux.table_controls_html()}
 </div>
 
 <div class="scroll">
@@ -4842,7 +4848,7 @@ function priceMoveBadge(r) {
   const title = `${down ? "Zlevněno" : "Zdraženo"} z ${fmtCzk(m.first)} na ${fmtCzk(m.last)}`
     + ` (${fmtCzk(Math.abs(m.diff))}) — otevři inzerát pro celou historii`;
   return ` <span class="pmove ${down ? "pm-down" : "pm-up"}" title="${escapeHtml(title)}">`
-    + `${down ? "▼" : "▲"} ${fmtPct1(m.pct)}</span>`;
+    + `${down ? "▼" : "▲"} ${fmtPct1(m.pct)}${down ? uxDropSuffix(r) : ""}</span>`;
 }
 
 function priceHistoryHtml(r) {
@@ -5361,6 +5367,7 @@ function openModal(id) {
   if (!item) return;
   document.getElementById("modalSheet").innerHTML = buildModalHtml(item);
   document.getElementById("modalOverlay").classList.add("open");
+  uxModalOpened("byt", item.id);
 }
 
 function openHistoryItem(idx) {
@@ -5371,10 +5378,12 @@ function openHistoryItem(idx) {
   if (!item) return;
   document.getElementById("modalSheet").innerHTML = buildModalHtml(item);
   document.getElementById("modalOverlay").classList.add("open");
+  uxModalOpened("byt", ev.id);
 }
 
 function closeModal() {
   document.getElementById("modalOverlay").classList.remove("open");
+  uxModalClosed();
   // A token typed after closing must not fire a save for a listing no longer on screen.
   if (pendingAction && pendingAction.modal) pendingAction = null;
 }
@@ -5464,7 +5473,7 @@ function renderPodHarfou() {
   tbody.innerHTML = rows.length ? rows.map(r => `
     <tr class="clickable-row ${CHANGED_IDS.has(r.id) ? 'changed' : ''}" onclick="openModal(${escapeHtml(JSON.stringify(r.id))})">
       <td><img class="thumb" src="${escapeHtml(r.thumb || PLACEHOLDER)}" loading="lazy" onerror="this.src=PLACEHOLDER"></td>
-      <td><button class="linklike" onclick="event.stopPropagation();openModal(${escapeHtml(JSON.stringify(r.id))})">${escapeHtml(r.title) || '—'}${r.is_seed ? ' <span class="badge ok">sledovaný</span>' : ''}${overrideBadges(r)}</button></td>
+      <td><button class="linklike" onclick="event.stopPropagation();openModal(${escapeHtml(JSON.stringify(r.id))})">${escapeHtml(r.title) || '—'}${r.is_seed ? ' <span class="badge ok">sledovaný</span>' : ''}${overrideBadges(r)}</button>${uxRowBadges("byt", r.id)}</td>
       <td>${r.transaction_type === 'pronajem' ? 'rent' : 'sale'}</td>
       <td>${r.disposition || '—'}</td>
       <td>${fmtCzk(r.price_czk)}${priceMoveBadge(r)}</td>
@@ -5548,7 +5557,7 @@ function render() {
   tbody.innerHTML = rows.map(r => `
     <tr class="clickable-row ${CHANGED_IDS.has(r.id) ? 'changed' : ''}" onclick="openModal(${escapeHtml(JSON.stringify(r.id))})">
       <td><img class="thumb" src="${escapeHtml(r.thumb || PLACEHOLDER)}" loading="lazy" onerror="this.src=PLACEHOLDER"></td>
-      <td><button class="linklike" onclick="event.stopPropagation();openModal(${escapeHtml(JSON.stringify(r.id))})"><span class="clip" title="${escapeHtml(r.title || '')}">${escapeHtml(r.title) || '—'}</span></button>${overrideBadges(r)}${relistBadge(r)}</td>
+      <td><button class="linklike" onclick="event.stopPropagation();openModal(${escapeHtml(JSON.stringify(r.id))})"><span class="clip" title="${escapeHtml(r.title || '')}">${escapeHtml(r.title) || '—'}</span></button>${overrideBadges(r)}${relistBadge(r)}${uxRowBadges("byt", r.id)}</td>
       <td>${r.transaction_type === 'pronajem' ? 'rent' : 'sale'}</td>
       <td>${r.disposition || '—'}</td>
       <td>${fmtCzk(r.price_czk)}${priceMoveBadge(r)}</td>
@@ -5648,7 +5657,7 @@ function garRow(g, sub) {
   const idAttr = escapeHtml(String(g.id));
   return `<tr class="clickable-row${sub ? " pair-sub" : ""}" data-gid="${idAttr}">
     <td><img class="thumb" src="${escapeHtml(safeImg(g.thumb))}" loading="lazy" onerror="this.src=PLACEHOLDER"></td>
-    <td>${sub ? "↳ " : ""}${kindTxt(g)}</td>
+    <td>${sub ? "↳ " : ""}${kindTxt(g)}${uxRowBadges("garaz", g.id)}</td>
     <td>${txTxt(g)}</td>
     <td>${addressHtml(g)}<div class="hint">${escapeHtml(areaLabel(g))}</div></td>
     <td>${numTxt(g.usable_area_sqm)}</td>
@@ -5807,6 +5816,7 @@ function openGarage(id) {
   if (!g) return;
   document.getElementById("modalSheet").innerHTML = garageModalHtml(g);
   document.getElementById("modalOverlay").classList.add("open");
+  uxModalOpened("garaz", g.id);
 }
 
 // Jeden posluchač na celý dokument místo inline onclick: id z dat se nikdy
@@ -5960,12 +5970,14 @@ function openGone(id) {
   const sheet = document.getElementById("modalSheet");
   sheet.innerHTML = goneModalHtml(g, null);
   document.getElementById("modalOverlay").classList.add("open");
+  uxModalOpened("byt", g.id);
   loadGoneArchive().then(arch => {
     // Jen když je pořád otevřený tentýž inzerát -- klik mezitím jinam vyhrává.
     const open = sheet.querySelector("[data-gone-modal]");
     if (!open || open.getAttribute("data-gone-modal") !== String(id)) return;
     if (!document.getElementById("modalOverlay").classList.contains("open")) return;
     sheet.innerHTML = goneModalHtml(g, arch[String(id)] || {});
+    uxModalOpened("byt", g.id);
   });
 }
 
@@ -6160,6 +6172,7 @@ document.getElementById("goneSearch")?.addEventListener("input", renderGone);
     js += novostavby.page_js(nov_json)
     js += timeline.page_js(script_json(tl_payload))
     js += developers_card.page_js()
+    js += ux.page_js(script_json(ux.build_payload(snapshot, gone_rows)))
     js += ribbon.ribbon_js() + "\ninitRibbon();\n"
 
     # Not named `html`: that would shadow the stdlib module of the same name,

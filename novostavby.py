@@ -737,6 +737,11 @@ def build_alert(events, now, dashboard_url=None):
         line = " · ".join(parts)
         if url:
             line += f' · <a href="{html.escape(url, quote=True)}">odkaz</a>'
+        # Detail přímo na dashboardu (#byt=<id> otevře inzerát po načtení).
+        import ux
+        dash = ux.dashboard_link(dashboard_url, r.get("id"))
+        if dash:
+            line += f' · <a href="{html.escape(dash, quote=True)}">na dashboardu</a>'
         lines.append(line)
     if len(events) > MAX_ALERT_LINES:
         lines.append(f"… a dalších {len(events) - MAX_ALERT_LINES}")
@@ -1229,7 +1234,11 @@ def page_js(payload_json):
       if (lbl && lbl.tagName === "LABEL") lbl.style.display = "none";
     }
     document.getElementById("modalOverlay").classList.add("open");
+    // Hvězda oblíbených + kopírování odkazu (ux.py), když je na stránce.
+    if (typeof uxModalOpened === "function") uxModalOpened("nov", String(id));
   }
+  // Pro ux.py (#byt= odkaz, hledání, oblíbené): jeden detail novostavby, ne dva.
+  window.openNov = openNov;
   document.addEventListener("click", ev => {
     if (ev.target.closest("[data-stop]")) return;
     const el = ev.target.closest("[data-nid]");

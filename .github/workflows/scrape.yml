@@ -128,6 +128,7 @@ jobs:
           python test_geocode.py
           python test_areas.py
           python test_ribbon.py
+          python test_ux.py
           python test_removals.py
           python test_novostavby.py
           python test_timeline.py
@@ -220,3 +221,20 @@ jobs:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           NTFY_TOKEN: ${{ secrets.NTFY_TOKEN }}
         run: python send_novostavby_alert.py
+
+      # Dlouho otevřený bod: rozbitý běh dřív nikdo nehlásil -- dashboard jen
+      # tiše stárnul. Jedna zpráva na Telegram s odkazem na běh. Bez secrets
+      # nebo při chybě Telegramu jen varování v logu: krok sám nikdy neselže.
+      # Spolehlivě pokrývá selhání kroku (failure()). Zrušení a timeout jsou
+      # jen best effort: GitHub při zrušení nejdřív přehodnotí podmínku jobu
+      # a runner může skončit dřív, než se sem dostane. Pro ty případy je
+      # záchranou indikátor čerstvosti dat na dashboardu (žlutá/červená).
+      - name: Telegram alert on failure
+        if: failure() || cancelled()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          RUN_EVENT: ${{ github.event_name }}
+          JOB_STATUS: ${{ job.status }}
+        run: python3 ux.py notify-failure || true
