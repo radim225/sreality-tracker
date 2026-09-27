@@ -857,6 +857,14 @@ async function uxCopy(id, btn) {
 
 // Novostavby nemají vlastní detail -- stačí malý: cena, typ, historie, odkazy.
 function uxOpenNov(id) {
+  // Plný detail z karty novostaveb (fotky, popis, opravy), když je na stránce;
+  // tenhle zjednodušený jen jako záloha.
+  if (typeof window.openNov === "function" && typeof window.novItem === "function"
+      && window.novItem(id)) {
+    window.openNov(id);
+    uxModalOpened("nov", String(id));
+    return;
+  }
   const n = uxNovById.get(String(id));
   if (!n) return;
   const tx = n.transaction_type === "pronajem" ? "pronájem" : "prodej";
