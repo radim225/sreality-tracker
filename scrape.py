@@ -4491,6 +4491,19 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
   .card.collapsed {{ padding-bottom: 10px; }}
   #ovPatInput {{ flex: 1 1 260px; }}
 {nov_css}
+  .ov-footer {{ position: sticky; bottom: -16px; margin: 12px -16px -16px; padding: 10px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+               background: #1d2230; border-top: 1px solid #2c3345; z-index: 2; }}
+  .ov-footer .ov-row {{ display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 6px; }}
+  .ov-footer .popup-btn {{ font-size: 0.85rem; padding: 8px 14px; margin-top: 0; }}
+  .ov-footer .popup-btn:disabled {{ opacity: .55; cursor: progress; }}
+  .ov-status {{ font-size: 0.8rem; color: #9aa; }}
+  .ov-status:empty {{ display: none; }}
+  .ov-status.busy {{ color: #7ab8ff; }}
+  .ov-status.ok {{ color: #6f6; }}
+  .ov-status.err {{ color: #f88; }}
+  .ov-status.info {{ color: #fc6; }}
+  .ov-status a {{ color: #7ab8ff; }}
+  .badge.warn {{ background: #1c2f4a; color: #7ab8ff; }}
 {ribbon_css_str}
 </style>
 </head>
@@ -4869,13 +4882,13 @@ function portalName(s) {
 
 /* ---- správa sledovaných inzerátů (workflow_dispatch s fine-grained PAT) ---- */
 const GH_REPO = "radim225/sreality-tracker";
-let pendingInputs = null;
+const GH_ACTIONS_URL = `https://github.com/${GH_REPO}/actions/workflows/scrape.yml`;
+// What to run once a token has been typed in: {modal: bool, run: fn}.
+let pendingAction = null;
 
 function setManageStatus(msg) {
   const el = document.getElementById("manageStatus");
   if (el) el.textContent = msg;
-  const el2 = document.getElementById("overrideStatus");
-  if (el2) el2.textContent = msg;
 }
 
 function renderTrackedList() {
@@ -4922,52 +4935,76 @@ function askForPat() {
 function savePatFrom(inputId, rowId) {
   const input = document.getElementById(inputId);
   const v = (input.value || "").trim();
-  if (!v) return;
+  if (!v) { input.focus(); return; }
   pageToken = v;
   input.value = "";
   document.getElementById(rowId).style.display = "none";
-  if (pendingInputs) { const p = pendingInputs; pendingInputs = null; manageTracked(p); }
+  if (pendingAction) { const p = pendingAction; pendingAction = null; p.run(); }
 }
 
 function savePat() { savePatFrom("patInput", "patRow"); }
 function saveModalPat() { savePatFrom("ovPatInput", "ovPatRow"); }
 
+// The one place that talks to GitHub. Only a 204 is success: anything else
+// (including a fetch that never got an answer) comes back as ok:false with a
+// sentence to show, so no caller can claim "saved" for a request that was lost.
+async function dispatchWorkflow(inputs) {
+  let resp;
+  try {
+    resp = await fetch(`https://api.github.com/repos/${GH_REPO}/actions/workflows/scrape.yml/dispatches`, {
+      method: "POST",
+      headers: { "Authorization": "Bearer " + pageToken, "Accept": "application/vnd.github+json" },
+      body: JSON.stringify({ ref: "main", inputs }),
+    });
+  } catch (e) {
+    return {ok: false, kind: "network",
+      text: `Síťová chyba — požadavek na GitHub neprošel (${(e && e.message) || e}). Nic se neuložilo, zkus to znovu.`};
+  }
+  const status = resp.status;
+  if (status === 204) return {ok: true, status};
+  let msg = "";
+  try { const j = await resp.json(); msg = (j && typeof j.message === "string") ? j.message : ""; } catch (e) {}
+  if (status === 401 || status === 403)
+    return {ok: false, kind: "auth", status,
+      text: `GitHub token odmítl (HTTP ${status}) — je neplatný, prošlý, nebo nemá oprávnění Actions: Read and write. Vlož platný token.`};
+  if (status === 404)
+    return {ok: false, kind: "auth", status,
+      text: "GitHub vrátil HTTP 404 — token nejspíš nemá přístup k repu sreality-tracker. Vlož token s přístupem k tomuto repu."};
+  if (status === 422)
+    return {ok: false, kind: "rejected", status,
+      text: `GitHub vstup odmítl (HTTP 422)${msg ? ": " + msg : ""}. Nic se neuložilo.`};
+  return {ok: false, kind: "http", status,
+    text: `Neočekávaná odpověď GitHubu (HTTP ${status})${msg ? ": " + msg : ""}. Nic se neuložilo.`};
+}
+
 async function manageTracked(inputs) {
   const val = inputs.add_url ?? inputs.remove_url ?? inputs.override_set ?? inputs.override_delete;
   if (!val) { setManageStatus("Vlož URL inzerátu ze Sreality."); return; }
-  const token = pageToken;
-  if (!token) {
-    pendingInputs = inputs;
+  if (!pageToken) {
+    pendingAction = {modal: false, run: () => manageTracked(inputs)};
     askForPat();
     setManageStatus("Vlož GitHub token (fine-grained: jen toto repo, Actions Read & write) — akce se pak provede.");
     return;
   }
   setManageStatus("Spouštím workflow…");
-  try {
-    const resp = await fetch(`https://api.github.com/repos/${GH_REPO}/actions/workflows/scrape.yml/dispatches`, {
-      method: "POST",
-      headers: { "Authorization": "Bearer " + token, "Accept": "application/vnd.github+json" },
-      body: JSON.stringify({ ref: "main", inputs }),
-    });
-    if (resp.status === 204) {
-      let done = "Akce";
-      if (inputs.add_url) done = "Přidání";
-      else if (inputs.remove_url) done = "Odebrání";
-      else if (inputs.override_set) done = "Oprava";
-      else if (inputs.override_delete) done = "Smazání opravy";
-      setManageStatus(done + " spuštěno ✓ — hotovo za ~5–15 min, pak obnov stránku.");
-      if (inputs.add_url) document.getElementById("addUrlInput").value = "";
-    } else if (resp.status === 401 || resp.status === 403) {
-      forgetPat();
-      pendingInputs = inputs;
-      askForPat();
-      setManageStatus(`GitHub token odmítl (HTTP ${resp.status}) — vlož platný token.`);
-    } else {
-      setManageStatus(`Neočekávaná odpověď (HTTP ${resp.status}).`);
-    }
-  } catch (e) {
-    setManageStatus("Požadavek selhal: " + e.message);
+  const r = await dispatchWorkflow(inputs);
+  if (r.ok) {
+    let done = "Akce";
+    if (inputs.add_url) done = "Přidání";
+    else if (inputs.remove_url) done = "Odebrání";
+    else if (inputs.override_set) done = "Oprava";
+    else if (inputs.override_delete) done = "Smazání opravy";
+    setManageStatus(done + " spuštěno ✓ — hotovo za ~5–15 min, pak obnov stránku.");
+    if (inputs.add_url) document.getElementById("addUrlInput").value = "";
+    if (inputs.override_delete) setOvPending(String(inputs.override_delete), {op: "delete"});
+    return;
   }
+  if (r.kind === "auth") {
+    forgetPat();
+    pendingAction = {modal: false, run: () => manageTracked(inputs)};
+    askForPat();
+  }
+  setManageStatus(r.text);
 }
 
 function costBreakdownHtml(item) {
@@ -5034,6 +5071,85 @@ function overrideBadges(item) {
   return out;
 }
 
+/* ---- ruční oprava z detailu inzerátu ----
+   An override takes a workflow run (~5–15 min) to reach this page, and until
+   then the embedded data still shows the old numbers. So a dispatch GitHub
+   accepted (204, nothing else) is remembered per listing in localStorage and
+   shown on reopen as "čeká na zpracování"; once the page's own data carries the
+   same override it reads "uloženo ✓" and the entry is dropped. Per browser only
+   -- it is a reminder, not the record; overrides.json is the record. */
+const OV_PENDING_KEY = "ov_pending";
+const OV_PENDING_TTL_MS = 2 * 60 * 60 * 1000;
+let ovBusy = false;
+
+function loadOvPending() {
+  try {
+    const o = JSON.parse(localStorage.getItem(OV_PENDING_KEY) || "{}");
+    return (o && typeof o === "object" && !Array.isArray(o)) ? o : {};
+  } catch (e) { return {}; }
+}
+
+function setOvPending(id, entry) {
+  const all = loadOvPending();
+  if (entry) all[id] = {...entry, at: Date.now()}; else delete all[id];
+  try {
+    if (Object.keys(all).length) localStorage.setItem(OV_PENDING_KEY, JSON.stringify(all));
+    else localStorage.removeItem(OV_PENDING_KEY);
+  } catch (e) {}
+}
+
+// Same fields the workflow keeps (scrape.normalize_override).
+function ovMatches(payload, applied) {
+  if (!applied) return false;
+  const num = v => (v == null || v === "") ? null : Number(v);
+  return num(payload.floor_area_sqm) === num(applied.floor_area_sqm)
+    && num(payload.fees_czk) === num(applied.fees_czk)
+    && String(payload.note || "").trim() === String(applied.note || "").trim()
+    && !!payload.exclude_from_stats === !!applied.exclude_from_stats;
+}
+
+// none | applied | pending | confirmed | expired, plus the values to prefill.
+function overrideState(item) {
+  const id = String(item.id);
+  const applied = (item.override && typeof item.override === "object") ? item.override : null;
+  const p = loadOvPending()[id];
+  if (p && typeof p.at === "number") {
+    const done = p.op === "delete" ? !applied : ovMatches(p.payload || {}, applied);
+    if (done) { setOvPending(id, null); return {kind: "confirmed", applied, values: applied}; }
+    if (Date.now() - p.at > OV_PENDING_TTL_MS) {
+      setOvPending(id, null);
+      return {kind: "expired", applied, at: p.at, values: applied};
+    }
+    return {kind: "pending", applied, at: p.at, op: p.op,
+            values: p.op === "delete" ? null : (p.payload || null)};
+  }
+  return {kind: applied ? "applied" : "none", applied, values: applied};
+}
+
+function fmtHm(ms) {
+  const d = new Date(ms);
+  return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+}
+
+function ovBadgeHtml(st) {
+  const manual = st.applied ? ' <span class="badge approx">upraveno ručně</span>' : "";
+  if (st.kind === "pending")
+    return `<span class="badge warn">${st.op === "delete" ? "smazání " : ""}čeká na zpracování (odesláno ${fmtHm(st.at)})</span>${manual}`;
+  if (st.kind === "confirmed") return `<span class="badge ok">uloženo ✓</span>${manual}`;
+  return manual;
+}
+
+function setOvStatus(kind, html) {
+  const el = document.getElementById("overrideStatus");
+  if (!el) return;
+  el.className = "ov-status" + (kind ? " " + kind : "");
+  el.innerHTML = html;
+}
+
+function setOvButtons(disabled) {
+  document.querySelectorAll("#modalSheet [data-ov-btn]").forEach(b => { b.disabled = disabled; });
+}
+
 function saveOverride(id) {
   const listingId = String(id);
   const area = document.getElementById("ovArea").value.trim();
@@ -5045,54 +5161,109 @@ function saveOverride(id) {
   if (fees) payload.fees_czk = Number(fees);
   if (note) payload.note = note;
   if (exclude) payload.exclude_from_stats = true;
-  if (payload.floor_area_sqm !== undefined && !(payload.floor_area_sqm > 0)) {
-    setManageStatus("m² musí být kladné číslo.");
+  let err = "";
+  if (payload.floor_area_sqm !== undefined && !(payload.floor_area_sqm > 0)) err = "m² musí být kladné číslo.";
+  else if (payload.fees_czk !== undefined && !(Number.isInteger(payload.fees_czk) && payload.fees_czk >= 0)) err = "Poplatky musí být celé číslo ≥ 0.";
+  else if (!area && !fees && !note && !exclude) err = "Vyplň aspoň jedno pole opravy.";
+  if (err) {
+    setOvStatus("err", escapeHtml(err) + " Nic se neodeslalo.");
+    const form = document.getElementById("ovForm");
+    if (form && form.scrollIntoView) form.scrollIntoView({behavior: "smooth", block: "center"});
     return;
   }
-  if (payload.fees_czk !== undefined && !(payload.fees_czk >= 0)) {
-    setManageStatus("Poplatky musí být číslo ≥ 0.");
+  submitOverride(listingId, {override_set: JSON.stringify(payload)}, {op: "set", payload});
+}
+
+function deleteOverride(id) {
+  submitOverride(String(id), {override_delete: String(id)}, {op: "delete"});
+}
+
+async function submitOverride(id, inputs, entry) {
+  if (ovBusy) return;
+  if (!pageToken) {
+    pendingAction = {modal: true, run: () => submitOverride(id, inputs, entry)};
+    askForPat();
+    setOvStatus("info", "Zatím se nic neodeslalo. Vlož GitHub token (fine-grained: jen toto repo, "
+      + "Actions Read and write) a klikni „Použít token a uložit“.");
     return;
   }
-  if (!area && !fees && !note && !exclude) {
-    setManageStatus("Vyplň aspoň jedno pole opravy.");
+  ovBusy = true;
+  setOvButtons(true);
+  setOvStatus("busy", "Odesílám…");
+  let r;
+  try { r = await dispatchWorkflow(inputs); } finally { ovBusy = false; setOvButtons(false); }
+  if (r.ok) {
+    setOvPending(id, entry);
+    const badge = document.getElementById("ovBadge");
+    const item = ALL.find(x => String(x.id) === id);
+    if (badge && item) badge.innerHTML = ovBadgeHtml(overrideState(item));
+    setOvStatus("ok", (entry.op === "delete" ? "Smazání opravy zařazeno" : "Uloženo")
+      + " do fronty — projeví se po doběhnutí běhu (~5–15 min), pak obnov stránku. "
+      + `<a href="${GH_ACTIONS_URL}" target="_blank" rel="noopener">Běhy v Actions →</a>`);
     return;
   }
-  manageTracked({override_set: JSON.stringify(payload)});
+  if (r.kind === "auth") {
+    forgetPat();
+    pendingAction = {modal: true, run: () => submitOverride(id, inputs, entry)};
+    askForPat();
+  }
+  setOvStatus("err", escapeHtml(r.text));
 }
 
 function overrideFormHtml(item) {
-  const ov = item.override || {};
-  const areaVal = ov.floor_area_sqm != null ? ov.floor_area_sqm : "";
-  const feesVal = ov.fees_czk != null ? ov.fees_czk : "";
-  const noteVal = escapeHtml(ov.note || "").replace(/`/g, "&#96;").replace(/\$/g, "&#36;");
+  const st = overrideState(item);
+  const ov = st.values || {};
+  const areaVal = ov.floor_area_sqm != null ? escapeHtml(String(ov.floor_area_sqm)) : "";
+  const feesVal = ov.fees_czk != null ? escapeHtml(String(ov.fees_czk)) : "";
+  const noteVal = escapeHtml(ov.note || "");
   const excl = ov.exclude_from_stats ? "checked" : "";
-  const idLit = JSON.stringify(String(item.id));
-  const delBtn = ov.id
-    ? `<button class="popup-btn" style="background:#7f1d1d;" onclick="manageTracked({override_delete: ${idLit}})">Smazat opravu</button>`
+  const expired = st.kind === "expired"
+    ? `<div class="modal-note">Oprava odeslaná v ${fmtHm(st.at)} se do 2 h na stránce neobjevila — nepotvrdilo se,
+        zkontroluj běh v <a href="${GH_ACTIONS_URL}" target="_blank" rel="noopener">Actions</a>. Pole ukazují, co platí teď.</div>`
     : "";
-  return `<div class="ov-form" onclick="event.stopPropagation()">
-    <h3>Oprava čísel</h3>
+  const pendingNote = st.kind === "pending"
+    ? `<p class="hint" style="margin:0 0 6px;">Pole ukazují odeslané hodnoty; čísla výše jsou ještě ze staré verze stránky.</p>`
+    : "";
+  return `<div class="ov-form" id="ovForm" onclick="event.stopPropagation()">
+    <h3>Oprava čísel <span id="ovBadge">${ovBadgeHtml(st)}</span></h3>
+    ${expired}${pendingNote}
     <p class="hint" style="margin:0 0 6px;">Prázdné pole = nechat parser. Opravené m²/poplatky jdou do odhadu.
       Ne-tržní prodej: zaškrtni „mimo statistiku“ a napiš důvod — nájem se nevymýšlí.</p>
-    <label>Plocha m² (teď ${item.floor_area_sqm ?? "—"})</label>
-    <input id="ovArea" type="number" min="0" step="0.1" value="${areaVal}" placeholder="${item.floor_area_sqm ?? ""}">
-    <label>Poplatky Kč/měs (teď ${item.fees_missing ? "neuvedeno" : (item.fees_czk ?? "—")})</label>
-    <input id="ovFees" type="number" min="0" step="1" value="${feesVal}" placeholder="${item.fees_missing ? "" : (item.fees_czk ?? "")}">
+    <label>Plocha m² (teď ${escapeHtml(String(item.floor_area_sqm ?? "—"))})</label>
+    <input id="ovArea" type="number" min="0" step="0.1" value="${areaVal}" placeholder="${escapeHtml(String(item.floor_area_sqm ?? ""))}">
+    <label>Poplatky Kč/měs (teď ${item.fees_missing ? "neuvedeno" : escapeHtml(String(item.fees_czk ?? "—"))})</label>
+    <input id="ovFees" type="number" min="0" step="1" value="${feesVal}" placeholder="${item.fees_missing ? "" : escapeHtml(String(item.fees_czk ?? ""))}">
     <label>Poznámka</label>
     <textarea id="ovNote" placeholder="proč to není tržní / odkud je oprava">${noteVal}</textarea>
     <label class="ov-check"><input id="ovExclude" type="checkbox" ${excl}> Mimo statistiku (ne-tržní prodej — zůstane na stránce, ne v mediánu)</label>
-    <div class="ov-row">
-      <button class="popup-btn" onclick="saveOverride(${idLit})">Uložit opravu</button>
-      ${delBtn}
-    </div>
+    <p class="hint" style="margin:6px 0 0;">Poznámka se commituje do veřejného repa a vypíše se na této
+      stránce — piš ji tak, aby ji mohl číst kdokoli.</p>
+  </div>`;
+}
+
+// Save lives in a footer pinned to the bottom of the sheet, not under the form:
+// on a phone the form sits below the gallery and the whole description, and a
+// button (and the token prompt, and the result) several screens down is one
+// nobody sees. The id goes into onclick through escapeHtml -- a bare
+// JSON.stringify there closes the attribute at its first quote, and from 3. 9.
+// to 27. 9. that made every "Uložit opravu" click a silent SyntaxError.
+function overrideFooterHtml(item) {
+  const idAttr = escapeHtml(JSON.stringify(String(item.id)));
+  const delBtn = item.override
+    ? `<button class="popup-btn" data-ov-btn style="background:#7f1d1d;" onclick="deleteOverride(${idAttr})">Smazat opravu</button>`
+    : "";
+  return `<div class="ov-footer" onclick="event.stopPropagation()">
     <div id="ovPatRow" class="ov-row" style="display:none;">
       <input id="ovPatInput" type="password" autocomplete="off"
+             onkeydown="if(event.key==='Enter'){event.preventDefault();saveModalPat();}"
              placeholder="GitHub token — fine-grained, jen toto repo, Actions Read & write">
       <button class="popup-btn" onclick="saveModalPat()">Použít token a uložit</button>
     </div>
-    <div id="overrideStatus" class="hint"></div>
-    <p class="hint" style="margin:6px 0 0;">Poznámka se commituje do veřejného repa a vypíše se na této
-      stránce — piš ji tak, aby ji mohl číst kdokoli.</p>
+    <div id="overrideStatus" class="ov-status" role="status" aria-live="polite"></div>
+    <div class="ov-row">
+      <button class="popup-btn" data-ov-btn onclick="saveOverride(${idAttr})">Uložit opravu</button>
+      ${delBtn}
+    </div>
   </div>`;
 }
 
@@ -5133,6 +5304,7 @@ function buildModalHtml(item) {
     <a class="modal-link" href="${escapeHtml(item.url)}" target="_blank" rel="noopener">Otevřít na ${portalName(item.source)} →</a>
     ${(item.also_on || []).map(a => `<a class="modal-link" style="background:#334155;" href="${escapeHtml(a.url)}" target="_blank" rel="noopener">Také na ${portalName(a.source)} →</a>`).join(" ")}
     ${item.also_on && item.also_on.length ? '<div class="cost-note">Stejný byt inzerovaný na více portálech — sloučeno do jednoho řádku, odkazy na ostatní výše.</div>' : ""}
+    ${overrideFooterHtml(item)}
   `;
 }
 
@@ -5155,6 +5327,8 @@ function openHistoryItem(idx) {
 
 function closeModal() {
   document.getElementById("modalOverlay").classList.remove("open");
+  // A token typed after closing must not fire a save for a listing no longer on screen.
+  if (pendingAction && pendingAction.modal) pendingAction = null;
 }
 
 // The change log holds up to 300 events. It used to live in a 420px scroll box;

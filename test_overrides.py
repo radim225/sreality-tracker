@@ -211,6 +211,30 @@ except ValueError:
     check("zero m² rejected", True, True)
 
 
+# --- modal JS: the save button must be clickable --------------------------- #
+# From 3. 9. to 27. 9. "Uložit opravu" was onclick="saveOverride(${idLit})"
+# with idLit a bare JSON.stringify: the id's quote closed the attribute, every
+# click was a SyntaxError and nothing was sent or shown. Radim's edits simply
+# vanished. A JSON literal inside a double-quoted handler must go through
+# escapeHtml; this is the whole class, not just the one button.
+import re
+src = Path(scrape.__file__).read_text(encoding="utf-8")
+bare = re.findall(r'on[a-z]+="[^"`]*\$\{\s*(?:JSON\.stringify|idLit)', src)
+check("no bare JSON literal inside an inline handler", bare, [])
+check("override save goes through escapeHtml",
+      'onclick="saveOverride(${idAttr})"' in src
+      and "const idAttr = escapeHtml(JSON.stringify(String(item.id)));" in src, True)
+# Only a 204 may be reported as saved, and the pending marker is written only
+# on that branch.
+dispatch = src[src.index("async function dispatchWorkflow"):src.index("async function manageTracked")]
+check("dispatch: 204 is the only ok", dispatch.count("ok: true"), 1)
+check("dispatch: ok is guarded by 204", "if (status === 204) return {ok: true" in dispatch, True)
+submit = src[src.index("async function submitOverride"):src.index("function overrideFormHtml")]
+check("pending stored only after ok", submit.index("setOvPending(id, entry)") > submit.index("if (r.ok)"), True)
+check("token never in a URL", re.search(r"dispatches[^`]*\$\{pageToken", src), None)
+check("save button in a sticky footer", ".ov-footer {{ position: sticky;" in src, True)
+
+
 print()
 if FAILURES:
     print(f"{len(FAILURES)} FAILED:")
