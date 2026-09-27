@@ -26790,6 +26790,7 @@
   "lon": 14.459364361768088,
   "price_czk": 20000,
   "price_czk_per_sqm": 430,
+  "returned_at": "2026-09-27T19:49:00Z",
   "seller_name": "Wilson & White",
   "source": "sreality",
   "street": "Křišťanova",
@@ -37766,6 +37767,70 @@
   "total_czk": 22500,
   "transaction_type": "pronajem",
   "url": "https://www.bezrealitky.cz/nemovitosti-byty-domy/861747-nabidka-pronajem-bytu-kolbenova-praha"
+ },
+ "bez-994862": {
+  "address": {
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Hartigova 1185/102, Žižkov"
+  },
+  "approx_location": false,
+  "area": "vysocany",
+  "description": "Prodej bytu 1+1, (celkem 43 m2) 28,9 m² + zahrádka 14 m² k výlučnému užívání\n\nNabízím k prodeji byt 1+1 o velikosti 28,9 m² se zahrádkou 14 m² k výlučnému užívání. Byt prošel kompletní rekonstrukcí – nová elektroinstalace, vinylová podlaha, nová kuchyňská linka včetně spotřebičů.\n\nPlyn v bytě je zdarma (hradí SVJ).\nMěsíční poplatky činí 2 402 Kč.  Jsou nizké. \n\nDoporučuji jako investici nebo k vlastnímu bydlení.\n\nVelmi dobrá lokalita – veškerá občanská vybavenost v docházkové vzdálenosti, včetně parku.",
+  "disposition": "1+1",
+  "first_seen": "2026-08-23T19:10:36Z",
+  "floor_area_sqm": 43,
+  "gone_at": "2026-09-27T19:49:57Z",
+  "id": "bez-994862",
+  "images": [
+   "https://api.bezrealitky.cz/media/cache/record_main/data/images/advert/994k/994862/1775813455-mdskrdbtcy-photo-2026-04-10-11-30-12.jpg"
+  ],
+  "last_price_czk": 5590000,
+  "lat": 50.0897654,
+  "lon": 14.4657851,
+  "price_czk": 5590000,
+  "price_czk_per_sqm": 130000,
+  "source": "bezrealitky",
+  "thumb": "https://api.bezrealitky.cz/media/cache/record_thumb/data/images/advert/994k/994862/1775813455-mdskrdbtcy-photo-2026-04-10-11-30-12.jpg",
+  "title": "Prodej bytu 1+1 43 m²",
+  "total_czk": 5590000,
+  "transaction_type": "prodej",
+  "url": "https://www.bezrealitky.cz/nemovitosti-byty-domy/994862-nabidka-prodej-bytu-hartigova-praha"
+ },
+ "idnes-6a6a23903cec8668570e3505": {
+  "address": {
+   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
+   "precision": "street",
+   "source": "sreality-ulice",
+   "text": "Hartigova, Žižkov"
+  },
+  "approx_location": true,
+  "area": "vysocany",
+  "city_part": "Žižkov",
+  "description": "Prodej bytu 1+1 43 m² Prodej bytu 1+1, (celkem 43 m²) 28,9 m² + zahrádka 14 m² k výlučnému užívání Nabízím k prodeji byt 1+1 o velikosti 28,9 m² se zahrádkou 14 m² k výlučnému užívání. Byt prošel kompletní rekonstrukcí – nová elektroinstalace, vinylová podlaha, nová kuchyňská linka včetně spotřebičů. Plyn v bytě je zdarma (hradí SVJ). Měsíční poplatky činí 2 402 Kč. Jsou nizké. Doporučuji jako investici nebo k vlastnímu bydlení. Velmi dobrá lokalita – veškerá občanská vybavenost v docházkové vzdálenosti, včetně parku. Tato nemovitost je určena výhradně přímým zájemcům o koupi. Na inzerát můžete také reagovat přímo na webu Bezrealitky.",
+  "disposition": "1+1",
+  "first_seen": "2026-08-23T19:10:36Z",
+  "floor_area_sqm": 43.0,
+  "gone_at": "2026-09-27T00:00:00Z",
+  "id": "idnes-6a6a23903cec8668570e3505",
+  "images": [
+   "https://sta-reality2.1gr.cz/sta/compile/thumbs/1/4/a/99377f1d89a29edd06193b1f4ebd0.webp"
+  ],
+  "last_price_czk": 5590000,
+  "lat": 50.09043991976656,
+  "locality": "Hartigova, Praha 3 - Žižkov",
+  "lon": 14.470227600036504,
+  "price_czk": 5590000,
+  "price_czk_per_sqm": 130000,
+  "source": "idnes",
+  "street": "Hartigova",
+  "thumb": "https://sta-reality2.1gr.cz/sta/compile/thumbs/1/4/a/99377f1d89a29edd06193b1f4ebd0.webp",
+  "title": "Prodej bytu 1+1 43 m²",
+  "total_czk": 5590000,
+  "transaction_type": "prodej",
+  "url": "https://reality.idnes.cz/detail/prodej/byt/praha-3-hartigova/6a6a23903cec8668570e3505/"
  },
  "idnes-6ab4e79d72af7d5ce10b92d6": {
   "address": {
