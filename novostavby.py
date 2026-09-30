@@ -33,6 +33,7 @@ import unicodedata
 from datetime import datetime
 
 import gone_archive
+import photo_archive
 
 # --- Kde --------------------------------------------------------------------- #
 # Geokódováno 27. 9. 2026 přes Nominatim (OSM), včetně geometrie ulic, aby šlo
@@ -857,6 +858,12 @@ def page_payload(records, generated_at, overrides=None):
             rec["images"] = imgs
         else:
             rec.pop("images", None)
+        # Vlastní kopie fotek (photo_archive): Sreality je po smazání
+        # inzerátu stáhne z CDN, tyhle zůstanou.
+        local = [p for p in photo_archive.local_photos(rec.get("id"))
+                 if photo_archive.WEB_PATH_RE.match(p)]
+        if local:
+            rec["photos_local"] = local
         dom = days_on_market(r, generated_at)
         rec["market_start"], rec["market_source"] = market_start(r)
         rec["days_lower_bound"] = dom["lower_bound"]
@@ -1176,10 +1183,30 @@ def page_js(payload_json):
   // ---- Detail inzerátu: stejný modal jako u bytů (galerie, historie ceny,
   // parametry, popis, odkaz, ruční oprava) ----
   const BY_ID = new Map(NOV.records.map(r => [String(r.id), r]));
+  // Jen cesty, které vyrábí photo_archive.WEB_PATH_RE -- nic jiného z dat
+  // se jako src nepoužije.
+  const LOCAL_PHOTO_RE = /^photos\/nov\/[0-9A-Za-z_-]{1,40}\/[0-9]\.(?:webp|jpg|png)$/;
+  // Selhaná fotka: zkusit vlastní kopii, jinak ji z galerie vyndat. Prázdná
+  // galerie pak řekne proč (CSS .modal-gallery:empty).
+  window.novPhotoError = function (img) {
+    const fb = img.getAttribute("data-fb") || "";
+    img.removeAttribute("data-fb");
+    if (fb && LOCAL_PHOTO_RE.test(fb)) { img.src = fb; return; }
+    img.remove();
+  };
+  function novThumb(r) {
+    const local = (r.photos_local || []).filter(p => LOCAL_PHOTO_RE.test(p));
+    return (r.gone_at && local.length) ? local[0] : safeImg(r.thumb);
+  }
   function novModalHtml(r) {
-    const imgs = (r.images && r.images.length) ? r.images : (r.thumb ? [r.thumb] : []);
+    // Vlastní kopie (photos/nov/…) mají přednost u zmizelých -- Sreality
+    // jejich fotky smaže z CDN. U živých jsou zálohou, když odkaz selže.
+    const local = (r.photos_local || []).filter(p => LOCAL_PHOTO_RE.test(p));
+    const remote = (r.images && r.images.length) ? r.images : (r.thumb ? [r.thumb] : []);
+    const imgs = (r.gone_at && local.length) ? local.map(p => [p, ""])
+      : remote.map((u, i) => [safeImg(u), local[i] || ""]);
     const gallery = imgs.length
-      ? imgs.map(u => `<img src="${escapeHtml(safeImg(u))}" loading="lazy" onerror="this.remove()">`).join("")
+      ? imgs.map(([u, fb]) => `<img src="${escapeHtml(u)}" data-fb="${escapeHtml(fb)}" loading="lazy" onerror="novPhotoError(this)">`).join("")
       : `<img src="${PLACEHOLDER}">`;
     const x = dom(r);
     const goneHtml = r.gone_at ? `<div class="modal-note">❌ Už není v nabídce — zmizel ${fmtDay(r.gone_at)}
@@ -1267,7 +1294,7 @@ def page_js(payload_json):
       });
       const url = safeUrl(r.url);
       m.bindPopup(`<div style="min-width:150px;">
-        <img class="popup-thumb" src="${escapeHtml(safeImg(r.thumb))}" onerror="this.src=PLACEHOLDER">
+        <img class="popup-thumb" src="${escapeHtml(novThumb(r))}" onerror="this.src=PLACEHOLDER">
         <div style="font-weight:600;font-size:0.85rem;">${escapeHtml(r.disposition || "")} · ${TXL[r.transaction_type] || ""}</div>
         <div style="font-size:0.8rem;">${escapeHtml(r.street || "")} · ${priceTxt(r)}</div>
         <div style="font-size:0.75rem;">${stateTxt(r)} · ${kmTxt(r.km)} km</div>

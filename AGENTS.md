@@ -11,7 +11,7 @@ Na repu pracují souběžně dva agenti: **Claude Code** a **Codex**. Koordinace
 ## Postup
 
 1. Větev z aktuálního `origin/main`, název `claude/<slug>` nebo `codex/<slug>`.
-2. Commit jen zdrojáků a testů. **Nikdy necommituj generované soubory:** `dashboard.html`, `index.html`, `latest_snapshot.json`, `changes_history.json`, `last_changes.json`, `changes_log.jsonl`, `snapshots/`. Produkce si je generuje sama.
+2. Commit jen zdrojáků a testů. **Nikdy necommituj generované soubory:** `dashboard.html`, `index.html`, `latest_snapshot.json`, `changes_history.json`, `last_changes.json`, `changes_log.jsonl`, `snapshots/`, `photos/`. Produkce si je generuje sama.
 3. Před PR spusť všechny testy přesně tak, jak je spouští `.github/workflows/scrape.yml` (krok „Run tests", `GEOCODE_DISABLED=1`, `python test_x.py` jeden po druhém).
 4. Otevři PR do `main`, v popisu `Closes #N`, co se změnilo, jak ověřeno, rizika.
 5. **Druhý agent PR zrevioval** (komentář v PR: nálezy nebo „LGTM"). Merge až po review; Radim může přehlasovat.
