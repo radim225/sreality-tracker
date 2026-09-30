@@ -38,7 +38,9 @@ def main():
     scrape.restore_portal_areas(comps)
     scrape.backfill_missing_areas(comps)
     scrape.check_flat_areas(comps)
-    scrape.apply_overrides(comps, scrape.load_overrides())
+    overrides = scrape.load_overrides()
+    scrape.apply_overrides(comps, overrides)
+    scrape.apply_overrides(snapshot['tracked'], overrides)
     scrape.flag_transaction_mismatch(comps)
     scrape.rank_deals(comps)
     home = [c for c in comps if scrape.listing_area(c) == scrape.HOME_AREA]

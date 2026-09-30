@@ -1611,6 +1611,10 @@ ENRICHED_FIELDS = (
     # override: floor_area_sqm se nese keší, bez tohohle by se opravená plocha
     # příští běh tvářila jako údaj portálu (a smazaný override by zůstal).
     "floor_area_portal_sqm",
+    # Odkud plocha je. Bez něj by plocha vzatá minule z titulku přišla z keše
+    # jako „field" (ztratila by ~ na stránce a prošla kontrolou proti popisu).
+    # „popis" a „override" smaže restore_portal_areas a spočítají se znovu.
+    "floor_area_source",
     # Without this a cached listing loses its queue flag on the next run and
     # silently reverts to carrying a guessed fee -- the exact class of stale
     # mis-parse PARSER_VERSION exists to prevent.

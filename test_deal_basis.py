@@ -112,6 +112,11 @@ check("override zruší rozpor a zapamatuje portál",
 scrape.restore_portal_areas([ov])
 scrape.apply_overrides([ov], {})
 check("smazaný override: zpět plocha portálu", ov["floor_area_sqm"], 60.0)
+check("floor_area_source se nese keší", "floor_area_source" in scrape.ENRICHED_FIELDS, True)
+title_cached = {"id": 3, "source": "sreality", "floor_area_sqm": 50.0}
+scrape.carry_enrichment(title_cached, {"floor_area_sqm": 50.0, "floor_area_source": "title"})
+scrape.restore_portal_areas([title_cached])
+check("plocha z titulku zůstane „title“ i z keše", title_cached["floor_area_source"], "title")
 title_area = {"floor_area_sqm": 50.0, "floor_area_source": "title", "description": "podlahová plocha 71 m²"}
 check("plochu z titulku kontrola nepřepisuje", D.apply_area_check(title_area), None)
 
