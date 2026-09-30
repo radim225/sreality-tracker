@@ -21,6 +21,7 @@ import deal_basis
 import developers_card
 import geocode
 import gone_archive
+import mapguard
 import market
 import notify
 import novostavby
@@ -4633,6 +4634,7 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
   .badge.warn {{ background: #1c2f4a; color: #7ab8ff; }}
 {timeline.CSS}
 {ribbon_css_str}
+{mapguard.CSS}
 {ux.CSS}
 </style>
 </head>
@@ -6322,7 +6324,9 @@ renderGone();
 document.getElementById("goneSearch")?.addEventListener("input", renderGone);
 """
 
-    js = (
+    # mapguard první: jeho L.Map.addInitHook musí platit dřív, než vznikne
+    # první mapa (initMap, initGarageMap, novostavby).
+    js = mapguard.JS + (
         re.sub(r"__(?:TRACKED_JSON|HISTORY_JSON|ELECTRICITY_CZK|DEAL_THRESHOLD|DATA_JSON|CHANGED_IDS_JSON"
                r"|GARAGES_JSON|GARAGE_STATS_JSON|AREA_LABELS_JSON|AREA_STATS_JSON|GONE_JSON|HOT_JSON"
                r"|HOT_BY_CLASS_JSON)__",
