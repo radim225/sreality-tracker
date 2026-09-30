@@ -32,6 +32,19 @@ def main():
         scrape.backfill_missing_areas(listings)
         scrape.flag_transaction_mismatch(listings)
         scrape.attach_sale_extras(listings)
+    # Plocha z popisu a medián podle typu domu (deal_basis) -- stejné pořadí
+    # jako main(): obnovit plochu portálu, zkontrolovat, overrides, seřadit.
+    comps = snapshot['comparables']
+    scrape.restore_portal_areas(comps)
+    scrape.backfill_missing_areas(comps)
+    scrape.check_flat_areas(comps)
+    scrape.apply_overrides(comps, scrape.load_overrides())
+    scrape.flag_transaction_mismatch(comps)
+    scrape.rank_deals(comps)
+    home = [c for c in comps if scrape.listing_area(c) == scrape.HOME_AREA]
+    snapshot['stats'] = scrape.compute_stats(home)
+    snapshot['area_stats'] = {k: scrape.compute_stats([c for c in comps if scrape.listing_area(c) == k])
+                              for k in scrape.AREAS}
     scrape.render_dashboard(snapshot, changes, snapshot['stats'], history, estimate,
                             scrape.price_histories(all_pool))
     shutil.copyfile(scrape.DASHBOARD_PATH, scrape.ROOT / 'index.html')

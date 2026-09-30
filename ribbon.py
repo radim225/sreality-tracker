@@ -27,6 +27,8 @@ import json
 import math
 from datetime import datetime, timezone
 
+import deal_basis
+
 # Oblasti a jejich popisky -- zrcadlí AREAS v scrape.py. Jsou to naše vlastní
 # řetězce, ne scrapovaný text, takže je smí JS vložit i bez escapování
 # (escapuje je stejně, pro jistotu).
@@ -120,7 +122,8 @@ def _median_claim_ok(c):
     poplatků: jejich celková cena chybí o reálný náklad, takže vypadají
     levněji, než jsou. To je pravidlo projektu, stejné jako u karty
     „Nejlepší nabídky"."""
-    if c.get("deal_pct") is None or c.get("deal_outlier") or c.get("exclude_from_stats"):
+    if (c.get("deal_pct") is None or c.get("deal_outlier") or c.get("exclude_from_stats")
+            or c.get("area_mismatch")):
         return False
     return not (c.get("transaction_type") == "pronajem" and c.get("fees_missing"))
 
@@ -187,7 +190,10 @@ def _relist_signal(item):
 
 def _flat_candidate(c, drops, news):
     """Signály jednoho bytu → (skóre, kind, důvod), nebo None, když žhavý není."""
-    if c.get("deal_outlier") or c.get("exclude_from_stats") or c.get("tx_suspect"):
+    # Nevysvětlený rozpor plochy (deal_basis): Kč/m² nesedí, takže ani
+    # „žhavý" není -- Radim 30. 9.: mimo medián i žhavé nabídky.
+    if (c.get("deal_outlier") or c.get("exclude_from_stats") or c.get("tx_suspect")
+            or c.get("area_mismatch")):
         return None
     price = c.get("price_czk")
     if not price:
@@ -198,7 +204,10 @@ def _flat_candidate(c, drops, news):
     median_ok = _median_claim_ok(c)
     deal_pct = c.get("deal_pct")
     below = -deal_pct if (median_ok and deal_pct < 0) else 0
-    median_text = f"−{below} % pod mediánem {c.get('disposition') or ''}".strip() if below else None
+    # deal_label říká, proti čemu: „2+kk · novostavba", nebo „2+kk, všechny
+    # typy", když třída domu chybí nebo má skupina málo inzerátů.
+    label = c.get("deal_label") or c.get("disposition") or ""
+    median_text = f"−{below} % pod mediánem {label}".strip() if below else None
 
     old = drops.get(key)
     if old and price < old:
@@ -304,6 +313,7 @@ def _item(src, score, kind, reason, is_garage):
         "score": round(score, 1),
         "kind": kind,
         "is_garage": is_garage,
+        "house_class": None if is_garage else src.get("house_class"),
     }
 
 
@@ -387,6 +397,24 @@ def hot_offers(comparables, history, garages, now, limit=14):
     g_pick = _pick(unique(order(garage_items)), min(GARAGE_MAX, max(limit // 4, 1)))
     f_pick = _pick(unique(order(flats)), limit - len(g_pick))
     return order(f_pick + g_pick)
+
+
+HOUSE_CLASSES = ("novostavba", "panel", "starsi", "neurceno")
+
+
+def hot_offers_by_class(comparables, history, now, limit=14):
+    """Žhavé byty zvlášť pro každý typ domu (filtr „Typ domu" na stránce).
+
+    Stejný výběr jako hot_offers, jen nad byty jedné třídy a bez garáží --
+    kdyby se jen schovávalo z celkových 14, filtr „panel" by pás skoro vždy
+    vyprázdnil, i když žhavé panelové byty existují. Třída „neurceno" =
+    typ domu se nepodařilo zjistit (deal_basis.building_class vrátil None)."""
+    out = {}
+    for cls in HOUSE_CLASSES:
+        want = None if cls == "neurceno" else cls
+        subset = [c for c in comparables or [] if c.get("house_class") == want]
+        out[cls] = hot_offers(subset, history, [], now, limit=limit)
+    return out
 
 
 # --- HTML / CSS / JS ---------------------------------------------------------
@@ -473,9 +501,10 @@ def ribbon_html(sections):
   <div id="ribArea" role="group" aria-label="Oblast">{switch}</div>
 </nav>
 <section id="hotStrip">
-  <h2>🔥 Žhavé nabídky <span class="hint" id="hotCount"></span></h2>
+  <h2>🔥 Žhavé nabídky <span class="hint" id="hotCount"></span> {deal_basis.house_select_html()}</h2>
   <div id="hotList"></div>
-  <p class="hint">Vybráno automaticky: ≥ 8 % pod mediánem Kč/m² stejné dispozice a oblasti,
+  <p class="hint">Vybráno automaticky: ≥ 8 % pod mediánem Kč/m² stejné dispozice, oblasti a typu domu
+    (typ neznámý nebo málo inzerátů → medián všech typů, řečeno v důvodu),
     zlevnění ≥ 3 % za poslední 3 dny, nové za 48 h pod mediánem, levněji znovu vložené.
     Pronájmy bez uvedených poplatků se jako „pod mediánem" nevydávají.</p>
 </section>"""
@@ -574,11 +603,20 @@ function hotPrice(h) {
   return h.price_czk == null ? "—" : fmtCzk(Math.round(h.price_czk));
 }
 
+// Filtr „Typ domu" (scrape.py: setHouseFilter) přepne na výběr té třídy
+// z HOT_BY_CLASS -- jen schovat z celkových 14 by pás často vyprázdnilo.
+function hotSource() {
+  const hf = window.HOUSE_FILTER || "";
+  if (hf && typeof HOT_BY_CLASS !== "undefined" && HOT_BY_CLASS[hf]) return HOT_BY_CLASS[hf];
+  return HOT;
+}
+
 function renderHot() {
   const list = document.getElementById("hotList");
   if (!list) return;
   const area = window.AREA_FILTER || "";
-  const items = HOT.map((h, idx) => [h, idx]).filter(([h]) => !area || (h.area || "vysocany") === area);
+  const src = hotSource();
+  const items = src.map((h, idx) => [h, idx]).filter(([h]) => !area || (h.area || "vysocany") === area);
   const count = document.getElementById("hotCount");
   if (count) count.textContent = items.length ? `(${items.length})` : "";
   if (!items.length) {
@@ -605,7 +643,7 @@ function renderHot() {
 }
 
 function openHot(idx) {
-  const h = HOT[idx];
+  const h = hotSource()[idx];
   if (!h) return;
   // Detail v modalu jen u bytu, který stránka zná (garáže v ALL nejsou);
   // jinak rovnou na portál, v nové záložce a bez window.opener.
@@ -632,6 +670,7 @@ function initRibbon() {
     if (card) openHot(Number(card.dataset.idx));
   });
   document.addEventListener("areachange", renderHot);
+  document.addEventListener("housechange", renderHot);
 
   measureRibbon();
   window.addEventListener("resize", measureRibbon);

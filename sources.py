@@ -125,6 +125,8 @@ _DETAIL_FIELDS = (
     "description", "price_note", "admin_fee_czk", "old_price_czk", "fees_czk",
     "fees_missing", "fees_source", "electricity_czk", "electricity_estimated",
     "total_czk", "price_czk_per_sqm", "parser_version",
+    # Viz scrape.ENRICHED_FIELDS: plocha před opravou z popisu / overridem.
+    "floor_area_portal_sqm",
 )
 
 

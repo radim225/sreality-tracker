@@ -134,6 +134,7 @@ jobs:
           python test_timeline.py
           python test_developers.py
           python test_pages.py
+          python test_deal_basis.py
 
       - name: Run scraper
         env:

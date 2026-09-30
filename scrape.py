@@ -17,6 +17,7 @@ from pathlib import Path
 
 import requests
 
+import deal_basis
 import developers_card
 import geocode
 import gone_archive
@@ -1217,6 +1218,12 @@ def apply_overrides(listings, overrides, *, stamp_ui=True):
                 listing["override_note"] = ov["note"]
         changed = False
         if "floor_area_sqm" in ov and ov["floor_area_sqm"] is not None:
+            # Plocha portálu přežije do dalšího běhu (restore_portal_areas):
+            # jinak by se ruční plocha nesla keší i po smazání overridu.
+            if listing.get("floor_area_sqm") and "floor_area_portal_sqm" not in listing:
+                listing["floor_area_portal_sqm"] = listing["floor_area_sqm"]
+            listing.pop("area_mismatch", None)
+            listing.pop("area_note", None)
             listing["floor_area_sqm"] = float(ov["floor_area_sqm"])
             # Otherwise a hand-entered area keeps whatever source the backfill
             # left behind, and the page tells Radim his own correction was read
@@ -1331,6 +1338,10 @@ def attributes_from_params(params, data):
         # puts the median at 4 days, which is an artefact of unstable search
         # pagination rather than anything about the market (§3.7).
         "since": params.get("since"),
+        # Rok kolaudace -- třída domu pro výhodnost (deal_basis, novostavba =
+        # kolaudace >= 2015). Přibývá postupně s čtením detailů, bez bumpu
+        # PARSER_VERSION: do té doby rozhoduje štítek stavu, typ stavby a popis.
+        "acceptance_year": params.get("acceptanceYear") if isinstance(params.get("acceptanceYear"), int) else None,
         "edited": params.get("edited"),
         "views": params.get("stats") if isinstance(params.get("stats"), int) else None,
         # Struck-through price: the advert's own record of having come down.
@@ -1595,7 +1606,11 @@ ENRICHED_FIELDS = (
     "parking_state", "parking_price_czk",
     "balcony", "balcony_area_sqm", "loggia", "loggia_area_sqm",
     "terrace", "terrace_area_sqm", "elevator", "ownership", "ownership_name",
-    "since", "edited", "views", "price_old_czk",
+    "since", "edited", "views", "price_old_czk", "acceptance_year",
+    # Plocha z portálu, když ji deal_basis opravil z popisu nebo ji přepsal
+    # override: floor_area_sqm se nese keší, bez tohohle by se opravená plocha
+    # příští běh tvářila jako údaj portálu (a smazaný override by zůstal).
+    "floor_area_portal_sqm",
     # Without this a cached listing loses its queue flag on the next run and
     # silently reverts to carrying a guessed fee -- the exact class of stale
     # mis-parse PARSER_VERSION exists to prevent.
@@ -3128,39 +3143,76 @@ def deal_group(c):
     return (listing_area(c), c.get("transaction_type"), c.get("disposition"))
 
 
+# Skupina menší než tohle nemá medián, kterému by šlo věřit -- stejná hranice
+# jako dosud u (oblast, transakce, dispozice).
+DEAL_MIN_GROUP = 4
+
+
 def rank_deals(comparables):
     """Score every listing against the median Kč/m² of its own disposition and
     transaction type, so "cheap" means cheap for what it is rather than just
     small.
 
+    Od 30. 9. (Radim) i podle třídy domu: novostavba / panel / starší
+    (deal_basis.building_class). Panelák za 158 tis. Kč/m² není výhodná
+    novostavba. Když třídu neznáme nebo má skupina méně než DEAL_MIN_GROUP
+    inzerátů, srovnává se se širokým mediánem (oblast, transakce, dispozice)
+    a `deal_label` to říká („2+kk, všechny typy") -- nic se tiše nepřehodí.
+
     Rentals whose fee is unknown are scored but never surfaced as deals: their
     all-in total is missing a real cost, so they look cheaper than they are.
     Left in, they would crowd out the genuine bargains -- the "best deals" list
-    would mostly be a list of adverts that didn't disclose their fees."""
+    would mostly be a list of adverts that didn't disclose their fees.
+    Inzerát s nevysvětleným rozporem plochy (area_mismatch) nemá Kč/m²,
+    kterému by šlo věřit: do mediánu nejde a „X % pod mediánem" se o něm
+    netvrdí."""
     def comparable_basis(c):
         """A rental's Kč/m² is only on the same footing as its neighbours once
         the fee is known -- until then it is rent-only and looks too cheap. Such
         rows are kept off the median as well as out of the deal list, or a run
         with many un-enriched listings would drag the baseline down and make
         everything else look expensive."""
-        if c.get("exclude_from_stats"):
+        if c.get("exclude_from_stats") or c.get("area_mismatch"):
             return False
         return not (c.get("transaction_type") == "pronajem" and c.get("fees_missing"))
+
+    now_year = datetime.now(timezone.utc).year
+    for c in comparables:
+        c["house_class"], c["house_class_source"] = deal_basis.building_class(c, now_year)
 
     groups = {}
     for c in comparables:
         v = c.get("price_czk_per_sqm")
         if v and comparable_basis(c):
             groups.setdefault(deal_group(c), []).append(v)
-    medians = {k: statistics.median(v) for k, v in groups.items() if len(v) >= 4}
+            if c["house_class"]:
+                groups.setdefault(deal_group(c) + (c["house_class"],), []).append(v)
+    medians = {k: (statistics.median(v), len(v)) for k, v in groups.items()
+               if len(v) >= DEAL_MIN_GROUP}
 
     for c in comparables:
         c["deal_pct"] = None
         c["deal_ok"] = False
-        med = medians.get(deal_group(c))
+        c["deal_outlier"] = False
+        for k in ("deal_basis", "deal_median", "deal_n", "deal_label"):
+            c.pop(k, None)
         v = c.get("price_czk_per_sqm")
-        if not med or not v:
+        if not v or c.get("area_mismatch"):
             continue
+        broad = deal_group(c)
+        cls = c["house_class"]
+        if cls and broad + (cls,) in medians:
+            (med, n), basis = medians[broad + (cls,)], "class"
+        elif broad in medians:
+            (med, n), basis = medians[broad], "broad"
+        else:
+            continue
+        disp = c.get("disposition") or ""
+        c["deal_basis"] = basis
+        c["deal_median"] = round(med)
+        c["deal_n"] = n
+        c["deal_label"] = (f"{disp} · {deal_basis.CLASS_LABEL[cls]}" if basis == "class"
+                           else f"{disp}, všechny typy").strip(" ·,")
         c["deal_pct"] = round((v - med) / med * 100)
         c["deal_ok"] = (
             comparable_basis(c)
@@ -3172,6 +3224,32 @@ def rank_deals(comparables):
         # you can compare on Kč/m²).
         c["deal_outlier"] = c["deal_pct"] < DEAL_FLOOR_PCT
     return comparables
+
+
+def restore_portal_areas(listings):
+    """Před slučováním duplicit: plocha z portálu místo loňské opravy z
+    popisu / overridu (deal_basis.restore_portal_area), aby dedup klíč i
+    kontrola plochy viděly údaj portálu."""
+    n = 0
+    for c in listings:
+        if deal_basis.restore_portal_area(c):
+            recompute_listing_costs(c)
+            n += 1
+    return n
+
+
+def check_flat_areas(listings):
+    """Plocha bytu z popisu (deal_basis.apply_area_check): oprava, když rozdíl
+    vysvětlí terasa/balkon/lodžie/sklep/zahrada/stání, jinak příznak rozporu.
+    Po backfill_missing_areas, před apply_overrides -- ruční plocha vyhrává."""
+    counts = collections.Counter()
+    for c in listings:
+        status = deal_basis.apply_area_check(c)
+        if status == "corrected":
+            recompute_listing_costs(c)
+        if status:
+            counts[status] += 1
+    return counts
 
 
 # The flat the area's asking prices are read against. The price is the flat
@@ -3552,6 +3630,7 @@ def compute_stats(comparables):
             if c["transaction_type"] == tx
             and c.get("price_czk_per_sqm")
             and not c.get("exclude_from_stats")
+            and not c.get("area_mismatch")
             and (disp_filter is None or c.get("disposition") == disp_filter)
         ]
         if not vals:
@@ -4266,6 +4345,8 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
         # z diff_snapshots, které přichází až po sweepu garáží -- se starším
         # "teď" by vypadaly jako z budoucnosti a do pásu by se nedostaly.
         changes.get("generated_at") or snapshot["generated_at"]))
+    hot_by_class_json = script_json(ribbon.hot_offers_by_class(
+        comparables, history, changes.get("generated_at") or snapshot["generated_at"]))
     ribbon_css_str = ribbon.ribbon_css()
     ribbon_html_str = ribbon.ribbon_html([
         ("favCard", "★ Oblíbené"), ("dealsCard", "🔥 Nejlepší"), ("garageCard", "🅿️ Garáže"), ("novCard", "🏗️ Novostavby"), ("devCard", "💼 Ceníky"),
@@ -4580,9 +4661,12 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
       <option value="3+kk">3+kk</option>
       <option value="3+1">3+1</option>
     </select>
+    {deal_basis.house_select_html()}
   </div>
   <div class="deals-list" id="dealsList"></div>
-  <p class="hint">Řazeno podle odchylky Kč/m² od mediánu <b>stejné dispozice</b> v oblasti — ne podle absolutní ceny,
+  <p class="hint">Řazeno podle odchylky Kč/m² od mediánu <b>stejné dispozice a typu domu</b> (novostavba od 2015 / panel /
+     starší) v oblasti; když typ neznáme nebo je skupina menší než 4, proti mediánu všech typů — řádek to vždy říká.
+     Ne podle absolutní ceny,
      aby malý 1+kk a velký 3+kk šly porovnat. U pronájmů se počítá celková cena (nájem + poplatky + elektřina).
      Inzeráty bez uvedených poplatků se sem záměrně nedostanou: jejich celková cena je podhodnocená, takže by
      vypadaly levněji, než jsou.</p>
@@ -4722,6 +4806,7 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
     <option value="bezrealitky">Bezrealitky</option>
     <option value="idnes">iDNES</option>
   </select>
+  {deal_basis.house_select_html()}
   <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;">
     <input type="checkbox" id="filterPodHarfou" style="width:auto;"> Pod Harfou only
   </label>
@@ -4731,6 +4816,7 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
   <input id="search" type="text" placeholder="Hledat název / ulici / lokalitu…">
   {ux.table_controls_html()}
 </div>
+<div id="liveMedian" class="hint" style="margin:0 0 8px;"></div>
 
 <div class="scroll">
 <table id="tbl">
@@ -4745,7 +4831,7 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
       <th data-k="total_czk" title="Rent: nájem + poplatky + elektřina (real or estimated). Sale: purchase price.">Celkem</th>
       <th data-k="floor_area_sqm">m²</th>
       <th data-k="price_czk_per_sqm">Kč/m²</th>
-      <th data-k="deal_pct" title="Odchylka Kč/m² od mediánu stejné dispozice v oblasti. Záporné = levnější.">vs. medián</th>
+      <th data-k="deal_pct" title="Odchylka Kč/m² od mediánu stejné dispozice a typu domu v oblasti (° = typ neznámý nebo málo inzerátů, srovnáno se všemi typy). Záporné = levnější.">vs. medián</th>
       <th data-k="dist_km" title="Vzdušná vzdálenost od středu sledované oblasti">km</th>
       <th data-k="city_part">Locality</th>
       <th>Odkaz</th>
@@ -4779,6 +4865,7 @@ const AREA_LABELS = __AREA_LABELS_JSON__;
 const AREA_STATS = __AREA_STATS_JSON__;
 const GONE = __GONE_JSON__;
 const HOT = __HOT_JSON__;
+const HOT_BY_CLASS = __HOT_BY_CLASS_JSON__;
 let sortKey = "price_czk_per_sqm", sortDir = 1;
 
 const PLACEHOLDER = "data:image/svg+xml;utf8," + encodeURIComponent(
@@ -4821,6 +4908,14 @@ function fmtFees(r) {
 // as measured.
 function fmtArea(r) {
   if (r.floor_area_sqm === null || r.floor_area_sqm === undefined) return "—";
+  // Plocha bytu z popisu (portál ji nafoukl o terasu apod.) / nevysvětlený
+  // rozpor -- obojí s poznámkou z deal_basis.area_note.
+  if (r.floor_area_source === "popis") {
+    return `<span title="${escapeHtml(r.area_note || "")}">${escapeHtml(String(r.floor_area_sqm))} ✎</span>`;
+  }
+  if (r.area_mismatch) {
+    return `${escapeHtml(String(r.floor_area_sqm))} <span class="fee-na" title="${escapeHtml(r.area_note || "")}">⚠</span>`;
+  }
   if (r.floor_area_source !== "title") return String(r.floor_area_sqm);
   return `<span title="Inzerát plochu neuvádí v datech — vzato z jeho vlastního titulku, zaokrouhleno na celé m²">${r.floor_area_sqm}~</span>`;
 }
@@ -4898,7 +4993,17 @@ function saleExtrasHtml(r) {
     pro celou větu. Do celkové ceny ani do Kč/m² se nezapočítávají.</div>`;
 }
 
+// „proti mediánu 2+kk · novostavba (n = 23)" -- text jde přes escapeHtml,
+// čísla přes Number.
+function dealBasisText(r) {
+  if (!r.deal_label) return "";
+  const n = Number(r.deal_n);
+  return `proti mediánu ${escapeHtml(r.deal_label)}${n ? ` (n = ${n})` : ""}`;
+}
 function fmtDeal(r) {
+  if (r.area_mismatch) {
+    return `— <span class="fee-na" title="${escapeHtml(r.area_note || "Plocha na portálu nesedí s popisem")}">⚠</span>`;
+  }
   if (r.deal_pct === null || r.deal_pct === undefined) return "—";
   const cls = r.deal_ok ? "deal-good" : (r.deal_pct > 0 ? "deal-bad" : "");
   let warn = "";
@@ -4907,7 +5012,12 @@ function fmtDeal(r) {
   } else if (r.transaction_type === "pronajem" && r.fees_missing) {
     warn = ' <span class="fee-na" title="Bez poplatků — srovnání není spolehlivé">?</span>';
   }
-  return `<span class="${cls}">${r.deal_pct > 0 ? "+" : ""}${r.deal_pct}%</span>${warn}`;
+  const basis = r.deal_label
+    ? `Proti mediánu ${r.deal_label} v oblasti: ${fmtCzk(r.deal_median)}/m², n = ${Number(r.deal_n) || "?"}`
+      + (r.deal_basis === "broad" ? ". Typ domu neznámý nebo málo inzerátů stejného typu — srovnáno se všemi typy." : "")
+    : "";
+  const broad = r.deal_basis === "broad" ? "°" : "";
+  return `<span class="${cls}" title="${escapeHtml(basis)}">${r.deal_pct > 0 ? "+" : ""}${r.deal_pct}%${broad}</span>${warn}`;
 }
 
 function escapeHtml(s) {
@@ -5347,7 +5457,10 @@ function buildModalHtml(item) {
       <div><b>m²</b>${fmtArea(item)}</div>
       <div><b>Floor</b>${floorLine}</div>
       <div><b>Typ</b>${item.transaction_type === "pronajem" ? "pronájem" : "prodej"}</div>
+      <div><b>Typ domu</b>${escapeHtml(HOUSE_LABELS[houseOf(item)] || "—")}${item.house_class_source === "popis" ? ' <span class="hint">(z popisu)</span>' : ""}</div>
       <div><b>Locality</b>${escapeHtml(item.locality || item.city_part || "—")}</div>
+      ${item.area_note ? `<div style="grid-column:1/-1;"><b>Plocha</b>${escapeHtml(item.area_note)}</div>` : ""}
+      ${item.deal_label ? `<div style="grid-column:1/-1;"><b>Srovnání</b>${fmtDeal(item)} ${dealBasisText(item)}, medián ${fmtCzk(item.deal_median)}/m²</div>` : ""}
       <div style="grid-column:1/-1;"><b>Adresa</b>${addressHtml(item)}<div class="hint">${mapLinksHtml(item.lat, item.lon)}</div></div>
       ${garageParkingHtml(item)}
       ${parkingStateHtml(item)}
@@ -5499,7 +5612,7 @@ function renderDeals() {
   // disposition+area+price collapses here and here only.
   const seen = new Set();
   const rows = DATA
-    .filter(r => r.deal_ok && areaOk(r) && (!tx || r.transaction_type === tx) && (!disp || r.disposition === disp))
+    .filter(r => r.deal_ok && areaOk(r) && houseOk(r) && (!tx || r.transaction_type === tx) && (!disp || r.disposition === disp))
     .sort((a, b) => a.deal_pct - b.deal_pct)
     .filter(r => {
       const k = [r.transaction_type, r.disposition, r.floor_area_sqm, r.price_czk].join("|");
@@ -5510,7 +5623,8 @@ function renderDeals() {
     .slice(0, 12);
   const el = document.getElementById("dealsList");
   if (!rows.length) {
-    el.innerHTML = `<div style="color:#888;font-size:0.8rem;">Žádná nabídka teď není aspoň ${DEAL_THRESHOLD} % pod mediánem své dispozice.</div>`;
+    const hf = window.HOUSE_FILTER || "";
+    el.innerHTML = `<div style="color:#888;font-size:0.8rem;">Žádná nabídka${hf ? ` (typ domu: ${escapeHtml(HOUSE_LABELS[hf])})` : ""} teď není aspoň ${DEAL_THRESHOLD} % pod mediánem své dispozice.</div>`;
     return;
   }
   el.innerHTML = rows.map(r => `
@@ -5522,6 +5636,7 @@ function renderDeals() {
           · ${r.transaction_type === "pronajem" ? "pronájem" : "prodej"}${srcBadge(r.source)}${alsoBadges(r)}</div>
         <div class="dmeta">${fmtTotal(r)}${r.transaction_type === "pronajem" ? "/měs. vč. poplatků" : ""}
           · ${fmtCzk(r.price_czk_per_sqm)}/m²${r.old_price_czk ? ` · <span style="color:#7CFFB2;">zlevněno z ${fmtCzk(r.old_price_czk)}</span>` : ""}</div>
+        <div class="dmeta">${dealBasisText(r)}${r.area_note ? ` · <span title="${escapeHtml(r.area_note)}">plocha z popisu ✎</span>` : ""}</div>
       </div>
       <div class="dpct">${r.deal_pct}%</div>
     </div>`).join("");
@@ -5536,6 +5651,7 @@ function render() {
   const q = document.getElementById("search").value.toLowerCase();
   let rows = DATA.filter(r => {
     if (!areaOk(r)) return false;
+    if (!houseOk(r)) return false;
     if (tx && r.transaction_type !== tx) return false;
     if (disp && r.disposition !== disp) return false;
     if (source && r.source !== source) return false;
@@ -5545,6 +5661,7 @@ function render() {
     if (q && !((r.title||"").toLowerCase().includes(q) || (r.city_part||"").toLowerCase().includes(q) || (r.street||"").toLowerCase().includes(q) || (r.locality||"").toLowerCase().includes(q))) return false;
     return true;
   });
+  renderLiveMedian(rows);
   rows.sort((a, b) => {
     let av = a[sortKey], bv = b[sortKey];
     if (av === null || av === undefined) av = -Infinity;
@@ -5580,6 +5697,50 @@ function render() {
 function areaOf(x) { return (x && x.area) || "vysocany"; }
 function areaOk(x) { const f = window.AREA_FILTER || ""; return !f || areaOf(x) === f; }
 function areaLabel(x) { return AREA_LABELS[areaOf(x)] || areaOf(x); }
+
+// ---------------------------------------------------------------------------
+// Typ domu (deal_basis). Tři výběry .house-filter (tabulka, Nejlepší nabídky,
+// pás žhavých nabídek) drží jeden stav; změna pošle "housechange".
+// ---------------------------------------------------------------------------
+const HOUSE_LABELS = { novostavba: "novostavba", panel: "panel", starsi: "starší", neurceno: "typ neurčen" };
+const HOUSE_KEY = "houseFilter";
+window.HOUSE_FILTER = "";
+function houseOf(x) { return (x && x.house_class) || "neurceno"; }
+function houseOk(x) { const f = window.HOUSE_FILTER || ""; return !f || houseOf(x) === f; }
+function setHouseFilter(v, persist) {
+  if (!Object.prototype.hasOwnProperty.call(HOUSE_LABELS, v)) v = "";
+  window.HOUSE_FILTER = v;
+  document.querySelectorAll("select.house-filter").forEach(s => { s.value = v; });
+  if (persist) { try { localStorage.setItem(HOUSE_KEY, v); } catch (e) {} }
+  document.dispatchEvent(new CustomEvent("housechange"));
+}
+
+// Medián Kč/m² z řádků, které tabulka právě ukazuje. Stejná pravidla jako
+// rank_deals: bez vyřazených, bez nevysvětlené plochy, bez pronájmů bez
+// poplatků (jejich Kč/m² je podhodnocené). Prodej a pronájem zvlášť --
+// dohromady by medián nic neznamenal.
+function medianOf(vals) {
+  if (!vals.length) return null;
+  const s = vals.slice().sort((a, b) => a - b), m = Math.floor(s.length / 2);
+  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+}
+function renderLiveMedian(rows) {
+  const el = document.getElementById("liveMedian");
+  if (!el) return;
+  const parts = [];
+  for (const [tx, label] of [["prodej", "prodej"], ["pronajem", "pronájem"]]) {
+    const vals = rows.filter(r => r.transaction_type === tx && r.price_czk_per_sqm
+      && !r.exclude_from_stats && !r.area_mismatch && !r.tx_suspect
+      && !(tx === "pronajem" && r.fees_missing)).map(r => r.price_czk_per_sqm);
+    if (!vals.length) continue;
+    parts.push(vals.length >= 4
+      ? `${label} <b>${fmtCzk(Math.round(medianOf(vals)))}</b> (n = ${vals.length})`
+      : `${label}: málo dat (n = ${vals.length})`);
+  }
+  el.innerHTML = parts.length
+    ? `Medián Kč/m² pro aktuální filtr: ${parts.join(" · ")}. Bez vyřazených, bez nesedící plochy a bez pronájmů bez poplatků.`
+    : "Medián Kč/m² pro aktuální filtr: žádná data.";
+}
 
 function fmtDay(iso) {
   if (!iso) return "—";
@@ -6126,6 +6287,14 @@ document.getElementById("filterPodHarfou").addEventListener("change", render);
 document.getElementById("filterFees").addEventListener("change", render);
 document.getElementById("search").addEventListener("input", render);
 document.getElementById("dealTx").addEventListener("change", renderDeals);
+document.querySelectorAll("select.house-filter").forEach(sel =>
+  sel.addEventListener("change", () => setHouseFilter(sel.value, true)));
+document.addEventListener("housechange", () => { render(); renderDeals(); });
+{
+  let savedHouse = "";
+  try { savedHouse = localStorage.getItem(HOUSE_KEY) || ""; } catch (e) {}
+  setHouseFilter(savedHouse, false);
+}
 document.getElementById("dealDisp").addEventListener("change", renderDeals);
 makeCollapsible();
 measureHeader();
@@ -6151,7 +6320,8 @@ document.getElementById("goneSearch")?.addEventListener("input", renderGone);
 
     js = (
         re.sub(r"__(?:TRACKED_JSON|HISTORY_JSON|ELECTRICITY_CZK|DEAL_THRESHOLD|DATA_JSON|CHANGED_IDS_JSON"
-               r"|GARAGES_JSON|GARAGE_STATS_JSON|AREA_LABELS_JSON|AREA_STATS_JSON|GONE_JSON|HOT_JSON)__",
+               r"|GARAGES_JSON|GARAGE_STATS_JSON|AREA_LABELS_JSON|AREA_STATS_JSON|GONE_JSON|HOT_JSON"
+               r"|HOT_BY_CLASS_JSON)__",
                lambda m: {
                    "__TRACKED_JSON__": tracked_json, "__HISTORY_JSON__": history_json,
                    "__ELECTRICITY_CZK__": str(ELECTRICITY_ESTIMATE_CZK),
@@ -6162,6 +6332,7 @@ document.getElementById("goneSearch")?.addEventListener("input", renderGone);
                    "__AREA_STATS_JSON__": area_stats_json,
                    "__GONE_JSON__": gone_json,
                    "__HOT_JSON__": hot_json,
+                   "__HOT_BY_CLASS_JSON__": hot_by_class_json,
                }[m.group(0)], js_template)
     )
 
@@ -6498,6 +6669,9 @@ def main():
         areas={k: (a["center"], a["radius_km"]) for k, a in AREAS.items()},
     )
     comparables += sources.fetch_extra_comparables()
+    restored_areas = restore_portal_areas(comparables)
+    if restored_areas:
+        print(f"Plocha z portálu obnovena u {restored_areas} inzerátů před kontrolou", file=sys.stderr)
     comparables, folded = merge_cross_portal(comparables)
     for c in comparables:
         assign_area(c)
@@ -6509,6 +6683,11 @@ def main():
     filled_area = backfill_missing_areas(comparables) + backfill_missing_areas(tracked)
     if filled_area:
         print(f"Plocha doplněna z titulku u {filled_area} inzerátů", file=sys.stderr)
+    area_counts = check_flat_areas(comparables)
+    print(f"Plocha vs. popis: {dict(area_counts)}", file=sys.stderr)
+    if area_counts.get("mismatch"):
+        print(f"::warning::{area_counts['mismatch']} inzerátů má plochu, kterou popis nevysvětlí "
+              "-- mimo medián a výhodné nabídky", file=sys.stderr)
     apply_overrides(comparables, overrides)
     apply_overrides(tracked, overrides)
     # After the overrides, which reset exclude_from_stats on every listing.
