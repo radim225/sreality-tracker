@@ -24,6 +24,7 @@ import gone_archive
 import mapguard
 import market
 import notify
+import photo_archive
 import novostavby
 import pool
 import relist
@@ -2317,6 +2318,21 @@ def fetch_novostavby(prev_snapshot=None):
     return records, events, meta
 
 
+def archive_novostavby_photos(records, now):
+    """Vlastní kopie fotek novostaveb (photo_archive): Sreality je po smazání
+    inzerátu stáhne z CDN a modal zmizelé novostavby by zůstal bez fotek.
+    Doplněk -- vlastní try, aby chyba nestála ani kolekci novostaveb."""
+    try:
+        stats = photo_archive.archive(
+            records, photo_archive.http_fetch(SESSION, _get_with_deadline))
+        removed = photo_archive.prune(records, now)
+    except Exception as exc:  # noqa: BLE001 -- doplněk
+        print(f"::warning::fotky novostaveb: {exc}", file=sys.stderr)
+        return
+    print(f"Fotky novostaveb: {stats}" + (f", smazáno po {photo_archive.KEEP_DAYS} dnech / "
+          f"mimo kolekci: {removed}" if removed else ""), file=sys.stderr)
+
+
 def fetch_comparables(prev_snapshot=None):
     by_id = {}
     for ward in SEARCH_WARDS:
@@ -4560,6 +4576,8 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
   #modalClose {{ float: right; background: none; border: none; color: #999; font-size: 1.3rem; cursor: pointer; }}
   .modal-gallery {{ display: flex; gap: 6px; overflow-x: auto; margin: 8px 0; }}
   .modal-gallery img {{ height: 140px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }}
+  /* Všechny fotky selhaly (novPhotoError je vyndal): říct proč, ne nechat díru. */
+  .modal-gallery:empty::after {{ content: "Fotky už na portálu nejsou a vlastní kopii nemáme."; color: #888; font-size: 0.8rem; }}
   .modal-grid {{ display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; font-size: 0.85rem; margin: 10px 0; }}
   .modal-grid div b {{ display: block; color: #9aa; font-size: 0.7rem; font-weight: 500; }}
   .modal-desc {{ font-size: 0.85rem; line-height: 1.4; color: #ccc; white-space: pre-wrap; }}
@@ -6751,6 +6769,7 @@ def main():
         snapshot["novostavby_meta"] = nov_meta
         snapshot["novostavby_stats"] = novostavby.compute_stats(
             novostavby.with_overrides(nov_records, load_overrides()), snapshot["generated_at"])
+        archive_novostavby_photos(nov_records, snapshot["generated_at"])
     except Exception as exc:  # noqa: BLE001 -- deliberate: never fail the run
         print(f"::warning::novostavby sweep failed: {exc}", file=sys.stderr)
         nov_events = []

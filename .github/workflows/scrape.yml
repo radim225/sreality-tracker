@@ -136,6 +136,7 @@ jobs:
           python test_pages.py
           python test_deal_basis.py
           python test_mapguard.py
+          python test_photo_archive.py
 
       - name: Run scraper
         env:
@@ -196,6 +197,11 @@ jobs:
           for f in gone_archive.json geocode_cache.json; do
             if [ -e "$f" ]; then git add "$f"; fi
           done
+          # Kopie fotek novostaveb (photo_archive.py). -A kvůli smazaným po
+          # 180 dnech; podmínka, protože před prvním stažením adresář není.
+          if [ -e photos ] || git ls-files --error-unmatch photos >/dev/null 2>&1; then
+            git add -A photos
+          fi
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
