@@ -10,8 +10,8 @@
  "location_note": "U Komína (OSM „Semerínka“)",
  "access_note": "robots.txt: prázdné Disallow",
  "baseline_at": "2026-09-27T14:56:46Z",
- "fetched_at": "2026-10-01T11:44:55Z",
- "last_ok_at": "2026-10-01T11:44:55Z",
+ "fetched_at": "2026-10-02T11:14:58Z",
+ "last_ok_at": "2026-10-02T11:14:58Z",
  "units": {
   "01.01.01": {
    "id": "01.01.01",
@@ -799,14 +799,14 @@
    "disposition": "3+kk",
    "area_sqm": 90.3,
    "terrace_sqm": 78.3,
-   "price_czk": 15981000,
-   "status": "volny",
-   "status_raw": "Volný (0)",
+   "status": "predrezervace",
+   "status_raw": "Předrezervace (1)",
    "first_seen": "2026-09-27T14:56:46Z",
-   "last_change_at": "2026-09-27T14:56:46Z",
+   "last_change_at": "2026-10-02T11:14:58Z",
    "last_price_czk": 15981000,
    "last_price_at": "2026-09-27T14:56:46Z",
-   "baseline": true
+   "baseline": true,
+   "price_hidden_at": "2026-10-02T11:14:58Z"
   },
   "02.03.02": {
    "id": "02.03.02",
@@ -1526,14 +1526,14 @@
    "disposition": "3+kk",
    "area_sqm": 90.5,
    "terrace_sqm": 87.8,
-   "price_czk": 15997000,
-   "status": "volny",
-   "status_raw": "Volný (0)",
+   "status": "predrezervace",
+   "status_raw": "Předrezervace (1)",
    "first_seen": "2026-09-27T14:56:46Z",
-   "last_change_at": "2026-09-27T14:56:46Z",
+   "last_change_at": "2026-10-02T11:14:58Z",
    "last_price_czk": 15997000,
    "last_price_at": "2026-09-27T14:56:46Z",
-   "baseline": true
+   "baseline": true,
+   "price_hidden_at": "2026-10-02T11:14:58Z"
   },
   "03.03.02": {
    "id": "03.03.02",
@@ -2271,14 +2271,14 @@
    "floor_raw": "03 NP",
    "disposition": "2+kk",
    "area_sqm": 46.5,
-   "price_czk": 8859000,
-   "status": "volny",
-   "status_raw": "Volný (0)",
+   "status": "predrezervace",
+   "status_raw": "Předrezervace (1)",
    "first_seen": "2026-09-27T14:56:46Z",
-   "last_change_at": "2026-09-27T14:56:46Z",
+   "last_change_at": "2026-10-02T11:14:58Z",
    "last_price_czk": 8859000,
    "last_price_at": "2026-09-27T14:56:46Z",
-   "baseline": true
+   "baseline": true,
+   "price_hidden_at": "2026-10-02T11:14:58Z"
   },
   "04.03.08": {
    "id": "04.03.08",
