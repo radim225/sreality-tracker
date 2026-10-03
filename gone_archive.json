@@ -3146,6 +3146,51 @@
   "transaction_type": "pronajem",
   "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/1295130700"
  },
+ "1296445516": {
+  "address": {
+   "distance_m": 19,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (19 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Drahobejlova 2567/32, Prosek"
+  },
+  "address_exact": true,
+  "approx_location": false,
+  "area": "vysocany",
+  "city_part": "Libeň",
+  "description": "Finanční podmínky - byt č. 705\r\n\r\n•\tNájemné (včetně parkovacího stání):  31.000 Kč / měsíc.\r\n•\tSlužby: 4.800 Kč / 1 os. za měsíc, 5.200 Kč / 2 os. za měsíc, 5.500 Kč / 3 os. za měsíc (včetně optického internetu!)\r\n•\tEnergie: elektřina – přepis na nájemce\r\n•\tVratná kauce: 2 měsíční nájmy\r\n•\tProvize RK: NEplatíte provizi\r\n\r\nExkluzivní bydlení v novostavbě kousek od metra a parku: Buďte prvním nájemcem v projektu ODETA BALKONY!\r\n\r\nHledáte moderní, nadstandardní bydlení pro pár či menší rodinu, kde budete mít vše doslova na dosah ruky? Jako výhradní zástupce majitele vám nabízím pronájem nového, prosvětleného a prostorné bytu 2+kk s terasou o velikosti 23,4 m² v nově dokončeném projektu ODETA BALKONY v dynamicky se rozvíjející lokalitě Prahy 9 – Libeň, ulice Drahobejlova a pronajímají se nezařízené, s plně vybavenou kuchyní a koupelnou!\r\n\r\nBytový dům architektonicky navazuje na úspěšnou první etapu Odeta Teras s termínem nastěhování již od srpna 2026\r\n\r\nByt je situován v moderní novostavbě s výtahem a nabízí:\r\n•\tProstorný obývací pokoj s velkoformátovými okny, která zajišťují dostatek denního světla\r\n•\tPlně vybavenou designovou kuchyňskou linku s vestavěnými spotřebiči PHILCO (horkovzd",
+  "disposition": "2+kk",
+  "fees_czk": 4800,
+  "first_seen": "2026-09-14T04:48:08Z",
+  "floor_area_sqm": 76.0,
+  "floor_number": 7,
+  "furnished": "castecne",
+  "gone_at": "2026-10-03T22:57:12Z",
+  "house_number": "2567",
+  "id": 1296445516,
+  "images": [
+   "https://d18-a.sdn.cz/d_18/c_img_qF_D/k0OqwCKREBG8FBEUH5Xs6T/fdc1.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_D/nOdL4BtPEyD4lWfBdAH5Xs65/2bf2.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_D/nOdL4BtPEyCly89wgH5Xs7l/51a1.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_D/nOdL4BtPEyBFnmYBQ5H5Xs8S/76d9.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_D/nOdL4BtPEyBuWMSBOkH5Xs9B/6b5f.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+  ],
+  "is_new_building": true,
+  "last_price_czk": 31000,
+  "lat": 50.105488,
+  "locality": "Drahobejlova, Libeň, Praha",
+  "lon": 14.490096,
+  "price_czk": 31000,
+  "price_czk_per_sqm": 491,
+  "seller_name": "Ing. Martina Popenková",
+  "source": "sreality",
+  "street": "Drahobejlova",
+  "thumb": "https://d18-a.sdn.cz/d_18/c_img_qF_D/k0OqwCKREBG8FBEUH5Xs6T/fdc1.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+  "title": "Pronájem bytu 2+kk 76 m²",
+  "total_czk": 37300,
+  "transaction_type": "pronajem",
+  "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/1296445516"
+ },
  "1298064204": {
   "address": {
    "distance_m": 0,
@@ -19325,6 +19370,7 @@
   "lon": 14.489942342962625,
   "price_czk": 7239000,
   "price_czk_per_sqm": 141941,
+  "returned_at": "2026-10-03T22:56:13Z",
   "seller_name": "Ing. Jiří Beneš",
   "source": "sreality",
   "street": "Skloněná",
@@ -24895,6 +24941,47 @@
   "transaction_type": "pronajem",
   "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/3120439372"
  },
+ "3123261516": {
+  "address": {
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Nad Vodovodem 489/69, Praha 10"
+  },
+  "approx_location": false,
+  "area": "vysocany",
+  "city_part": "Malešice",
+  "description": "Exkluzivně si Vám dovolujeme nabídnout krásný slunný byt s balkonem v klidné části Praha 10 – Malešice. Byt je dispozičně řešen jako 2+1  a nachází se ve 2. patře cihlového domu. K bytu náleží menší sklep v domě.\n Byt je v dobrém stavu díky rozsáhlé rekonstrukci cca před 20 lety (nové zděné jádro, elektřina v jádru, nová kuchyňská linka, přebroušení parket apod.). Rozloha bytu je 53 m2 + balkon (3 m2) + sklep (1,5 m2).\nDominantou bytu je obývací pokoj navazující na menší kuchyň a vstup na balkon. V rámci rekonstrukce byla kuchyň vybavena novou kuchyňskou linkou s myčkou. Dále je kuchyň vybavena lednicí a plynovým sporákem s el. troubou. Koupelna je vybavena vanou a pračkou.  WC je samostatné.  V chodbě se nachází prostorné šatní skříně a vstupy do dalšího pokoje - ložnice.  Okna jsou plastová. Orientace bytu je sever (ložnice) a jih obývací pokoj s kuchyní.\n Byt se nachází v 2 NP (1.patro), což díky absenci výtahu v domě je to velice dobrá poloha. V současné době je byt vybaven původním nábytkem (viz. foto), ale není problém byt zcela vyklidit dle dohody s novým nabyvatelem.\nV domě je zaveden internet. Dům je řádně udržovaný, zateplený včetně nových plastových oken.\n V docházkové v",
+  "disposition": "2+1",
+  "first_seen": "2026-09-02T12:50:31Z",
+  "floor_area_sqm": 54.0,
+  "floor_number": 2,
+  "gone_at": "2026-10-03T22:57:12Z",
+  "id": 3123261516,
+  "images": [
+   "https://d18-a.sdn.cz/d_18/c_img_qF_A/kBoPC1H7BNH3rBRzHqLw2N/2cb2.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_A/kBoPC1H7BBGaWeBXIHqLxBc/ab23.png?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_A/nQNUzrWdcWBYX3RBOLHqLwkt/59d1.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_A/kBoPC1H7BNH3rBSJHqLxA0/d757.png?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_A/nQNUzrWdcWC6XojBZ1HqLw7j/4c1d.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+  ],
+  "is_new_building": false,
+  "last_price_czk": 7500000,
+  "lat": 50.08196866479637,
+  "locality": "Nad vodovodem, Malešice, Praha",
+  "lon": 14.495595128223506,
+  "price_czk": 7500000,
+  "price_czk_per_sqm": 138889,
+  "seller_name": "Jan Škurek",
+  "source": "sreality",
+  "street": "Nad vodovodem",
+  "thumb": "https://d18-a.sdn.cz/d_18/c_img_qF_A/kBoPC1H7BNH3rBRzHqLw2N/2cb2.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+  "title": "Prodej bytu 2+1 54 m²",
+  "total_czk": 7500000,
+  "transaction_type": "prodej",
+  "url": "https://www.sreality.cz/detail/prodej/byt/2%2B1/x/3123261516"
+ },
  "3129401420": {
   "address": {
    "distance_m": 14,
@@ -27125,6 +27212,47 @@
   "total_czk": 12910000,
   "transaction_type": "prodej",
   "url": "https://www.sreality.cz/detail/prodej/byt/3%2Bkk/x/3329373004"
+ },
+ "3329826892": {
+  "address": {
+   "distance_m": 1,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (1 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Novovysočanská 2509/3f, Hrdlořezy"
+  },
+  "approx_location": false,
+  "area": "vysocany",
+  "city_part": "Libeň",
+  "description": "Nabízím k pronájmu světlý a útulný byt 2+kk o výměře 40,6 m², který se nachází v panelové budově s celkem šesti podlažími. Byt, situovaný v prvním patře, je ve velmi dobrém stavu a je částečně vybaven, což umožňuje ihned začít bydlení bez zbytečných starostí. Ideální pro pár.\n\nK bytu náleží také prostorný balkón o rozloze 12 m², kde si můžete vychutnat čerstvý vzduch a relax po pracovním dni. V ceně je také parkovací místo, což ocení zejména majitelé vozidel.\n\nSamozřejmostí je také výtah a sklep. Zvířata do bytu nechceme.\n\nV případě zájmu mě neváhejte kontaktovat prostřednictvím zprávy na komunikační platformě a domluvit si prohlídku této atraktivní nabídky.",
+  "disposition": "2+kk",
+  "fees_czk": 5872,
+  "first_seen": "2026-09-20T22:26:49Z",
+  "floor_area_sqm": 41.0,
+  "floor_number": 1,
+  "gone_at": "2026-10-03T22:57:12Z",
+  "id": 3329826892,
+  "images": [
+   "https://d18-a.sdn.cz/d_18/c_img_qF_C/k0OqwCKRCO7AF9CH09rey/5f4b.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_C/k0OqwCKRDgcHsDocH09sCA/d62b.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_C/k0OqwCKRB7OXgvEH09sie/b053.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_C/nOdL4BtPEyC2Er4BAYH09tAP/0593.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_C/nOdL4BtPEyC2Er4VvH09tZW/b80d.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+  ],
+  "is_new_building": false,
+  "last_price_czk": 25000,
+  "lat": 50.099687820729855,
+  "locality": "Novovysočanská, Libeň, Praha",
+  "lon": 14.483624571930276,
+  "price_czk": 25000,
+  "price_czk_per_sqm": 790,
+  "source": "sreality",
+  "street": "Novovysočanská",
+  "thumb": "https://d18-a.sdn.cz/d_18/c_img_qF_C/k0OqwCKRCO7AF9CH09rey/5f4b.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+  "title": "Pronájem bytu 2+kk 41 m²",
+  "total_czk": 32372,
+  "transaction_type": "pronajem",
+  "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/3329826892"
  },
  "3334660172": {
   "address": {
@@ -31179,16 +31307,29 @@
   "url": "https://www.sreality.cz/detail/pronajem/byt/3%2Bkk/x/3677339724"
  },
  "3682922572": {
+  "address": {
+   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
+   "precision": "street",
+   "source": "sreality-ulice",
+   "text": "Ocelářská, Libeň"
+  },
   "approx_location": false,
+  "area": "vysocany",
   "city_part": "Libeň",
   "description": "Hledáte byt, který spojuje moderní bydlení, klidné prostředí a výbornou dostupnost do centra Prahy? Pak by vás mohla zaujmout tato nabídka prostorného bytu o dispozici 2+kk, který se nachází v  kvalitní novostavbě z roku 2014 v ulici Ocelářská, Praha 9 - Libeň. Byt je ihned k dispozici a díky svému promyšlenému dispozičnímu řešení je ideální jak pro vlastní bydlení, tak jako investice k dlouhodobému pronájmu (ten vám rádi zajistíme a budeme se o byt starat jako o vlastní).\r\nCelková podlahová plocha bytu činí cca 56,8m2 a dispozice je navržena s důrazem na praktičnost i komfort každodenního života. Předsíň 7,6m2, obývací pokoj s kuchyňským koutem 28,2m2, ložnice 16,8m2, koupelna 4,2m2. K bytu náleží i sklepní kóje o velikosti cca 1,5m2.\r\nPo vstupu do bytu Vás překvapí prostorná předsíň s dostatkem místa pro vestavné skříně. Dominantou bytu je prostorný obývací pokoj s kuchyňským koutem, jehož velká okna směřují do upravené zeleně a klidného vnitrobloku. Ten lidé využívají jako odpočinkovou zónu (pískoviště, lavičky, stůl na pink ponk, cvičení) málo kdy je u domu takto krásný prostor pouze pro potřeby obyvatel domu. \r\nVýhled z bytu do malého parčíku vytváří velmi příjemnou atmosféru ",
   "disposition": "2+kk",
+  "episodes": [
+   {
+    "gone_at": "2026-09-24T04:35:55Z",
+    "returned_at": "2026-09-26T19:15:16Z"
+   }
+  ],
   "fees_czk": 1510,
   "first_seen": "2026-08-23T19:10:36Z",
   "floor_area_sqm": 57.0,
   "floor_number": 2,
   "furnished": "ano",
-  "gone_at": "2026-09-24T04:35:55Z",
+  "gone_at": "2026-10-03T22:57:12Z",
   "id": 3682922572,
   "images": [
    "https://d18-a.sdn.cz/d_18/c_img_qF_B/nOdL4BtPEyD4lWfFM3Hwwpbc/fc53.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
@@ -31204,7 +31345,6 @@
   "lon": 14.489015728402,
   "price_czk": 8690000,
   "price_czk_per_sqm": 152456,
-  "returned_at": "2026-09-26T19:15:16Z",
   "seller_name": "Eva Rychlovská",
   "source": "sreality",
   "street": "Ocelářská",
@@ -34881,6 +35021,51 @@
   "transaction_type": "pronajem",
   "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/3973197900"
  },
+ "3980800076": {
+  "address": {
+   "distance_m": 19,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (19 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Drahobejlova 2567/32, Prosek"
+  },
+  "address_exact": true,
+  "approx_location": false,
+  "area": "vysocany",
+  "city_part": "Libeň",
+  "description": "Finanční podmínky - byt č. 704:\r\n\r\n•\tNájemné včetně parkovacího stání: 29.000 Kč / měsíc\r\n•\tSlužby: 4.800 Kč / 1 os. za měsíc, 5.200 Kč / 2 os. za měsíc, 5.500 Kč / 3 os. za měsíc (včetně optického internetu!)\r\n•\tEnergie: elektřina – přepis na nájemce\r\n•\tVratná kauce: 2 měsíční nájmy\r\n•\tProvize RK: NEplatíte provizi\r\n\r\nExkluzivní bydlení v novostavbě kousek od metra a parku: Buďte prvním nájemcem v projektu ODETA BALKONY!\r\n\r\nHledáte moderní, nadstandardní bydlení pro pár či menší rodinu, kde budete mít vše doslova na dosah ruky? Jako výhradní zástupce majitele vám nabízím pronájem nového, prosvětleného a prostorné bytu 2+kk s terasou o velikosti 15,5 m²  v nově dokončeném projektu ODETA BALKONY v dynamicky se rozvíjející lokalitě Prahy 9 – Libeň, ulice Drahobejlova a pronajímají se nezařízené, s plně vybavenou kuchyní a koupelnou!\r\n\r\nBytový dům architektonicky navazuje na úspěšnou první etapu Odeta Teras s termínem nastěhování již od srpna 2026.\r\n\r\nByt je situován v moderní novostavbě s výtahem a nabízí:\r\n•\tProstorný obývací pokoj s velkoformátovými okny, která zajišťují dostatek denního světla.\r\n•\tPlně vybavenou designovou kuchyňskou linku s vestavěnými spotřebiči PHILCO (horkovzd",
+  "disposition": "2+kk",
+  "fees_czk": 4800,
+  "first_seen": "2026-09-14T04:48:08Z",
+  "floor_area_sqm": 61.0,
+  "floor_number": 7,
+  "furnished": "castecne",
+  "gone_at": "2026-10-03T22:57:12Z",
+  "house_number": "2567",
+  "id": 3980800076,
+  "images": [
+   "https://d18-a.sdn.cz/d_18/c_img_qF_D/nOdL4BtPEyD4lWfBFUH5XtgG/56b4.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_D/nOdL4BtPEyD4lWfBcgH5Xtgt/1e82.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_D/k0OqwCKREBG8FBMFH5XthY/968c.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_D/nOdL4BtPEyCly89wgH5Xth8/452e.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_D/nOdL4BtPEyBFnmYBQ5H5Xtio/9f0d.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+  ],
+  "is_new_building": true,
+  "last_price_czk": 29000,
+  "lat": 50.105488,
+  "locality": "Drahobejlova, Libeň, Praha",
+  "lon": 14.490096,
+  "price_czk": 29000,
+  "price_czk_per_sqm": 579,
+  "seller_name": "Ing. Martina Popenková",
+  "source": "sreality",
+  "street": "Drahobejlova",
+  "thumb": "https://d18-a.sdn.cz/d_18/c_img_qF_D/nOdL4BtPEyD4lWfBFUH5XtgG/56b4.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+  "title": "Pronájem bytu 2+kk 61 m²",
+  "total_czk": 35300,
+  "transaction_type": "pronajem",
+  "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/3980800076"
+ },
  "3987202124": {
   "address": {
    "distance_m": 2,
@@ -36115,38 +36300,60 @@
   "url": "https://www.sreality.cz/detail/pronajem/byt/1%2Bkk/x/4071944268"
  },
  "4075155532": {
+  "address": {
+   "distance_m": 19,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (19 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Drahobejlova 2567/32, Prosek"
+  },
+  "address_exact": true,
   "approx_location": false,
+  "area": "vysocany",
   "city_part": "Libeň",
   "description": "Finanční podmínky:\r\n•\tNájemné: 17.000 Kč / měsíc\r\n•\tSlužby: 4.200 Kč / 1 osoba za měsíc, 4.800 Kč / 2 osoby za měsíc (včetně optického internetu!)\r\n•\tEnergie: elektřina – přepis na nájemce\r\n•\tVratná kauce: 2 měsíční nájmy\r\n•\tProvize RK: NEplatíte provizi\r\n\r\nExkluzivní bydlení v novostavbě kousek od metra a parku: Buďte prvním nájemcem v projektu ODETA BALKONY!\r\n\r\nHledáte moderní, chytře řešené bydlení, kde budete mít vše doslova na dosah ruky? Jako výhradní zástupce vám nabízím pronájem nového, prosvětleného bytu o dispozici 1+kk a podlahové ploše 30,5 m² s vlastní lodžií o velikosti 1,3 m² v nově dokončeném prémiovém projektu ODETA BALKONY v dynamicky se rozvíjející lokalitě Prahy 9 – Libeň, ulice Drahobejlova a pronajímají se nezařízené, s plně vybavenou kuchyní a koupelnou!\r\n\r\nBytový dům architektonicky navazuje na úspěšnou první etapu Odeta Teras s termínem nastěhování již od srpna 2026.\r\n\r\nByt je situován v moderní novostavbě s výtahem a nabízí:\r\n•\tProstorný obývací pokoj s kuchyňským koutem a velkoformátovými okny, která zajišťují dostatek denního světla.\r\n•\tVybavenou designovou kuchyňskou linku s vestavěnými spotřebiči PHILCO (indukční varná deska, myčka nádobí, digestoř a v",
   "disposition": "1+kk",
+  "episodes": [
+   {
+    "gone_at": "2026-08-28T10:24:36Z",
+    "returned_at": "2026-09-26T19:15:16Z"
+   }
+  ],
   "fees_czk": 4200,
   "first_seen": "2026-08-23T19:10:36Z",
   "floor_area_sqm": 30.0,
   "floor_number": 3,
   "furnished": "castecne",
-  "gone_at": "2026-08-28T10:24:36Z",
+  "gone_at": "2026-10-03T22:57:12Z",
+  "house_number": "2567",
   "id": 4075155532,
   "images": [
-   "https://d18-a.sdn.cz/d_18/c_img_qD_D/kQMlcCt5zmC5zFHBW0mHPzNvh/c43f.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
-   "https://d18-a.sdn.cz/d_18/c_img_qD_D/kQMlcCt5zmUKhkZTTHPzNwZ/8331.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
-   "https://d18-a.sdn.cz/d_18/c_img_qD_D/kQMlcCt5zmD87zEaCmHPzNxL/0962.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
-   "https://d18-a.sdn.cz/d_18/c_img_qD_D/nO2CysqjGrCP7qOBO5lHPzNyA/3b8d.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
-   "https://d18-a.sdn.cz/d_18/c_img_qD_D/kQMlcCt5zmChFvGXpTHPzNy5/0331.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/nCR9NVflLChOIjLhCH7UZFO/ba27.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/nCR9NVflLwO7jK0kH7UZFy/350a.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/kcKfrMAkFMsuhLOkH7UZGc/f1fc.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/kcKfrMAkFDbqUhRF9H7UZHG/8496.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/nCR9NVflLChOIjMDTH7UZHq/66e1.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
   ],
   "is_new_building": false,
-  "last_price_czk": 17000,
+  "last_price_czk": 17500,
   "lat": 50.105488,
   "locality": "Drahobejlova, Libeň, Praha",
   "lon": 14.490096,
-  "price_czk": 17000,
-  "price_czk_per_sqm": 757,
-  "returned_at": "2026-09-26T19:15:16Z",
+  "price_czk": 17500,
+  "price_czk_per_sqm": 773,
+  "relisted_as": {
+   "id": 2664702028,
+   "linked_at": "2026-10-03T22:56:13Z",
+   "text_similarity": 0.6,
+   "url": "https://www.sreality.cz/detail/pronajem/byt/1%2Bkk/x/2664702028",
+   "verdict": "same"
+  },
   "seller_name": "Ing. Martina Popenková",
   "source": "sreality",
   "street": "Drahobejlova",
-  "thumb": "https://d18-a.sdn.cz/d_18/c_img_qD_D/kQMlcCt5zmC5zFHBW0mHPzNvh/c43f.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+  "thumb": "https://d18-a.sdn.cz/d_18/c_img_qG_A/nCR9NVflLChOIjLhCH7UZFO/ba27.jpeg?fl=res,400,400,1|shr,,20|webp,60",
   "title": "Pronájem bytu 1+kk 30 m²",
-  "total_czk": 22700,
+  "total_czk": 23200,
   "transaction_type": "pronajem",
   "url": "https://www.sreality.cz/detail/pronajem/byt/1%2Bkk/x/4075155532"
  },
@@ -45688,6 +45895,7 @@
    "url": "https://reality.idnes.cz/detail/prodej/byt/praha-3-osikova/6aaddeeb9657e67f88008cf9/",
    "verdict": "same"
   },
+  "returned_at": "2026-10-03T22:56:13Z",
   "source": "sreality",
   "street": "Osiková",
   "thumb": "https://d18-a.sdn.cz/d_18/c_img_qF_C/nOdL4BtPEyC2Er48zHyrazz/826f.jpeg?fl=res,400,400,1|shr,,20|webp,60",
@@ -47118,6 +47326,37 @@
   "total_czk": 24500,
   "transaction_type": "pronajem",
   "url": "https://www.bezrealitky.cz/nemovitosti-byty-domy/1061836-nabidka-pronajem-bytu-vinohradska-praha"
+ },
+ "bez-1061859": {
+  "address": {
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Za Karlínským přístavem 683/6, Karlín"
+  },
+  "approx_location": false,
+  "area": "vysocany",
+  "description": "2+KK | 57 m² | PŘEDZAHRÁDKA 52 m² | KARLÍN – REZIDENCE VLTAVA\n\nVýjimečná nabídka městského bydlení s vlastním venkovním prostorem v jedné z nejvyhledávanějších pražských lokalit.\n\nNabízíme k prodeji elegantní byt 2+kk o podlahové ploše 57 m², situovaný v přízemí moderní Rezidence Vltava v pražském Karlíně.\n\nJednou z největších předností této nemovitosti je soukromá předzahrádka o výměře 52 m², která vytváří jedinečné propojení komfortního městského bydlení s možností vlastního venkovního prostoru.\n\nBYT 2+KK | 57 m²\n\nDispozice nabízí příjemně řešený obytný prostor s kuchyňským koutem, samostatnou ložnici, koupelnu a vstupní chodbu. Díky umístění v přízemí je byt bezprostředně propojen s vlastní předzahrádkou.\n\nCelková plocha bytu a předzahrádky činí 109 m².\n\nSOUKROMÁ PŘEDZAHRÁDKA 52 m²\n\nPředzahrádka představuje skutečný benefit této nemovitosti. Nabízí prostor pro venkovní posezení, ranní kávu, relaxaci nebo vytvoření vlastní zelené oázy přímo v centru Prahy.\n\nTakto velký soukromý venkovní prostor je v Karlíně velmi žádaným a zároveň výjimečným prvkem.\n\nREZIDENCE VLTAVA\n\nByt se nachází v moderní rezidenční budově zkolaudované v roce 2015, která těží z atraktivní polohy přímo v Karlí",
+  "disposition": "2+kk",
+  "first_seen": "2026-09-01T13:34:50Z",
+  "floor_area_sqm": 57,
+  "gone_at": "2026-10-03T22:57:12Z",
+  "id": "bez-1061859",
+  "images": [
+   "https://api.bezrealitky.cz/media/cache/record_main/data/images/advert/1061k/1061859/1788266738-pnrmwawhtf-273fe9f4-12be-4efb-9a5d-27bccb57b19b.png"
+  ],
+  "last_price_czk": 13900000,
+  "lat": 50.095878,
+  "lon": 14.4494103,
+  "price_czk": 13900000,
+  "price_czk_per_sqm": 243860,
+  "source": "bezrealitky",
+  "thumb": "https://api.bezrealitky.cz/media/cache/record_thumb/data/images/advert/1061k/1061859/1788266738-pnrmwawhtf-273fe9f4-12be-4efb-9a5d-27bccb57b19b.png",
+  "title": "Prodej bytu 2+kk 57 m²",
+  "total_czk": 13900000,
+  "transaction_type": "prodej",
+  "url": "https://www.bezrealitky.cz/nemovitosti-byty-domy/1061859-nabidka-prodej-bytu-za-karlinskym-pristavem-praha"
  },
  "bez-1061937": {
   "address": {
@@ -49505,6 +49744,76 @@
   "transaction_type": "pronajem",
   "url": "https://reality.idnes.cz/detail/pronajem/byt/praha-8-sokolova/6aa269897b68362e65034e5b/"
  },
+ "idnes-6aa74ffb53c0b41c540293a5": {
+  "address": {
+   "distance_m": 2,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (2 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Drahobejlova 1226/30, Prosek"
+  },
+  "approx_location": true,
+  "area": "vysocany",
+  "city_part": "Libeň",
+  "description": "Pronájem 2+kk s velkorysou terasou včetně parkovacího stání v domě Finanční podmínky - byt č. 704: • Nájemné: 30.000 Kč / měsíc, ve kterém je zahrnuto parkovací stání. • Služby: 4.800 Kč / 1 os. za měsíc, 5.200 Kč / 2 os. za měsíc, 5.500 Kč / 3 os. za měsíc (včetně optického internetu. ) • Energie: elektřina – přepis na nájemce • Vratná kauce: 2 měsíční nájmy • Provize RK: NEplatíte provizi Exkluzivní bydlení v novostavbě kousek od metra a parku: Buďte prvním nájemcem v projektu ODETA BALKONY. Hledáte moderní, nadstandardní bydlení pro pár či menší rodinu, kde budete mít vše doslova na dosah ruky? Jako výhradní zástupce majitele vám nabízím pronájem nového, prosvětleného a prostorné bytu 2+kk s terasou o velikosti 15,5 m² v nově dokončeném projektu ODETA BALKONY v dynamicky se rozvíjející lokalitě Prahy 9 – Libeň, ulice Drahobejlova a pronajímají se nezařízené, s plně vybavenou kuchyní a koupelnou. Bytový dům architektonicky navazuje na úspěšnou první etapu Odeta Teras s termínem nastěhování již od srpna 2026. Byt je situován v moderní novostavbě s výtahem a nabízí: • Prostorný obývací pokoj s velkoformátovými okny, která zajišťují dostatek denního světla. • Plně vybavenou designov",
+  "disposition": "2+kk",
+  "fees_czk": 4800,
+  "first_seen": "2026-09-14T04:48:08Z",
+  "floor_area_sqm": 61.0,
+  "gone_at": "2026-10-03T00:00:00Z",
+  "id": "idnes-6aa74ffb53c0b41c540293a5",
+  "images": [
+   "https://sta-reality2.1gr.cz/sta/compile/thumbs/8/a/e/3d13dd708c73b58efcd310207af3d.webp"
+  ],
+  "last_price_czk": 30000,
+  "lat": 50.10558443160657,
+  "locality": "Drahobejlova, Praha 9 - Libeň",
+  "lon": 14.489748764969331,
+  "price_czk": 30000,
+  "price_czk_per_sqm": 595,
+  "source": "idnes",
+  "street": "Drahobejlova",
+  "thumb": "https://sta-reality2.1gr.cz/sta/compile/thumbs/8/a/e/3d13dd708c73b58efcd310207af3d.webp",
+  "title": "Pronájem bytu 2+kk 61 m²",
+  "total_czk": 36300,
+  "transaction_type": "pronajem",
+  "url": "https://reality.idnes.cz/detail/pronajem/byt/praha-9-drahobejlova/6aa74ffb53c0b41c540293a5/"
+ },
+ "idnes-6aa751df58909521960be2eb": {
+  "address": {
+   "distance_m": 3,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (3 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Drahobejlova 1226/30, Prosek"
+  },
+  "approx_location": true,
+  "area": "vysocany",
+  "city_part": "Libeň",
+  "description": "Pronájem 2+kk s nádhernou terasou včetně A/C a parkovacího stání v domě Finanční podmínky - byt č. 705 • Nájemné (včetně parkovacího stání): 31.000 Kč / měsíc. • Služby: 4.800 Kč / 1 os. za měsíc, 5.200 Kč / 2 os. za měsíc, 5.500 Kč / 3 os. za měsíc (včetně optického internetu. ) • Energie: elektřina – přepis na nájemce • Vratná kauce: 2 měsíční nájmy • Provize RK: NEplatíte provizi Exkluzivní bydlení v novostavbě kousek od metra a parku: Buďte prvním nájemcem v projektu ODETA BALKONY. Hledáte moderní, nadstandardní bydlení pro pár či menší rodinu, kde budete mít vše doslova na dosah ruky? Jako výhradní zástupce majitele vám nabízím pronájem nového, prosvětleného a prostorné bytu 2+kk s terasou o velikosti 23,4 m² v nově dokončeném projektu ODETA BALKONY v dynamicky se rozvíjející lokalitě Prahy 9 – Libeň, ulice Drahobejlova a pronajímají se nezařízené, s plně vybavenou kuchyní a koupelnou. Bytový dům architektonicky navazuje na úspěšnou první etapu Odeta Teras s termínem nastěhování již od srpna 2026 Byt je situován v moderní novostavbě s výtahem a nabízí: • Prostorný obývací pokoj s velkoformátovými okny, která zajišťují dostatek denního světla • Plně vybavenou designovou kuchyňs",
+  "disposition": "2+kk",
+  "fees_czk": 4800,
+  "first_seen": "2026-09-19T18:37:53Z",
+  "floor_area_sqm": 77.0,
+  "gone_at": "2026-10-03T00:00:00Z",
+  "id": "idnes-6aa751df58909521960be2eb",
+  "images": [
+   "https://sta-reality2.1gr.cz/sta/compile/thumbs/9/7/e/7032dff066878dbdaae4efd96eb42.webp"
+  ],
+  "last_price_czk": 31000,
+  "lat": 50.10558417197596,
+  "locality": "Drahobejlova, Praha 9 - Libeň",
+  "lon": 14.489722815346349,
+  "price_czk": 31000,
+  "price_czk_per_sqm": 484,
+  "source": "idnes",
+  "street": "Drahobejlova",
+  "thumb": "https://sta-reality2.1gr.cz/sta/compile/thumbs/9/7/e/7032dff066878dbdaae4efd96eb42.webp",
+  "title": "Pronájem bytu 2+kk 77 m²",
+  "total_czk": 37300,
+  "transaction_type": "pronajem",
+  "url": "https://reality.idnes.cz/detail/pronajem/byt/praha-9-drahobejlova/6aa751df58909521960be2eb/"
+ },
  "idnes-6aaadcfe1ede840cb10839e9": {
   "address": {
    "distance_m": 36,
@@ -50247,5 +50556,50 @@
   "total_czk": 7490000,
   "transaction_type": "prodej",
   "url": "https://reality.idnes.cz/detail/prodej/byt/praha-8-nad-okrouhlikem/6abe64721678ec57d10f3ac0/"
+ },
+ "idnes-6abe9d277edea4e5cd0c4239": {
+  "address": {
+   "distance_m": 3,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (3 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Drahobejlova 1226/30, Prosek"
+  },
+  "approx_location": true,
+  "area": "vysocany",
+  "city_part": "Libeň",
+  "description": "Pronájem 1+kk s lodžií, 30,5 m² Finanční podmínky: • Nájemné: 17.000 Kč / měsíc • Služby: 4.200 Kč / 1 osoba za měsíc, 4.800 Kč / 2 osoby za měsíc (včetně optického internetu. ) • Energie: elektřina – přepis na nájemce • Vratná kauce: 2 měsíční nájmy • Provize RK: NEplatíte provizi Exkluzivní bydlení v novostavbě kousek od metra a parku: Buďte prvním nájemcem v projektu ODETA BALKONY. Hledáte moderní, chytře řešené bydlení, kde budete mít vše doslova na dosah ruky? Jako výhradní zástupce vám nabízím pronájem nového, prosvětleného bytu o dispozici 1+kk a podlahové ploše 30,5 m² s vlastní lodžií o velikosti 1,3 m² v nově dokončeném prémiovém projektu ODETA BALKONY v dynamicky se rozvíjející lokalitě Prahy 9 – Libeň, ulice Drahobejlova a pronajímají se nezařízené, s plně vybavenou kuchyní a koupelnou. Bytový dům architektonicky navazuje na úspěšnou první etapu Odeta Teras s termínem nastěhování již od srpna 2026. Byt je situován v moderní novostavbě s výtahem a nabízí: • Prostorný obývací pokoj s kuchyňským koutem a velkoformátovými okny, která zajišťují dostatek denního světla. • Vybavenou designovou kuchyňskou linku s vestavěnými spotřebiči PHILCO (indukční varná deska, myčka nádobí",
+  "disposition": "1+kk",
+  "fees_czk": 4200,
+  "first_seen": "2026-10-01T21:09:12Z",
+  "floor_area_sqm": 31.0,
+  "gone_at": "2026-10-03T00:00:00Z",
+  "id": "idnes-6abe9d277edea4e5cd0c4239",
+  "images": [
+   "https://sta-reality2.1gr.cz/sta/compile/thumbs/f/f/f/41c5e0157bf17595a710a407643d2.webp"
+  ],
+  "last_price_czk": 17500,
+  "lat": 50.10558417197596,
+  "locality": "Drahobejlova, Praha 9 - Libeň",
+  "lon": 14.489722815346349,
+  "price_czk": 17500,
+  "price_czk_per_sqm": 748,
+  "relist_of": {
+   "first_seen": "2026-08-29T13:52:39Z",
+   "gone_at": "2026-10-01T00:00:00Z",
+   "id": "idnes-6a929393bed3cea0210843cb",
+   "listed_since": "2026-08-29T13:52:39Z",
+   "price_czk": 17500,
+   "text_similarity": 1.0,
+   "url": "https://reality.idnes.cz/detail/pronajem/byt/praha-9-drahobejlova/6a929393bed3cea0210843cb/",
+   "verdict": "same"
+  },
+  "source": "idnes",
+  "street": "Drahobejlova",
+  "thumb": "https://sta-reality2.1gr.cz/sta/compile/thumbs/f/f/f/41c5e0157bf17595a710a407643d2.webp",
+  "title": "Pronájem bytu 1+kk 31 m²",
+  "total_czk": 23200,
+  "transaction_type": "pronajem",
+  "url": "https://reality.idnes.cz/detail/pronajem/byt/praha-9-drahobejlova/6abe9d277edea4e5cd0c4239/"
  }
 }
