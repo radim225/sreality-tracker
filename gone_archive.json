@@ -3824,6 +3824,47 @@
   "transaction_type": "pronajem",
   "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/1356759116"
  },
+ "1370587212": {
+  "address": {
+   "distance_m": 4,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (4 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Sousedíkova 970/3, Vysočany"
+  },
+  "approx_location": false,
+  "area": "vysocany",
+  "city_part": "Vysočany",
+  "description": "Hledáte bydlení, které Vám nabídne pohodlí moderního bytu, skvělou dostupnost do centra Prahy a zároveň možnost každodenního odpočinku v zeleni? Pak Vás zaujme tento světlý a prakticky řešený byt 2+kk o užitné ploše 59 m² v ulici Sousedíkova v pražských Vysočanech.\r\n\r\nByt má promyšlenou dispozici, která nabízí dostatek prostoru pro pohodlné bydlení jednotlivce, páru i menší rodiny. Obývací pokoj s kuchyňským koutem a samostatná ložnice mají přímý vstup na balkon o velikosti 4 m², kde si můžete vychutnat ranní kávu nebo večerní odpočinek po náročném dni.\r\n\r\nPraktickou stránku bydlení podtrhuje komora přímo v bytě a další úložné prostory poskytuje sklep o výměře 3 m² umístěný v přízemí domu. Velkým benefitem je také prostorná koupelna oddělená od samostatné toalety, což zvyšuje komfort každodenního fungování. Pokud byste potřebovali ještě více úložného prostoru, nabízí se jednoduchá možnost vytvoření praktické šatny v části ložnice dle navrhované úpravy v půdorysu.\r\n\r\nLokalita patří mezi největší přednosti této nabídky. Jen přibližně 5 minut chůze od domu se nachází tramvajová zastávka, díky které se rychle dostanete do centra města i dalších částí Prahy. Bezprostředně u domu navazuj",
+  "disposition": "2+kk",
+  "first_seen": "2026-06-28T19:37:02Z",
+  "floor_area_sqm": 59.0,
+  "floor_number": 3,
+  "gone_at": "2026-10-04T19:42:26Z",
+  "id": 1370587212,
+  "images": [
+   "https://d18-a.sdn.cz/d_18/c_img_qC_B/nO2CysqjGrCP7qOGobG0t1If/ce8a.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qC_B/nO2CysqjGrC2szhJnpG0t1Ja/d177.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qC_B/kQMlcCt5zmChFvGESFG0t1Kg/7207.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qC_B/nO2CysqjGrud5yGKEG0t1Lf/22aa.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qC_B/nO2CysqjGrB9kIMIp4G0t1MV/fff7.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+  ],
+  "is_new_building": false,
+  "last_price_czk": 9360000,
+  "lat": 50.1051946517121,
+  "locality": "Sousedíkova, Vysočany, Praha",
+  "lon": 14.5172308220914,
+  "price_czk": 9360000,
+  "price_czk_per_sqm": 158644,
+  "seller_name": "Ing. Petr Franěk",
+  "source": "sreality",
+  "street": "Sousedíkova",
+  "thumb": "https://d18-a.sdn.cz/d_18/c_img_qC_B/nO2CysqjGrCP7qOGobG0t1If/ce8a.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+  "title": "Prodej bytu 2+kk 59 m²",
+  "total_czk": 9360000,
+  "transaction_type": "prodej",
+  "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/1370587212"
+ },
  "1376247884": {
   "address": {
    "note": "číslo domu uvedené v popisu inzerátu",
@@ -36569,6 +36610,7 @@
   "lon": 14.4869558550349,
   "price_czk": 9990000,
   "price_czk_per_sqm": 131447,
+  "returned_at": "2026-10-04T19:41:02Z",
   "seller_name": "Dagmar Holcová",
   "source": "sreality",
   "street": "Matějkova",
@@ -47686,6 +47728,7 @@
   "lon": 14.4980745,
   "price_czk": 6300000,
   "price_czk_per_sqm": 196875,
+  "returned_at": "2026-10-04T19:41:02Z",
   "source": "bezrealitky",
   "thumb": "https://api.bezrealitky.cz/media/cache/record_thumb/data/images/advert/1029k/1029927/1785750794-lebdpnnouo-byt-10.jpg",
   "title": "Prodej bytu 1+kk 32 m²",
