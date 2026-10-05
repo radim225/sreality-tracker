@@ -10,8 +10,8 @@
  "location_note": "mezi Radlickou a Novoveskou (přibližně, u Radlické 355)",
  "access_note": "robots.txt zakazuje jen /admin/",
  "baseline_at": "2026-09-27T14:56:46Z",
- "fetched_at": "2026-10-04T11:13:17Z",
- "last_ok_at": "2026-10-04T11:13:17Z",
+ "fetched_at": "2026-10-05T12:30:30Z",
+ "last_ok_at": "2026-10-05T12:30:30Z",
  "units": {
   "A1.1.1": {
    "id": "A1.1.1",
@@ -397,12 +397,16 @@
    "disposition": "2+kk",
    "area_sqm": 48.3,
    "accessory_area_sqm": 5.2,
-   "status": "predrezervace",
-   "status_raw": "Před-rezervovaný",
+   "price_excl_vat_czk": 8216964,
+   "price_czk": 9203000,
+   "status": "volny",
+   "status_raw": "Volný",
    "source_id": "44699503",
    "first_seen": "2026-09-27T14:56:46Z",
-   "last_change_at": "2026-09-27T14:56:46Z",
-   "baseline": true
+   "last_change_at": "2026-10-05T12:30:30Z",
+   "baseline": true,
+   "last_price_at": "2026-10-05T12:30:30Z",
+   "last_price_czk": 9203000
   },
   "A1.4.4": {
    "id": "A1.4.4",
