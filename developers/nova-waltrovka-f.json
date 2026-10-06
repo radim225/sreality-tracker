@@ -11,8 +11,8 @@
  "gone_means": "rezervováno/prodáno (web prodané z ceníku vyřazuje)",
  "access_note": "robots.txt neexistuje (404); podmínky zakazují jen zásah do obsahu webu",
  "baseline_at": "2026-09-27T14:56:46Z",
- "fetched_at": "2026-10-05T12:30:30Z",
- "last_ok_at": "2026-10-05T12:30:30Z",
+ "fetched_at": "2026-10-06T12:10:01Z",
+ "last_ok_at": "2026-10-06T12:10:01Z",
  "units": {
   "F10.001": {
    "id": "F10.001",
@@ -278,10 +278,11 @@
    "status_raw": "Předrezervace",
    "source_created_at": "2026-08-07T08:09:12.809Z",
    "first_seen": "2026-09-27T14:56:46Z",
-   "last_change_at": "2026-09-27T14:56:46Z",
+   "last_change_at": "2026-10-06T12:10:01Z",
    "last_price_czk": 10402900,
    "last_price_at": "2026-09-27T14:56:46Z",
-   "baseline": true
+   "baseline": true,
+   "gone_at": "2026-10-06T12:10:01Z"
   },
   "F10.302": {
    "id": "F10.302",
@@ -388,10 +389,11 @@
    "status_raw": "Předrezervace",
    "source_created_at": "2026-08-07T08:09:12.992Z",
    "first_seen": "2026-09-27T14:56:46Z",
-   "last_change_at": "2026-09-27T14:56:46Z",
+   "last_change_at": "2026-10-06T12:10:01Z",
    "last_price_czk": 10654600,
    "last_price_at": "2026-09-27T14:56:46Z",
-   "baseline": true
+   "baseline": true,
+   "gone_at": "2026-10-06T12:10:01Z"
   },
   "F10.402": {
    "id": "F10.402",
@@ -428,11 +430,11 @@
    "price_excl_vat_czk": 10480625,
    "price_with_extras_czk": 12649300,
    "extras": "PS11, SK08",
-   "status": "predrezervace",
-   "status_raw": "Předrezervace",
+   "status": "volny",
+   "status_raw": "Dostupný",
    "source_created_at": "2026-08-07T08:09:13.145Z",
    "first_seen": "2026-09-27T14:56:46Z",
-   "last_change_at": "2026-09-27T14:56:46Z",
+   "last_change_at": "2026-10-06T12:10:01Z",
    "last_price_czk": 11738300,
    "last_price_at": "2026-09-27T14:56:46Z",
    "baseline": true
@@ -829,11 +831,11 @@
    "price_excl_vat_czk": 17874643,
    "price_with_extras_czk": 21666000,
    "extras": "SK26, PS10, PS11",
-   "status": "volny",
-   "status_raw": "Dostupný",
+   "status": "predrezervace",
+   "status_raw": "Předrezervace",
    "source_created_at": "2024-09-19T08:56:56.935Z",
    "first_seen": "2026-09-27T14:56:46Z",
-   "last_change_at": "2026-09-27T14:56:46Z",
+   "last_change_at": "2026-10-06T12:10:01Z",
    "last_price_czk": 20019600,
    "last_price_at": "2026-09-27T14:56:46Z",
    "baseline": true
