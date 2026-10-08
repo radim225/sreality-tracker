@@ -41,7 +41,7 @@
  "1028513868": {
   "id": "1028513868",
   "first_seen": "2026-07-09T17:49:12Z",
-  "last_seen": "2026-10-08T15:42:59Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -118,7 +118,7 @@
  "1062527052": {
   "id": "1062527052",
   "first_seen": "2026-07-21T17:08:11Z",
-  "last_seen": "2026-10-08T15:42:59Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -237,7 +237,7 @@
  "1085333580": {
   "id": "1085333580",
   "first_seen": "2026-07-16T17:02:42Z",
-  "last_seen": "2026-10-08T15:42:59Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -309,13 +309,18 @@
  "1089462348": {
   "id": "1089462348",
   "first_seen": "2026-07-08T10:06:28Z",
-  "last_seen": "2026-10-08T15:42:59Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
     "at": "2026-07-08",
     "price_czk": 6499000,
     "total_czk": 6499000
+   },
+   {
+    "at": "2026-10-08",
+    "price_czk": 6399000,
+    "total_czk": 6399000
    }
   ],
   "url": "https://www.sreality.cz/detail/prodej/byt/1%2Bkk/x/1089462348",
@@ -330,21 +335,21 @@
   "lat": 50.1032915264,
   "lon": 14.519068333,
   "pod_harfou": false,
-  "price_czk": 6499000,
+  "price_czk": 6399000,
   "fees_czk": null,
   "fees_missing": true,
   "fees_source": null,
   "electricity_czk": null,
   "electricity_estimated": false,
-  "total_czk": 6499000,
-  "price_czk_per_sqm": 209645,
+  "total_czk": 6399000,
+  "price_czk_per_sqm": 206419,
   "garage": false,
   "parking": false,
   "floor_number": 3,
   "floors_total": null,
   "backfilled": true,
   "dist_km": 2.12,
-  "deal_pct": -2,
+  "deal_pct": -3,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -352,7 +357,7 @@
   "is_new_building": true,
   "building_type": 2,
   "building_type_name": "Cihlová",
-  "energy_rating": "C",
+  "energy_rating": "B",
   "furnished": "ano",
   "commission_czk": null,
   "tenant_not_pay_commission": null,
@@ -370,8 +375,8 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 7009,
-  "edited": "2026-08-26",
+  "views": 15034,
+  "edited": "2026-10-08",
   "since": "2026-07-08",
   "parking_state": "none",
   "parking_price_czk": null,
@@ -625,7 +630,7 @@
  "1381163084": {
   "id": "1381163084",
   "first_seen": "2026-07-14T17:03:16Z",
-  "last_seen": "2026-10-08T15:42:59Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -660,7 +665,7 @@
   "floors_total": null,
   "backfilled": true,
   "dist_km": 1.32,
-  "deal_pct": 4,
+  "deal_pct": 3,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -697,7 +702,7 @@
  "1446826060": {
   "id": "1446826060",
   "first_seen": "2026-07-31T10:28:26Z",
-  "last_seen": "2026-10-08T15:42:59Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1957,7 +1962,7 @@
  "224321612": {
   "id": "224321612",
   "first_seen": "2026-07-09T01:27:57Z",
-  "last_seen": "2026-10-08T15:42:59Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1992,7 +1997,7 @@
   "floors_total": 5,
   "backfilled": true,
   "dist_km": 2.03,
-  "deal_pct": 69,
+  "deal_pct": 70,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -2454,7 +2459,7 @@
  "2605278028": {
   "id": "2605278028",
   "first_seen": "2026-07-07T10:47:34Z",
-  "last_seen": "2026-10-08T15:42:59Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2656,7 +2661,7 @@
  "2665009228": {
   "id": "2665009228",
   "first_seen": "2026-07-27T17:29:31Z",
-  "last_seen": "2026-10-08T15:42:59Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2696,7 +2701,7 @@
   "floors_total": 5,
   "backfilled": true,
   "dist_km": 2.18,
-  "deal_pct": 11,
+  "deal_pct": 12,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -2968,7 +2973,7 @@
  "2839470156": {
   "id": "2839470156",
   "first_seen": "2026-07-09T10:47:27Z",
-  "last_seen": "2026-10-08T15:42:59Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3013,7 +3018,7 @@
   "floors_total": 5,
   "backfilled": true,
   "dist_km": 1.12,
-  "deal_pct": -22,
+  "deal_pct": -23,
   "deal_outlier": false,
   "price_old_czk": 5800000,
   "building_condition": 9,
@@ -3860,7 +3865,7 @@
  "3311853644": {
   "id": "3311853644",
   "first_seen": "2026-07-22T10:13:56Z",
-  "last_seen": "2026-10-08T15:42:59Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4539,7 +4544,7 @@
  "36036684": {
   "id": "36036684",
   "first_seen": "2026-07-20T17:17:05Z",
-  "last_seen": "2026-10-08T15:42:59Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4581,7 +4586,7 @@
   "exclude_from_stats": false,
   "dist_km": 1.43,
   "price_old_czk": null,
-  "deal_pct": -1,
+  "deal_pct": -2,
   "deal_outlier": false,
   "building_condition": 1,
   "building_condition_name": "Velmi dobrý",
@@ -4694,7 +4699,7 @@
  "3662205004": {
   "id": "3662205004",
   "first_seen": "2026-07-27T01:28:24Z",
-  "last_seen": "2026-10-08T15:42:59Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5484,7 +5489,7 @@
  "4180140108": {
   "id": "4180140108",
   "first_seen": "2026-07-17T09:46:26Z",
-  "last_seen": "2026-10-08T15:42:59Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5539,7 +5544,7 @@
   "floors_total": null,
   "backfilled": true,
   "dist_km": 1.45,
-  "deal_pct": -1,
+  "deal_pct": 0,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -6823,7 +6828,7 @@
  "882630732": {
   "id": "882630732",
   "first_seen": "2026-07-02T17:27:02Z",
-  "last_seen": "2026-10-08T15:42:59Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6983,7 +6988,7 @@
  "960421964": {
   "id": "960421964",
   "first_seen": "2026-07-09T10:47:27Z",
-  "last_seen": "2026-10-08T15:42:59Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7028,7 +7033,7 @@
   "floors_total": 5,
   "backfilled": true,
   "dist_km": 1.11,
-  "deal_pct": -24,
+  "deal_pct": -25,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 2,
@@ -7179,7 +7184,7 @@
  "bez-1006128": {
   "id": "bez-1006128",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-10-08T15:42:59Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7217,7 +7222,7 @@
   "parking": null,
   "backfilled": true,
   "dist_km": 2.28,
-  "deal_pct": -14,
+  "deal_pct": -13,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "area": "vysocany"
@@ -7384,7 +7389,7 @@
  "bez-1014682": {
   "id": "bez-1014682",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-10-08T15:42:59Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7430,7 +7435,7 @@
  "bez-1015021": {
   "id": "bez-1015021",
   "first_seen": "2026-07-10T17:43:16Z",
-  "last_seen": "2026-10-08T15:42:59Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7893,7 +7898,7 @@
  "bez-1029927": {
   "id": "bez-1029927",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-10-08T05:58:50Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10865,7 +10870,7 @@
  "bez-981957": {
   "id": "bez-981957",
   "first_seen": "2026-07-21T10:14:29Z",
-  "last_seen": "2026-10-08T05:58:50Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10903,7 +10908,7 @@
   "parking": null,
   "backfilled": true,
   "dist_km": 1.36,
-  "deal_pct": -26,
+  "deal_pct": -27,
   "deal_outlier": false,
   "exclude_from_stats": false
  },
@@ -11058,7 +11063,7 @@
  "bez-996941": {
   "id": "bez-996941",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-10-08T15:42:59Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -13151,7 +13156,7 @@
  "idnes-6a0c59a72b5ffab24208d684": {
   "id": "idnes-6a0c59a72b5ffab24208d684",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-10-08T15:42:59Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -13414,7 +13419,7 @@
  "idnes-6a1c18ee6d13c98fa102e4c8": {
   "id": "idnes-6a1c18ee6d13c98fa102e4c8",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-10-08T05:58:50Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -14284,7 +14289,7 @@
  "idnes-6a2aca7dae30040b1a04a726": {
   "id": "idnes-6a2aca7dae30040b1a04a726",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-10-08T05:58:50Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -14668,7 +14673,7 @@
  "idnes-6a3170496e725c29510c6cd5": {
   "id": "idnes-6a3170496e725c29510c6cd5",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-10-08T05:58:50Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -14691,8 +14696,8 @@
   "street": "Smržových",
   "locality": "Smržových, Praha 9 - Vysočany",
   "city_part": "Vysočany",
-  "lat": 50.109274264049866,
-  "lon": 14.51807142228139,
+  "lat": 50.10930684998414,
+  "lon": 14.518148466078802,
   "pod_harfou": false,
   "price_czk": 9809000,
   "fees_czk": null,
@@ -20667,7 +20672,7 @@
  "idnes-6a5cf1c4719f99fb6402761d": {
   "id": "idnes-6a5cf1c4719f99fb6402761d",
   "first_seen": "2026-07-20T01:20:55Z",
-  "last_seen": "2026-10-08T05:58:50Z",
+  "last_seen": "2026-10-08T21:24:47Z",
   "gone_at": null,
   "price_history": [
    {
