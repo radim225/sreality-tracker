@@ -4350,19 +4350,35 @@ def override_effect(ov, listing):
     return lines
 
 
-def overrides_card(overrides, listings, *, extra=(), archive=None):
-    """Ruční opravy inzerátů — karta na dashboardu, stejný tvar jako fronta poplatků.
+_PORTAL_LABELS = {"sreality": "Sreality", "bezrealitky": "Bezrealitky", "idnes": "iDNES"}
 
-    Záznam v overrides.json přežije, i když inzerát z nabídky zmizí: stejné id
-    se po návratu znovu opraví. Proto karta ukazuje i id, které teď v tabulce
-    není (název a datum zmizení z gone_archive, je-li tam). `listings` jsou
-    inzeráty, které umí otevřít detail (openModal); `extra` (novostavby) se
-    jen odkazují na portál. Mazání jde přes PAT + dispatch."""
+
+def overrides_card(overrides, listings, *, extra=(), archive=None):
+    """Ruční opravy inzerátů — karta na dashboardu.
+
+    Jeden řádek = jedna oprava: název (otevře detail inzerátu), co oprava
+    změnila (override_effect, „původně → nově"), poznámka. Mazání je schválně
+    nenápadné a dvoukrokové (JS ovCardAskDelete ukáže potvrzení přímo
+    v řádku): smazaná oprava tiše vrátí parserova čísla do mediánu.
+
+    Záznam v overrides.json přežije, i když inzerát z nabídky zmizí: stejné ID
+    inzerátu se po návratu znovu opraví. Proto karta ukazuje i ID, které teď
+    v tabulce není (název a datum zmizení z gone_archive, je-li tam).
+    `listings` umí otevřít detail (openModal), `extra` (novostavby) otevře
+    JS přes window.openNov. Id jen v data-* atributech -- žádný inline handler;
+    odkaz na portál jen https."""
     if not overrides:
         return ""
     by_id = {str(c.get("id")): c for c in listings}
     extra_by_id = {str(c.get("id")): c for c in extra}
     archive = archive or {}
+
+    def effect_html(line):
+        if line.startswith("mimo statistiku"):
+            rest = line[len("mimo statistiku"):].lstrip(" —")
+            return (f'<div class="ov-eff"><span class="badge bad">mimo statistiku</span> '
+                    f'{html.escape(rest)}</div>')
+        return f'<div class="ov-eff">{html.escape(line)}</div>'
 
     rows = []
     for oid in sorted(overrides, key=str):
@@ -4371,27 +4387,24 @@ def overrides_card(overrides, listings, *, extra=(), archive=None):
         listing = openable or extra_by_id.get(str(oid))
         arch = archive.get(str(oid)) if listing is None else None
         shown = listing or arch or {}
-        title = shown.get("title") or str(oid)
-        url = shown.get("url") or ""
         gone = listing is None
-        title_html = html.escape(title)
-        link = ""
-        if url:
-            link = (f'<a href="{html.escape(url, quote=True)}" target="_blank" '
-                    f'rel="noopener" title="Otevřít na portálu">↗</a>')
-        if openable is not None:
-            open_id = html.escape(json.dumps(openable.get("id")), quote=True)
-            title_html = (
-                f'<button class="linklike" onclick="openModal({open_id})">{title_html}</button>'
-                + (" " + link if link else "")
-            )
-        elif url:
-            title_html = (f'<a href="{html.escape(url, quote=True)}" target="_blank" '
-                          f'rel="noopener">{title_html}</a>')
-        effect = "".join(
-            f'<div class="hint">{html.escape(line)}</div>'
-            for line in override_effect(ov, listing)
-        )
+        sid = html.escape(str(oid), quote=True)
+        title = html.escape(str(shown.get("title") or f"Inzerát ID {oid}"))
+        if gone:
+            # Detail zmizelého ukáže JS, jen když ho má GONE_BY_ID.
+            title_html = (f'<span class="ov-title">{title}</span> <button class="linklike" '
+                          f'data-gone-id="{sid}" data-ov-gone hidden>detail</button>')
+        else:
+            title_html = (f'<button class="linklike ov-title" data-ov-open="{sid}" '
+                          f'title="Otevřít detail inzerátu">{title}</button>')
+        url = str(shown.get("url") or "")
+        portal = ""
+        if url.startswith("https://"):
+            label = _PORTAL_LABELS.get(shown.get("source"), "portál")
+            portal = (f' · <a href="{html.escape(url, quote=True)}" target="_blank" '
+                      f'rel="noopener">{label} ↗</a>')
+        effect = "".join(effect_html(line) for line in override_effect(ov, listing)) \
+            or '<div class="ov-eff">jen poznámka</div>'
         note = html.escape(ov.get("note") or "")
         status = ""
         if gone:
@@ -4402,31 +4415,30 @@ def overrides_card(overrides, listings, *, extra=(), archive=None):
             except ValueError:
                 when = ""
             status = (
-                '<div class="hint">inzerát teď není v nabídce'
+                '<div class="hint">zmizelý inzerát'
                 + (f" (zmizel {html.escape(when)})" if when else "")
-                + " — oprava zůstává uložená a použije se, až se stejné id vrátí</div>"
+                + " — oprava zůstává uložená a použije se, až se inzerát se stejným ID vrátí</div>"
             )
-        delete_id = html.escape(json.dumps(str(oid)), quote=True)
         rows.append(
-            f"""<div class="fq-item" data-ov-row="{html.escape(str(oid), quote=True)}">
+            f"""<div class="fq-item ov-item{' gone' if gone else ''}" data-ov-row="{sid}">
               <div class="fq-head">
-                <span>{title_html} <span class="hint">{html.escape(str(oid))}</span></span>
-                <button class="popup-btn" style="background:#7f1d1d;"
-                  onclick="deleteOverrideRow({delete_id})">🗑 Smazat</button>
+                <span class="ov-name">{title_html}<span data-ov-pend></span></span>
+                <span class="ov-meta">ID {html.escape(str(oid))}{portal} ·
+                  <button class="ov-del" data-ov-del="{sid}">Smazat opravu</button></span>
               </div>
-              {effect}
-              {f'<div class="fq-text">{note}</div>' if note else ""}
+              <div class="ov-changes">{effect}</div>
+              {f'<div class="fq-text">„{note}“</div>' if note else ""}
               {status}
-              <div class="hint" data-ov-row-status></div>
+              <div class="ov-confirm" data-ov-confirm hidden></div>
             </div>"""
         )
     return f"""<div class="card" id="overridesCard">
   <h2 style="margin-top:0;font-size:1rem;">✏️ Opravy ({len(overrides)})</h2>
-  <p class="hint" style="margin:0 0 10px;">Ručně opravená plocha nebo poplatek se <b>počítá do odhadu</b>
-    (přepočítá se celkem i Kč/m²). „Mimo statistiku“ je pro ne-tržní prodej — inzerát zůstane na stránce,
-    do mediánu ne. Záznam se nemaže, když inzerát zmizí: stejné id po návratu nese tutéž opravu.
+  <p class="hint" style="margin:0 0 10px;">Ruční opravy čísel u jednotlivých inzerátů. Opravená plocha
+    nebo poplatky <b>jdou do odhadu</b> (přepočte se celkem i Kč/m²); „mimo statistiku“ = ne-tržní prodej,
+    inzerát zůstane na stránce, do mediánu ne. Oprava platí dál, i když inzerát zmizí a vrátí se se stejným ID.
     Novou opravu zadáš v detailu inzerátu.</p>
-  <div class="scroll">{"".join(rows)}</div>
+  <div class="ov-list">{"".join(rows)}</div>
 </div>"""
 
 
@@ -4673,6 +4685,21 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
               justify-content: space-between; font-size: 0.8rem; }}
   .fq-head a {{ color: #7ab8ff; }}
   .fq-text {{ font-size: 0.72rem; color: #999; margin-top: 3px; }}
+  /* Karta Opravy: řádek = název · co se změnilo · poznámka; mazání nenápadné. */
+  .ov-item {{ border-radius: 6px; transition: background .4s; }}
+  .ov-item.ov-flash {{ background: #2a2410; }}
+  .ov-name {{ min-width: 0; }}
+  .ov-title {{ font-weight: 600; font-size: 0.84rem; }}
+  .ov-item.gone .ov-title {{ color: #999; }}
+  .ov-meta {{ font-size: 0.7rem; color: #888; white-space: nowrap; }}
+  .ov-changes {{ font-size: 0.78rem; color: #bbb; margin-top: 3px; }}
+  .ov-eff + .ov-eff {{ margin-top: 2px; }}
+  .ov-del {{ background: none; border: none; padding: 0; font: inherit; color: #888;
+             text-decoration: underline; cursor: pointer; }}
+  .ov-del:hover, .ov-del:focus-visible {{ color: #f88; }}
+  .ov-confirm {{ display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-top: 6px;
+                 padding: 6px 10px; background: #2a1414; border-radius: 6px; font-size: 0.78rem; }}
+  .ov-confirm[hidden], .ov-del[hidden] {{ display: none; }}
   .ov-form {{ background: #11141b; border-radius: 8px; padding: 10px; margin: 12px 0; }}
   .ov-form h3 {{ margin: 0 0 8px; font-size: 0.85rem; color: #d9c38f; }}
   .ov-form label {{ display: block; font-size: 0.7rem; color: #9aa; margin: 6px 0 2px; }}
@@ -5377,24 +5404,6 @@ async function manageTracked(inputs) {
   setManageStatus(r.text);
 }
 
-/* Smazání opravy z karty „Opravy": stav přímo v řádku a připomínka „čeká na
-   zpracování" i po obnovení stránky (stejný localStorage záznam jako v detailu). */
-async function deleteOverrideRow(id) {
-  await manageTracked({override_delete: String(id)});
-  markOvCardRows();
-}
-
-function markOvCardRows() {
-  const pend = loadOvPending();
-  document.querySelectorAll("[data-ov-row]").forEach(row => {
-    const p = pend[row.getAttribute("data-ov-row")];
-    const el = row.querySelector("[data-ov-row-status]");
-    if (!el) return;
-    const live = p && p.op === "delete" && typeof p.at === "number" && Date.now() - p.at < OV_PENDING_TTL_MS;
-    el.textContent = live ? "smazání čeká na zpracování (odesláno " + fmtHm(p.at) + ") — obnov stránku za ~5–15 min" : "";
-  });
-}
-
 function costBreakdownHtml(item) {
   const adminRow = item.admin_fee_czk
     ? `<div class="cost-row"><span>📋 Administrativní poplatek (jednorázově)</span><span>${fmtCzk(item.admin_fee_czk)}</span></div>`
@@ -5452,11 +5461,52 @@ function garageParkingHtml(item) {
   return `<div><b>Garáž</b>${fmt(item.garage)}</div><div><b>Parkování</b>${fmt(item.parking)}</div>`;
 }
 
+function fmtSqm(v) {
+  const n = Number(v);
+  if (v == null || v === "" || !isFinite(n)) return "—";
+  return n.toLocaleString("cs-CZ", {maximumFractionDigits: 1}) + " m²";
+}
+
+// Krátká verze scrape.override_effect pro detail a tooltip v tabulce:
+// [popisek, původně | null, nově], naformátované. Původní plochu drží
+// floor_area_portal_sqm; původní poplatek se po opravě nikde nenese.
+function ovChanges(item) {
+  const ov = (item.override && typeof item.override === "object") ? item.override : null;
+  if (!ov) return [];
+  const out = [];
+  if (ov.floor_area_sqm != null) {
+    let before = item.floor_area_portal_sqm;
+    // Jen když se oprava v datech už projevila -- jinak portálová plocha není „původně".
+    if (item.floor_area_source !== "override" || Number(before) === Number(ov.floor_area_sqm)) before = null;
+    out.push(["Plocha", before == null ? null : fmtSqm(before), fmtSqm(ov.floor_area_sqm)]);
+  }
+  if (ov.fees_czk != null) out.push(["Poplatky", null, fmtCzk(Number(ov.fees_czk)) + "/měs"]);
+  return out;
+}
+
+function ovSummaryText(item) {
+  const bits = ovChanges(item).map(([l, b, a]) => b ? `${l} ${b} → ${a}` : `${l} ${a}`);
+  if (item.override && item.override.exclude_from_stats) bits.push("mimo statistiku");
+  return bits.join(" · ") || "jen poznámka";
+}
+
 function overrideBadges(item) {
   let out = "";
-  if (item.override) out += ' <span class="badge approx">oprava</span>';
+  if (item.override) out += ` <span class="badge approx" title="${escapeHtml("Oprava: " + ovSummaryText(item))}">oprava</span>`;
   if (item.exclude_from_stats) out += ' <span class="badge bad">mimo statistiku</span>';
   return out;
+}
+
+// V detailu inzerátu: co oprava mění a cesta zpátky na kartu Opravy.
+function ovModalNoteHtml(item) {
+  if (!item.override) return "";
+  const chg = ovChanges(item).map(([l, b, a]) =>
+    `${l} ${b ? `<s>${escapeHtml(b)}</s> → ` : ""}<b>${escapeHtml(a)}</b>`);
+  if (item.override.exclude_from_stats) chg.push("mimo statistiku");
+  const note = item.override_note ? ` — „${escapeHtml(item.override_note)}“` : "";
+  const jump = document.getElementById("overridesCard")
+    ? ` <button class="linklike" data-ov-jump="${escapeHtml(String(item.id))}">všechny opravy →</button>` : "";
+  return `<div class="modal-note">✏️ Oprava: ${chg.join(" · ") || "jen poznámka"}${note}${jump}</div>`;
 }
 
 /* ---- ruční oprava z detailu inzerátu ----
@@ -5520,7 +5570,7 @@ function fmtHm(ms) {
 }
 
 function ovBadgeHtml(st) {
-  const manual = st.applied ? ' <span class="badge approx">upraveno ručně</span>' : "";
+  const manual = st.applied ? ' <span class="badge approx">oprava</span>' : "";
   if (st.kind === "pending")
     return `<span class="badge warn">${st.op === "delete" ? "smazání " : ""}čeká na zpracování (odesláno ${fmtHm(st.at)})</span>${manual}`;
   if (st.kind === "confirmed") return `<span class="badge ok">uloženo ✓</span>${manual}`;
@@ -5553,6 +5603,9 @@ function saveOverride(id) {
   if (payload.floor_area_sqm !== undefined && !(payload.floor_area_sqm > 0)) err = "m² musí být kladné číslo.";
   else if (payload.fees_czk !== undefined && !(Number.isInteger(payload.fees_czk) && payload.fees_czk >= 0)) err = "Poplatky musí být celé číslo ≥ 0.";
   else if (!area && !fees && !note && !exclude) err = "Vyplň aspoň jedno pole opravy.";
+  // Ruční plocha přepíše portál a posune Kč/m²; bez zdroje za měsíc nikdo neví,
+  // jestli platí 196 z inzerátu, nebo 91,5 odněkud jinud.
+  else if (area && !note) err = "U opravy plochy napiš do poznámky, odkud číslo je.";
   if (err) {
     setOvStatus("err", escapeHtml(err) + " Nic se neodeslalo.");
     const form = document.getElementById("ovForm");
@@ -5623,7 +5676,7 @@ function overrideFormHtml(item) {
     <input id="ovArea" type="number" min="0" step="0.1" value="${areaVal}" placeholder="${escapeHtml(String(item.floor_area_sqm ?? ""))}">
     <label>Poplatky Kč/měs (teď ${item.fees_missing ? "neuvedeno" : escapeHtml(String(item.fees_czk ?? "—"))})</label>
     <input id="ovFees" type="number" min="0" step="1" value="${feesVal}" placeholder="${item.fees_missing ? "" : escapeHtml(String(item.fees_czk ?? ""))}">
-    <label>Poznámka</label>
+    <label>Poznámka (u opravy plochy povinná — odkud číslo je)</label>
     <textarea id="ovNote" placeholder="proč to není tržní / odkud je oprava">${noteVal}</textarea>
     <label class="ov-check"><input id="ovExclude" type="checkbox" ${excl}> Mimo statistiku (ne-tržní prodej — zůstane na stránce, ne v mediánu)</label>
     <p class="hint" style="margin:6px 0 0;">Poznámka se commituje do veřejného repa a vypíše se na této
@@ -5669,7 +5722,7 @@ function buildModalHtml(item) {
     <h2>${escapeHtml(item.title || "Listing")} ${approxHtml}${overrideBadges(item)}</h2>
     ${noteHtml}
     ${item.tx_suspect ? `<div class="modal-note">⚠ ${escapeHtml(item.tx_suspect)} — inzerát zůstává, jak ho portál vede, ale je mimo statistiku.</div>` : ""}
-    ${item.override_note ? `<div class="modal-note">Oprava: ${escapeHtml(item.override_note)}</div>` : ""}
+    ${ovModalNoteHtml(item)}
     ${item.relist_of ? `<div class="modal-note">↻ ${item.relist_of.verdict === "maybe" ? "Možná znovu vložený" : "Znovu vložený"} inzerát —
       tentýž byt byl v nabídce už od ${fmtDay(item.relist_of.listed_since || item.relist_of.first_seen)}${item.relist_of.price_czk ? ` za ${fmtCzk(item.relist_of.price_czk)}` : ""},
       zmizel ${fmtDay(item.relist_of.gone_at)} a vrátil se pod novým číslem.
@@ -6389,6 +6442,116 @@ document.addEventListener("click", ev => {
   openGone(el.getAttribute("data-gone-id"));
 });
 
+/* ---- karta Opravy: detail, mazání ve dvou krocích, stav „čeká" ----
+   Všechno přes data-* atributy (id nikdy do inline handleru). Smazání se
+   neodesílá na první klik: potvrzení se ukáže přímo v řádku, protože smazaná
+   oprava tiše vrátí parserova čísla do mediánu. */
+function ovCardRow(id) {
+  return [...document.querySelectorAll("#overridesCard [data-ov-row]")]
+    .find(r => r.getAttribute("data-ov-row") === String(id)) || null;
+}
+
+function ovOpenListing(id) {
+  const item = ALL_BY_ID.get(String(id));
+  if (item) { openModal(item.id); return; }
+  if (typeof window.novItem === "function" && window.novItem(id) && typeof window.openNov === "function") {
+    window.openNov(String(id)); return;
+  }
+  if (GONE_BY_ID.has(String(id))) openGone(id);
+}
+
+function ovCardSync() {
+  document.querySelectorAll("#overridesCard [data-ov-row]").forEach(row => {
+    const id = row.getAttribute("data-ov-row");
+    const item = ALL_BY_ID.get(id);
+    let st = item ? overrideState(item) : {kind: "none"};
+    if (!item) {
+      const p = loadOvPending()[id];
+      if (p && typeof p.at === "number" && Date.now() - p.at <= OV_PENDING_TTL_MS)
+        st = {kind: "pending", at: p.at, op: p.op};
+    }
+    const pend = st.kind === "pending";
+    const slot = row.querySelector("[data-ov-pend]");
+    if (slot) slot.innerHTML = pend
+      ? ` <span class="badge warn">${st.op === "delete" ? "smazání" : "změna"} čeká na zpracování (odesláno ${fmtHm(st.at)})</span>`
+      : "";
+    const del = row.querySelector("[data-ov-del]");
+    if (del) del.hidden = pend && st.op === "delete";
+    const g = row.querySelector("[data-ov-gone]");
+    if (g) g.hidden = !GONE_BY_ID.has(id);
+  });
+}
+
+function ovCardAskDelete(row) {
+  const box = row && row.querySelector("[data-ov-confirm]");
+  if (!box) return;
+  const back = row.querySelector(".ov-changes .badge.bad") ? " a vrátí se do statistiky" : "";
+  box.innerHTML = `<span>Smazat opravu? Inzerát se vrátí k číslům z portálu${back}.</span>
+    <button class="popup-btn" style="background:#7f1d1d;margin-top:0;" data-ov-del-yes>Ano, smazat opravu</button>
+    <button class="linklike" data-ov-del-no>Zpět</button>
+    <span class="ov-status" data-ov-status></span>`;
+  box.hidden = false;
+  box.querySelector("[data-ov-del-no]").focus();
+}
+
+async function ovCardDelete(row) {
+  if (!row) return;
+  const id = row.getAttribute("data-ov-row");
+  const status = row.querySelector("[data-ov-status]");
+  const say = (kind, msg) => { if (status) { status.className = "ov-status " + kind; status.textContent = msg; } };
+  if (!pageToken) {
+    pendingAction = {modal: false, run: () => ovCardDelete(row)};
+    askForPat();
+    say("info", "Zatím se nic neodeslalo. Vlož GitHub token v kartě Sledované — smazání se pak provede.");
+    return;
+  }
+  const btns = row.querySelectorAll("[data-ov-confirm] button");
+  btns.forEach(b => { b.disabled = true; });
+  say("busy", "Odesílám…");
+  let r;
+  try { r = await dispatchWorkflow({override_delete: id}); } finally { btns.forEach(b => { b.disabled = false; }); }
+  if (r.ok) {
+    setOvPending(id, {op: "delete"});
+    const box = row.querySelector("[data-ov-confirm]");
+    box.hidden = true; box.innerHTML = "";
+    ovCardSync();
+    return;
+  }
+  if (r.kind === "auth") {
+    forgetPat();
+    pendingAction = {modal: false, run: () => ovCardDelete(row)};
+    askForPat();
+  }
+  say("err", r.text);
+}
+
+// Z detailu inzerátu zpátky na jeho řádek v kartě Opravy (rozbalí ji, je-li sbalená).
+function ovJumpToCard(id) {
+  const card = document.getElementById("overridesCard");
+  if (!card) return;
+  if (modalIsOpen()) closeModal();
+  if (card.classList.contains("collapsed")) card.querySelector("h2")?.click();
+  const row = ovCardRow(id) || card;
+  row.scrollIntoView({behavior: "smooth", block: "center"});
+  row.classList.add("ov-flash");
+  setTimeout(() => row.classList.remove("ov-flash"), 1800);
+}
+
+document.addEventListener("click", ev => {
+  const t = ev.target;
+  if (!(t instanceof Element)) return;
+  const open = t.closest("[data-ov-open]");
+  if (open) { ev.preventDefault(); ovOpenListing(open.getAttribute("data-ov-open")); return; }
+  const del = t.closest("[data-ov-del]");
+  if (del) { ovCardAskDelete(del.closest("[data-ov-row]")); return; }
+  const yes = t.closest("[data-ov-del-yes]");
+  if (yes) { ovCardDelete(yes.closest("[data-ov-row]")); return; }
+  const no = t.closest("[data-ov-del-no]");
+  if (no) { const box = no.closest("[data-ov-confirm]"); box.hidden = true; box.innerHTML = ""; return; }
+  const jump = t.closest("[data-ov-jump]");
+  if (jump) { ev.stopPropagation(); ovJumpToCard(jump.getAttribute("data-ov-jump")); }
+});
+
 function initMap() {
   const center = TRACKED.find(t => t.lat != null) || DATA.find(d => d.lat != null);
   if (!center) return;
@@ -6539,6 +6702,7 @@ renderDeals();
 renderPodHarfou();
 renderHistory();
 renderTrackedList();
+ovCardSync();
 initMap();
 document.getElementById("garTx")?.addEventListener("change", renderGarages);
 document.getElementById("garSearch")?.addEventListener("input", renderGarages);
@@ -6549,7 +6713,6 @@ initGarageMap();
 renderGarages();
 renderAreaStats();
 renderGone();
-markOvCardRows();
 ["goneTx", "goneMode"].forEach(i => document.getElementById(i)?.addEventListener("change", renderGone));
 document.getElementById("goneSearch")?.addEventListener("input", renderGone);
 """
