@@ -9992,6 +9992,57 @@
   "transaction_type": "pronajem",
   "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/1691496524"
  },
+ "1693061196": {
+  "address": {
+   "distance_m": 16,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (16 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Habartická 503/42, Střížkov"
+  },
+  "address_exact": false,
+  "approx_location": false,
+  "area": "vysocany",
+  "city_part": "Střížkov",
+  "description": "Nabízíme k prodeji světlý,  velmi prakticky řešený byt, o dispozici 3+kk s celkovou plochou 61 m² včetně lodžie a komory.\r\n\r\nHledáte byt, do kterého se můžete rovnou nastěhovat, aniž byste museli řešit vestavěné skříně, úložné prostory nebo rekonstrukci? Právě jste ho našli.\r\n\r\nKaždý centimetr tohoto bytu byl promyšlen tak, aby poskytoval maximální komfort pro každodenní život. Dominantou interiéru je kvalitní nábytek vyrobený na míru v hodnotě přesahující jeden milion korun. Díky němu vzniklo velké množství praktických úložných prostor, aniž by byt působil stísněně. Naopak – celý interiér působí vzdušně, čistě a nadčasově.\r\n\r\nSrdcem domova je otevřený obývací pokoj plynule navazující na velkoryse řešenou kuchyň.\r\n\r\nStejná péče byla věnována i ostatním částem bytu, které nabízejí dostatek prostoru pro pohodlné rodinné bydlení i každodenní život.\r\n\r\nVelkou předností je také samotná lokalita. Klidná ulice Habartická na Praze 9 – Střížkov nabízí vše, co od moderního bydlení očekáváte. V pěší dostupnosti najdete mateřské, základní i střední školy, obchody, restaurace, lékaře, sportoviště i další služby. Stanice metra C Střížkov je vzdálena jen několik minut chůze a přímo před domem se ",
+  "disposition": "3+kk",
+  "fees_czk": 0,
+  "first_seen": "2026-10-07T15:42:56Z",
+  "floor_area_sqm": 61.0,
+  "floor_number": 7,
+  "furnished": "ano",
+  "gone_at": "2026-10-10T15:13:15Z",
+  "id": 1693061196,
+  "images": [
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/kcKfrMAkFW9k4T4fH9g1k1/ba62.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/nCR9NVflLnoRVKdFH9g1ll/2547.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/kcKfrMAkFW9k4T4bH9g1mI/7fc1.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/kcKfrMAkFW9k4T6PH9g1mg/2510.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/kcKfrMAkFCpZ9wJ2DH9g1nF/38c7.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+  ],
+  "is_new_building": false,
+  "last_price_czk": 8499000,
+  "lat": 50.1215793026072,
+  "locality": "Habartická, Střížkov, Praha",
+  "lon": 14.4818964687465,
+  "price_czk": 8499000,
+  "price_czk_per_sqm": 139328,
+  "relisted_as": {
+   "id": 2830962764,
+   "linked_at": "2026-10-10T15:12:23Z",
+   "text_similarity": 1.0,
+   "url": "https://www.sreality.cz/detail/prodej/byt/3%2Bkk/x/2830962764",
+   "verdict": "same"
+  },
+  "seller_name": "Matti Erlebach, DiS",
+  "source": "sreality",
+  "street": "Habartická",
+  "thumb": "https://d18-a.sdn.cz/d_18/c_img_qG_A/kcKfrMAkFW9k4T4fH9g1k1/ba62.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+  "title": "Prodej bytu 3+kk 61 m²",
+  "total_czk": 8499000,
+  "transaction_type": "prodej",
+  "url": "https://www.sreality.cz/detail/prodej/byt/3%2Bkk/x/1693061196"
+ },
  "1694052428": {
   "address": {
    "distance_m": 0,
@@ -11204,6 +11255,7 @@
   "lon": 14.5081401426,
   "price_czk": 13990000,
   "price_czk_per_sqm": 186533,
+  "returned_at": "2026-10-10T15:12:23Z",
   "source": "sreality",
   "street": "Pod Harfou",
   "thumb": "https://d18-a.sdn.cz/d_18/c_img_qF_A/kPVqmweP7JB4z4nDt2HpgU0p/4a03.jpeg?fl=res,400,400,1|shr,,20|webp,60",
@@ -23271,6 +23323,50 @@
   "total_czk": 20250000,
   "transaction_type": "prodej",
   "url": "https://www.sreality.cz/detail/prodej/byt/3%2Bkk/x/2524237900"
+ },
+ "2526876492": {
+  "address": {
+   "distance_m": 2,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (2 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Nad Úžlabinou 708/7, Malešice"
+  },
+  "address_exact": true,
+  "approx_location": false,
+  "area": "vysocany",
+  "city_part": "Malešice",
+  "description": "Nabízíme k prodeji moderní byt 3+kk v osobním vlastnictví, který je součástí novostavby v okolní smíšené zástavbě kombinující bydlení a kanceláře. Nemovitost se nachází v klidné a příjemné části Prahy 10, ideální pro rodiny i jednotlivce, kteří vyhledávají tiché prostředí s výbornou dostupností do centra města.\n\nByt o podlahové ploše 59 m² se nachází v 4. nadzemním podlaží a díky výtahu je zajištěn pohodlný bezbariérový přístup. K bytu dále náleží prostorný balkon o velikosti 22 m², který nabízí příjemné posezení s výhledem do okolí, a také sklepní kóje o ploše 2 m², vhodná pro uskladnění sportovního či sezónního vybavení.\nVýhodou této nabídky je garantované parkovací stání a navíc také samostatná garáž pro jedno vozidlo, což je v této lokalitě velmi žádaný benefit.\n\nByt se prodává jako částečně vybavený, což novým majitelům poskytuje možnost doladit interiér podle vlastních představ. Energetická náročnost budovy je ve třídě C, což zaručuje rozumné provozní náklady. Jejich přesnou výši Vám na vyžádání sdělí makléř.\n\nCena: 11.000.000 Kč vč. provize\n\nPokud Vás tato nabídka zaujala, neváhejte nás kontaktovat telefonicky či e-mailem. Prohlídky jsou možné po předchozí domluvě. Rádi Vám ",
+  "disposition": "3+kk",
+  "first_seen": "2026-09-17T13:27:06Z",
+  "floor_area_sqm": 59.0,
+  "floor_number": 4,
+  "furnished": "castecne",
+  "gone_at": "2026-10-10T15:13:15Z",
+  "house_number": "708",
+  "id": 2526876492,
+  "images": [
+   "https://d18-a.sdn.cz/d_18/c_img_og_B/nDJ4VEZEqBMnoOH9KFLYDfm/0423.png?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_og_B/nDJ4VEZEqx7ONIbLFLYDXG/633b.png?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_og_B/kOzkBkwYBTBCGZ9E8tFLYETB/f8e8.png?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_og_B/kOzkBkwYBTBLrRlFJVFLYDtV/bcda.png?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_og_B/nDJ4VEZEqBMnoOH92FLYDzl/1e26.png?fl=res,800,800,1|shr,,20|jpg,80"
+  ],
+  "is_new_building": true,
+  "last_price_czk": 11000000,
+  "lat": 50.080381368877575,
+  "locality": "Nad úžlabinou, Malešice, Praha",
+  "lon": 14.499899661389593,
+  "price_czk": 11000000,
+  "price_czk_per_sqm": 186441,
+  "seller_name": "Ing. Artem Faust",
+  "source": "sreality",
+  "street": "Nad úžlabinou",
+  "thumb": "https://d18-a.sdn.cz/d_18/c_img_og_B/nDJ4VEZEqBMnoOH9KFLYDfm/0423.png?fl=res,400,400,1|shr,,20|webp,60",
+  "title": "Prodej bytu 3+kk 59 m²",
+  "total_czk": 11000000,
+  "transaction_type": "prodej",
+  "url": "https://www.sreality.cz/detail/prodej/byt/3%2Bkk/x/2526876492"
  },
  "252719180": {
   "address": {
@@ -46899,6 +46995,51 @@
   "transaction_type": "pronajem",
   "url": "https://www.sreality.cz/detail/pronajem/byt/1%2Bkk/x/4155752524"
  },
+ "4158660684": {
+  "address": {
+   "distance_m": 16,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (16 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "U Kněžské louky 2096/25, Žižkov"
+  },
+  "address_exact": true,
+  "approx_location": false,
+  "area": "vysocany",
+  "city_part": "Žižkov",
+  "description": "Pěkný zařízený byt s balkonem 2+kk 50 m2, Praha 3 - Žižkov/Jarov, ul. U kněžské louky.\n\n2. patro, ložnice s přístupem na bakon, obývací pokoj s kuchyňskou linkou s lednicí, koupelna s vanou (pračka možno), samostatná toaleta, předsíň. \n\nV docházkové vzdálenosti je několik linek tramvaje i autobusu, rovněž veškerá občanská vybavenost. Bezproblémové parkování před domem. PENB:G",
+  "disposition": "2+kk",
+  "fees_czk": 3600,
+  "first_seen": "2026-09-29T10:48:39Z",
+  "floor_area_sqm": 50.0,
+  "floor_number": 3,
+  "furnished": "ano",
+  "gone_at": "2026-10-10T15:13:15Z",
+  "house_number": "2152",
+  "id": 4158660684,
+  "images": [
+   "https://d18-a.sdn.cz/d_18/c_img_qF_D/k0OqwCKRB7OXgCvGH55Tf3/25ea.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_D/k0OqwCKRIhAnBmtH55ThU/4902.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_D/k0OqwCKRD1EvuCj2H55Tgx/c3e6.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_D/k0OqwCKRBOXzTBXWH55Tmv/042e.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_D/nOdL4BtPEyBuWMSBkIH55Tfr/8bf7.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+  ],
+  "is_new_building": false,
+  "last_price_czk": 17000,
+  "lat": 50.094236125692206,
+  "locality": "U kněžské louky, Žižkov, Praha",
+  "lon": 14.493769705295565,
+  "price_czk": 17000,
+  "price_czk_per_sqm": 442,
+  "seller_name": "Ivana Formanová",
+  "source": "sreality",
+  "street": "U kněžské louky",
+  "thumb": "https://d18-a.sdn.cz/d_18/c_img_qF_D/k0OqwCKRB7OXgCvGH55Tf3/25ea.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+  "title": "Pronájem bytu 2+kk 50 m²",
+  "total_czk": 22100,
+  "transaction_type": "pronajem",
+  "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/4158660684"
+ },
  "4159909964": {
   "address": {
    "distance_m": 0,
@@ -58230,6 +58371,37 @@
   "transaction_type": "pronajem",
   "url": "https://www.bezrealitky.cz/nemovitosti-byty-domy/1041005-nabidka-pronajem-bytu-u-libenskeho-pivovaru-praha"
  },
+ "bez-1041446": {
+  "address": {
+   "distance_m": 8,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (8 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Na Laurové 1017/5, Praha 5"
+  },
+  "approx_location": false,
+  "area": "jinonice",
+  "description": "Hledáte výjimečný prostor, kde se snoubí velkoměstský styl s klidem a soukromím?\r\n\r\nPředstavujeme vám prostorný byt 3+kk s naprosto jedinečnou dispozicí, který nabízí dvě ložnice se samostatnými koupelnami, prostorný obývací pokoj, balkon a třetí toaletu s předsíňkou.\r\n\r\nByt se nachází ve 2. NP novostavby Rezidence Laurová v atraktivní lokalitě Prahy 5 – Smíchov. Nabízí komfortní rodinné bydlení s výhledem do klidné ulice, vnitroblok plný zeleně a výbornou dostupnost do centra města. K bytu náleží garážové stání.\r\n\r\nDům i samotný byt je v prémiovém standardu s důrazem na moderní technologie:\r\n– podlahové vytápění\r\n– rekuperace vzduchu\r\n– videotelefon, čipový vstupní systém\r\n– dřevěné podlahy a bezfalcové dveře o výšce 2,1 m\r\n– balkony a terasy s keramickou mrazuvzdornou dlažbou.\r\n\r\nCelková užitná plocha bytu včetně balkonu a sklepa činí 104,1 m².\r\n\r\nZe vstupní haly je přístup do první ložnice o výměře 19,3 m², která disponuje vlastní koupelnou s vanou a toaletou. Pokoj nabízí také dostatek prostoru pro realizaci vestavěného úložného řešení. Hala dále plynule navazuje na prostorný obývací pokoj s přípravou na kuchyňský kout o rozloze 31,7 m², který tvoří přirozené centrum bytu. Z ob",
+  "disposition": "3+kk",
+  "first_seen": "2026-09-27T19:49:00Z",
+  "floor_area_sqm": 95,
+  "gone_at": "2026-10-10T15:13:15Z",
+  "id": "bez-1041446",
+  "images": [
+   "https://api.bezrealitky.cz/media/cache/record_main/data/images/advert/1041k/1041446/1041446-1790343823-foto-1.jpg"
+  ],
+  "last_price_czk": 16490000,
+  "lat": 50.0609677,
+  "lon": 14.398317,
+  "price_czk": 16490000,
+  "price_czk_per_sqm": 173579,
+  "source": "bezrealitky",
+  "thumb": "https://api.bezrealitky.cz/media/cache/record_thumb/data/images/advert/1041k/1041446/1041446-1790343823-foto-1.jpg",
+  "title": "Prodej bytu 3+kk 95 m²",
+  "total_czk": 16490000,
+  "transaction_type": "prodej",
+  "url": "https://www.bezrealitky.cz/nemovitosti-byty-domy/1041446-nabidka-prodej-bytu-na-laurove-praha"
+ },
  "bez-1042017": {
   "address": {
    "distance_m": 0,
@@ -58261,6 +58433,37 @@
   "total_czk": 45000,
   "transaction_type": "pronajem",
   "url": "https://www.bezrealitky.cz/nemovitosti-byty-domy/1042017-nabidka-pronajem-bytu-sanderova-praha"
+ },
+ "bez-1042774": {
+  "address": {
+   "distance_m": 8,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (8 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Na Laurové 1017/5, Praha 5"
+  },
+  "approx_location": false,
+  "area": "jinonice",
+  "description": "Hledáte velkorysý a vzdušný prostor, kde se snoubí moderní styl s maximálním komfortem?\r\n\r\nPředstavujeme vám prostorný a prosvětlený rohový byt 2+kk o celkové užitné ploše 77,2 m², který je ideální volbou pro ty, kdo hledají nadstandardní životní prostor nebo chtějí chytře propojit bydlení s prací z domova.\r\n\r\nByt se nachází ve 3. NP novostavby Rezidence Laurová v atraktivní lokalitě Praha 5 – Smíchov. Díky své ploše 70,5 m² (bez lodžie a sklepa) nabízí byt ojedinělou míru pohodlí, která dalece přesahuje běžné standardy dispozic 2+kk.\r\n\r\nPřednosti bytu: \r\n•\tNadstandardní dispozice: Dominantou bytu je rozlehlý obývací pokoj s přípravou pro kuchyňský kout (34,9 m²) a velkorysá ložnice (21 m²). \r\n•\tPraktické řešení: Samostatná toaleta s předsíňkou a samostatná koupelna s toaletou zajišťují maximální soukromí. \r\n•\tVenkovní prostor: Lodžie (3,1 m²) pro chvíle relaxace a praktický sklep (3,6 m²) pro uložení vašich věcí. \r\n•\tVysoký standard: Dům využívá moderní technologie pro komfortní a úsporné bydlení.\r\n\r\nK bytu náleží garážové stání (k dokoupení za 600 000 Kč).\r\n\r\nRezidence Laurová je privátním projektem, který nabízí moderní životní styl pod jednou střechou. Součástí společných prost",
+  "disposition": "2+kk",
+  "first_seen": "2026-09-27T19:49:00Z",
+  "floor_area_sqm": 77,
+  "gone_at": "2026-10-10T15:13:15Z",
+  "id": "bez-1042774",
+  "images": [
+   "https://api.bezrealitky.cz/media/cache/record_main/data/images/advert/1042k/1042774/1042774-1790343672-foto-1.jpg"
+  ],
+  "last_price_czk": 11590000,
+  "lat": 50.0609677,
+  "lon": 14.398317,
+  "price_czk": 11590000,
+  "price_czk_per_sqm": 150519,
+  "source": "bezrealitky",
+  "thumb": "https://api.bezrealitky.cz/media/cache/record_thumb/data/images/advert/1042k/1042774/1042774-1790343672-foto-1.jpg",
+  "title": "Prodej bytu 2+kk 77 m²",
+  "total_czk": 11590000,
+  "transaction_type": "prodej",
+  "url": "https://www.bezrealitky.cz/nemovitosti-byty-domy/1042774-nabidka-prodej-bytu-na-laurove-praha"
  },
  "bez-1043132": {
   "address": {
@@ -64377,6 +64580,40 @@
   "total_czk": 30500,
   "transaction_type": "pronajem",
   "url": "https://reality.idnes.cz/detail/pronajem/byt/praha-8-pobrezni/6a9ffee8153c6f1401095476/"
+ },
+ "idnes-6aa25a75f98c97c9a40320b4": {
+  "address": {
+   "distance_m": 17,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (17 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Rečkova 1702/8, Žižkov"
+  },
+  "approx_location": true,
+  "area": "vysocany",
+  "city_part": "Žižkov",
+  "description": "Prodej bytu 1+kk 36 m² 1+kk | Praha 3 – Žižkov | 28,3 m² byt + 1,4 m² balkon + 6,2 m² sklepní kóje Nabízím Vám jako přímý majitel k prodeji kompletně zrekonstruovaný a plně zařízený byt 1+kk o podlahové ploše 28,3 m² v ulici Hartigova, Praha 3 – Žižkov. K bytu náleží balkon o ploše 1,4 m² a nadstandardně prostorná sklepní kóje o ploše 6,2 m², která poskytuje na poměry bytu 1+kk mimořádné množství úložného prostoru. Byt prošel kompletní prémiovou rekonstrukcí s důrazem na kvalitu provedení, nadčasový design a komfort každodenního bydlení. Díky velkým oknům působí interiér velmi světlým a vzdušným dojmem. Obytný prostor přirozeně kombinuje plnohodnotnou kuchyň, jídelní část i komfortní zónu pro spaní a odpočinek. Standard rekonstrukce: - klimatizace v obytné části i koupelně - podlahové vytápění v obytné části i koupelně - dřevěná okna s izolačním trojsklem - kvalitní vinylová podlaha v dekoru dřeva - bezfalcové interiérové dveře - nové bezpečnostní vstupní dveře - sádrokartonový podhled - podsvícená garnýž - závěsy vyrobené na míru - vestavěná skříň s elegantně ukrytým 85l bojlerem - plně vybavená kuchyňská linka s vestavnou myčkou, troubou, varnou deskou a digestoří - designová bet",
+  "disposition": "1+kk",
+  "first_seen": "2026-10-04T05:47:21Z",
+  "floor_area_sqm": 28.3,
+  "gone_at": "2026-10-10T00:00:00Z",
+  "id": "idnes-6aa25a75f98c97c9a40320b4",
+  "images": [
+   "https://sta-reality2.1gr.cz/sta/compile/thumbs/5/a/9/59fa8b47d042819379e043c78eeb3.webp"
+  ],
+  "last_price_czk": 6499000,
+  "lat": 50.09052882759557,
+  "locality": "Hartigova, Praha 3 - Žižkov",
+  "lon": 14.47069042689238,
+  "price_czk": 6499000,
+  "price_czk_per_sqm": 229647,
+  "source": "idnes",
+  "street": "Hartigova",
+  "thumb": "https://sta-reality2.1gr.cz/sta/compile/thumbs/5/a/9/59fa8b47d042819379e043c78eeb3.webp",
+  "title": "Prodej bytu 1+kk 36 m²",
+  "total_czk": 6499000,
+  "transaction_type": "prodej",
+  "url": "https://reality.idnes.cz/detail/prodej/byt/praha-3-hartigova/6aa25a75f98c97c9a40320b4/"
  },
  "idnes-6aa269897b68362e65034e5b": {
   "address": {
