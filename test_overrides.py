@@ -211,6 +211,60 @@ except ValueError:
     check("zero m² rejected", True, True)
 
 
+# --- card: what the correction changed ------------------------------------ #
+sale = {"id": 4004937804, "title": "Prodej bytu 3+kk 196 m²", "transaction_type": "prodej",
+        "price_czk": 19950000, "floor_area_sqm": 91.5, "floor_area_portal_sqm": 196.0,
+        "floor_area_source": "override", "price_czk_per_sqm": 218033,
+        "url": "https://www.sreality.cz/detail/x/4004937804"}
+ov_sale = {"id": "4004937804", "floor_area_sqm": 91.5, "note": "Podlahová plocha 91,5 m² podle Radima"}
+eff = " | ".join(scrape.override_effect(ov_sale, sale))
+check("effect: portal -> corrected area, Czech decimals", "196 m² (portál) → 91,5 m² (oprava)" in eff, True)
+check("effect: Kč/m² before -> after", "101 786 Kč/m² → 218 033 Kč/m²" in eff, True)
+check("no dot decimals in effect", "91.5" in eff, False)
+card = scrape.overrides_card({"4004937804": ov_sale}, [sale])
+check("row opens the detail via openModal with a JSON id", 'openModal(4004937804)' in card, True)
+check("row keeps a link to the portal", "sreality.cz/detail/x/4004937804" in card, True)
+
+same = dict(sale, id=4131835980, title="Pronájem bytu 3+kk 225 m²", floor_area_sqm=103.0,
+            floor_area_portal_sqm=103.0, transaction_type="pronajem", total_czk=67900)
+eff = " | ".join(scrape.override_effect({"id": "4131835980", "floor_area_sqm": 103.0}, same))
+check("effect: no-op override is called out", "oprava ji nemění" in eff, True)
+check("effect: title area mentioned when it differs", "titulek inzerátu uvádí 225" in eff, True)
+
+fees = " | ".join(scrape.override_effect({"id": "1", "floor_area_sqm": 50, "fees_czk": 3000},
+                                         dict(sale, floor_area_portal_sqm=60.0, floor_area_sqm=50.0)))
+check("effect: no Kč/m² before when a fee is overridden", "Kč/m² →" in fees, False)
+
+excl = dict(sale, floor_area_source="popis", floor_area_sqm=42.0, floor_area_portal_sqm=47.0, area_mismatch=True)
+eff = " | ".join(scrape.override_effect({"id": "1", "exclude_from_stats": True}, excl))
+check("effect: shows the area actually used", "plocha ve statistice 42 m²" in eff, True)
+check("effect: shows portal area and mismatch", "portál uvádí 47" in eff and "nesedí" in eff, True)
+check("effect: excluded explained", "nepočítá do mediánu" in eff, True)
+
+pending = " | ".join(scrape.override_effect(ov_sale, dict(sale, floor_area_source="field", floor_area_sqm=196.0)))
+check("effect: not-yet-applied area is flagged", "neprojevila" in pending, True)
+
+arch = {"400": {"id": 400, "title": "Starý inzerát", "url": "https://example.com/400", "gone_at": "2026-09-24T23:14:46Z"}}
+gone_card = scrape.overrides_card({"400": {"id": "400", "floor_area_sqm": 33}}, [], archive=arch)
+check("gone listing takes title from the archive", "Starý inzerát" in gone_card, True)
+check("gone listing shows when it vanished", "zmizel 24. 9. 2026" in gone_card, True)
+check("gone listing is not an openModal button", "openModal" in gone_card, False)
+
+# --- normalize: non-finite numbers and empty records ----------------------- #
+for label, payload in (
+    ("NaN area rejected", {"id": "1", "floor_area_sqm": float("nan")}),
+    ("Infinity area rejected", {"id": "1", "floor_area_sqm": float("inf")}),
+    ("Infinity fee rejected", {"id": "1", "fees_czk": float("inf")}),
+    ("NaN fee rejected", {"id": "1", "fees_czk": float("nan")}),
+    ("override with no fields rejected", {"id": "1"}),
+):
+    try:
+        scrape.normalize_override(payload)
+        check(label, True, False)
+    except ValueError:
+        check(label, True, True)
+
+
 # --- modal JS: the save button must be clickable --------------------------- #
 # From 3. 9. to 27. 9. "Uložit opravu" was onclick="saveOverride(${idLit})"
 # with idLit a bare JSON.stringify: the id's quote closed the attribute, every
