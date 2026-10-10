@@ -55,12 +55,27 @@ FEE_QUEUE_PATH = ROOT / "fee_review_queue.json"
 OVERRIDES_PATH = ROOT / "overrides.json"
 
 # Sreality category_sub_cb codes (from /hledani estatesFilterPage)
-DISPOSITION_CODES = {2: "1+kk", 3: "1+1", 4: "2+kk", 5: "2+1", 6: "3+kk", 7: "3+1"}
+# Od #27 (Radim 10. 10.: „spíš sbírejme víc dat, než méně… pak můžeme
+# filtrovat v dashboardu") i velké byty a atypické. Kódy 8–12 a 16 ověřené
+# živě 27. 9. (novostavby.py) a 10. 10. (`velikost=6-a-vice` vrací jen 12,
+# `atypicky` jen 16).
+DISPOSITION_CODES = {
+    2: "1+kk", 3: "1+1", 4: "2+kk", 5: "2+1", 6: "3+kk", 7: "3+1",
+    8: "4+kk", 9: "4+1", 10: "5+kk", 11: "5+1", 12: "6+", 16: "atypický",
+}
+# Dispozice, na kterých stojí časové řady: karta Statistika oblastí, týdenní
+# a měsíční zápis, okno poolu a graf nabídky. Sbíralo se jen tohle do 10. 10.
+# a přidání velkých bytů by změnilo složení mediánu -- skok, který není trh.
+# Velké byty jsou v tabulce, na mapě, ve filtrech a ve výhodnosti (ta má
+# medián po dispozicích, takže se nemíchají).
+TREND_DISPOSITIONS = ("1+kk", "1+1", "2+kk", "2+1", "3+kk", "3+1")
+# Sreality's "velikost" slug where it differs from the label.
+VELIKOST_SLUG = {12: "6-a-vice", 16: "atypicky"}
 # The same set as a "velikost" query param. Sreality accepts it server-side and
 # resolves it to exactly these categorySubCb codes, so the search returns only
 # relevant dispositions instead of every flat in the ward -- roughly halving the
 # number of search pages we have to walk.
-SEARCH_VELIKOST = ",".join(DISPOSITION_CODES.values())
+SEARCH_VELIKOST = ",".join(VELIKOST_SLUG.get(code, label) for code, label in DISPOSITION_CODES.items())
 TRANSACTION_TYPES = ["pronajem", "prodej"]  # rent, sale
 
 # Standalone garages and parking spaces. Sreality files them under the "Ostatní"
@@ -2908,6 +2923,10 @@ def home_config(cfg):
     first run after the change compares equal."""
     home = AREAS[HOME_AREA]
     out = {k: v for k, v in (cfg or {}).items() if k != "areas"}
+    # Zápis a odhad čtou jen TREND_DISPOSITIONS, takže přidání velkých bytů
+    # (#27) týden neoznačí jako „změnila se konfigurace".
+    if "dispositions" in out:
+        out["dispositions"] = sorted(TREND_DISPOSITIONS)
     out["wards"] = sorted(home["wards"])
     out["idnes_wards"] = sorted(sources.IDNES_WARDS_BY_AREA.get(HOME_AREA, ()))
     return out
@@ -2938,6 +2957,22 @@ def areas_added_only(prev_cfg, curr_cfg):
         if not set(prev_cfg.get(key) or []) <= set(curr_cfg.get(key) or []):
             return set()
     return set(curr_areas) - set(prev_areas)
+
+
+def dispositions_added_only(prev_cfg, curr_cfg):
+    """The dispositions switched on since `prev_cfg`, when that is the ONLY
+    change (#27). Same reasoning as areas_added_only: the big flats already on
+    the market are baseline, not news, but the rest of the run's news stays."""
+    if not prev_cfg or not curr_cfg:
+        return set()
+    prev_core = {k: v for k, v in prev_cfg.items() if k != "dispositions"}
+    curr_core = {k: v for k, v in curr_cfg.items() if k != "dispositions"}
+    if prev_core != curr_core:
+        return set()
+    prev_d, curr_d = set(prev_cfg.get("dispositions") or []), set(curr_cfg.get("dispositions") or [])
+    if not prev_d or not prev_d < curr_d:
+        return set()
+    return curr_d - prev_d
 
 
 def diff_snapshots(prev, curr):
@@ -3006,7 +3041,15 @@ def diff_snapshots(prev, curr):
             file=sys.stderr,
         )
         changes["baselined_areas"] = sorted(fresh_areas)
-    if prev.get("config") != curr.get("config") and not fresh_areas:
+    fresh_disps = dispositions_added_only(prev.get("config"), curr.get("config"))
+    if fresh_disps:
+        print(
+            f"New disposition(s) {', '.join(sorted(fresh_disps))} since the last snapshot -- "
+            "their listings are baselined silently, the rest diffs as usual.",
+            file=sys.stderr,
+        )
+        changes["baselined_dispositions"] = sorted(fresh_disps)
+    if prev.get("config") != curr.get("config") and not fresh_areas and not fresh_disps:
         print(
             "Search config changed since the last snapshot -- suppressing removal "
             "detection for this run and re-baselining.",
@@ -3031,7 +3074,8 @@ def diff_snapshots(prev, curr):
             # Same reasoning as removals, mirrored: widening the area surfaces
             # hundreds of listings that have been on the market for months.
             # Calling them "new" would bury the handful that really are.
-            if not changes.get("config_changed") and listing_area(new) not in fresh_areas:
+            if (not changes.get("config_changed") and listing_area(new) not in fresh_areas
+                    and new.get("disposition") not in fresh_disps):
                 changes["new_listings"].append({**new, "first_seen": changes["generated_at"]})
         else:
             # Compare on total cost (rent+fees+electricity for rentals), not
@@ -4825,12 +4869,7 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
     </select>
     <select id="dealDisp">
       <option value="">Všechny dispozice</option>
-      <option value="1+kk">1+kk</option>
-      <option value="1+1">1+1</option>
-      <option value="2+kk">2+kk</option>
-      <option value="2+1">2+1</option>
-      <option value="3+kk">3+kk</option>
-      <option value="3+1">3+1</option>
+      {"".join(f'<option value="{d}">{d}</option>' for d in DISPOSITION_CODES.values())}
     </select>
     {deal_basis.house_select_html()}
   </div>
@@ -4875,7 +4914,7 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
 {fee_queue_card_html}
 
 <div class="card" id="areaStatsCard">
-  <h2 style="margin-top:0;font-size:1rem;">📊 Statistika oblastí ({", ".join(DISPOSITION_CODES.values())})</h2>
+  <h2 style="margin-top:0;font-size:1rem;">📊 Statistika oblastí ({", ".join(TREND_DISPOSITIONS)})</h2>
   <div id="areaStats"></div>
   <div class="cost-note">*nájem Kč/m² = nájem + poplatky + odhad elektřiny ({ELECTRICITY_ESTIMATE_CZK} Kč), ne holý nájem.
     Každá oblast má vlastní medián; odhad nájmu a týdenní zápis počítají jen Vysočany.</div>
@@ -4964,12 +5003,7 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
   </select>
   <select id="filterDisp">
     <option value="">All dispositions</option>
-    <option value="1+kk">1+kk</option>
-    <option value="1+1">1+1</option>
-    <option value="2+kk">2+kk</option>
-    <option value="2+1">2+1</option>
-    <option value="3+kk">3+kk</option>
-    <option value="3+1">3+1</option>
+    {"".join(f'<option value="{d}">{d}</option>' for d in DISPOSITION_CODES.values())}
   </select>
   <select id="filterSource">
     <option value="">All sources</option>
@@ -6986,12 +7020,16 @@ def main():
     comparables = rank_deals(snapshot["comparables"])
     # `stats` stays the home area's, because everything already reading it
     # (the stats card, the report, the own-flat card) means Vysočany.
-    # Okolní čtvrti (#26) ve statistice nejsou -- ani v parkování.
-    home = [c for c in comparables if listing_area(c) == HOME_AREA and in_core(c)]
+    # Okolní čtvrti (#26) ve statistice nejsou -- ani v parkování. A jen
+    # TREND_DISPOSITIONS (#27): karta i zápis jsou časová řada.
+    home = [c for c in comparables
+            if listing_area(c) == HOME_AREA and in_core(c)
+            and c.get("disposition") in TREND_DISPOSITIONS]
     stats = compute_stats(home)
     snapshot["stats"] = stats
     snapshot["area_stats"] = {
-        key: compute_stats([c for c in comparables if listing_area(c) == key and in_core(c)])
+        key: compute_stats([c for c in comparables if listing_area(c) == key and in_core(c)
+                            and c.get("disposition") in TREND_DISPOSITIONS])
         for key in AREAS
     }
     snapshot["parking_stats"] = parking_price_stats(home)

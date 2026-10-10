@@ -46,10 +46,12 @@ def main():
     scrape.flag_transaction_mismatch(comps)
     scrape.mark_scope(comps)
     scrape.rank_deals(comps)
-    home = [c for c in comps if scrape.listing_area(c) == scrape.HOME_AREA and scrape.in_core(c)]
+    home = [c for c in comps if scrape.listing_area(c) == scrape.HOME_AREA and scrape.in_core(c)
+            and c.get("disposition") in scrape.TREND_DISPOSITIONS]
     snapshot['stats'] = scrape.compute_stats(home)
     snapshot['area_stats'] = {k: scrape.compute_stats([c for c in comps if scrape.listing_area(c) == k
-                                                       and scrape.in_core(c)])
+                                                       and scrape.in_core(c)
+                                                       and c.get("disposition") in scrape.TREND_DISPOSITIONS])
                               for k in scrape.AREAS}
     scrape.render_dashboard(snapshot, changes, snapshot['stats'], history, estimate,
                             scrape.price_histories(all_pool))
