@@ -45,6 +45,9 @@ POOL_FIELDS = (
     "price_czk", "fees_czk", "fees_missing", "fees_source", "electricity_czk",
     "electricity_estimated", "total_czk", "price_czk_per_sqm", "price_old_czk",
     "deal_pct", "deal_outlier", "exclude_from_stats",
+    # Plocha na portálu nesedí s popisem a přílohy rozdíl nevysvětlí
+    # (deal_basis, #21): Kč/m² se nedá věřit, odhad nájmu ho vynechá.
+    "area_mismatch",
     # attributes (see scrape.enrich_comparable)
     "building_condition", "building_condition_name", "is_new_building",
     "building_type", "building_type_name", "energy_rating", "furnished",
@@ -142,6 +145,12 @@ def save_state(state):
     STATE_PATH.write_text(json.dumps(state, ensure_ascii=False, indent=1))
 
 
+# Příznaky, které snapshot při zrušení MAŽE (pop), místo aby je nastavil na
+# False. Novější pohled bez nich musí příznak smazat i v poolu, jinak by jednou
+# označený záznam zůstal mimo odhad navždy.
+CLEARED_FLAGS = ("area_mismatch",)
+
+
 def _snapshot_view(comp):
     rec = {}
     for field in POOL_FIELDS:
@@ -215,11 +224,17 @@ def update_from_snapshot(pool, snapshot, changes=None, at=None):
         newer = not rec.get("last_seen") or at >= rec["last_seen"]
         if newer:
             rec.update(view)
+            for flag in CLEARED_FLAGS:
+                if flag not in view:
+                    rec.pop(flag, None)
             rec["last_seen"] = at
             if at < (rec.get("first_seen") or at):
                 rec["first_seen"] = at
         else:
             for key, value in view.items():
+                # A cleared flag is a newer answer, not a gap to fill.
+                if key in CLEARED_FLAGS:
+                    continue
                 if rec.get(key) is None:
                     rec[key] = value
             if at < (rec.get("first_seen") or at):

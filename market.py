@@ -111,6 +111,10 @@ def base_eligible(rec):
         return False
     if rec.get("exclude_from_stats"):
         return False
+    # Nevysvětlená plocha (#21): Kč/m² nesedí, stejně jako v mediánu
+    # výhodnosti a ve statistikách oblastí.
+    if rec.get("area_mismatch"):
+        return False
     return True
 
 
@@ -377,6 +381,7 @@ def level(records, tx, as_of, disposition=None):
         if r.get("transaction_type") == tx
         and not r.get("deal_outlier")
         and not r.get("exclude_from_stats")
+        and not r.get("area_mismatch")
         and (disposition is None or r.get("disposition") == disposition)
         and not (tx == "pronajem" and r.get("fees_missing"))
     ]
