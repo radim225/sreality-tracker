@@ -1124,13 +1124,13 @@ def normalize_override(payload):
             area = float(payload["floor_area_sqm"])
         except (TypeError, ValueError) as exc:
             raise ValueError("floor_area_sqm must be a number") from exc
-        if area <= 0:
-            raise ValueError("floor_area_sqm must be positive")
+        if not math.isfinite(area) or area <= 0:
+            raise ValueError("floor_area_sqm must be a finite positive number")
         rec["floor_area_sqm"] = area
     if "fees_czk" in payload and payload["fees_czk"] not in (None, ""):
         try:
             fees = int(payload["fees_czk"])
-        except (TypeError, ValueError) as exc:
+        except (TypeError, ValueError, OverflowError) as exc:
             raise ValueError("fees_czk must be an integer") from exc
         if fees < 0:
             raise ValueError("fees_czk must be >= 0")
@@ -1138,6 +1138,9 @@ def normalize_override(payload):
     note = payload.get("note")
     if note:
         rec["note"] = str(note).strip()
+    if len(rec) == 1:
+        # Prázdná oprava by na kartě nic neříkala a nic nezměnila.
+        raise ValueError("override changes nothing: give an area, a fee, a note or exclude_from_stats")
     return rec
 
 
@@ -4180,55 +4183,148 @@ def fee_queue_card(queue):
 </div>"""
 
 
-def overrides_card(overrides, listings):
+def fmt_cz_num(v, digits=2):
+    """České číslo: 91.5 -> „91,5", 103.0 -> „103" (bez zbytečných nul)."""
+    try:
+        x = round(float(v), digits)
+    except (TypeError, ValueError):
+        return str(v)
+    text = str(int(x)) if x == int(x) else f"{x:.{digits}f}".rstrip("0")
+    return text.replace(".", ",")
+
+
+def fmt_cz_sqm(v):
+    return f"{fmt_cz_num(v)} m²"
+
+
+def fmt_cz_per_sqm(v):
+    return f"{int(v):,}".replace(",", " ") + " Kč/m²" if v is not None else "—"
+
+
+def _title_area(title):
+    """Plocha z titulku inzerátu („... 225 m²"), nebo None."""
+    m = re.search(r"(\d+(?:[.,]\d+)?)\s*m²", (title or "").replace(" ", " "))
+    return float(m.group(1).replace(",", ".")) if m else None
+
+
+def override_effect(ov, listing):
+    """Co oprava změnila — řádky textu (neescapované). Čistá funkce.
+
+    Původní hodnota portálu je `floor_area_portal_sqm` (apply_overrides ji
+    uloží před přepsáním). Kč/m² „před" se dopočítá jen tam, kde je spolehlivé:
+    s ruční opravou poplatku nemáme původní celkem, takže se nehádá."""
+    lines = []
+    listing = listing or {}
+    if ov.get("floor_area_sqm") is not None:
+        new_area = float(ov["floor_area_sqm"])
+        portal = listing.get("floor_area_portal_sqm")
+        applied = listing.get("floor_area_source") == "override"
+        line = f"plocha {fmt_cz_sqm(new_area)}"
+        if listing and applied and portal:
+            if abs(float(portal) - new_area) < 0.005:
+                line = (f"plocha {fmt_cz_sqm(new_area)} — shodná s uloženým údajem portálu, "
+                        "oprava ji nemění")
+                t_area = _title_area(listing.get("title"))
+                if t_area and abs(t_area - new_area) >= 0.5:
+                    line += f" (titulek inzerátu uvádí {fmt_cz_sqm(t_area)})"
+            else:
+                line = f"plocha {fmt_cz_sqm(portal)} (portál) → {fmt_cz_sqm(new_area)} (oprava)"
+                after = listing.get("price_czk_per_sqm")
+                if listing.get("transaction_type") == "pronajem":
+                    base = listing.get("total_czk")
+                else:
+                    base = listing.get("price_czk")
+                if ov.get("fees_czk") is None and base and after:
+                    before = round(base / float(portal))
+                    line += f" · {fmt_cz_per_sqm(before)} → {fmt_cz_per_sqm(after)}"
+        elif listing and not applied:
+            line += " (zatím se v datech neprojevila — použije se při dalším běhu)"
+        lines.append(line)
+    elif listing.get("floor_area_sqm"):
+        # Bez ruční plochy: ukaž, z jaké plochy se opravdu počítá (titulek
+        # inzerátu může uvádět jinou), a rozpor s popisem.
+        line = f"plocha ve statistice {fmt_cz_sqm(listing['floor_area_sqm'])}"
+        portal = listing.get("floor_area_portal_sqm")
+        if listing.get("floor_area_source") == "popis" and portal:
+            line += f" (portál uvádí {fmt_cz_sqm(portal)}, upraveno podle popisu)"
+        if listing.get("area_mismatch"):
+            line += " — pozor: plocha nesedí s popisem inzerátu"
+        lines.append(line)
+    if ov.get("fees_czk") is not None:
+        lines.append(f"poplatky {fmt_czk(ov['fees_czk'])} (oprava; původní údaj portálu se neuchovává)")
+    if ov.get("exclude_from_stats"):
+        lines.append("mimo statistiku — inzerát se nepočítá do mediánu ani odhadu")
+    return lines
+
+
+def overrides_card(overrides, listings, *, extra=(), archive=None):
     """Ruční opravy inzerátů — karta na dashboardu, stejný tvar jako fronta poplatků.
 
     Záznam v overrides.json přežije, i když inzerát z nabídky zmizí: stejné id
     se po návratu znovu opraví. Proto karta ukazuje i id, které teď v tabulce
-    není. Mazání jde stejnou cestou jako sledované inzeráty (PAT + dispatch)."""
+    není (název a datum zmizení z gone_archive, je-li tam). `listings` jsou
+    inzeráty, které umí otevřít detail (openModal); `extra` (novostavby) se
+    jen odkazují na portál. Mazání jde přes PAT + dispatch."""
     if not overrides:
         return ""
     by_id = {str(c.get("id")): c for c in listings}
-
-    def fields_of(ov):
-        bits = []
-        if "floor_area_sqm" in ov and ov["floor_area_sqm"] is not None:
-            bits.append(f"m² {ov['floor_area_sqm']}")
-        if "fees_czk" in ov and ov["fees_czk"] is not None:
-            bits.append(f"poplatky {fmt_czk(ov['fees_czk'])}")
-        if ov.get("exclude_from_stats"):
-            bits.append("mimo statistiku")
-        return " · ".join(bits) or "jen poznámka"
+    extra_by_id = {str(c.get("id")): c for c in extra}
+    archive = archive or {}
 
     rows = []
     for oid in sorted(overrides, key=str):
         ov = overrides[oid]
-        listing = by_id.get(str(oid))
-        title = (listing or {}).get("title") or str(oid)
-        url = (listing or {}).get("url") or ""
+        openable = by_id.get(str(oid))
+        listing = openable or extra_by_id.get(str(oid))
+        arch = archive.get(str(oid)) if listing is None else None
+        shown = listing or arch or {}
+        title = shown.get("title") or str(oid)
+        url = shown.get("url") or ""
         gone = listing is None
         title_html = html.escape(title)
+        link = ""
         if url:
+            link = (f'<a href="{html.escape(url, quote=True)}" target="_blank" '
+                    f'rel="noopener" title="Otevřít na portálu">↗</a>')
+        if openable is not None:
+            open_id = html.escape(json.dumps(openable.get("id")), quote=True)
             title_html = (
-                f'<a href="{html.escape(url, quote=True)}" target="_blank" '
-                f'rel="noopener">{title_html}</a>'
+                f'<button class="linklike" onclick="openModal({open_id})">{title_html}</button>'
+                + (" " + link if link else "")
             )
-        note = html.escape(ov.get("note") or "")
-        status = (
-            '<span class="hint">inzerát teď není v nabídce — oprava čeká na stejné id</span>'
-            if gone else ""
+        elif url:
+            title_html = (f'<a href="{html.escape(url, quote=True)}" target="_blank" '
+                          f'rel="noopener">{title_html}</a>')
+        effect = "".join(
+            f'<div class="hint">{html.escape(line)}</div>'
+            for line in override_effect(ov, listing)
         )
+        note = html.escape(ov.get("note") or "")
+        status = ""
+        if gone:
+            when = str((arch or {}).get("gone_at") or "")[:10]
+            try:
+                d = datetime.strptime(when, "%Y-%m-%d")
+                when = f"{d.day}. {d.month}. {d.year}"
+            except ValueError:
+                when = ""
+            status = (
+                '<div class="hint">inzerát teď není v nabídce'
+                + (f" (zmizel {html.escape(when)})" if when else "")
+                + " — oprava zůstává uložená a použije se, až se stejné id vrátí</div>"
+            )
         delete_id = html.escape(json.dumps(str(oid)), quote=True)
         rows.append(
-            f"""<div class="fq-item">
+            f"""<div class="fq-item" data-ov-row="{html.escape(str(oid), quote=True)}">
               <div class="fq-head">
                 <span>{title_html} <span class="hint">{html.escape(str(oid))}</span></span>
                 <button class="popup-btn" style="background:#7f1d1d;"
-                  onclick="manageTracked({{override_delete: {delete_id}}})">🗑 Smazat</button>
+                  onclick="deleteOverrideRow({delete_id})">🗑 Smazat</button>
               </div>
-              <div class="hint">{html.escape(fields_of(ov))}</div>
+              {effect}
               {f'<div class="fq-text">{note}</div>' if note else ""}
               {status}
+              <div class="hint" data-ov-row-status></div>
             </div>"""
         )
     return f"""<div class="card" id="overridesCard">
@@ -4356,8 +4452,10 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
 
     fee_queue_card_html = fee_queue_card(build_fee_review_queue(comparables))
     overrides = load_overrides()
-    overrides_card_html = overrides_card(overrides, list(comparables) + list(tracked_list)
-                                         + list(snapshot.get("novostavby") or []))
+    overrides_card_html = overrides_card(
+        overrides, list(comparables) + list(tracked_list),
+        extra=list(snapshot.get("novostavby") or []),
+        archive=gone_archive.load_archive())
     # Ribbon: výběr sekcí + žhavé nabídky. Počítá se z `generated_at`, ne
     # z hodin, aby stejná data dala vždy stejný výběr.
     hot_json = script_json(ribbon.hot_offers(
@@ -5191,6 +5289,24 @@ async function manageTracked(inputs) {
     askForPat();
   }
   setManageStatus(r.text);
+}
+
+/* Smazání opravy z karty „Opravy": stav přímo v řádku a připomínka „čeká na
+   zpracování" i po obnovení stránky (stejný localStorage záznam jako v detailu). */
+async function deleteOverrideRow(id) {
+  await manageTracked({override_delete: String(id)});
+  markOvCardRows();
+}
+
+function markOvCardRows() {
+  const pend = loadOvPending();
+  document.querySelectorAll("[data-ov-row]").forEach(row => {
+    const p = pend[row.getAttribute("data-ov-row")];
+    const el = row.querySelector("[data-ov-row-status]");
+    if (!el) return;
+    const live = p && p.op === "delete" && typeof p.at === "number" && Date.now() - p.at < OV_PENDING_TTL_MS;
+    el.textContent = live ? "smazání čeká na zpracování (odesláno " + fmtHm(p.at) + ") — obnov stránku za ~5–15 min" : "";
+  });
 }
 
 function costBreakdownHtml(item) {
@@ -6338,6 +6454,7 @@ initGarageMap();
 renderGarages();
 renderAreaStats();
 renderGone();
+markOvCardRows();
 ["goneTx", "goneMode"].forEach(i => document.getElementById(i)?.addEventListener("change", renderGone));
 document.getElementById("goneSearch")?.addEventListener("input", renderGone);
 """
