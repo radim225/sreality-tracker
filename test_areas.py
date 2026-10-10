@@ -105,6 +105,54 @@ check("okno všech", len(pool.window(recs, now=now, area=None)), 2)
 arrived, _ = market.period_movement(recs, "2026-09-18T00:00:00Z", now)
 check("přírůstky v zápisu = jen Vysočany", [r["id"] for r in arrived], ["1"])
 
+# --- okolní čtvrti (#26) -------------------------------------------------- #
+check("sledovaná čtvrť = core",
+      scrape.listing_scope({"area": "vysocany", "city_part": "Libeň"}), "core")
+check("okolní čtvrť = fringe",
+      scrape.listing_scope({"area": "vysocany", "city_part": "Holešovice"}), "fringe")
+check("obecné 'Praha 9' = fringe",
+      scrape.listing_scope({"area": "vysocany", "city_part": "Praha 9"}), "fringe")
+check("bez čtvrti = core (Bezrealitky)", scrape.listing_scope({"area": "vysocany"}), "core")
+check("čtvrť jiné oblasti = fringe",
+      scrape.listing_scope({"area": "jinonice", "city_part": "Libeň"}), "fringe")
+
+cfg = new_cfg
+prev = {"config": cfg, "comparables": [
+    {"id": 1, "area": "vysocany", "city_part": "Libeň", "price_czk": 20000, "total_czk": 20000},
+    {"id": 5, "area": "vysocany", "city_part": "Strašnice", "price_czk": 20000, "total_czk": 20000}]}
+curr = {"config": cfg, "comparables": [
+    {"id": 1, "area": "vysocany", "city_part": "Libeň", "price_czk": 20000, "total_czk": 20000},
+    {"id": 2, "area": "vysocany", "city_part": "Vysočany", "price_czk": 18000, "total_czk": 18000},
+    {"id": 3, "area": "vysocany", "city_part": "Holešovice", "price_czk": 9000, "total_czk": 9000},
+    {"id": 4, "area": "jinonice", "city_part": "Smíchov", "price_czk": 9000, "total_czk": 9000}]}
+changes = scrape.diff_snapshots(prev, curr)
+check("okolí nevyvolá 'new'", [c["id"] for c in changes["new_listings"]], [2])
+check("zmizení okolí není kandidát na 'pryč'",
+      [c["id"] for c in curr["pending_removal"]], [])
+
+flats = []
+for i, (ward, v) in enumerate([("Vysočany", 100)] * 5 + [("Holešovice", 300)] * 5):
+    flats.append({"id": i, "area": "vysocany", "city_part": ward, "transaction_type": "prodej",
+                  "disposition": "2+kk", "price_czk_per_sqm": v + i})
+check("mark_scope počítá okolí", scrape.mark_scope(flats), 5)
+scrape.rank_deals(flats)
+check("medián výhodnosti jen ze sledovaných čtvrtí", flats[0]["deal_median"], 102)
+check("okolí nemá 'X % pod mediánem'", [f["deal_pct"] for f in flats[5:]], [None] * 5)
+check("okolí není výhodná nabídka", any(f["deal_ok"] for f in flats[5:]), False)
+check("compute_stats bez okolí", scrape.compute_stats(flats)["sale_median_czk_per_sqm"], 102)
+
+recs = {
+    "1": {"id": "1", "last_seen": "2026-10-08T00:00:00Z", "first_seen": "2026-10-07T16:00:00Z"},
+    "2": {"id": "2", "last_seen": "2026-10-08T00:00:00Z", "first_seen": "2026-10-07T16:00:00Z",
+          "scope": "fringe"},
+}
+now = "2026-10-10T00:00:00Z"
+check("okno poolu bez okolí", [r["id"] for r in pool.window(recs, now=now)], ["1"])
+check("okno poolu s okolím na vyžádání", len(pool.window(recs, now=now, core_only=False)), 2)
+arrived, _ = market.period_movement(recs, "2026-10-05T00:00:00Z", now)
+check("přírůstky v zápisu bez okolí", [r["id"] for r in arrived], ["1"])
+check("pool nese scope", "scope" in pool.POOL_FIELDS, True)
+
 # --- kontakty z veřejného výstupu ---------------------------------------- #
 items = [{"description": "Volejte 724 223 828 nebo pište na jan@firma.cz. Cena 8 990 000 Kč.",
           "seller_name": "RK Honzík honzik@honzik.cz"}]

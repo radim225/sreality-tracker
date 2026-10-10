@@ -38,6 +38,8 @@ POOL_FIELDS = (
     # classification
     "transaction_type", "disposition", "floor_area_sqm", "street", "locality",
     "city_part", "lat", "lon", "dist_km", "pod_harfou", "area",
+    # core / fringe (#26): fringe = okolní čtvrť, mimo všechny statistiky.
+    "scope",
     # A re-posted advert points at the one it replaced (relist.py), so the
     # price path can be read across both ids.
     "relist_of",
@@ -325,13 +327,17 @@ def area_of(rec):
     return rec.get("area") or HOME_AREA
 
 
-def window(pool, days=WINDOW_DAYS, now=None, end=None, area=HOME_AREA):
+def window(pool, days=WINDOW_DAYS, now=None, end=None, area=HOME_AREA, core_only=True):
     """Records last seen inside the window (R-4.2).
 
     Home area only unless asked otherwise: the rent estimate, the medians and
     the weekly trend all describe Vysočany, and a Jinonice record in the window
     would move them without anything in Vysočany having moved. `area=None`
     means every area.
+
+    Okolní čtvrti (`scope == "fringe"`, #26) jsou venku stejně jako cizí
+    oblast: Sreality je vrací od 7. 10. navíc a v týdnu 41 by se tvářily
+    jako ~450 nově příchozích bytů. `core_only=False` je vrátí.
 
     `end` moves the window back in time so a past week can be recomputed on
     exactly the definition used live -- that is what makes the weekly series
@@ -341,6 +347,8 @@ def window(pool, days=WINDOW_DAYS, now=None, end=None, area=HOME_AREA):
     out = []
     for rec in records_of(pool):
         if area is not None and area_of(rec) != area:
+            continue
+        if core_only and rec.get("scope") == "fringe":
             continue
         seen = parse_ts(rec.get("last_seen"))
         if seen is None:

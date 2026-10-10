@@ -552,6 +552,10 @@ def period_movement(all_records, start, end, area=poolmod.HOME_AREA):
     for rec in poolmod.records_of(all_records):
         if area is not None and poolmod.area_of(rec) != area:
             continue
+        # Okolní čtvrti (#26): 7. 10. jich „přibylo" ~450 najednou, a to
+        # nebyl trh, ale Sreality.
+        if rec.get("scope") == "fringe":
+            continue
         first = parse_ts(rec.get("first_seen"))
         if first and start_dt <= first <= end_dt:
             arrived.append(rec)

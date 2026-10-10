@@ -436,6 +436,47 @@ def assign_area(item):
     return item
 
 
+# Od běhu 7. 10. 15:44 vrací Sreality na hledání `region=<čtvrť>` i inzeráty
+# z okolních čtvrtí (Holešovice, Strašnice, Smíchov, Prosek, Střížkov, ...;
+# 473 nových id v jednom běhu, config otisk beze změny, #26). Leží v kruhu
+# oblasti, takže filtrem prošly. Radim (10. 10.): „spíš sbírejme víc dat, než
+# méně… pak filtrovat v dashboardu" -- proto se nezahazují, jen označí:
+#   core   = `city_part` je mezi čtvrtěmi své oblasti (nebo chybí: inzerát bez
+#            čtvrti tu byl i před 7. 10. a zahodit ho by tiše zmenšilo trh),
+#   fringe = jiná čtvrť, včetně obecných „Praha 9" -- před 7. 10. jich bylo 0.
+# Okolí nejde do mediánů, výhodných nabídek, odhadu nájmu, týdenního zápisu
+# ani do změn (nové / zmizelé / zlevněné): jeho přítomnost řídí Sreality, ne
+# trh, a kdyby to Sreality vrátilo, ohlásilo by se 400 „zmizelých".
+SCOPE_CORE = "core"
+SCOPE_FRINGE = "fringe"
+
+
+def listing_scope(item):
+    """`core` or `fringe` for one listing -- see the block above."""
+    ward = item.get("city_part")
+    if not ward:
+        return SCOPE_CORE
+    area = AREAS.get(listing_area(item)) or AREAS[HOME_AREA]
+    return SCOPE_CORE if ward in area["wards"] else SCOPE_FRINGE
+
+
+def mark_scope(items):
+    """Stamp `scope` on every listing (snapshot or pool record); returns how
+    many are fringe. Recomputed every run from area + ward, never carried, so
+    a change to a ward list re-scopes everything at once."""
+    n = 0
+    for item in items:
+        item["scope"] = listing_scope(item)
+        n += item["scope"] == SCOPE_FRINGE
+    return n
+
+
+def in_core(item):
+    """Statistics read only the watched wards. A record without `scope`
+    (everything before #26) is core -- that is what it was collected as."""
+    return item.get("scope") != SCOPE_FRINGE
+
+
 def cdn_url(url):
     if not url:
         return None
@@ -2942,6 +2983,11 @@ def diff_snapshots(prev, curr):
     prev_by_id = {c["id"]: c for c in prev.get("comparables", [])}
     prev_by_id.update(prev_pending)
     curr_by_id = {c["id"]: c for c in curr.get("comparables", [])}
+    # Okolní čtvrti (#26) se do změn nehlásí vůbec: jestli je Sreality vrací,
+    # rozhoduje Sreality, ne trh. Scope se určuje z čtvrti, ne z uloženého
+    # pole, takže platí i pro snapshot z doby před #26.
+    prev_by_id = {k: v for k, v in prev_by_id.items() if listing_scope(v) == SCOPE_CORE}
+    curr_by_id = {k: v for k, v in curr_by_id.items() if listing_scope(v) == SCOPE_CORE}
 
     # The search itself changed shape this run, so an absence says nothing about
     # the listing. Re-baseline silently instead of announcing a mass removal.
@@ -3193,7 +3239,7 @@ def rank_deals(comparables):
         rows are kept off the median as well as out of the deal list, or a run
         with many un-enriched listings would drag the baseline down and make
         everything else look expensive."""
-        if c.get("exclude_from_stats") or c.get("area_mismatch"):
+        if c.get("exclude_from_stats") or c.get("area_mismatch") or not in_core(c):
             return False
         return not (c.get("transaction_type") == "pronajem" and c.get("fees_missing"))
 
@@ -3218,7 +3264,9 @@ def rank_deals(comparables):
         for k in ("deal_basis", "deal_median", "deal_n", "deal_label"):
             c.pop(k, None)
         v = c.get("price_czk_per_sqm")
-        if not v or c.get("area_mismatch"):
+        # Okolí (#26) se s mediánem sledovaných čtvrtí nesrovnává: Holešovice
+        # „15 % pod mediánem Vysočan" by bylo tvrzení o jiném trhu.
+        if not v or c.get("area_mismatch") or not in_core(c):
             continue
         broad = deal_group(c)
         cls = c["house_class"]
@@ -3429,7 +3477,7 @@ def own_property_stats(comparables):
         # as not-a-price by rank_deals. They belong nowhere near a median.
         if c.get("deal_outlier"):
             return False
-        if c.get("exclude_from_stats"):
+        if c.get("exclude_from_stats") or not in_core(c):
             return False
         sqm = c.get("floor_area_sqm")
         if size_band:
@@ -3652,6 +3700,7 @@ def compute_stats(comparables):
             and c.get("price_czk_per_sqm")
             and not c.get("exclude_from_stats")
             and not c.get("area_mismatch")
+            and in_core(c)
             and (disp_filter is None or c.get("disposition") == disp_filter)
         ]
         if not vals:
@@ -4837,6 +4886,9 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
   <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;">
     <input type="checkbox" id="filterFees" style="width:auto;"> Jen se známými poplatky
   </label>
+  <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;" title="Od 7. 10. vrací Sreality i inzeráty z okolních čtvrtí. Do mediánů, výhodných nabídek ani změn nejdou.">
+    <input type="checkbox" id="filterFringe" style="width:auto;"> I okolní čtvrti
+  </label>
   <input id="search" type="text" placeholder="Hledat název / ulici / lokalitu…">
   {ux.table_controls_html()}
 </div>
@@ -5719,7 +5771,12 @@ function render() {
 // z doby, kdy se sledovaly jen Vysočany.
 // ---------------------------------------------------------------------------
 function areaOf(x) { return (x && x.area) || "vysocany"; }
-function areaOk(x) { const f = window.AREA_FILTER || ""; return !f || areaOf(x) === f; }
+// Okolní čtvrti (#26): skryté, dokud je přepínač „I okolní čtvrti" vypnutý.
+// Platí pro tabulku, mapu i výhodné nabídky; garáže `scope` nemají.
+function areaOk(x) {
+  if (x && x.scope === "fringe" && !window.SHOW_FRINGE) return false;
+  const f = window.AREA_FILTER || ""; return !f || areaOf(x) === f;
+}
 function areaLabel(x) { return AREA_LABELS[areaOf(x)] || areaOf(x); }
 
 // ---------------------------------------------------------------------------
@@ -5754,7 +5811,7 @@ function renderLiveMedian(rows) {
   const parts = [];
   for (const [tx, label] of [["prodej", "prodej"], ["pronajem", "pronájem"]]) {
     const vals = rows.filter(r => r.transaction_type === tx && r.price_czk_per_sqm
-      && !r.exclude_from_stats && !r.area_mismatch && !r.tx_suspect
+      && !r.exclude_from_stats && !r.area_mismatch && !r.tx_suspect && r.scope !== "fringe"
       && !(tx === "pronajem" && r.fees_missing)).map(r => r.price_czk_per_sqm);
     if (!vals.length) continue;
     parts.push(vals.length >= 4
@@ -5762,7 +5819,7 @@ function renderLiveMedian(rows) {
       : `${label}: málo dat (n = ${vals.length})`);
   }
   el.innerHTML = parts.length
-    ? `Medián Kč/m² pro aktuální filtr: ${parts.join(" · ")}. Bez vyřazených, bez nesedící plochy a bez pronájmů bez poplatků.`
+    ? `Medián Kč/m² pro aktuální filtr: ${parts.join(" · ")}. Bez vyřazených, bez nesedící plochy, bez okolních čtvrtí a bez pronájmů bez poplatků.`
     : "Medián Kč/m² pro aktuální filtr: žádná data.";
 }
 
@@ -6309,6 +6366,10 @@ document.getElementById("filterDisp").addEventListener("change", render);
 document.getElementById("filterSource").addEventListener("change", render);
 document.getElementById("filterPodHarfou").addEventListener("change", render);
 document.getElementById("filterFees").addEventListener("change", render);
+document.getElementById("filterFringe").addEventListener("change", e => {
+  window.SHOW_FRINGE = e.target.checked;
+  document.dispatchEvent(new CustomEvent("areachange"));
+});
 document.getElementById("search").addEventListener("input", render);
 document.getElementById("dealTx").addEventListener("change", renderDeals);
 document.querySelectorAll("select.house-filter").forEach(sel =>
@@ -6461,6 +6522,9 @@ def update_pool_and_reports(snapshot, changes):
     # the corrected m²/fee in the estimate, and a deleted override cannot stick
     # as exclude_from_stats on a record that is no longer in the snapshot.
     apply_overrides(list(all_pool.values()), load_overrides(), stamp_ui=False)
+    # Pool records from before #26 have no `scope`; stamping the whole pool
+    # takes the 7. 10. fringe out of the window, the estimate and the reports.
+    mark_scope(all_pool.values())
     shards = pool.save_pool(all_pool)
     notes = [
         f"Pool: {len(all_pool)} inzerátů celkem, +{counts['new']} nových, "
@@ -6701,6 +6765,9 @@ def main():
     comparables, folded = merge_cross_portal(comparables)
     for c in comparables:
         assign_area(c)
+    fringe = mark_scope(comparables)
+    if fringe:
+        print(f"Okolní čtvrti (mimo statistiku a změny, #26): {fringe} inzerátů", file=sys.stderr)
     # After enrich (fetch + extra sources) and fold, before rank / stats /
     # pool / estimate / dashboard. An override whose listing is not in this
     # run stays in overrides.json and is applied again when the same id returns.
@@ -6798,14 +6865,17 @@ def main():
     backfill_missing_areas(snapshot["comparables"])
     flag_transaction_mismatch(snapshot["comparables"])
     attach_sale_extras(snapshot["comparables"])
+    mark_scope(snapshot["comparables"])
     comparables = rank_deals(snapshot["comparables"])
     # `stats` stays the home area's, because everything already reading it
     # (the stats card, the report, the own-flat card) means Vysočany.
-    home = [c for c in comparables if listing_area(c) == HOME_AREA]
+    # Okolní čtvrti (#26) ve statistice nejsou -- ani v parkování.
+    home = [c for c in comparables if listing_area(c) == HOME_AREA and in_core(c)]
     stats = compute_stats(home)
     snapshot["stats"] = stats
     snapshot["area_stats"] = {
-        key: compute_stats([c for c in comparables if listing_area(c) == key]) for key in AREAS
+        key: compute_stats([c for c in comparables if listing_area(c) == key and in_core(c)])
+        for key in AREAS
     }
     snapshot["parking_stats"] = parking_price_stats(home)
     fee_queue = build_fee_review_queue(comparables)
