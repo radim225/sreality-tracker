@@ -321,6 +321,17 @@ HOME_AREA = "vysocany"
 AREA_LABELS = {"vysocany": "Vysočany", "jinonice": "Jinonice · Nové Butovice · Prokopské údolí"}
 
 
+# Dispozice časových řad -- shodné se scrape.TREND_DISPOSITIONS (test_areas.py
+# to hlídá). Velké byty (#27) se sbírají, ale okno poolu, odhad a zápis je
+# nečtou: jejich příchod by změnil složení mediánu.
+TREND_DISPOSITIONS = ("1+kk", "1+1", "2+kk", "2+1", "3+kk", "3+1")
+
+
+def in_trend(rec):
+    disp = rec.get("disposition")
+    return disp is None or disp in TREND_DISPOSITIONS
+
+
 def area_of(rec):
     return rec.get("area") or HOME_AREA
 
@@ -341,6 +352,8 @@ def window(pool, days=WINDOW_DAYS, now=None, end=None, area=HOME_AREA):
     out = []
     for rec in records_of(pool):
         if area is not None and area_of(rec) != area:
+            continue
+        if not in_trend(rec):
             continue
         seen = parse_ts(rec.get("last_seen"))
         if seen is None:

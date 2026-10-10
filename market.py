@@ -552,6 +552,9 @@ def period_movement(all_records, start, end, area=poolmod.HOME_AREA):
     for rec in poolmod.records_of(all_records):
         if area is not None and poolmod.area_of(rec) != area:
             continue
+        # Velké byty (#27) by v týdnu zapnutí „přibyly" všechny naráz.
+        if not poolmod.in_trend(rec):
+            continue
         first = parse_ts(rec.get("first_seen"))
         if first and start_dt <= first <= end_dt:
             arrived.append(rec)
