@@ -170,6 +170,15 @@ for day in ("01", "02", "03"):
 check("an unchanged price does not lengthen the path",
       len(p5["21"]["price_history"]), 1)
 
+# --- #21: area_mismatch se nese do poolu a zase maže ------------------------ #
+p21 = {}
+pool.update_from_snapshot(p21, snap("2026-10-01T00:00:00Z", [listing(21, 20000, area_mismatch=True)]))
+check("pool nese area_mismatch", p21["21"].get("area_mismatch"), True)
+pool.update_from_snapshot(p21, snap("2026-10-02T00:00:00Z", [listing(21, 20000)]))
+check("zrušený area_mismatch zmizí i z poolu", "area_mismatch" in p21["21"], False)
+pool.update_from_snapshot(p21, snap("2026-09-30T00:00:00Z", [listing(21, 20000, area_mismatch=True)]))
+check("starší snapshot příznak nevrátí", "area_mismatch" in p21["21"], False)
+
 print()
 if FAILURES:
     print(f"{len(FAILURES)} case(s) failed: {', '.join(FAILURES)}")

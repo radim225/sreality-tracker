@@ -38,6 +38,8 @@ POOL_FIELDS = (
     # classification
     "transaction_type", "disposition", "floor_area_sqm", "street", "locality",
     "city_part", "lat", "lon", "dist_km", "pod_harfou", "area",
+    # core / fringe (#26): fringe = okolní čtvrť, mimo všechny statistiky.
+    "scope",
     # A re-posted advert points at the one it replaced (relist.py), so the
     # price path can be read across both ids.
     "relist_of",
@@ -45,6 +47,9 @@ POOL_FIELDS = (
     "price_czk", "fees_czk", "fees_missing", "fees_source", "electricity_czk",
     "electricity_estimated", "total_czk", "price_czk_per_sqm", "price_old_czk",
     "deal_pct", "deal_outlier", "exclude_from_stats",
+    # Plocha na portálu nesedí s popisem a přílohy rozdíl nevysvětlí
+    # (deal_basis, #21): Kč/m² se nedá věřit, odhad nájmu ho vynechá.
+    "area_mismatch",
     # attributes (see scrape.enrich_comparable)
     "building_condition", "building_condition_name", "is_new_building",
     "building_type", "building_type_name", "energy_rating", "furnished",
@@ -142,6 +147,12 @@ def save_state(state):
     STATE_PATH.write_text(json.dumps(state, ensure_ascii=False, indent=1))
 
 
+# Příznaky, které snapshot při zrušení MAŽE (pop), místo aby je nastavil na
+# False. Novější pohled bez nich musí příznak smazat i v poolu, jinak by jednou
+# označený záznam zůstal mimo odhad navždy.
+CLEARED_FLAGS = ("area_mismatch",)
+
+
 def _snapshot_view(comp):
     rec = {}
     for field in POOL_FIELDS:
@@ -215,11 +226,17 @@ def update_from_snapshot(pool, snapshot, changes=None, at=None):
         newer = not rec.get("last_seen") or at >= rec["last_seen"]
         if newer:
             rec.update(view)
+            for flag in CLEARED_FLAGS:
+                if flag not in view:
+                    rec.pop(flag, None)
             rec["last_seen"] = at
             if at < (rec.get("first_seen") or at):
                 rec["first_seen"] = at
         else:
             for key, value in view.items():
+                # A cleared flag is a newer answer, not a gap to fill.
+                if key in CLEARED_FLAGS:
+                    continue
                 if rec.get(key) is None:
                     rec[key] = value
             if at < (rec.get("first_seen") or at):
@@ -321,17 +338,32 @@ HOME_AREA = "vysocany"
 AREA_LABELS = {"vysocany": "Vysočany", "jinonice": "Jinonice · Nové Butovice · Prokopské údolí"}
 
 
+# Dispozice časových řad -- shodné se scrape.TREND_DISPOSITIONS (test_areas.py
+# to hlídá). Velké byty (#27) se sbírají, ale okno poolu, odhad a zápis je
+# nečtou: jejich příchod by změnil složení mediánu.
+TREND_DISPOSITIONS = ("1+kk", "1+1", "2+kk", "2+1", "3+kk", "3+1")
+
+
+def in_trend(rec):
+    disp = rec.get("disposition")
+    return disp is None or disp in TREND_DISPOSITIONS
+
+
 def area_of(rec):
     return rec.get("area") or HOME_AREA
 
 
-def window(pool, days=WINDOW_DAYS, now=None, end=None, area=HOME_AREA):
+def window(pool, days=WINDOW_DAYS, now=None, end=None, area=HOME_AREA, core_only=True):
     """Records last seen inside the window (R-4.2).
 
     Home area only unless asked otherwise: the rent estimate, the medians and
     the weekly trend all describe Vysočany, and a Jinonice record in the window
     would move them without anything in Vysočany having moved. `area=None`
     means every area.
+
+    Okolní čtvrti (`scope == "fringe"`, #26) jsou venku stejně jako cizí
+    oblast: Sreality je vrací od 7. 10. navíc a v týdnu 41 by se tvářily
+    jako ~450 nově příchozích bytů. `core_only=False` je vrátí.
 
     `end` moves the window back in time so a past week can be recomputed on
     exactly the definition used live -- that is what makes the weekly series
@@ -341,6 +373,10 @@ def window(pool, days=WINDOW_DAYS, now=None, end=None, area=HOME_AREA):
     out = []
     for rec in records_of(pool):
         if area is not None and area_of(rec) != area:
+            continue
+        if core_only and rec.get("scope") == "fringe":
+            continue
+        if not in_trend(rec):
             continue
         seen = parse_ts(rec.get("last_seen"))
         if seen is None:

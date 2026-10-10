@@ -111,6 +111,10 @@ def base_eligible(rec):
         return False
     if rec.get("exclude_from_stats"):
         return False
+    # Nevysvětlená plocha (#21): Kč/m² nesedí, stejně jako v mediánu
+    # výhodnosti a ve statistikách oblastí.
+    if rec.get("area_mismatch"):
+        return False
     return True
 
 
@@ -377,6 +381,7 @@ def level(records, tx, as_of, disposition=None):
         if r.get("transaction_type") == tx
         and not r.get("deal_outlier")
         and not r.get("exclude_from_stats")
+        and not r.get("area_mismatch")
         and (disposition is None or r.get("disposition") == disposition)
         and not (tx == "pronajem" and r.get("fees_missing"))
     ]
@@ -551,6 +556,11 @@ def period_movement(all_records, start, end, area=poolmod.HOME_AREA):
     arrived, left = [], []
     for rec in poolmod.records_of(all_records):
         if area is not None and poolmod.area_of(rec) != area:
+            continue
+        # Okolní čtvrti (#26): 7. 10. jich „přibylo" ~450 najednou, a to
+        # nebyl trh, ale Sreality. Velké byty (#27) by v týdnu zapnutí
+        # „přibyly" všechny naráz.
+        if rec.get("scope") == "fringe" or not poolmod.in_trend(rec):
             continue
         first = parse_ts(rec.get("first_seen"))
         if first and start_dt <= first <= end_dt:

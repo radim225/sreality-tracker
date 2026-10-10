@@ -11,6 +11,11 @@ v DISPOSITION_CODES nejsou, a kdyby se sem dostaly, vstoupily by do mediánů
 bytů, do poolu i do odhadu nájmu. Vlastní klíč ve snapshotu (`novostavby`),
 vlastní karta, vlastní alert.
 
+Od #27 (10. 10.) sbírá hlavní sběr i 4+kk a větší, takže tentýž byt může být
+v `comparables` i tady. Do mediánů, poolu a odhadu ale nevstoupí:
+scrape.TREND_DISPOSITIONS je drží mimo časové řady a výhodnost má medián po
+dispozicích. Tahle kolekce zůstává kvůli kruhu, třídění a vlastnímu alertu.
+
 Rozdělení práce:
   * scrape.py sbírá (hledání po čtvrtích, detail nového inzerátu a pak jednou
     za týden, ověření zmizení přes 404) -- potřebuje jeho HTTP vrstvu s retry.
