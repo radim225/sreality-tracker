@@ -6,7 +6,7 @@ Run: python3 test_segments.py
 import json
 import sys
 import tempfile
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import market
@@ -66,9 +66,17 @@ check("skelet patří do starší cihly (třída starsi)",
 check("bez typu = neurčeno", segments.house_segment({}, Y), "neurceno")
 check("is_new_building doplní novostavbu, jen když třída chybí",
       segments.house_segment({"is_new_building": True}, Y), "novostavba")
-check("vysocany = Praha 9", segments.location_band({"area": "vysocany"}), "praha9")
-check("chybějící area = Praha 9", segments.location_band({}), "praha9")
-check("jinonice = zbytek", segments.location_band({"area": "jinonice"}), "zbytek")
+check("vysocany = klíč praha9", segments.location_band({"area": "vysocany"}), "praha9")
+check("chybějící area = klíč praha9", segments.location_band({}), "praha9")
+check("jinonice = klíč zbytek", segments.location_band({"area": "jinonice"}), "zbytek")
+_loc = {row["key"]: row["label"] for row in segments.catalog()
+        if row["transaction"] == "prodej" and row["axis"] == "lokalita"}
+check("štítek oblasti říká Vysočany, Libeň, Karlín a Žižkov",
+      "Karlín" in _loc["praha9"] and "Žižkov" in _loc["praha9"] and "Vysočany" in _loc["praha9"], True)
+check("štítek oblasti netvrdí, že je to Praha 9", "Praha 9" in _loc["praha9"], False)
+check("druhý štítek říká Jinonice a že to není celá Praha",
+      "Jinonice" in _loc["zbytek"] and "ne celá Praha" in _loc["zbytek"], True)
+check("druhý štítek netvrdí zbytek Prahy", "Zbytek Prahy" in _loc["zbytek"], False)
 
 
 def ref(**kw):
@@ -107,6 +115,8 @@ def listing(i, price=5_000_000, history=None, **kw):
         "gone_at": None,
     }
     rec.update(kw)
+    if "price_czk_per_sqm" not in kw and rec.get("price_czk") and rec.get("floor_area_sqm"):
+        rec["price_czk_per_sqm"] = round(rec["price_czk"] / rec["floor_area_sqm"])
     return rec
 
 
@@ -186,7 +196,11 @@ for i in range(5):
         price_history=[{"at": "2026-10-05", "price_czk": 5_000_000}],
     ))
 grown_seg = one(summary_of(grown), "prodej:typ:panel")
-check("počet aktivních +20 % při stabilním pokrytí", "active_count" in codes(grown_seg), True)
+check("skok počtu příznak nespustí", "active_count" in codes(grown_seg), False)
+check("vypnutí příznaku je zapsané", "active_count" in skipped(grown_seg), True)
+check("důvod říká, že je příznak vypnutý",
+      "vypnutý" in next(r["text"] for r in grown_seg["nevyhodnoceno"] if r["code"] == "active_count"), True)
+check("metrika počtu zůstává", grown_seg["active_count"], 30)
 check("pokrytí je stabilní", grown_seg["coverage_stable"], True)
 
 state_change = {"config_changes": [
@@ -197,6 +211,46 @@ changed = one(summary_of(grown, state=state_change), "prodej:typ:panel")
 check("změna konfigurace počet aktivních nehlásí", "active_count" in codes(changed), False)
 check("důvod je zapsaný", "active_count" in skipped(changed), True)
 check("poznámka pokrytí", changed["coverage_note"], "zmena_konfigurace_sberu")
+
+# Inzerát viděný uprostřed týdne, ale už ne v posledním sběru, v hlášeném
+# týdnu není. V předchozím ještě ano — řada proto nemusí jen růst.
+ghost_rows = [listing(f"live{i}") for i in range(25)]
+ghost_rows.append(listing("ghost", last_seen="2026-10-07T08:00:00Z"))
+ghost = one(summary_of(ghost_rows), "prodej:typ:panel")
+ghost_by_week = {p["week"]: p["n"] for p in ghost["series"]}
+check("bez gone_at, ale mimo snapshot, se nepočítá", ghost["active_count"], 25)
+check("v předchozím týdnu ještě v nabídce byl", ghost_by_week["2026-W40"], 26)
+
+dropped = ghost_rows + [
+    listing("mm", area_mismatch=True),
+    listing("noprice", price_czk_per_sqm=None),
+    listing("excl", exclude_from_stats=True),
+]
+check("rozpor plochy, chybějící Kč/m² a vyřazení se nepočítají",
+      one(summary_of(dropped), "prodej:typ:panel")["active_count"], 25)
+
+# Pool po apply_overrides umí mít exclude False, snapshot pořád True.
+stale = [listing("keep")]
+stale.append(listing("cleared", exclude_from_stats=False))
+segments.stamp_live_snapshot(stale, {"comparables": [
+    {"id": "lst-keep", "price_czk_per_sqm": stale[0]["price_czk_per_sqm"], "area": "vysocany"},
+    {"id": "lst-cleared", "exclude_from_stats": True, "price_czk_per_sqm": 1, "area": "vysocany"},
+]})
+check("razítko snapshotu vrátí vyřazení, které pool smazal",
+      one(summary_of(stale), "prodej:typ:panel")["active_count"], 1)
+
+# Uzavřený týden. 14. 10. 2026 je středa W42, W41 skončil 11. 10.
+check("středa 14. 10. hlásí W41",
+      segments.build_summary([listing(1)], as_of="2026-10-14T12:00:00Z")["week"], "2026-W41")
+check("středa 7. 10. (W41 ještě běží) hlásí W40",
+      segments.build_summary([listing(1)], as_of="2026-10-07T12:00:00Z")["week"], "2026-W40")
+check("neděle 11. 10. v poledne ještě není W41",
+      segments.build_summary([listing(1)], as_of="2026-10-11T12:00:00Z")["week"], "2026-W40")
+check("pondělí 12. 10. 00:00 už má W41 uzavřený",
+      segments.build_summary([listing(1)], as_of="2026-10-12T00:00:00Z")["week"], "2026-W41")
+check("vyžádaný rozpracovaný týden se nebere",
+      segments.build_summary([listing(1)], as_of="2026-10-14T12:00:00Z", week="2026-W42")["week"],
+      "2026-W41")
 
 # Před koncem srpna se medián Kč/m² neuvádí a počet se nesrovnává.
 august = [listing(f"a{i}") for i in range(25)]
@@ -233,7 +287,10 @@ for back, key in enumerate(("2026-W37", "2026-W38", "2026-W39", "2026-W40")):
         "2026-W39": "2026-W40", "2026-W40": "2026-W41",
     }[key])
     dur_rows += cohort(f"d{back}-", key, 10, gone_at=nxt_start)
-dur_rows += cohort("now-", "2026-W41", 40)
+dur_rows += cohort(
+    "now-", "2026-W41", 40,
+    last_seen=datetime(2026, 10, 14, 12, 0, tzinfo=timezone.utc),
+)
 dur = one(summary_of(dur_rows), "prodej:typ:panel")
 check("medián doby vyskočil na 40", dur["median_days_on_market"], 40)
 check("doba +20 % proti 4 týdnům", "duration_vs_4w" in codes(dur), True)

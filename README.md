@@ -143,6 +143,13 @@ python segments.py
 python segments.py --week 2026-W41 --output /tmp/weekly_segments.json
 ```
 
+Aktivní počet je množina `sale_count` / `rent_count` z posledního snapshotu
+(inzerát v něm je, má Kč/m², není vyřazený a nemá rozpor plochy). Příznak skoku
+toho počtu je vypnutý, metrika v JSON zůstává. Lokalita „Vysočany a okolí“
+není administrativní Praha 9 (kruh bere i Libeň, Karlín a Žižkov). Druhý koš
+jsou Jinonice a další sledované oblasti, ne celá Praha. Souhrn bere poslední
+uzavřený ISO týden, i když se skript spustí uprostřed týdne.
+
 ### Nastavení notifikací
 
 Volitelné secrets na repu (bez nich běh projde, jen se nic neodešle a workflow
