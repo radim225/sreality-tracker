@@ -24,6 +24,7 @@ import gone_archive
 import mapguard
 import market
 import notify
+import segments
 import photo_archive
 import novostavby
 import pool
@@ -4373,7 +4374,8 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
         ("favCard", "★ Oblíbené"), ("dealsCard", "🔥 Nejlepší"), ("garageCard", "🅿️ Garáže"), ("novCard", "🏗️ Novostavby"), ("devCard", "💼 Ceníky"),
         ("goneCard", "❌ Zmizelé"),
         ("tlCard", "📈 Vývoj cen"),
-        ("mapCard", "🗺️ Mapa"), ("areaStatsCard", "📊 Statistika"), ("podHarfouCard", "📍 Pod Harfou"),
+        ("mapCard", "🗺️ Mapa"), ("segmentCard", "📉 Segmenty"),
+        ("areaStatsCard", "📊 Statistika"), ("podHarfouCard", "📍 Pod Harfou"),
         ("historyCard", "📜 Historie"), ("tbl", "📋 Tabulka"), ("manageCard", "⚙️ Sledované"),
     ])
     gone_rows = gone_archive.dashboard_rows(gone_archive.load_archive(), snapshot["generated_at"], days=30)
@@ -4733,6 +4735,8 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
   <div class="cost-note">*nájem Kč/m² = nájem + poplatky + odhad elektřiny ({ELECTRICITY_ESTIMATE_CZK} Kč), ne holý nájem.
     Každá oblast má vlastní medián; odhad nájmu a týdenní zápis počítají jen Vysočany.</div>
 </div>
+
+{segments.dashboard_card()}
 
 {timeline.card_html(tl_payload)}
 
@@ -6547,6 +6551,18 @@ def update_pool_and_reports(snapshot, changes):
     estimate = market.rent_estimate(
         pool.window(all_pool), as_of=now, state=json.loads(json.dumps(state)),
         week_key=market.iso_week_key(now), allow_switch=False,
+    )
+    # After the report and the notification. A failure here turns the run red
+    # (the Monday file would otherwise just be missing) but the snapshot and
+    # the pool are already on disk. Nothing in this call sends an alert.
+    try:
+        seg = segments.publish(all_pool, state, as_of=now)
+    except Exception as exc:
+        print(f"::error::Týdenní segmenty selhaly: {exc}", file=sys.stderr)
+        raise
+    notes.append(
+        f"Segmenty {seg['week']}: větší posun {seg['vetsi_posun_n']}, "
+        f"krizový signál {'ano' if seg['krizovy_signal'] else 'ne'} → {segments.OUTPUT_NAME}"
     )
     return estimate, notes, price_histories(all_pool)
 

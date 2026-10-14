@@ -137,6 +137,7 @@ jobs:
           python test_deal_basis.py
           python test_mapguard.py
           python test_photo_archive.py
+          python test_segments.py
 
       - name: Run scraper
         env:
@@ -178,6 +179,15 @@ jobs:
             echo "::error::OWN_* secret name leaked into a public artefact" >&2
             exit 1
           fi
+          # weekly_segments.json is public Pages output. Aggregates only —
+          # the dashboard HTML still contains scraped listing text, so this
+          # guard stays on the segment file.
+          if [ -f weekly_segments.json ]; then
+            if grep -E -q "ownCard|709/R|MORTGAGE_PAYMENT|hypoindex|OWN_(PRICE|LTV|DEPOSIT|EXTRA)_" weekly_segments.json; then
+              echo "::error::personal data leaked into weekly_segments.json" >&2
+              exit 1
+            fi
+          fi
 
       # Pages publikuje kořen repa a web smí mít nejvýš 1 GB; snapshots/ je
       # proto vyřazený v _config.yml. Tady jen varování, když se web k limitu
@@ -194,7 +204,7 @@ jobs:
           git add changes_log.jsonl pool reports fee_review_queue.json
           # Jen když existují: chybějící soubor by git add shodil a s ním
           # commit celého běhu (snapshot, pool, dashboard).
-          for f in gone_archive.json geocode_cache.json; do
+          for f in gone_archive.json geocode_cache.json weekly_segments.json; do
             if [ -e "$f" ]; then git add "$f"; fi
           done
           # Kopie fotek novostaveb (photo_archive.py). -A kvůli smazaným po

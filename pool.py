@@ -48,6 +48,10 @@ POOL_FIELDS = (
     # attributes (see scrape.enrich_comparable)
     "building_condition", "building_condition_name", "is_new_building",
     "building_type", "building_type_name", "energy_rating", "furnished",
+    # Class computed by deal_basis on the snapshot (description included).
+    # Kept so a later segment cut does not have to re-guess from a shorter
+    # record. Absent on rows folded before this field existed.
+    "house_class", "house_class_source",
     "commission_czk", "tenant_not_pay_commission", "no_commission",
     "cellar", "cellar_area_sqm", "garage", "garage_count", "parking",
     # The three-state view of the same thing. `garage`/`parking` stay because
