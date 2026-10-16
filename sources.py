@@ -221,7 +221,35 @@ NEXT_DATA_RE = re.compile(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', re.
 BEZ_DISPOSITION_MAP = {
     "DISP_1_KK": "1+kk", "DISP_2_KK": "2+kk", "DISP_3_KK": "3+kk",
     "DISP_4_KK": "4+kk", "DISP_1_1": "1+1", "DISP_2_1": "2+1", "DISP_3_1": "3+1",
+    "DISP_4_1": "4+1", "DISP_5_KK": "5+kk", "DISP_5_1": "5+1",
 }
+BEZ_DISP_RE = re.compile(r"DISP_(\d+)_(KK|1)$")
+
+
+def bez_disposition(code):
+    """Bezrealitky's enum -> our label. 6 rooms and more fold into "6+" like
+    Sreality's code 12; anything unrecognised (atypical, "other") is None and
+    the advert is skipped -- we cannot tell what it is."""
+    if code in BEZ_DISPOSITION_MAP:
+        return BEZ_DISPOSITION_MAP[code]
+    m = BEZ_DISP_RE.match(code or "")
+    if m and int(m.group(1)) >= 6:
+        return "6+"
+    return None
+
+
+def idnes_disposition(title):
+    """Disposition from an iDNES card title ("prodej bytu 4+kk 98 m²").
+    Same labels as Sreality: 6 rooms and more are "6+", "atypický" stays."""
+    t = (title or "").lower()
+    m = IDNES_DISP_RE.search(t)
+    if m:
+        disp = m.group(1).replace(" ", "")
+        rooms = int(disp.split("+")[0])
+        return "6+" if rooms >= 6 else disp
+    if "atypick" in t:
+        return "atypický"
+    return None
 
 
 def _blank_comparable():
@@ -332,7 +360,7 @@ def _build_bez_image_map(obj, out=None):
 
 
 def _bez_parse_advert(a, img_map):
-    disp = BEZ_DISPOSITION_MAP.get(a.get("disposition"))
+    disp = bez_disposition(a.get("disposition"))
     if disp not in TARGET_DISPOSITIONS:
         return None
     gps = a.get("gps") or {}
@@ -476,8 +504,7 @@ def _idnes_parse_card(seg, tx):
     title = _text((IDNES_TITLE_RE.search(seg) or [None, ""])[1] if IDNES_TITLE_RE.search(seg) else "")
     info = _text((IDNES_INFO_RE.search(seg) or [None, ""])[1] if IDNES_INFO_RE.search(seg) else "")
     price_txt = _text((IDNES_PRICE_RE.search(seg) or [None, ""])[1] if IDNES_PRICE_RE.search(seg) else "")
-    disp_m = IDNES_DISP_RE.search(title)
-    disp = disp_m.group(1).replace(" ", "").lower() if disp_m else None
+    disp = idnes_disposition(title)
     if disp not in TARGET_DISPOSITIONS:
         return None
     # "Kolmá, Praha 9 - Vysočany" -> street "Kolmá", ward "Vysočany". The ward
