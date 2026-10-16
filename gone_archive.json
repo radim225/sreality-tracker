@@ -6576,6 +6576,68 @@
   "transaction_type": "prodej",
   "url": "https://www.sreality.cz/detail/prodej/byt/3%2Bkk/x/1385766988"
  },
+ "1387008076": {
+  "address": {
+   "distance_m": 6,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (6 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Granitova 1115/8, Praha 9"
+  },
+  "address_exact": true,
+  "approx_location": false,
+  "area": "vysocany",
+  "city_part": "Hloubětín",
+  "description": "Vzhledem ke zvýšené poptávce o námi nabízené nemovitosti prosíme všechny vážné zájemce, aby nás pro rychlé vyřízení kontaktovali pomocí odpovědního formuláře u inzerátu. Následně Vám zašleme email s odkazem na krátký osobní dotazník. Po jeho vyplnění se vám ozveme a domluvíme se na dalším postupu a termínu prohlídky.\r\n\r\nNabízíme k podnájmu světlý a prakticky řešený byt o dispozici 1+kk a výměře 32,9 m², který se nachází ve 3. patře moderní cihlové novostavby s výtahem. Dům leží v atraktivní a dynamicky se rozvíjející lokalitě v ulici Granitová na Praze 9 – Hloubětín.\r\n\r\nByt je udržovaný v perfektním stavu novostavby a podnajímá se vybavený tak, jak můžete vidět na fotografiích. Hlavní obytná část spojuje komfortní zónu pro odpočinek s kuchyňským koutem. K bytu náleží také praktický sklep pro uskladnění vašich věcí a pro maximální pohodlí je zde možnost pronájmu vyhrazeného garážového či parkovacího stání za příplatek 2 000 Kč měsíčně. Byt je nekuřácký. Preferujeme nájemníky bez domácích mazlíčků.\r\n\r\nLokalita vyniká skvělou občanskou vybaveností i dopravní dostupností. Jen 3 minuty chůze od domu najdete supermarket Lidl i tramvajovou zastávku, odkud se za pouhé 2 minuty dostanete na",
+  "disposition": "1+kk",
+  "fees_czk": 2877,
+  "first_seen": "2026-10-12T18:15:11Z",
+  "floor_area_sqm": 33.0,
+  "floor_number": 3,
+  "furnished": "castecne",
+  "gone_at": "2026-10-16T22:55:00Z",
+  "house_number": "1115",
+  "id": 1387008076,
+  "images": [
+   "https://d18-a.sdn.cz/d_18/c_img_qG_B/nCR9NVflLrfprwyVIDfzfe/2bd5.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_B/nCR9NVflLCsdQ6D9IIDfzgG/5505.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_B/kcKfrMAkFB3JsT5HKIDfzgr/60f5.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_B/kcKfrMAkFnIwlp92IDfzhW/8ff9.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_B/kcKfrMAkFW9k4L90IDfziF/4087.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+  ],
+  "is_new_building": true,
+  "last_price_czk": 18490,
+  "lat": 50.107987059,
+  "locality": "Granitova, Hloubětín, Praha",
+  "lon": 14.5275958745,
+  "price_czk": 18490,
+  "price_czk_per_sqm": 693,
+  "relist_of": {
+   "first_seen": "2026-09-25T20:04:02Z",
+   "gone_at": "2026-10-13T02:09:02Z",
+   "id": 2362581068,
+   "listed_since": "2026-09-25T20:04:02Z",
+   "price_czk": 19990,
+   "text_similarity": 1.0,
+   "url": "https://www.sreality.cz/detail/pronajem/byt/1%2Bkk/x/2362581068",
+   "verdict": "same"
+  },
+  "relisted_as": {
+   "id": 2133200972,
+   "linked_at": "2026-10-16T22:54:06Z",
+   "text_similarity": 0.87,
+   "url": "https://www.sreality.cz/detail/pronajem/byt/1%2Bkk/x/2133200972",
+   "verdict": "same"
+  },
+  "seller_name": "Nikola Linhart",
+  "source": "sreality",
+  "street": "Granitova",
+  "thumb": "https://d18-a.sdn.cz/d_18/c_img_qG_B/nCR9NVflLrfprwyVIDfzfe/2bd5.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+  "title": "Pronájem bytu 1+kk 33 m²",
+  "total_czk": 22867,
+  "transaction_type": "pronajem",
+  "url": "https://www.sreality.cz/detail/pronajem/byt/1%2Bkk/x/1387008076"
+ },
  "138817612": {
   "address": {
    "distance_m": 0,
@@ -12115,6 +12177,57 @@
   "transaction_type": "pronajem",
   "url": "https://www.sreality.cz/detail/pronajem/byt/2%2B1/x/1688809548"
  },
+ "1689849932": {
+  "address": {
+   "distance_m": 15,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (15 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Radlická 354/107b, Radlice"
+  },
+  "address_exact": false,
+  "approx_location": false,
+  "area": "jinonice",
+  "city_part": "Radlice",
+  "description": "Vzhledem ke zvýšené poptávce o námi nabízené nemovitosti prosíme všechny vážné zájemce, aby nás pro rychlé vyřízení kontaktovali pomocí odpovědního formuláře u inzerátu. Následně Vám zašleme email s odkazem na krátký osobní dotazník. Po jeho vyplnění se vám ozveme a domluvíme se na dalším postupu a termínu prohlídky.\r\n\r\nNabízíme k podnájmu světlý a moderní byt v novostavbě o dispozici 2+kk a podlahové ploše 50,2 m². Byt se nachází v 5. nadzemním podlaží bytového domu v ulici U Komína na pražských Radlicích a pyšní se příjemným výhledem do okolí.\r\n\r\nInteriér bytu tvoří obývací pokoj s kuchyňským koutem, samostatná ložnice a koupelna. Velkým benefitem je také vlastní sklep pro uskladnění sezónních věcí a vyhrazené parkovací stání, které je součástí podnájmu.\r\n\r\nRadlice nabízejí perfektní zázemí pro komfortní život. V bezprostředním okolí se nachází mateřská i základní škola, sportovní areál Radlice s bazénem i venkovním hřištěm a pro relaxaci či rodinné procházky skvěle poslouží blízké Radlické údolí, park Na Skalce. Nákupní možnosti zajišťuje nedaleké centrum Smíchov i lokální obchody a lékárny. Lokalita vyniká skvělou dopravní dostupností – stanice metra B Radlická, tramvajové a au",
+  "disposition": "2+kk",
+  "fees_czk": 3935,
+  "first_seen": "2026-10-06T18:38:27Z",
+  "floor_area_sqm": 51.0,
+  "floor_number": 5,
+  "furnished": "ne",
+  "gone_at": "2026-10-16T22:55:00Z",
+  "id": 1689849932,
+  "images": [
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/nCR9NVflLCnfP0jyHIAHWN1/e14b.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/kcKfrMAkFDbqUhyIkIAHWOS/5ffe.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/kcKfrMAkFCpZ9wOGzIAHWOx/5cfe.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/kcKfrMAkFCpZ9wNtjIAHWPP/8959.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/kcKfrMAkFCHDToN1xIAHWPt/6210.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+  ],
+  "is_new_building": true,
+  "last_price_czk": 26990,
+  "lat": 50.0557652,
+  "locality": "U Komína, Radlice, Praha",
+  "lon": 14.3805238,
+  "price_czk": 26990,
+  "price_czk_per_sqm": 636,
+  "relisted_as": {
+   "id": 3342209100,
+   "linked_at": "2026-10-16T22:54:06Z",
+   "text_similarity": 1.0,
+   "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/3342209100",
+   "verdict": "same"
+  },
+  "seller_name": "Markéta Klojdová",
+  "source": "sreality",
+  "street": "U Komína",
+  "thumb": "https://d18-a.sdn.cz/d_18/c_img_qG_A/nCR9NVflLCnfP0jyHIAHWN1/e14b.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+  "title": "Pronájem bytu 2+kk 51 m²",
+  "total_czk": 32425,
+  "transaction_type": "pronajem",
+  "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/1689849932"
+ },
  "1691496524": {
   "address": {
    "distance_m": 0,
@@ -16577,6 +16690,49 @@
   "total_czk": 8960000,
   "transaction_type": "prodej",
   "url": "https://www.sreality.cz/detail/prodej/byt/3%2B1/x/1883381836"
+ },
+ "1890132044": {
+  "address": {
+   "distance_m": 36,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (36 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Nekvasilova 571/21, Praha 8"
+  },
+  "approx_location": false,
+  "area": "vysocany",
+  "city_part": "Karlín",
+  "description": "Na pronájem nabízíme moderní zařízený byt o dispozici 2+kk s užitnou plochou 55 m² a balkónem o velikosti 7 m², situovaný ve 1. patře (2. nadzemní podlaží) novostavby s výtahem v ulici Nekvasilova, Praha 8 – Karlín. Součástí pronájmu je garážové parkovací stání a sklep, které jsou již zahrnuty v ceně nájemného.\r\n\r\nPůdorys bytové jednotky disponuje vstupní chodbou, obývacím pokojem s kuchyňským koutem, jídelní částí a přímým vstupem na balkón, samostatnou ložnicí s dalším vstupem na balkón, šatnou a koupelnou (s vanou, umyvadlem a toaletou). Vybavení bytu zahrnuje kuchyňskou linku se spotřebiči (sklokeramická varná deska, elektrická trouba, lednice s mrazákem, mikrovlnná trouba a myčka), pračku, sušičku a kompletní nábytek. K bytu náleží také sklep a garážové parkovací stání. Byt je pronajat a nájemce si nepřeje z osobních důvodů inzerovat fotografie interiéru.\r\n\r\nLokalita Praha 8 – Karlín patří mezi vyhledávané rezidenční části Prahy, které kombinují moderní městské bydlení, kompletní občanskou vybavenost a výbornou dostupnost do centra. V okolí se nachází široká nabídka restaurací, kaváren, obchodů, supermarketů, lékáren, škol a dalších služeb. Pro sport, procházky a relaxaci lze ",
+  "disposition": "2+kk",
+  "fees_czk": 5000,
+  "first_seen": "2026-09-18T13:05:34Z",
+  "floor_area_sqm": 60.0,
+  "floor_number": 5,
+  "furnished": "ano",
+  "gone_at": "2026-10-16T22:55:00Z",
+  "id": 1890132044,
+  "images": [
+   "https://d18-a.sdn.cz/d_18/c_img_qF_C/k0OqwCKRZSJdCUAH1NEgF/bd1b.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_C/nOdL4BtPEyBuWMSBMyH1NEgv/6877.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_C/k0OqwCKRD1EvuCuaH1NEhR/6954.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_C/k0OqwCKREB0Tc1sH1NEhz/1970.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_C/nOdL4BtPEyD4lWfBdZH1NEiV/319e.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+  ],
+  "is_new_building": false,
+  "last_price_czk": 40000,
+  "lat": 50.0968684757335,
+  "locality": "Nekvasilova, Karlín, Praha",
+  "lon": 14.4676663486065,
+  "price_czk": 40000,
+  "price_czk_per_sqm": 775,
+  "seller_name": "Ing. Marián Jozefček",
+  "source": "sreality",
+  "street": "Nekvasilova",
+  "thumb": "https://d18-a.sdn.cz/d_18/c_img_qF_C/k0OqwCKRZSJdCUAH1NEgF/bd1b.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+  "title": "Pronájem bytu 2+kk 60 m²",
+  "total_czk": 46500,
+  "transaction_type": "pronajem",
+  "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/1890132044"
  },
  "1892950092": {
   "address": {
@@ -31595,6 +31751,50 @@
   "transaction_type": "prodej",
   "url": "https://www.sreality.cz/detail/prodej/byt/1%2Bkk/x/2702885452"
  },
+ "2703802444": {
+  "address": {
+   "distance_m": 1,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (1 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Souběžná Ⅰ 431/32, Jinonice"
+  },
+  "address_exact": true,
+  "approx_location": false,
+  "area": "jinonice",
+  "city_part": "Jinonice",
+  "description": "Nabízíme k pronájmu byt  2+1 v prvním patře cihlového domu v klidné části Jinonic. \r\nOba pokoje jsou neprůchozí, obývací pokoj je orientován na jih  ložnice pak směrem do klidné zahrady na sever. \r\nVytápění zajišťuje nový kondenzační plynový kotel, takže si můžete vytápění regulovat podle vlastních potřeb.\r\nNemovitost se pronajímá částečně zařízená. \r\nV obývacím pokoji se nachází sedačka se stolkem a v ložnici manželská postel.\r\nMožnost využití zahrady.\r\n\t‌\r\nCena:\r\nnájemné: 20 000 Kč/měsíc\r\npoplatky: 1 000 Kč (voda, elektřina společných prostor a popelnice)\r\nelektřina: 1 000 Kč\r\nplyn: 1 000 Kč\r\nNemovitost se pronajímá bez sklepních prostor\r\n\t‌\r\nPři podpisu smlouvy:\r\n\t‌\r\nprvní nájem: 20 000 Kč + 3 000 poplatky\r\nvratná kauce: 20 000 Kč\r\nprovize RK: 10 000 Kč\r\ncelkem: 53 000 Kč\r\n\t‌\r\nJinonice nabízí velmi příjemnou kombinaci klidného bydlení a výborné dostupnosti do centra Prahy. V blízkosti je metro B, autobusové spojení, obchody, restaurace i další občanská vybavenost. Okolí zároveň nabízí dostatek zeleně a prostoru pro procházky a sport. Velkou výhodou je také bezplatné parkování přibližně 50 metrů od domu. Ideální volba pro ty, kteří hledají klidné bydlení v Praze s dobrou dostupno",
+  "disposition": "2+1",
+  "fees_czk": 3000,
+  "first_seen": "2026-09-26T20:38:36Z",
+  "floor_area_sqm": 45.0,
+  "floor_number": 1,
+  "gone_at": "2026-10-16T22:55:00Z",
+  "house_number": "431",
+  "id": 2703802444,
+  "images": [
+   "https://d18-a.sdn.cz/d_18/c_img_qE_C/nPYADvcUkmDcXILCFHHjbTjZ/c9a4.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qE_C/kPVqmweP7JB3Lg9D3fHjbTjy/5eca.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qE_C/nPYADvcUkmBcG9PB0SHjbTkS/f227.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qE_C/kPVqmweP7JDZwL3DE4HjbTkq/2f2b.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qE_C/kPVqmweP7JHlV8DlkHjbTlG/dd26.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+  ],
+  "is_new_building": false,
+  "last_price_czk": 20000,
+  "lat": 50.054599761963,
+  "locality": "Souběžná I, Jinonice, Praha",
+  "lon": 14.361000061035,
+  "price_czk": 20000,
+  "price_czk_per_sqm": 544,
+  "seller_name": "Pavel Stuchlík",
+  "source": "sreality",
+  "street": "Souběžná I",
+  "thumb": "https://d18-a.sdn.cz/d_18/c_img_qE_C/nPYADvcUkmDcXILCFHHjbTjZ/c9a4.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+  "title": "Pronájem bytu 2+1 45 m²",
+  "total_czk": 24500,
+  "transaction_type": "pronajem",
+  "url": "https://www.sreality.cz/detail/pronajem/byt/2%2B1/x/2703802444"
+ },
  "2704535628": {
   "address": {
    "distance_m": 0,
@@ -32221,6 +32421,46 @@
   "transaction_type": "pronajem",
   "url": "https://www.sreality.cz/detail/pronajem/byt/3%2B1/x/2742952012"
  },
+ "2745118796": {
+  "address": {
+   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
+   "precision": "street",
+   "source": "sreality-ulice",
+   "text": "Na kopečku, Libeň"
+  },
+  "approx_location": false,
+  "area": "vysocany",
+  "city_part": "Libeň",
+  "description": "Nabízíme k prodeji byt 2+kk o podlahové ploše 48,9 m² s balkonem 4 m²  v developerském projektu NEAR living v Praze 8, vznikajícím na pomezí Palmovky a Karlína.\n\nV rychle se rozvíjející pražské čtvrti Palmovka, jen pár minut od metra, roste nová rezidence, která splní představy o moderním městském bydlení. Nabízí kombinaci klidného zázemí, stylového interiéru a snadné dostupnosti centra. Díky poloze budete mít na dosah Karlín, Holešovice i Rohanský ostrov – a domov, kam se budete s radostí vracet.\nV projektu vznikne celkem 212 nízkoenergetických bytů s vlastní komunitní zahradou 425 m². Každý z bytů, od startovacího 1+kk po rodinné 3+kk, byl navržen s důrazem na efektivní využití prostoru a kvalitní vybavení. Propojuje architekturu s praktičností, město s klidem a život s budoucností. Stane se tak budoucí architektonickou ikonou Palmovky, která je dílem prestižního architektonického studia IBA architects.\n\nSoučástí standardu je podlahové vytápění i rekuperace – pro maximální pohodlí a příjemnou atmosféru domova. Vinylové podlahy, designové obklady a keramická dlažba na výběr z několika dekorů. Plastová okna s izolačním trojsklem, příprava na venkovní žaluzie na všech oknech uliční ",
+  "disposition": "2+kk",
+  "first_seen": "2026-09-04T19:03:49Z",
+  "floor_area_sqm": 49.0,
+  "floor_number": 4,
+  "gone_at": "2026-10-16T22:55:00Z",
+  "id": 2745118796,
+  "images": [
+   "https://d18-a.sdn.cz/d_18/c_img_qF_A/nOdL4BtPEyBuWMSBkmHrZUIO/a75f.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_A/k0OqwCKRBOXzTXNHrZUaL/0f57.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_A/k0OqwCKRBOXzTCkPHrZUdx/0622.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_A/k0OqwCKRIhAnCDeHrZUl0/cf2b.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_A/k0OqwCKRD1EvuBuaHrZUuL/2195.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+  ],
+  "is_new_building": false,
+  "last_price_czk": 9927000,
+  "lat": 50.099693,
+  "locality": "Na kopečku, Libeň, Praha",
+  "lon": 14.47151,
+  "price_czk": 9927000,
+  "price_czk_per_sqm": 202592,
+  "seller_name": "Tereza Fleischmannová",
+  "source": "sreality",
+  "street": "Na kopečku",
+  "thumb": "https://d18-a.sdn.cz/d_18/c_img_qF_A/nOdL4BtPEyBuWMSBkmHrZUIO/a75f.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+  "title": "Prodej bytu 2+kk 49 m²",
+  "total_czk": 9927000,
+  "transaction_type": "prodej",
+  "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/2745118796"
+ },
  "274673740": {
   "address": {
    "distance_m": 0,
@@ -32587,6 +32827,13 @@
   "lon": 14.4603223282066,
   "price_czk": 10900000,
   "price_czk_per_sqm": 205660,
+  "relisted_as": {
+   "id": "idnes-6ad28d040ef6b4e73a01a59a",
+   "linked_at": "2026-10-16T22:54:06Z",
+   "text_similarity": 0.89,
+   "url": "https://reality.idnes.cz/detail/prodej/byt/praha-8-na-strelnici/6ad28d040ef6b4e73a01a59a/",
+   "verdict": "same"
+  },
   "seller_name": "Mirek Rybín",
   "source": "sreality",
   "street": "Na střelnici",
@@ -45063,6 +45310,49 @@
   "transaction_type": "prodej",
   "url": "https://www.sreality.cz/detail/prodej/byt/1%2Bkk/x/3506057292"
  },
+ "3507232844": {
+  "address": {
+   "distance_m": 19,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (19 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Ocelářská 2526/17, Prosek"
+  },
+  "approx_location": false,
+  "area": "vysocany",
+  "city_part": "Libeň",
+  "description": "Ve výhradním zastoupení společnosti RE/MAX Future Vám nabízíme k pronájmu byt 1+kk s terasou a sklepem, který se nachází v novostavbě bytového domu v ulici Ocelářská v Praze 9 - Libeň.\r\n\r\nByt je situován v přízemí domu a nabízí příjemné bydlení s terasou orientovanou do klidného vnitrobloku.\r\nDispozice bytu zahrnuje prostornou předsíň (11,28 m²), koupelnu se sprchovým koutem a WC (4,44 m²), obytný pokoj s kuchyňským koutem (26,72 m²) a samostatnou šatnu (2,72 m²). Z obytného pokoje je přímý vstup na terasu o velikosti 7,8 m².\r\n\r\nKuchyňská linka je vybavena lednicí, myčkou nádobí, elektrickou troubou, mikrovlnnou troubou, čtyřplotýnkovou varnou deskou a digestoří. Součástí vybavení jsou také barové židle. V předsíni je k dispozici velká vestavná šatní skříň, lavice a věšák. V koupelně je umístěna funkční pračka se sušičkou. V obytném pokoji se nachází rám postele o rozměru 180 × 200 cm, který může po dohodě v bytě zůstat, případně být odstraněn.  V předsíni a koupelně je položena dlažba, v obytné místnosti laminátová podlaha. Okna i terasa jsou orientovány západním směrem do klidného vnitrobloku. Byt je vybaven předokenními roletami, které poskytují příjemné zastínění i větší soukro",
+  "disposition": "1+kk",
+  "fees_czk": 5000,
+  "first_seen": "2026-09-23T13:40:09Z",
+  "floor_area_sqm": 45.0,
+  "floor_number": 1,
+  "furnished": "castecne",
+  "gone_at": "2026-10-16T22:55:00Z",
+  "id": 3507232844,
+  "images": [
+   "https://d18-a.sdn.cz/d_18/c_img_qF_D/k0OqwCKRDbeZQDXQH2eyCO/658f.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_D/nOdL4BtPEyCi6LRBEUH2eyDU/4368.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_D/nOdL4BtPEyBuWMSoGH2eyEN/303b.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_D/nOdL4BtPEyBiPBFBIDH2eyFJ/782d.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qF_D/nOdL4BtPEyD4lWfBBOH2eyGG/45ea.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+  ],
+  "is_new_building": false,
+  "last_price_czk": 19500,
+  "lat": 50.105184,
+  "locality": "Ocelářská, Libeň, Praha",
+  "lon": 14.490572,
+  "price_czk": 19500,
+  "price_czk_per_sqm": 578,
+  "seller_name": "Ing. Lenka Lequin",
+  "source": "sreality",
+  "street": "Ocelářská",
+  "thumb": "https://d18-a.sdn.cz/d_18/c_img_qF_D/k0OqwCKRDbeZQDXQH2eyCO/658f.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+  "title": "Pronájem bytu 1+kk 45 m²",
+  "total_czk": 26000,
+  "transaction_type": "pronajem",
+  "url": "https://www.sreality.cz/detail/pronajem/byt/1%2Bkk/x/3507232844"
+ },
  "3508154444": {
   "address": {
    "note": "Sreality uvádí jen ulici, číslo domu neznámé",
@@ -45770,6 +46060,46 @@
   "total_czk": 28500,
   "transaction_type": "pronajem",
   "url": "https://www.sreality.cz/detail/pronajem/byt/2%2B1/x/3531460684"
+ },
+ "3531518028": {
+  "address": {
+   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
+   "precision": "street",
+   "source": "sreality-ulice",
+   "text": "Na kopečku, Libeň"
+  },
+  "approx_location": false,
+  "area": "vysocany",
+  "city_part": "Libeň",
+  "description": "Nabízíme k prodeji byt 2+kk o podlahové ploše 47,5 m² s balkonem 4 m²  v developerském projektu NEAR living v Praze 8, vznikajícím na pomezí Palmovky a Karlína.\n\nV rychle se rozvíjející pražské čtvrti Palmovka, jen pár minut od metra, roste nová rezidence, která splní představy o moderním městském bydlení. Nabízí kombinaci klidného zázemí, stylového interiéru a snadné dostupnosti centra. Díky poloze budete mít na dosah Karlín, Holešovice i Rohanský ostrov – a domov, kam se budete s radostí vracet.\nV projektu vznikne celkem 212 nízkoenergetických bytů s vlastní komunitní zahradou 425 m². Každý z bytů, od startovacího 1+kk po rodinné 3+kk, byl navržen s důrazem na efektivní využití prostoru a kvalitní vybavení. Propojuje architekturu s praktičností, město s klidem a život s budoucností. Stane se tak budoucí architektonickou ikonou Palmovky, která je dílem prestižního architektonického studia IBA architects.\n\nSoučástí standardu je podlahové vytápění i rekuperace – pro maximální pohodlí a příjemnou atmosféru domova. Vinylové podlahy, designové obklady a keramická dlažba na výběr z několika dekorů. Plastová okna s izolačním trojsklem, příprava na venkovní žaluzie na všech oknech uliční ",
+  "disposition": "2+kk",
+  "first_seen": "2026-08-23T19:10:36Z",
+  "floor_area_sqm": 48.0,
+  "floor_number": 5,
+  "gone_at": "2026-10-16T22:55:00Z",
+  "id": 3531518028,
+  "images": [
+   "https://d18-a.sdn.cz/d_18/c_img_qA_B/kcHp2YdDtDgLT0fJPGTYZV4/384e.png?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qA_B/kcHp2YdDtDgLT0fObGTYZ3K/23d2.png?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qA_B/nCTUX1iX5CDciVupcGTYZiB/faae.png?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qA_B/nCTUX1iX5Do9kXmIdGTYaGq/dcd0.png?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qA_B/nCTUX1iX5DwDWzvF6GTYamP/61a5.png?fl=res,800,800,1|shr,,20|jpg,80"
+  ],
+  "is_new_building": true,
+  "last_price_czk": 10308000,
+  "lat": 50.099693,
+  "locality": "Na kopečku, Libeň, Praha",
+  "lon": 14.47151,
+  "price_czk": 10308000,
+  "price_czk_per_sqm": 214750,
+  "seller_name": "Tereza Fleischmannová",
+  "source": "sreality",
+  "street": "Na kopečku",
+  "thumb": "https://d18-a.sdn.cz/d_18/c_img_qA_B/kcHp2YdDtDgLT0fJPGTYZV4/384e.png?fl=res,400,400,1|shr,,20|webp,60",
+  "title": "Prodej bytu 2+kk 48 m²",
+  "total_czk": 10308000,
+  "transaction_type": "prodej",
+  "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/3531518028"
  },
  "3533582412": {
   "address": {
@@ -51569,6 +51899,46 @@
   "transaction_type": "pronajem",
   "url": "https://www.sreality.cz/detail/pronajem/byt/3%2Bkk/x/3847798860"
  },
+ "3850362956": {
+  "address": {
+   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
+   "precision": "street",
+   "source": "sreality-ulice",
+   "text": "Na kopečku, Libeň"
+  },
+  "approx_location": false,
+  "area": "vysocany",
+  "city_part": "Libeň",
+  "description": "Nabízíme k prodeji byt 2+kk o podlahové ploše 51,5 m² s balkonem 11 m²  v developerském projektu NEAR living v Praze 8, vznikajícím na pomezí Palmovky a Karlína.\n\nV rychle se rozvíjející pražské čtvrti Palmovka, jen pár minut od metra, roste nová rezidence, která splní představy o moderním městském bydlení. Nabízí kombinaci klidného zázemí, stylového interiéru a snadné dostupnosti centra. Díky poloze budete mít na dosah Karlín, Holešovice i Rohanský ostrov – a domov, kam se budete s radostí vracet.\nV projektu vznikne celkem 212 nízkoenergetických bytů s vlastní komunitní zahradou 425 m². Každý z bytů, od startovacího 1+kk po rodinné 3+kk, byl navržen s důrazem na efektivní využití prostoru a kvalitní vybavení. Propojuje architekturu s praktičností, město s klidem a život s budoucností. Stane se tak budoucí architektonickou ikonou Palmovky, která je dílem prestižního architektonického studia IBA architects.\n\nSoučástí standardu je podlahové vytápění i rekuperace – pro maximální pohodlí a příjemnou atmosféru domova. Vinylové podlahy, designové obklady a keramická dlažba na výběr z několika dekorů. Plastová okna s izolačním trojsklem, příprava na venkovní žaluzie na všech oknech uliční",
+  "disposition": "2+kk",
+  "first_seen": "2026-08-23T19:10:36Z",
+  "floor_area_sqm": 52.0,
+  "floor_number": 5,
+  "gone_at": "2026-10-16T22:55:00Z",
+  "id": 3850362956,
+  "images": [
+   "https://d18-a.sdn.cz/d_18/c_img_qD_B/nO2CysqjGrB9kIMcxbHJA58w/dd9d.png?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qD_B/nO2CysqjGrCe62NSryHJA3FM/17be.png?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qD_B/nO2CysqjGrRICCb5BHJA5Rf/4eb9.png?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qD_B/nO2CysqjGrRICCb5BHJA6Ok/b1fb.png?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qD_B/kQMlcCt5zmCni4De19HJA7oy/670e.png?fl=res,800,800,1|shr,,20|jpg,80"
+  ],
+  "is_new_building": false,
+  "last_price_czk": 10871000,
+  "lat": 50.099693,
+  "locality": "Na kopečku, Libeň, Praha",
+  "lon": 14.47151,
+  "price_czk": 10871000,
+  "price_czk_per_sqm": 209058,
+  "seller_name": "Tereza Fleischmannová",
+  "source": "sreality",
+  "street": "Na kopečku",
+  "thumb": "https://d18-a.sdn.cz/d_18/c_img_qD_B/nO2CysqjGrB9kIMcxbHJA58w/dd9d.png?fl=res,400,400,1|shr,,20|webp,60",
+  "title": "Prodej bytu 2+kk 52 m²",
+  "total_czk": 10871000,
+  "transaction_type": "prodej",
+  "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/3850362956"
+ },
  "3851296844": {
   "address": {
    "distance_m": 28,
@@ -54416,6 +54786,58 @@
   "total_czk": 13970000,
   "transaction_type": "prodej",
   "url": "https://www.sreality.cz/detail/prodej/byt/3%2Bkk/x/3995721804"
+ },
+ "3997220940": {
+  "address": {
+   "distance_m": 8,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (8 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Saarinenova 1129/3, Praha 9"
+  },
+  "address_exact": true,
+  "approx_location": false,
+  "area": "vysocany",
+  "city_part": "Hloubětín",
+  "description": "Nabízíme Vám k pronájmu byt 2kk o velikosti 58m2 ( + balkón), který se nachází ve 2. podlaží novostavby z roku 2019, která je součástí rezidenčního areálu SUOMI Hloubětín. Byt se skládá ze vstupní chodby, ložnice, obývacího pokoje s kuchyňským koutem a vstupem na balkón, koupelny s vanou a toaletou a z další oddělené toalety. Byt se pronajímá vybavený ( viz. foto). \r\n\r\nSoučástí pronájmu je také sklepní kóje a k pronájmu je i parkovací stání (+2000,-). \r\n\r\nVelkou předností je orientace bytu do zeleně i blízkost tramvajové zastávky Vozovna Hloubětín. Na zastávku metra Kolbenova se dostanete za pouhé 2 minuty tramvají.\r\n\r\n Nájemné činí 23 000,- (+2000,- parkovacího stání ) + 5000,- poplatky + přepis elektřiny na nájemce. \r\nMajitel požaduje vratnou kauci 40 000,- a provize RK je ve výši 1x nájemné + DPH.\r\n Byt je k dispozici od 1.prosince. \r\n\r\nV případě dotazů či zájmu o prohlídku mě neváhejte kontaktovat.",
+  "disposition": "2+kk",
+  "fees_czk": 5000,
+  "first_seen": "2026-08-25T15:51:20Z",
+  "floor_area_sqm": 58.0,
+  "floor_number": 2,
+  "furnished": "ano",
+  "gone_at": "2026-10-16T22:55:00Z",
+  "house_number": "1129",
+  "id": 3997220940,
+  "images": [
+   "https://d18-a.sdn.cz/d_18/c_img_qG_C/kcKfrMAkFnIwl4shIFzkE7/de86.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_C/kcKfrMAkFnIwl4slIFzkFf/1245.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_C/kcKfrMAkFDbqUhBpR9IFzkGA/18a0.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_C/nCR9NVflLnoRVmQwIFzkGp/d592.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_C/nCR9NVflLrfprBbmIFzkHS/4399.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+  ],
+  "is_new_building": true,
+  "last_price_czk": 23000,
+  "lat": 50.1072822954,
+  "locality": "Saarinenova, Hloubětín, Praha",
+  "lon": 14.5271774719,
+  "price_czk": 23000,
+  "price_czk_per_sqm": 509,
+  "relisted_as": {
+   "id": 3034976332,
+   "linked_at": "2026-10-16T22:54:06Z",
+   "text_similarity": 1.0,
+   "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/3034976332",
+   "verdict": "same"
+  },
+  "seller_name": "Ing. Andrea Pertlíková",
+  "source": "sreality",
+  "street": "Saarinenova",
+  "thumb": "https://d18-a.sdn.cz/d_18/c_img_qG_C/kcKfrMAkFnIwl4shIFzkE7/de86.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+  "title": "Pronájem bytu 2+kk 58 m²",
+  "total_czk": 29500,
+  "transaction_type": "pronajem",
+  "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/3997220940"
  },
  "400171084": {
   "address": {
@@ -66851,6 +67273,49 @@
   "transaction_type": "prodej",
   "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/737853516"
  },
+ "738508876": {
+  "address": {
+   "note": "číslo domu uvedené v popisu inzerátu",
+   "precision": "text",
+   "source": "popis",
+   "text": "Musílkova 39, Košíře"
+  },
+  "address_exact": true,
+  "approx_location": false,
+  "area": "jinonice",
+  "city_part": "Košíře",
+  "description": "Prémiová investice: 1+kk se zahradou a sklepem v žádaných Košířích\r\n\r\nHledáte bezpečnou investici s vysokým potenciálem pronájmu? V exkluzivním zastoupení developera nabízíme k prodeji jednotku 1+kk v projektu Musílkova 39 v klidné části pražských Košíř, která kombinuje efektivní plochu 27,2 m2 s extra bonusem 10 m2 zahrádky a sklepní kóje.\r\nDům prošel kompletní rekonstrukcí, což zaručuje minimální provozní náklady a stav novostavby. \r\n\r\nByty se zahradou jsou na trhu velice žádaným zbožím. \r\n\r\nParametry: 1. nadzemní podlaží, celková rekonstrukce domu.\r\n\r\nRozdělení ploch: Pokoj s kuchyňským koutem (17,85 m2), prostorná předsíň (4,41 m2), plně vybavená koupelna se sprchovým koutem (1,99 m2) a samostatnou toaletou (1,43 m2), \r\n\r\nVlastnictví: Byt a sklepní kóje v osobním vlastnictví, zahrada ve výhradním užívání.\r\n\r\nLokalita: Praha 5 – Košíře, žádaná lokalita s výbornou dostupností do centra Prahy, parky, kompletní občanská vybavenost.\r\n\r\nKoupi jednotky je možné financovat hypotékou. Se zajištěním financování vám rádi pomůžeme, včetně výběru nejvýhodnější nabídky na trhu.\r\n\r\nPro podrobné informace si domluvte osobní schůzku. Pro komunikaci uvádějte evidenční číslo zakázky N117162.",
+  "disposition": "1+kk",
+  "first_seen": "2026-09-26T20:38:36Z",
+  "floor_area_sqm": 27.0,
+  "floor_number": 1,
+  "furnished": "ne",
+  "gone_at": "2026-10-16T22:55:00Z",
+  "house_number": "503",
+  "id": 738508876,
+  "images": [
+   "https://d18-a.sdn.cz/d_18/c_img_qE_E/kPVqmweP7JB4z4nDZkHo9q8O/543e.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_C/nCR9NVflLChOIjztKIF0O0P/7f18.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_C/nCR9NVflLwO7jwu2IF0O1S/240c.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_C/nCR9NVflLrfprCNUIF0O2b/e958.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_C/kcKfrMAkFCpZ9wRKiIF0O3f/414c.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+  ],
+  "is_new_building": false,
+  "last_price_czk": 5300000,
+  "lat": 50.0672563980989,
+  "locality": "Musílkova, Košíře, Praha",
+  "lon": 14.3673231870842,
+  "price_czk": 5300000,
+  "price_czk_per_sqm": 196296,
+  "seller_name": "Tomáš Böhm STYLE",
+  "source": "sreality",
+  "street": "Musílkova",
+  "thumb": "https://d18-a.sdn.cz/d_18/c_img_qE_E/kPVqmweP7JB4z4nDZkHo9q8O/543e.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+  "title": "Prodej bytu 1+kk 27 m²",
+  "total_czk": 5300000,
+  "transaction_type": "prodej",
+  "url": "https://www.sreality.cz/detail/prodej/byt/1%2Bkk/x/738508876"
+ },
  "738537548": {
   "address": {
    "distance_m": 14,
@@ -74421,6 +74886,38 @@
   "transaction_type": "pronajem",
   "url": "https://www.bezrealitky.cz/nemovitosti-byty-domy/1067310-nabidka-pronajem-bytu-vosmikovych-praha"
  },
+ "bez-1067659": {
+  "address": {
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Rečkova 1717/5, Žižkov"
+  },
+  "approx_location": false,
+  "area": "vysocany",
+  "description": "Majitel domu pronajme byt 2+kk v prvním patře s výhledem do vnitrobloku o velkosti 45 m2. Byt je vybaven kuchyňskou linkou s elektrickým sporákem. Vytápění je řešeno formou plynových topidel. Ohřev vody je řešen elektrickým bojlerem.\n\nByt je orientován do vnitrobloku s klidným prostředím.\n\nByt prošel kompletní rekonstrukci s novými okny a vybavením.\n\nByt se nachází v cihlovém činžovním domě s výtahem u zastávky Ohrada na Žižkově - dobré MHD spojení do centra Prahy.\n\nNájemné činní 22 000 Kč + 850 Kč á osoba za společné služby (vodné, stočné, osvětlení, úklid společných prostor a výtah). Energie (plyn a elektřina) jsou hrazeny nájemníkem na vlastní smlouvy. Vratná kauce je ve výši jednoho měsíce (tj. 22 000 Kč).\n\nByt je vhodný pro samostatné osoby, nebo bezdětný pár. Preferujeme zájemce bez domácích mazlíčků (psy a kočky).",
+  "disposition": "2+kk",
+  "fees_czk": 850,
+  "first_seen": "2026-09-16T13:34:23Z",
+  "floor_area_sqm": 45,
+  "gone_at": "2026-10-16T22:55:00Z",
+  "id": "bez-1067659",
+  "images": [
+   "https://api.bezrealitky.cz/media/cache/record_main/data/images/advert/1067k/1067659/1789543280-jlhxtlwjmn-2026-09-14-10-12-56.jpg"
+  ],
+  "last_price_czk": 22000,
+  "lat": 50.0902747,
+  "lon": 14.4707406,
+  "price_czk": 22000,
+  "price_czk_per_sqm": 541,
+  "source": "bezrealitky",
+  "thumb": "https://api.bezrealitky.cz/media/cache/record_thumb/data/images/advert/1067k/1067659/1789543280-jlhxtlwjmn-2026-09-14-10-12-56.jpg",
+  "title": "Pronájem bytu 2+kk 45 m²",
+  "total_czk": 24350,
+  "transaction_type": "pronajem",
+  "url": "https://www.bezrealitky.cz/nemovitosti-byty-domy/1067659-nabidka-pronajem-bytu-reckova-praha"
+ },
  "bez-1068539": {
   "address": {
    "distance_m": 0,
@@ -76156,6 +76653,38 @@
   "total_czk": 40700,
   "transaction_type": "pronajem",
   "url": "https://www.bezrealitky.cz/nemovitosti-byty-domy/566057-nabidka-pronajem-bytu-sokolovska-praha"
+ },
+ "bez-568869": {
+  "address": {
+   "distance_m": 1,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (1 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Cetyňská 453/2, Praha 5"
+  },
+  "approx_location": false,
+  "area": "jinonice",
+  "description": "Přímý majitel nabízí k dlouhodobému pronájmu prostorný byt po kompletní rekonstrukci v činžovní vile se zahradou. Byt tvoří vstupní hala, ze které se vchází  do koupelny, kuchyně, dvou samostatných pokojů a dvou malých komor s regály a s odvětráním.  V celém bytě je úsporné elektrické podlahové topení s termostaty, plovoucí podlahy jsou vinylové v šedé barvě. V kuchyni je nová kuchyňská linka s rakouskými spotřebiči.  Elektroměr bude převeden na nájemníka (záloha na energie je uvedena v rozpisu měsíčních plateb).  Byt se nachází ve druhém podlaží, pokoje jsou orientovány na jih s výhledem do udržované zahrady a dále do zalesněné stráně. Kuchyně je na severní straně s výhledem do zahrady ve vnitrobloku. Zahradu  je možné využívat k odpočinku. Velmi klidná, tichá lokalita s dobrou dostupností do centra. Nabízí mnoho možností sportovního vyžití - tenis, lesopark Cibulka, areál Ladronka. Celý dům je nekuřácký, bez domácích mazlíčků. Po dohodě je možnost garážového stání ve vedlejším domě.",
+  "disposition": "2+1",
+  "fees_czk": 5500,
+  "first_seen": "2026-09-29T10:48:39Z",
+  "floor_area_sqm": 60,
+  "gone_at": "2026-10-16T22:55:00Z",
+  "id": "bez-568869",
+  "images": [
+   "https://api.bezrealitky.cz/media/cache/record_main/data/images/advert/568k/568869/1621172266-sfnbmcfjmn.jpg"
+  ],
+  "last_price_czk": 21000,
+  "lat": 50.0667088,
+  "lon": 14.3690102,
+  "price_czk": 21000,
+  "price_czk_per_sqm": 467,
+  "source": "bezrealitky",
+  "thumb": "https://api.bezrealitky.cz/media/cache/record_thumb/data/images/advert/568k/568869/1621172266-sfnbmcfjmn.jpg",
+  "title": "Pronájem bytu 2+1 60 m²",
+  "total_czk": 28000,
+  "transaction_type": "pronajem",
+  "url": "https://www.bezrealitky.cz/nemovitosti-byty-domy/568869-nabidka-pronajem-bytu-cetynska-praha-5"
  },
  "bez-575075": {
   "address": {
@@ -79884,6 +80413,40 @@
   "transaction_type": "prodej",
   "url": "https://reality.idnes.cz/detail/prodej/byt/praha-8-za-karlinskym-pristavem/6a996fa1ee6b84545b014561/"
  },
+ "idnes-6a9adfc63a086e44aa0cf87b": {
+  "address": {
+   "distance_m": 20,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (20 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Svatošových 1017, Vysočany"
+  },
+  "approx_location": true,
+  "area": "vysocany",
+  "city_part": "Vysočany",
+  "disposition": "1+kk",
+  "fees_czk": 2731,
+  "first_seen": "2026-10-10T05:46:33Z",
+  "floor_area_sqm": 32.0,
+  "gone_at": "2026-10-15T00:00:00Z",
+  "id": "idnes-6a9adfc63a086e44aa0cf87b",
+  "images": [
+   "https://sta-reality2.1gr.cz/sta/compile/thumbs/b/f/e/7ee9d82a35163928a2839756479ec.webp"
+  ],
+  "last_price_czk": 20500,
+  "lat": 50.107924931366,
+  "locality": "Svatošových, Praha 9 - Vysočany",
+  "lon": 14.5164845470516,
+  "price_czk": 20500,
+  "price_czk_per_sqm": 773,
+  "source": "idnes",
+  "street": "Svatošových",
+  "thumb": "https://sta-reality2.1gr.cz/sta/compile/thumbs/b/f/e/7ee9d82a35163928a2839756479ec.webp",
+  "title": "Pronájem bytu 1+kk 32 m²",
+  "total_czk": 24731,
+  "transaction_type": "pronajem",
+  "url": "https://reality.idnes.cz/detail/pronajem/byt/praha-9-svatosovych/6a9adfc63a086e44aa0cf87b/"
+ },
  "idnes-6a9c2dfd7b5f4b0be70502d4": {
   "address": {
    "note": "Sreality uvádí jen ulici, číslo domu neznámé",
@@ -82487,6 +83050,39 @@
   "transaction_type": "prodej",
   "url": "https://reality.idnes.cz/detail/prodej/byt/praha-8-nad-okrouhlikem/6abf994fd405eea7ed067dde/"
  },
+ "idnes-6abfa711660dbaa78c0ab8e8": {
+  "address": {
+   "note": "Sreality uvádí jen ulici, číslo domu neznámé",
+   "precision": "street",
+   "source": "sreality-ulice",
+   "text": "Na stráži, Libeň"
+  },
+  "approx_location": true,
+  "area": "vysocany",
+  "city_part": "Libeň",
+  "disposition": "2+1",
+  "fees_czk": 600,
+  "first_seen": "2026-10-14T20:19:44Z",
+  "floor_area_sqm": 64.0,
+  "gone_at": "2026-10-16T00:00:00Z",
+  "id": "idnes-6abfa711660dbaa78c0ab8e8",
+  "images": [
+   "https://sta-reality2.1gr.cz/sta/compile/thumbs/9/5/0/b85213ce99f6778a4101d1615fe72.webp"
+  ],
+  "last_price_czk": 22000,
+  "lat": 50.11759573333333,
+  "locality": "Na stráži, Praha 8 - Libeň",
+  "lon": 14.477722,
+  "price_czk": 22000,
+  "price_czk_per_sqm": 377,
+  "source": "idnes",
+  "street": "Na stráži",
+  "thumb": "https://sta-reality2.1gr.cz/sta/compile/thumbs/9/5/0/b85213ce99f6778a4101d1615fe72.webp",
+  "title": "Pronájem bytu 2+1 64 m²",
+  "total_czk": 24100,
+  "transaction_type": "pronajem",
+  "url": "https://reality.idnes.cz/detail/pronajem/byt/praha-8-na-strazi/6abfa711660dbaa78c0ab8e8/"
+ },
  "idnes-6abfb7212ab5e825130bf74b": {
   "address": {
    "distance_m": 28,
@@ -82754,6 +83350,40 @@
   "transaction_type": "pronajem",
   "url": "https://reality.idnes.cz/detail/pronajem/byt/praha-9-u-svobodarny/6ac370db3324914d9600642f/"
  },
+ "idnes-6ac37d0560a0314e9e0145e5": {
+  "address": {
+   "distance_m": 27,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (27 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Musílkova 1314/44, Košíře"
+  },
+  "approx_location": true,
+  "area": "jinonice",
+  "city_part": "Košíře",
+  "disposition": "2+kk",
+  "fees_czk": 2000,
+  "first_seen": "2026-10-06T11:27:38Z",
+  "floor_area_sqm": 41.0,
+  "gone_at": "2026-10-16T00:00:00Z",
+  "id": "idnes-6ac37d0560a0314e9e0145e5",
+  "images": [
+   "https://sta-reality2.1gr.cz/sta/compile/thumbs/6/8/6/8c7c2cb455a6bfcb1fb8594d90ad9.webp"
+  ],
+  "last_price_czk": 24300,
+  "lat": 50.06778813553791,
+  "locality": "Musílkova, Praha 5 - Košíře",
+  "lon": 14.368552305193319,
+  "price_czk": 24300,
+  "price_czk_per_sqm": 678,
+  "source": "idnes",
+  "street": "Musílkova",
+  "thumb": "https://sta-reality2.1gr.cz/sta/compile/thumbs/6/8/6/8c7c2cb455a6bfcb1fb8594d90ad9.webp",
+  "title": "Pronájem bytu 2+kk 41 m²",
+  "total_czk": 27800,
+  "transaction_type": "pronajem",
+  "url": "https://reality.idnes.cz/detail/pronajem/byt/praha-5-musilkova/6ac37d0560a0314e9e0145e5/"
+ },
  "idnes-6ac3857794d612286b0da3ca": {
   "address": {
    "distance_m": 5,
@@ -82819,6 +83449,40 @@
   "title": "Prodej bytu 3+kk 84 m²",
   "transaction_type": "prodej",
   "url": "https://reality.idnes.cz/detail/prodej/byt/praha-9-oktabcovych/6ac38aa9a77ec9885302f7d2/"
+ },
+ "idnes-6ac3d9057ccd142a13010133": {
+  "address": {
+   "distance_m": 11,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (11 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Na Vysočanských vinicích 411/19, Praha 9"
+  },
+  "approx_location": true,
+  "area": "vysocany",
+  "city_part": "Vysočany",
+  "disposition": "2+kk",
+  "fees_czk": 6500,
+  "first_seen": "2026-10-16T13:22:52Z",
+  "floor_area_sqm": 69.0,
+  "gone_at": "2026-10-16T00:00:00Z",
+  "id": "idnes-6ac3d9057ccd142a13010133",
+  "images": [
+   "https://sta-reality2.1gr.cz/sta/compile/thumbs/e/c/9/f39a9110c8ae7863b0c498bdef2c5.webp"
+  ],
+  "last_price_czk": 30000,
+  "lat": 50.115663930050005,
+  "locality": "Na vysočanských vinicích, Praha 9 - Vysočany",
+  "lon": 14.509358322650002,
+  "price_czk": 30000,
+  "price_czk_per_sqm": 551,
+  "source": "idnes",
+  "street": "Na vysočanských vinicích",
+  "thumb": "https://sta-reality2.1gr.cz/sta/compile/thumbs/e/c/9/f39a9110c8ae7863b0c498bdef2c5.webp",
+  "title": "Pronájem bytu 2+kk 69 m²",
+  "total_czk": 38000,
+  "transaction_type": "pronajem",
+  "url": "https://reality.idnes.cz/detail/pronajem/byt/praha-9-na-vysocanskych-vinicich/6ac3d9057ccd142a13010133/"
  },
  "idnes-6ac493a3477abeb860081112": {
   "address": {
@@ -83193,6 +83857,50 @@
   "total_czk": 8499000,
   "transaction_type": "prodej",
   "url": "https://reality.idnes.cz/detail/prodej/byt/praha-5-fabianove/6ac799df114f1271c50c29de/"
+ },
+ "idnes-6ac7dfd87798fa3e610b9159": {
+  "address": {
+   "distance_m": 15,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (15 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Ambrožova 1565/8, Žižkov"
+  },
+  "approx_location": true,
+  "area": "vysocany",
+  "city_part": "Žižkov",
+  "description": "2+kk, 44m, P3 - Žižkov, ul. Ambrožova, částečně zařízené. Tento byt se nachází v 5. patře činžovního domu s výtahem poblíž parků Vítkov a Parukářka. Je zařízený kuchyňskou linkou se spotřebiči a částečně nábytkem (kompletní ložnice + komoda v kuchyni). V místnostech jsou plovoucí podlahy a koberec. Koupelna se sprchovým koutem a pračkou, toaleta je zvlášť. K dispozici kabel Vodafone. Velmi dobré denní a noční MHD (do 5 minut metra Želivského a Palmovka, 10min. na metro Florenc). Vratná kauce a provize pro RK činí 18.500,- Kč.",
+  "disposition": "2+kk",
+  "first_seen": "2026-10-14T13:46:41Z",
+  "floor_area_sqm": 44.0,
+  "gone_at": "2026-10-16T00:00:00Z",
+  "id": "idnes-6ac7dfd87798fa3e610b9159",
+  "images": [
+   "https://sta-reality2.1gr.cz/sta/compile/thumbs/2/c/1/33579b5e567c86f0274af0b1b228c.webp"
+  ],
+  "last_price_czk": 18500,
+  "lat": 50.0889763886074,
+  "locality": "Ambrožova, Praha 3 - Žižkov",
+  "lon": 14.472446265911934,
+  "price_czk": 18500,
+  "price_czk_per_sqm": 455,
+  "relist_of": {
+   "first_seen": "2026-09-28T16:52:17Z",
+   "gone_at": "2026-10-14T20:20:38Z",
+   "id": 2961252428,
+   "listed_since": "2026-09-28T16:52:17Z",
+   "price_czk": 18500,
+   "text_similarity": 0.82,
+   "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/2961252428",
+   "verdict": "same"
+  },
+  "source": "idnes",
+  "street": "Ambrožova",
+  "thumb": "https://sta-reality2.1gr.cz/sta/compile/thumbs/2/c/1/33579b5e567c86f0274af0b1b228c.webp",
+  "title": "Pronájem bytu 2+kk 44 m²",
+  "total_czk": 20000,
+  "transaction_type": "pronajem",
+  "url": "https://reality.idnes.cz/detail/pronajem/byt/praha-3-ambrozova/6ac7dfd87798fa3e610b9159/"
  },
  "idnes-6ac8e7f9aac02e0906072f51": {
   "address": {
