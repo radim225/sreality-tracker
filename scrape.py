@@ -6556,7 +6556,12 @@ def update_pool_and_reports(snapshot, changes):
     # (the Monday file would otherwise just be missing) but the snapshot and
     # the pool are already on disk. Nothing in this call sends an alert.
     try:
-        seg = segments.publish(all_pool, state, as_of=now)
+        # Kopie: stamp mění exclude/plochu podle snapshotu a pool už je
+        # uložený. apply_overrides umí na poolu smazat exclude, který
+        # sale_count ve snapshotu pořád má.
+        live_records = segments.stamp_live_snapshot(
+            [dict(rec) for rec in pool.records_of(all_pool)], snapshot)
+        seg = segments.publish(live_records, state, as_of=now)
     except Exception as exc:
         print(f"::error::Týdenní segmenty selhaly: {exc}", file=sys.stderr)
         raise
