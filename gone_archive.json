@@ -159,12 +159,18 @@
   "city_part": "Libeň",
   "description": "ID:Mar2kk\r\n\r\nNabízíme k dlouhodobému pronájmu útulný a kompletně zařízený byt 1+kk v lokalitě Praha 9  Libeň. Byt je připraven k nastěhování od 1. 12. 2026.\r\n\r\nVelkou výhodou je kompletní vybavení  nový nájemce se může nastěhovat prakticky bez nutnosti pořizovat další nábytek, spotřebiče nebo základní vybavení domácnosti.\r\n\r\nDispozice a vybavení\r\n\r\nByt se pronajímá plně zařízený a vybavený. Součástí je:\r\n\r\n* veškerý potřebný nábytek,\r\n* kompletně vybavená kuchyň,\r\n* domácí spotřebiče,\r\n* myčka nádobí,\r\n* nádobí a kuchyňské potřeby,\r\n* internet.\r\n\r\nPraktickým řešením je rozkládací postel, kterou lze rozložit na plnohodnotné dvoulůžko. Druhá matrace je součástí vybavení.\r\n\r\nByt je tak vhodný jak pro jednotlivce, tak pro pár.\r\n\r\nLokalita a doprava\r\n\r\nLibeň nabízí výbornou dostupnost do centra Prahy a kompletní občanskou vybavenost.\r\n\r\nPřibližně 10 minut chůze se nachází metro B  Palmovka a obdobně je dostupná také oblast Vysočanské. V okolí jsou tramvajové a autobusové spoje, obchody, supermarkety, restaurace, kavárny, lékárny a další služby.\r\n\r\nPodmínky pronájmu\r\n\r\nNájemné: 31 900 Kč/měsíc  v ceně jsou zahrnuty veškeré poplatky za služby, energie a internet.\r\nVratná kauce: 31 900 Kč\r",
   "disposition": "2+kk",
+  "episodes": [
+   {
+    "gone_at": "2026-10-10T23:37:36Z",
+    "returned_at": "2026-10-11T15:16:43Z"
+   }
+  ],
   "fees_czk": 5400,
   "first_seen": "2026-10-04T05:47:21Z",
   "floor_area_sqm": 45.0,
   "floor_number": 2,
   "furnished": "ano",
-  "gone_at": "2026-10-10T23:37:36Z",
+  "gone_at": "2026-10-17T18:33:30Z",
   "id": 1010503756,
   "images": [
    "https://d18-a.sdn.cz/d_18/c_img_qG_A/kcKfrMAkFB3JsTXHpH8vlvi/13e8.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
@@ -187,7 +193,6 @@
    "url": "https://reality.idnes.cz/detail/pronajem/byt/praha-9-kolcavka/6ac1dca1dae375fb0005d054/",
    "verdict": "same"
   },
-  "returned_at": "2026-10-11T15:16:43Z",
   "seller_name": "Bc. Igor Chotinskij",
   "source": "sreality",
   "street": "Kolčavka",
@@ -4508,6 +4513,7 @@
   "lon": 14.357483463206512,
   "price_czk": 23000,
   "price_czk_per_sqm": 395,
+  "returned_at": "2026-10-17T18:32:40Z",
   "seller_name": "Tomáš Svoboda",
   "source": "sreality",
   "street": "Kotlářka",
@@ -6861,6 +6867,7 @@
   "lon": 14.368125696914051,
   "price_czk": 6700000,
   "price_czk_per_sqm": 159524,
+  "returned_at": "2026-10-17T18:32:40Z",
   "seller_name": "Mgr. Elizaveta Fedorenko",
   "source": "sreality",
   "street": "Dubrovnická",
@@ -9384,6 +9391,50 @@
   "total_czk": 23000,
   "transaction_type": "pronajem",
   "url": "https://www.sreality.cz/detail/pronajem/byt/1%2Bkk/x/1507188812"
+ },
+ "1507332172": {
+  "address": {
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Zelenky-Hajského 1572/10, Žižkov"
+  },
+  "address_exact": true,
+  "approx_location": false,
+  "area": "vysocany",
+  "city_part": "Žižkov",
+  "description": "Exkluzivně nabízím pronájem moderního bytu o dispozici 2+kk a užitné ploše 40 m2, situovaného v prvním patře revitalizovaného, cihlového bytového domu s výtahem. \r\nJedná se o kompletně zrekonstruovaný, světlý byt s vlastním plynovým kotlem a kompletně zařízenou kuchyňskou linkou.\r\nBytový dům se nachází v Praze 3 – Žižkově, v ulici Zelenky-Hajského, v kompaktní městské zástavbě mezi ulicemi Hartigova, Jana Želivského, Biskupcova a Jeseniova. \r\nV bezprostředním okolí je dostupná tramvajová a autobusová doprava, tramvajová stanice \"Biskupcova\"  cca 200 m od domu. V bezprostřední blízkosti se nachází park Červená skála a navazující Parukářka. \r\nEkonomika pronájmu: \r\nMěsíční nájemné 22 000 Kč, služby spojené s užíváním bytu 1000 Kč měsíčně,  elektřina 1200 Kč měsíčně, plyn 1800 Kč měsíčně.",
+  "disposition": "2+kk",
+  "fees_czk": 1000,
+  "first_seen": "2026-10-07T15:42:56Z",
+  "floor_area_sqm": 40.0,
+  "floor_number": 2,
+  "gone_at": "2026-10-17T18:33:30Z",
+  "house_number": "1572",
+  "id": 1507332172,
+  "images": [
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/nCR9NVflLCNT9cfZsIAobVr/26d5.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/nCR9NVflLBkdq1C9AIAobWJ/8df7.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/kcKfrMAkFnIwlWW0IAobWl/b061.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/nCR9NVflLCNT9cf2OIAobbi/c5b3.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/nCR9NVflLCsdQ6PQhIAobfk/7b00.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+  ],
+  "is_new_building": false,
+  "last_price_czk": 22000,
+  "lat": 50.0889859906,
+  "locality": "Zelenky-Hajského, Žižkov, Praha",
+  "lon": 14.4672178931,
+  "price_czk": 22000,
+  "price_czk_per_sqm": 605,
+  "seller_name": "Ing. Radek Niezgoda",
+  "source": "sreality",
+  "street": "Zelenky-Hajského",
+  "thumb": "https://d18-a.sdn.cz/d_18/c_img_qG_A/nCR9NVflLCNT9cfZsIAobVr/26d5.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+  "title": "Pronájem bytu 2+kk 40 m²",
+  "total_czk": 24200,
+  "transaction_type": "pronajem",
+  "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/1507332172"
  },
  "1509806156": {
   "address": {
@@ -15032,14 +15083,20 @@
   "approx_location": false,
   "area": "vysocany",
   "city_part": "Karlín",
-  "description": "Vítáme vás ve výjimečné novostavbě bytu v moderním stylu, který se nachází na atraktivní adrese v rezidenci Blízká. Tato lokalita je známá svou dynamikou a kouzlem, které jsou ideální pro život ve městě. \r\n\r\nByt o dispozici 2+kk se rozkládá na obyvatelné ploše 57 m² a užitkové ploše 62 m², což poskytuje dostatek prostoru pro komfortní bydlení. Budova, ve které se byt nachází, byla postavena v roce 2026. Byt je umístěn ve druhém nadzemním podlaží sedmipatrového domu.\r\nDíky panoramatickým oknům je byt plný světla a nabízí krásný výhled. Okna jsou vybavena venkovními elektrickými roletami.\r\n\r\nByt disponuje balkonem o ploše 4,4 m², který poskytuje skvělý prostor k odpočinku a relaxaci na čerstvém vzduchu. Dále je v ceně parkovací stání.\r\n\r\nCelková cena bytu činí 32000 CZK za měsíc, poplatky za služby jsou ve výši 3 702 CZK a elektřina se bude převádět na nájemce. Kauce je ve výši 35702 CZK. \r\n\r\nOkolí bytu je plné života a nabízí širokou škálu služeb, od obchodů a restaurací po kulturní a volnočasové aktivity. Karlín je jednou z nejatraktivnějších městských čtvrtí v Praze díky své centrální poloze a skvělé dopravní dostupnosti.\r\n\r\nTento byt je skvělou volbou pro ty, kteří hledají modern",
+  "description": "Vítáme vás ve výjimečné novostavbě bytu v moderním stylu, který se nachází na atraktivní adrese v rezidenci Blízká. Tato lokalita je známá svou dynamikou a kouzlem, které jsou ideální pro život ve městě. \r\n\r\nByt o dispozici 2+kk se rozkládá na obyvatelné ploše 57 m² a užitkové ploše 62 m², což poskytuje dostatek prostoru pro komfortní bydlení. Budova, ve které se byt nachází, byla postavena v roce 2026. Byt je umístěn ve druhém nadzemním podlaží sedmipatrového domu.\r\nDíky panoramatickým oknům je byt plný světla a nabízí krásný výhled. Okna jsou vybavena venkovními elektrickými roletami.\r\n\r\nByt disponuje balkonem o ploše 4,4 m², který poskytuje skvělý prostor k odpočinku a relaxaci na čerstvém vzduchu. Dále je v ceně parkovací stání.\r\n\r\nCelková cena bytu činí 30000 CZK za měsíc, poplatky za služby jsou ve výši 3 702 CZK a elektřina se bude převádět na nájemce. Kauce je ve výši 33702 CZK. \r\n\r\nOkolí bytu je plné života a nabízí širokou škálu služeb, od obchodů a restaurací po kulturní a volnočasové aktivity. Karlín je jednou z nejatraktivnějších městských čtvrtí v Praze díky své centrální poloze a skvělé dopravní dostupnosti.\r\n\r\nTento byt je skvělou volbou pro ty, kteří hledají modern",
   "disposition": "2+kk",
+  "episodes": [
+   {
+    "gone_at": "2026-10-12T05:54:16Z",
+    "returned_at": "2026-10-12T18:15:11Z"
+   }
+  ],
   "fees_czk": 3702,
   "first_seen": "2026-09-18T13:05:34Z",
   "floor_area_sqm": 57.0,
   "floor_number": 2,
   "furnished": "castecne",
-  "gone_at": "2026-10-12T05:54:16Z",
+  "gone_at": "2026-10-17T18:33:30Z",
   "id": 1807294540,
   "images": [
    "https://d18-a.sdn.cz/d_18/c_img_qF_C/k0OqwCKRB7OXgBjmHzidNT/2ab7.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
@@ -15055,7 +15112,6 @@
   "lon": 14.4628503445585,
   "price_czk": 30000,
   "price_czk_per_sqm": 618,
-  "returned_at": "2026-10-12T18:15:11Z",
   "seller_name": "Michal Škoty",
   "source": "sreality",
   "street": "Švarcova",
@@ -29279,6 +29335,50 @@
   "transaction_type": "pronajem",
   "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/2564370508"
  },
+ "2565345356": {
+  "address": {
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Sokolovská 725/111, Karlín"
+  },
+  "address_exact": true,
+  "approx_location": false,
+  "area": "vysocany",
+  "city_part": "Karlín",
+  "description": "Nabízíme k pronájmu kompletně zařízený byt s lodžií v 5. patře nově postaveného rezidenčního projektu Block Karlín Living se společnou terasou na střeše, podzemním parkováním a klidným upraveným vnitroblokem. Sedmipodlažní dům pochází z dílny zavedené architektonické kanceláře Architekti Headhand. Budova se nachází ve vyhledávané pražské čtvrti Karlín v pěším dosahu stanic metra Invalidovna a Křižíkova, i v blízkosti zastávky tramvají. Trendy lokalita s rychlým spojením do centra nabízí kompletní občanskou vybavenost a služby. Bezprostřední okolí tvoří řada moderních business a administrativních center i tradiční městská zástavba s kosmopolitním mixem restaurací, kaváren, bister a obchodů. Čtvrť nabízí pestrou paletu příležitostí k aktivnímu vyžití např. v podobě tenisových kurtů, golfových odpališť, cyklostezky a řady fitness center.\r\n \r\n\r\nInteriér bytu tvoří obývací pokoj s plně vybavenou kuchyní a jídelním prostorem, ložnice s lodžií, koupelna se sprchovým koutem a toaletou a otevřená vstupní chodba. \r\n\r\nKlimatizace, řízené větrání, masivní dřevěné podlahy, velkoformátová dlažba, vestavěné úložné prostory, předokenní rolety, centrální podlahové vytápění, pračka se sušičkou, myčk",
+  "disposition": "2+kk",
+  "first_seen": "2026-10-07T15:42:56Z",
+  "floor_area_sqm": 40.0,
+  "floor_number": 6,
+  "furnished": "ano",
+  "gone_at": "2026-10-17T18:33:30Z",
+  "house_number": "725",
+  "id": 2565345356,
+  "images": [
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/kcKfrMAkFDbqUh3s7IAqGx8/e35d.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/kcKfrMAkFDvG5qTg4IAqG6C/1b8a.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/nCR9NVflLBaEbFOMxIAqHEO/093c.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/nCR9NVflLBkdq1DJqIAqHM5/ae8a.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/kcKfrMAkFDbqUh3s7IAqHVP/c916.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+  ],
+  "is_new_building": true,
+  "last_price_czk": 32640,
+  "lat": 50.0956750333946,
+  "locality": "Sokolovská, Karlín, Praha",
+  "lon": 14.4579317253325,
+  "price_czk": 32640,
+  "price_czk_per_sqm": 854,
+  "seller_name": "Michaela Koudelová",
+  "source": "sreality",
+  "street": "Sokolovská",
+  "thumb": "https://d18-a.sdn.cz/d_18/c_img_qG_A/kcKfrMAkFDbqUh3s7IAqGx8/e35d.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+  "title": "Pronájem bytu 2+kk 40 m²",
+  "total_czk": 34140,
+  "transaction_type": "pronajem",
+  "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/2565345356"
+ },
  "2565480524": {
   "address": {
    "note": "Sreality uvádí jen ulici, číslo domu neznámé",
@@ -38447,6 +38547,7 @@
   "lon": 14.518780260962423,
   "price_czk": 20000,
   "price_czk_per_sqm": 717,
+  "returned_at": "2026-10-17T18:32:40Z",
   "seller_name": "Mgr. Elizaveta Fedorenko",
   "source": "sreality",
   "street": "Ivana Hlinky",
@@ -49417,6 +49518,7 @@
   "lon": 14.350299141731298,
   "price_czk": 9600000,
   "price_czk_per_sqm": 102128,
+  "returned_at": "2026-10-17T18:32:40Z",
   "seller_name": "Mgr. Elizaveta Fedorenko",
   "source": "sreality",
   "street": "Seydlerova",
@@ -51637,12 +51739,18 @@
   "city_part": "Košíře",
   "description": "GLJ Partners Vám exkluzivně nabízí k pronájmu moderní byt o dispozici 2+kk a celkové ploše 88 m2, umístěný v prestižním rezidenčním projektu Vily Košíře v atraktivní lokalitě Praha 5 - Košíře, ulice Na Starce.\r\n\r\nPlocha bytu: 54 m2\r\nTerasa: 34 m2\r\nSklep: 5 m2\r\nPatro: 3. ze 4\r\nNájemné: 35 000 Kč / měsíc\r\nPoplatky za služby: 4 300 Kč / měsíc\r\nParkovací stání: 3 000 Kč / měsíc (podmínkou pronájmu)\r\nK nastěhování: ihned\r\n\r\nDispozice:\r\nByt se nachází v novostavbě moderního privátního rezidenčního komplexu Vily Košíře a nabízí komfortní bydlení s důrazem na kvalitu a soukromí. Dominantou bytu je prostorný obývací pokoj s plně vybavenou kuchyní na míru, která je osazena kvalitními spotřebiči značky Bosch.\r\nByt dále nabízí ložnici, koupelnu s vanou a pračkou, vstupní chodbu a přímý vstup na prostornou terasu, která poskytuje příjemné místo pro odpočinek.\r\n\r\nMezi další výhody patří podlahové vytápění, venkovní žaluzie, sklepní prostor a moderní standardy novostavby včetně výtahu.\r\n\r\nLokalita:\r\nVilla Košíře se nachází v klidné a vyhledávané části Prahy 5 - Košíře, která nabízí ideální kombinaci klidného bydlení a výborné dostupnosti do centra města. V okolí se nachází kompletní občanská vyba",
   "disposition": "2+kk",
+  "episodes": [
+   {
+    "gone_at": "2026-10-06T11:28:54Z",
+    "returned_at": "2026-10-06T18:38:27Z"
+   }
+  ],
   "fees_czk": 4300,
   "first_seen": "2026-09-26T20:38:36Z",
   "floor_area_sqm": 54.0,
   "floor_number": 3,
   "furnished": "ne",
-  "gone_at": "2026-10-06T11:28:54Z",
+  "gone_at": "2026-10-17T18:33:30Z",
   "house_number": "1405",
   "id": 3823624268,
   "images": [
@@ -51659,7 +51767,6 @@
   "lon": 14.3690494751802,
   "price_czk": 35000,
   "price_czk_per_sqm": 756,
-  "returned_at": "2026-10-06T18:38:27Z",
   "seller_name": "Vladiszláv Jakovlev",
   "source": "sreality",
   "street": "Na Stárce",
