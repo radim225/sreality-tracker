@@ -11,8 +11,8 @@
  "gone_means": "rezervováno/prodáno (web prodané z ceníku vyřazuje)",
  "access_note": "robots.txt neexistuje (404); podmínky zakazují jen zásah do obsahu webu",
  "baseline_at": "2026-09-27T14:56:46Z",
- "fetched_at": "2026-10-19T11:04:54Z",
- "last_ok_at": "2026-10-19T11:04:54Z",
+ "fetched_at": "2026-10-20T10:18:13Z",
+ "last_ok_at": "2026-10-20T10:18:13Z",
  "units": {
   "F10.001": {
    "id": "F10.001",
@@ -167,10 +167,11 @@
    "status_raw": "Předrezervace",
    "source_created_at": "2026-08-07T08:09:12.522Z",
    "first_seen": "2026-09-27T14:56:46Z",
-   "last_change_at": "2026-09-27T14:56:46Z",
+   "last_change_at": "2026-10-20T10:18:13Z",
    "last_price_czk": 9899500,
    "last_price_at": "2026-09-27T14:56:46Z",
-   "baseline": true
+   "baseline": true,
+   "gone_at": "2026-10-20T10:18:13Z"
   },
   "F10.202": {
    "id": "F10.202",
@@ -230,11 +231,11 @@
    "price_excl_vat_czk": 10203661,
    "price_with_extras_czk": 12339100,
    "extras": "PS13, SK19",
-   "status": "volny",
-   "status_raw": "Dostupný",
+   "status": "predrezervace",
+   "status_raw": "Předrezervace",
    "source_created_at": "2026-08-07T08:09:12.735Z",
    "first_seen": "2026-09-27T14:56:46Z",
-   "last_change_at": "2026-09-30T11:17:39Z",
+   "last_change_at": "2026-10-20T10:18:13Z",
    "last_price_czk": 11428100,
    "last_price_at": "2026-09-27T14:56:46Z",
    "baseline": true
@@ -728,10 +729,11 @@
    "status_raw": "Předrezervace",
    "source_created_at": "2025-02-14T11:00:12.524Z",
    "first_seen": "2026-09-27T14:56:46Z",
-   "last_change_at": "2026-09-27T14:56:46Z",
+   "last_change_at": "2026-10-20T10:18:13Z",
    "last_price_czk": 11229000,
    "last_price_at": "2026-09-27T14:56:46Z",
-   "baseline": true
+   "baseline": true,
+   "gone_at": "2026-10-20T10:18:13Z"
   },
   "F4.403": {
    "id": "F4.403",
