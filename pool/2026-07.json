@@ -41,7 +41,7 @@
  "1028513868": {
   "id": "1028513868",
   "first_seen": "2026-07-09T17:49:12Z",
-  "last_seen": "2026-10-21T04:36:50Z",
+  "last_seen": "2026-10-21T13:52:57Z",
   "gone_at": null,
   "price_history": [
    {
@@ -244,7 +244,7 @@
  "1085333580": {
   "id": "1085333580",
   "first_seen": "2026-07-16T17:02:42Z",
-  "last_seen": "2026-10-21T04:36:50Z",
+  "last_seen": "2026-10-21T13:52:57Z",
   "gone_at": null,
   "price_history": [
    {
@@ -279,7 +279,7 @@
   "floors_total": 14,
   "backfilled": true,
   "dist_km": 2.0,
-  "deal_pct": -2,
+  "deal_pct": -1,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -318,7 +318,7 @@
  "1089462348": {
   "id": "1089462348",
   "first_seen": "2026-07-08T10:06:28Z",
-  "last_seen": "2026-10-21T04:36:50Z",
+  "last_seen": "2026-10-21T13:52:57Z",
   "gone_at": null,
   "price_history": [
    {
@@ -1979,7 +1979,7 @@
  "224321612": {
   "id": "224321612",
   "first_seen": "2026-07-09T01:27:57Z",
-  "last_seen": "2026-10-21T04:36:50Z",
+  "last_seen": "2026-10-21T13:52:57Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2478,7 +2478,7 @@
  "2605278028": {
   "id": "2605278028",
   "first_seen": "2026-07-07T10:47:34Z",
-  "last_seen": "2026-10-21T04:36:50Z",
+  "last_seen": "2026-10-21T13:52:57Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2495,6 +2495,11 @@
     "at": "2026-09-30",
     "price_czk": 24000,
     "total_czk": 33500
+   },
+   {
+    "at": "2026-10-21",
+    "price_czk": 25500,
+    "total_czk": 35000
    }
   ],
   "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/2605278028",
@@ -2509,21 +2514,21 @@
   "lat": 50.112083998177106,
   "lon": 14.518455223510033,
   "pod_harfou": false,
-  "price_czk": 24000,
+  "price_czk": 25500,
   "fees_czk": 8000,
   "fees_missing": false,
   "fees_source": "note",
   "electricity_czk": 1500,
   "electricity_estimated": true,
-  "total_czk": 33500,
-  "price_czk_per_sqm": 644,
+  "total_czk": 35000,
+  "price_czk_per_sqm": 673,
   "garage": true,
   "parking": false,
   "floor_number": 6,
   "floors_total": null,
   "backfilled": true,
   "dist_km": 2.47,
-  "deal_pct": -1,
+  "deal_pct": 3,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -2549,8 +2554,8 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 23337,
-  "edited": "2026-09-30",
+  "views": 25302,
+  "edited": "2026-10-21",
   "since": "2026-02-13",
   "parking_state": "priced",
   "parking_price_czk": 2420,
@@ -2682,7 +2687,7 @@
  "2665009228": {
   "id": "2665009228",
   "first_seen": "2026-07-27T17:29:31Z",
-  "last_seen": "2026-10-21T04:36:50Z",
+  "last_seen": "2026-10-21T13:52:57Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2800,7 +2805,7 @@
  "2696716364": {
   "id": "2696716364",
   "first_seen": "2026-07-07T10:47:34Z",
-  "last_seen": "2026-10-21T04:36:50Z",
+  "last_seen": "2026-10-21T13:52:57Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2841,7 +2846,7 @@
   "backfilled": true,
   "dist_km": 2.47,
   "price_old_czk": null,
-  "deal_pct": -5,
+  "deal_pct": -4,
   "deal_outlier": false,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
@@ -2868,8 +2873,8 @@
   "elevator": null,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 4071,
-  "edited": "2026-10-20",
+  "views": 4320,
+  "edited": "2026-10-21",
   "since": "2026-04-29",
   "exclude_from_stats": false,
   "gone_last_price_czk": 18000,
@@ -3004,7 +3009,7 @@
  "2839470156": {
   "id": "2839470156",
   "first_seen": "2026-07-09T10:47:27Z",
-  "last_seen": "2026-10-21T04:36:50Z",
+  "last_seen": "2026-10-21T13:52:57Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3025,7 +3030,7 @@
   ],
   "url": "https://www.sreality.cz/detail/prodej/byt/1%2Bkk/x/2839470156",
   "source": "sreality",
-  "title": "На продажу квартира 1-комн. студия 36 m²",
+  "title": "Prodej bytu 1+kk 36 m²",
   "transaction_type": "prodej",
   "disposition": "1+kk",
   "floor_area_sqm": 36.0,
@@ -3898,7 +3903,7 @@
  "3311853644": {
   "id": "3311853644",
   "first_seen": "2026-07-22T10:13:56Z",
-  "last_seen": "2026-10-21T04:36:50Z",
+  "last_seen": "2026-10-21T13:52:57Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3953,7 +3958,7 @@
   "floors_total": 6,
   "backfilled": true,
   "dist_km": 1.39,
-  "deal_pct": -13,
+  "deal_pct": -11,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -4738,7 +4743,7 @@
  "3662205004": {
   "id": "3662205004",
   "first_seen": "2026-07-27T01:28:24Z",
-  "last_seen": "2026-10-21T04:36:50Z",
+  "last_seen": "2026-10-21T13:52:57Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5530,7 +5535,7 @@
  "4180140108": {
   "id": "4180140108",
   "first_seen": "2026-07-17T09:46:26Z",
-  "last_seen": "2026-10-21T04:36:50Z",
+  "last_seen": "2026-10-21T13:52:57Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5907,7 +5912,7 @@
  "45146188": {
   "id": "45146188",
   "first_seen": "2026-07-16T17:02:42Z",
-  "last_seen": "2026-10-21T04:36:50Z",
+  "last_seen": "2026-10-21T13:52:57Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5933,7 +5938,7 @@
   ],
   "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/45146188",
   "source": "sreality",
-  "title": "В аренду квартира 2-комн. студия 56 m²",
+  "title": "Pronájem bytu 2+kk 56 m²",
   "transaction_type": "pronajem",
   "disposition": "2+kk",
   "floor_area_sqm": 56.0,
@@ -5957,7 +5962,7 @@
   "floors_total": 8,
   "backfilled": true,
   "dist_km": 2.42,
-  "deal_pct": -1,
+  "deal_pct": -2,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -6880,7 +6885,7 @@
  "882630732": {
   "id": "882630732",
   "first_seen": "2026-07-02T17:27:02Z",
-  "last_seen": "2026-10-21T04:36:50Z",
+  "last_seen": "2026-10-21T13:52:57Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6925,7 +6930,7 @@
   "backfilled": true,
   "source": "sreality",
   "dist_km": 1.39,
-  "deal_pct": 15,
+  "deal_pct": 17,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -7047,7 +7052,7 @@
  "960421964": {
   "id": "960421964",
   "first_seen": "2026-07-09T10:47:27Z",
-  "last_seen": "2026-10-21T04:36:50Z",
+  "last_seen": "2026-10-21T13:52:57Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7068,7 +7073,7 @@
   ],
   "url": "https://www.sreality.cz/detail/prodej/byt/1%2Bkk/x/960421964",
   "source": "sreality",
-  "title": "На продажу квартира 1-комн. студия 36 m²",
+  "title": "Prodej bytu 1+kk 36 m²",
   "transaction_type": "prodej",
   "disposition": "1+kk",
   "floor_area_sqm": 36.0,
@@ -7973,7 +7978,7 @@
  "bez-1029927": {
   "id": "bez-1029927",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-10-20T23:16:46Z",
+  "last_seen": "2026-10-21T13:52:57Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9600,7 +9605,7 @@
  "bez-349115": {
   "id": "bez-349115",
   "first_seen": "2026-07-17T09:46:26Z",
-  "last_seen": "2026-10-20T23:16:46Z",
+  "last_seen": "2026-10-21T13:52:57Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10140,7 +10145,7 @@
  "bez-754575": {
   "id": "bez-754575",
   "first_seen": "2026-07-17T09:46:26Z",
-  "last_seen": "2026-10-20T23:16:46Z",
+  "last_seen": "2026-10-21T13:52:57Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10179,7 +10184,7 @@
   "backfilled": true,
   "exclude_from_stats": false,
   "dist_km": 0.59,
-  "deal_pct": -9,
+  "deal_pct": -8,
   "deal_outlier": false,
   "area": "vysocany",
   "house_class": null,
@@ -10911,7 +10916,7 @@
  "bez-972132": {
   "id": "bez-972132",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-10-20T23:16:46Z",
+  "last_seen": "2026-10-21T13:52:57Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10944,7 +10949,7 @@
   "parking": null,
   "backfilled": true,
   "dist_km": 2.57,
-  "deal_pct": 18,
+  "deal_pct": 19,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "house_class": null,
@@ -11148,7 +11153,7 @@
  "bez-996941": {
   "id": "bez-996941",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-10-20T23:16:46Z",
+  "last_seen": "2026-10-21T13:52:57Z",
   "gone_at": null,
   "price_history": [
    {
@@ -13243,7 +13248,7 @@
  "idnes-6a0c59a72b5ffab24208d684": {
   "id": "idnes-6a0c59a72b5ffab24208d684",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-10-20T23:16:46Z",
+  "last_seen": "2026-10-21T13:52:57Z",
   "gone_at": null,
   "price_history": [
    {
@@ -13277,7 +13282,7 @@
   "backfilled": true,
   "exclude_from_stats": false,
   "dist_km": null,
-  "deal_pct": 2,
+  "deal_pct": 3,
   "deal_outlier": false,
   "area": "vysocany",
   "house_class": null,
@@ -14380,7 +14385,7 @@
  "idnes-6a2aca7dae30040b1a04a726": {
   "id": "idnes-6a2aca7dae30040b1a04a726",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-10-21T04:36:50Z",
+  "last_seen": "2026-10-21T13:52:57Z",
   "gone_at": null,
   "price_history": [
    {
@@ -14418,7 +14423,7 @@
   "parking": null,
   "backfilled": true,
   "dist_km": 2.11,
-  "deal_pct": 1,
+  "deal_pct": 3,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "area": "vysocany",
@@ -14766,7 +14771,7 @@
  "idnes-6a3170496e725c29510c6cd5": {
   "id": "idnes-6a3170496e725c29510c6cd5",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-10-20T23:16:46Z",
+  "last_seen": "2026-10-21T13:52:57Z",
   "gone_at": null,
   "price_history": [
    {
