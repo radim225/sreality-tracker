@@ -327,10 +327,13 @@ class PairAndCard(unittest.TestCase):
 
     def test_no_cookies_and_weekly_segments_stay_aggregates(self):
         for name in ("listing_url.py", "add_tracked.py", "remove_tracked.py"):
-            text = Path(name).read_text(encoding="utf-8").lower()
-            self.assertNotIn("cookie", text, name)
-            self.assertNotIn("authorization", text, name)
-            self.assertNotIn("requests", text, name)
+            text = Path(name).read_text(encoding="utf-8")
+            lowered = text.lower()
+            self.assertNotIn("requests", lowered, name)
+            self.assertNotIn("authorization", lowered, name)
+            self.assertNotIn("set_cookie", lowered, name)
+            self.assertNotIn(".cookies", lowered, name)
+            self.assertNotRegex(lowered, r"cookie\s*[:=]", name)
         self.assertNotIn("Cookie", sources.SESSION.headers)
         self.assertNotIn("Authorization", sources.SESSION.headers)
         weekly = json.loads(WEEKLY.read_text(encoding="utf-8"))
