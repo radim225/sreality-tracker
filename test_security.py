@@ -89,13 +89,56 @@ class Security(unittest.TestCase):
     def test_listing_host_and_scheme(self):
         self.assertEqual(listing_id('https://www.sreality.cz/detail/prodej/byt/1%2Bkk/x/123'), 123)
         self.assertEqual(listing_id('123', allow_id=True), 123)
+        bez = 'https://www.bezrealitky.cz/nemovitosti-byty-domy/1079934-nabidka-prodej-bytu-podebradska-praha'
+        self.assertEqual(listing_id(bez), 'bez-1079934')
+        idnes = 'https://reality.idnes.cz/detail/pronajem/byt/praha-8-v-mezihori/6addf060616bccdf450d9450/'
+        self.assertEqual(listing_id(idnes), 'idnes-6addf060616bccdf450d9450')
         for url in ['javascript:alert(1)/123', 'https://evil.example/detail/a/123',
                     'https://www.sreality.cz@evil.example/detail/a/123',
                     'https://www.sreality.cz/detail/a/123?x=1',
-                    'https://www.sreality.cz/detail/a/$(id)/123']:
+                    'https://www.sreality.cz/detail/a/$(id)/123',
+                    'http://www.bezrealitky.cz/nemovitosti-byty-domy/1079934-nabidka',
+                    'https://evil.example/nemovitosti-byty-domy/1079934-nabidka',
+                    'https://www.bezrealitky.cz/nemovitosti-byty-domy/1079934-nabidka;x',
+                    'https://www.sreality.cz/detail/a/1;2/123',
+                    'https://reality.idnes.cz/detail/pronajem/byt/x/$(id)/',
+                    'https://news.idnes.cz/detail/prodej/byt/praha/6addf060616bccdf450d9450/']:
             with self.subTest(url=url):
                 with self.assertRaises(ValueError):
                     listing_id(url)
+
+    def test_workflow_add_and_remove_use_env_not_inputs_in_run(self):
+        """add_url / remove_url reach the shell only as "$ADD_URL" / "$REMOVE_URL"."""
+        workflow = Path('.github/workflows/scrape.yml').read_text()
+        self.assertNotIn('${{ inputs.add_url }}', workflow)
+        self.assertNotIn('${{ inputs.remove_url }}', workflow)
+        self.assertIn('python add_tracked.py "$ADD_URL"', workflow)
+        self.assertIn('python remove_tracked.py "$REMOVE_URL"', workflow)
+        self.assertRegex(workflow, r'ADD_URL:\s*\$\{\{\s*github\.event\.inputs\.add_url\s*\}\}')
+        self.assertRegex(workflow, r'REMOVE_URL:\s*\$\{\{\s*github\.event\.inputs\.remove_url\s*\}\}')
+        in_run = False
+        run_indent = 0
+        for line in workflow.splitlines():
+            stripped = line.strip()
+            if stripped.startswith('run:'):
+                script = line.split('run:', 1)[1].strip()
+                if script in {'|', '>', '|-', '>-', ''}:
+                    in_run = True
+                    run_indent = len(line) - len(line.lstrip())
+                else:
+                    in_run = False
+                    self.assertNotIn('${{', script)
+                    self.assertNotIn('inputs.add_url', script)
+                    self.assertNotIn('inputs.remove_url', script)
+                continue
+            if in_run:
+                indent = len(line) - len(line.lstrip()) if stripped else run_indent + 1
+                if stripped and indent <= run_indent:
+                    in_run = False
+                else:
+                    self.assertNotIn('${{', line)
+                    self.assertNotIn('inputs.add_url', line)
+                    self.assertNotIn('inputs.remove_url', line)
 
     def test_workflow_does_not_inject_own_secrets_into_scrape(self):
         workflow = Path('.github/workflows/scrape.yml').read_text()

@@ -11,11 +11,11 @@ on:
   workflow_dispatch:
     inputs:
       add_url:
-        description: "Sreality listing URL to add to tracked.json before scraping"
+        description: "URL inzerátu (Sreality, Bezrealitky nebo iDNES) k přidání do tracked.json před scrapem"
         required: false
         default: ""
       remove_url:
-        description: "Sreality listing URL (or numeric id) to remove from tracked.json before scraping"
+        description: "URL nebo id (Sreality / bez-… / idnes-…) k odebrání z tracked.json před scrapem"
         required: false
         default: ""
       override_set:
@@ -122,6 +122,7 @@ jobs:
           python test_report.py
           python test_notify.py
           python test_security.py
+          python test_tracked_url.py
           python test_sale_extras.py
           python test_relist.py
           python test_gone_archive.py

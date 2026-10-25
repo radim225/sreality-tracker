@@ -34,6 +34,7 @@ import ribbon
 import timeline
 import sources
 import ux
+from listing_url import order_tracked, portal_tracked_id
 
 ROOT = Path(__file__).parent
 SNAPSHOTS_DIR = ROOT / "snapshots"
@@ -1362,7 +1363,11 @@ def fetch_tracked(url, listing_id):
     """A record with "unavailable" means the fetch failed, not that the listing
     went away -- main() carries the previous state forward for those. Only a 404
     is treated as a real delisting; that is what Sreality actually serves for a
-    removed advert."""
+    removed advert.
+
+    Bezrealitky and iDNES never reach the network from here. Their tracked card
+    is the comparison row scrape already stored; a second download would be a
+    new request (and a place a cookie could leak)."""
 
     def unreadable(reason):
         return {
@@ -1372,6 +1377,12 @@ def fetch_tracked(url, listing_id):
             "fetched_at": now_iso(),
             "error": reason,
         }
+
+    host = ""
+    if isinstance(url, str):
+        host = (urllib.parse.urlsplit(url).hostname or "").lower()
+    if portal_tracked_id(listing_id) or host not in {"sreality.cz", "www.sreality.cz"}:
+        return unreadable("detail fetch is only for sreality.cz; other portals are paired")
 
     try:
         next_data, status = fetch_next_data(url)
@@ -1448,6 +1459,202 @@ def fetch_tracked(url, listing_id):
         "lon": locality.get("longitude"),
         "approx_location": False,
     }
+
+
+def fetch_configured_tracked(tracked_config, prev_tracked_by_id):
+    """Fetch Sreality seeds only. Portal ids are filled in later from comparables."""
+    n_portal = sum(1 for t in tracked_config if portal_tracked_id(t.get("id")))
+    n_fetch = len(tracked_config) - n_portal
+    extra = f" ({n_portal} from comparison records, no extra request)" if n_portal else ""
+    print(f"Fetching {n_fetch} tracked listing(s){extra}...", file=sys.stderr)
+    tracked = []
+    for t in tracked_config:
+        if portal_tracked_id(t.get("id")):
+            continue
+        fetched = fetch_tracked(t["url"], t["id"])
+        prev_t = prev_tracked_by_id.get(t["id"])
+        unreadable = fetched.get("unavailable", False)
+        if unreadable:
+            # We simply could not read the page. Keep showing the last known
+            # state rather than flipping the listing to "no longer listed" --
+            # that would fire a removal alert about an upstream hiccup.
+            print(
+                f"Tracked id={t['id']} unreadable, keeping last known state: {fetched['error']}",
+                file=sys.stderr,
+            )
+            fetched = (
+                {**prev_t, "fetch_error": fetched["error"], "fetch_error_at": fetched["fetched_at"]}
+                if prev_t
+                else {**fetched, "active": False}
+            )
+        elif not fetched.get("active"):
+            if prev_t:
+                # Carry forward the last time it was *actually* seen active, even
+                # across multiple consecutive inactive runs (prev_t may itself
+                # already be a backfilled record with no fresh active sighting).
+                last_active_at = prev_t.get("last_active_at") or (
+                    prev_t.get("fetched_at") if prev_t.get("active") else None
+                )
+                fetched = {**prev_t, **fetched}
+                if last_active_at:
+                    fetched["last_active_at"] = last_active_at
+        if not unreadable:
+            # A successful read clears any error carried over from a failed run.
+            fetched.pop("fetch_error", None)
+            fetched.pop("fetch_error_at", None)
+        tracked.append(fetched)
+        print(
+            f"Tracked id={fetched['id']} active={fetched.get('active')} title={fetched.get('title')!r}",
+            file=sys.stderr,
+        )
+    return tracked
+
+
+# Fields the tracked card and the price diff already understand. Explicit list:
+# a comparison row is not copied wholesale, so a new key on a portal advert
+# cannot ride into the tracked record (and from there into the public page)
+# without being named here.
+_TRACKED_FROM_COMP = (
+    "title", "disposition", "transaction_type", "fees_czk", "fees_missing",
+    "fees_source", "electricity_czk", "floor_area_sqm", "floor_area_source",
+    "price_czk_per_sqm", "floor_number", "floors_total", "locality", "city_part",
+    "street", "description", "seller_name", "thumb", "lat", "lon", "garage",
+    "parking",
+)
+
+
+def tracked_from_comparable(comp, url=None):
+    """Comparison row -> tracked-card row. No network.
+
+    The card reads the asking price from rent_czk (sale and rent both). The
+    diff reads total_czk, so electricity_estimated has to be present even when
+    the portal left it false.
+    """
+    price = comp.get("price_czk")
+    total = comp.get("total_czk")
+    if total is None:
+        total = price
+    row = {
+        "id": comp.get("id"),
+        "url": comp.get("url") or url,
+        "source": comp.get("source"),
+        "active": True,
+        "fetched_at": comp.get("verified_live_at"),
+        "rent_czk": price,
+        "total_czk": total,
+        "electricity_estimated": bool(comp.get("electricity_estimated")),
+        "images": list(comp.get("images") or []),
+        "sale_extras": list(comp.get("sale_extras") or []),
+        "approx_location": bool(comp.get("approx_location")),
+    }
+    for key in _TRACKED_FROM_COMP:
+        if key in comp:
+            row[key] = comp.get(key)
+    return row
+
+
+def _with_inactive(row, prev_t):
+    """Same disappearance as a Sreality 404: keep the last details, mark inactive."""
+    row = dict(row)
+    row["active"] = False
+    if prev_t:
+        last = prev_t.get("last_active_at")
+        if prev_t.get("active"):
+            last = prev_t.get("fetched_at") or prev_t.get("last_active_at")
+        if last:
+            row["last_active_at"] = last
+        if row.get("rent_czk") is None and prev_t.get("rent_czk") is not None:
+            row["rent_czk"] = prev_t.get("rent_czk")
+            row["total_czk"] = prev_t.get("total_czk")
+            if "electricity_estimated" in prev_t:
+                row["electricity_estimated"] = prev_t.get("electricity_estimated")
+    return row
+
+
+def _index_by_id(rows):
+    out = {}
+    for comp in rows or []:
+        if comp and comp.get("id") is not None and comp["id"] not in out:
+            out[comp["id"]] = comp
+    return out
+
+
+def pair_portal_tracked(config_entries, comparables, prev_tracked, gone=(),
+                        folded=(), prev_comparables=()):
+    """Pair Bezrealitky/iDNES tracked ids with comparison rows already in hand.
+
+    Does not fetch. A confirmed disappearance (`gone`, the same list
+    verify_removals already produced) keeps the card and marks it inactive.
+    A mere absence keeps the previous card. Nothing is dropped.
+    """
+    fresh = _index_by_id(comparables)
+    folded_by_id = _index_by_id(folded)
+    older = _index_by_id(prev_comparables)
+    gone_by_id = _index_by_id(gone)
+    prev_by_id = _index_by_id(prev_tracked)
+    rows = []
+    for entry in config_entries:
+        lid = entry.get("id")
+        url = entry.get("url")
+        prev_t = prev_by_id.get(lid)
+        comp = fresh.get(lid) or folded_by_id.get(lid)
+        if comp is not None:
+            row = tracked_from_comparable(comp, url)
+            if comp.get("active") is False:
+                row = _with_inactive(row, prev_t)
+            rows.append(row)
+            continue
+        if lid in gone_by_id:
+            rows.append(_with_inactive(tracked_from_comparable(gone_by_id[lid], url), prev_t))
+            continue
+        if lid in older:
+            row = tracked_from_comparable(older[lid], url)
+            row["active"] = True
+            rows.append(row)
+            continue
+        if prev_t:
+            kept = dict(prev_t)
+            kept.setdefault("url", url)
+            rows.append(kept)
+            continue
+        rows.append({
+            "id": lid,
+            "url": url,
+            "active": True,
+            "unavailable": True,
+            "electricity_estimated": False,
+            "error": "srovnávací záznam v tomhle běhu není",
+        })
+    return rows
+
+
+def attach_portal_tracked(snapshot, changes, tracked_config, prev, folded, overrides):
+    """Fill portal seeds after verify_removals, then recompute tracked price diffs.
+
+    Sreality seeds are already on snapshot["tracked"]. Portal seeds are ordered
+    in front of them so the Bezrealitky card sits at the top.
+    """
+    portal_config = [t for t in tracked_config if portal_tracked_id(t.get("id"))]
+    portal_rows = []
+    if portal_config:
+        portal_rows = pair_portal_tracked(
+            portal_config,
+            snapshot.get("comparables") or [],
+            (prev or {}).get("tracked") or [],
+            changes.get("newly_inactive") or [],
+            folded,
+            list((prev or {}).get("comparables") or [])
+            + list((prev or {}).get("pending_removal") or []),
+        )
+        apply_overrides(portal_rows, overrides)
+        backfill_missing_areas(portal_rows)
+        flag_transaction_mismatch(portal_rows)
+        attach_sale_extras(portal_rows)
+    snapshot["tracked"] = order_tracked(list(portal_rows) + list(snapshot.get("tracked") or []))
+    if portal_config and prev is not None:
+        changes["tracked_price_changes"] = collect_tracked_price_changes(
+            prev.get("tracked") or [], snapshot["tracked"]
+        )
 
 
 def format_locality(locality):
@@ -2897,6 +3104,38 @@ def areas_added_only(prev_cfg, curr_cfg):
     return set(curr_areas) - set(prev_areas)
 
 
+def _cmp_price(item):
+    """All-in total once the record knows about electricity, else the base price.
+
+    Snapshots from before the cost-breakdown feature don't have
+    "electricity_estimated" -- their total_czk meant rent+fees only. Comparing
+    those against the new all-in total would report every rental as a price
+    change on that one transition. Tracked rows store the same number in
+    total_czk (rent_czk is the card's copy of the asking price).
+    """
+    if item.get("total_czk") is not None and "electricity_estimated" in item:
+        return item["total_czk"]
+    return item.get("price_czk")
+
+
+def collect_tracked_price_changes(prev_tracked, curr_tracked):
+    prev_by_id = {t["id"]: t for t in prev_tracked or [] if t.get("id") is not None}
+    out = []
+    for curr_t in curr_tracked or []:
+        prev_t = prev_by_id.get(curr_t.get("id"))
+        if (
+            prev_t is not None
+            and _cmp_price(prev_t) != _cmp_price(curr_t)
+            and curr_t.get("active")
+        ):
+            out.append({
+                "id": curr_t["id"],
+                "old_total_czk": prev_t.get("total_czk"),
+                "new_total_czk": curr_t.get("total_czk"),
+            })
+    return out
+
+
 def diff_snapshots(prev, curr):
     changes = {
         "generated_at": now_iso(),
@@ -2913,26 +3152,9 @@ def diff_snapshots(prev, curr):
     # those against the new all-in total would report every rental as a "price
     # change" on this one transition run. Fall back to comparing base price for
     # any record that predates the new schema.
-    def cmp_value(item):
-        if item.get("total_czk") is not None and "electricity_estimated" in item:
-            return item["total_czk"]
-        return item.get("price_czk")
-
-    prev_tracked_by_id = {t["id"]: t for t in prev.get("tracked", [])}
-    for curr_t in curr.get("tracked", []):
-        prev_t = prev_tracked_by_id.get(curr_t["id"])
-        if (
-            prev_t is not None
-            and cmp_value(prev_t) != cmp_value(curr_t)
-            and curr_t.get("active")
-        ):
-            changes["tracked_price_changes"].append(
-                {
-                    "id": curr_t["id"],
-                    "old_total_czk": prev_t.get("total_czk"),
-                    "new_total_czk": curr_t.get("total_czk"),
-                }
-            )
+    changes["tracked_price_changes"] = collect_tracked_price_changes(
+        prev.get("tracked", []), curr.get("tracked", [])
+    )
 
     # A listing absent from one run is only a candidate for removal, not a fact:
     # the search set itself fluctuates run to run. It has to be absent twice in a
@@ -2988,8 +3210,8 @@ def diff_snapshots(prev, curr):
         else:
             # Compare on total cost (rent+fees+electricity for rentals), not
             # just base price, so a fee change shows up as a price change too.
-            old_cmp = cmp_value(old)
-            new_cmp = cmp_value(new)
+            old_cmp = _cmp_price(old)
+            new_cmp = _cmp_price(new)
             # On a re-baseline the totals move for reasons that have nothing to
             # do with the market: merging two portals' copies donates a fee that
             # was only ever stated on one of them, so the all-in total changes
@@ -3699,6 +3921,7 @@ def build_tracked_item(tracked, changes):
         change_note = f"No longer listed — showing last known details from {tracked['last_active_at']}"
     return {
         "id": tracked["id"],
+        "source": tracked.get("source"),
         "is_seed": True,
         "title": tracked.get("title"),
         "disposition": tracked.get("disposition"),
@@ -3735,7 +3958,7 @@ def build_tracked_item(tracked, changes):
         "thumb": tracked.get("thumb"),
         "lat": tracked.get("lat"),
         "lon": tracked.get("lon"),
-        "approx_location": False,
+        "approx_location": bool(tracked.get("approx_location")),
         "url": tracked.get("url"),
         "active": tracked.get("active"),
         "change_note": change_note,
@@ -4017,7 +4240,7 @@ def render_tracked_card(tracked):
         else '<span class="badge bad">inactive / removed</span>'
     )
     last_active_html = (
-        f'<div class="modal-note" style="margin-top:8px;">Showing last known details from {tracked["last_active_at"]}</div>'
+        f'<div class="modal-note" style="margin-top:8px;">Showing last known details from {html.escape(str(tracked["last_active_at"]))}</div>'
         if not tracked.get("active") and tracked.get("last_active_at")
         else ""
     )
@@ -4036,7 +4259,7 @@ def render_tracked_card(tracked):
       <div><b>Kč/m² (total)</b>{fmt_czk(tracked.get('price_czk_per_sqm'))}</div>"""
     else:
         extras = "".join(
-            f'<div><b>{html.escape(e["label"])} (z popisu)</b>'
+            f'<div><b>{html.escape(e["label"], quote=True)} (z popisu)</b>'
             f'{" / ".join(fmt_czk(a) for a in e["amounts"])}</div>'
             for e in (tracked.get("sale_extras") or [])
         )
@@ -4054,15 +4277,17 @@ def render_tracked_card(tracked):
     else:
         area_cell = html.escape(str(area))
     move_html = render_price_move(tracked.get("price_history"))
-    return f"""<div class="card seed-card" onclick="openModal({tracked['id']})">
+    # Id jde do data atributu, ne do inline handleru (escape jako JSON.stringify).
+    open_id = html.escape(json.dumps(tracked["id"], ensure_ascii=False), quote=True)
+    return f"""<div class="card seed-card" data-open-id="{open_id}">
   <img class="seed-thumb" src="{html.escape(tracked.get('thumb') or '', quote=True)}" onerror="this.style.visibility='hidden'" alt="">
   <div style="flex:1;">
     <h2 style="margin-top:0;font-size:1rem;">Sledovaný inzerát — {'pronájem' if is_rent else 'prodej'} {active_badge}</h2>
     <div class="seed-grid">
-      <div><b>Title</b>{html.escape(tracked.get('title') or '—')}</div>
-      <div><b>Disposition</b>{html.escape(tracked.get('disposition') or '—')}</div>{money_cells}
+      <div><b>Title</b>{html.escape(tracked.get('title') or '—', quote=True)}</div>
+      <div><b>Disposition</b>{html.escape(tracked.get('disposition') or '—', quote=True)}</div>{money_cells}
       <div><b>m²</b>{area_cell}</div>
-      <div><b>Locality</b>{html.escape(tracked.get('locality') or '—')}</div>
+      <div><b>Locality</b>{html.escape(tracked.get('locality') or '—', quote=True)}</div>
     </div>
     {move_html}
     {last_active_html}
@@ -4702,7 +4927,7 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
   <h2 style="margin-top:0;font-size:1rem;">⚙️ Sledované inzeráty</h2>
   <div id="trackedList"></div>
   <div class="controls" style="margin:10px 0 0;">
-    <input id="addUrlInput" type="text" placeholder="https://www.sreality.cz/detail/..." style="flex:1;min-width:200px;">
+    <input id="addUrlInput" type="text" placeholder="URL ze Sreality, Bezrealitky nebo iDNES" style="flex:1;min-width:200px;">
     <button class="popup-btn" onclick="manageTracked({{add_url: document.getElementById('addUrlInput').value.trim()}})">➕ Sledovat</button>
   </div>
   <div id="patRow" class="controls" style="display:none;margin:8px 0 0;">
@@ -5091,7 +5316,7 @@ function renderTrackedList() {
         <div class="hat">${escapeHtml(t.locality || "")} · ${t.active ? "aktivní" : "neaktivní"}</div>
       </div>
       <button class="popup-btn" style="background:#7f1d1d;" title="Přestat sledovat"
-        onclick="manageTracked({remove_url: ${escapeHtml(JSON.stringify(String(t.id).replace(/^(bez|idnes)-/, "")))}})">🗑 Přestat sledovat</button>
+        onclick="manageTracked({remove_url: ${escapeHtml(JSON.stringify(String(t.id)))}})">🗑 Přestat sledovat</button>
     </div>`).join("") : '<div style="color:#888;font-size:0.8rem;">Žádné sledované inzeráty.</div>';
 }
 
@@ -5169,7 +5394,7 @@ async function dispatchWorkflow(inputs) {
 
 async function manageTracked(inputs) {
   const val = inputs.add_url ?? inputs.remove_url ?? inputs.override_set ?? inputs.override_delete;
-  if (!val) { setManageStatus("Vlož URL inzerátu ze Sreality."); return; }
+  if (!val) { setManageStatus("Vlož URL inzerátu ze Sreality, Bezrealitky nebo iDNES."); return; }
   if (!pageToken) {
     pendingAction = {modal: false, run: () => manageTracked(inputs)};
     askForPat();
@@ -6659,42 +6884,7 @@ def main():
     prev_tracked_by_id = {t["id"]: t for t in (prev or {}).get("tracked", [])}
 
     tracked_config = load_tracked_config()
-    print(f"Fetching {len(tracked_config)} tracked listing(s)...", file=sys.stderr)
-    tracked = []
-    for t in tracked_config:
-        fetched = fetch_tracked(t["url"], t["id"])
-        prev_t = prev_tracked_by_id.get(t["id"])
-        unreadable = fetched.get("unavailable", False)
-        if unreadable:
-            # We simply could not read the page. Keep showing the last known
-            # state rather than flipping the listing to "no longer listed" --
-            # that would fire a removal alert about an upstream hiccup.
-            print(
-                f"Tracked id={t['id']} unreadable, keeping last known state: {fetched['error']}",
-                file=sys.stderr,
-            )
-            fetched = (
-                {**prev_t, "fetch_error": fetched["error"], "fetch_error_at": fetched["fetched_at"]}
-                if prev_t
-                else {**fetched, "active": False}
-            )
-        elif not fetched.get("active"):
-            if prev_t:
-                # Carry forward the last time it was *actually* seen active, even
-                # across multiple consecutive inactive runs (prev_t may itself
-                # already be a backfilled record with no fresh active sighting).
-                last_active_at = prev_t.get("last_active_at") or (
-                    prev_t.get("fetched_at") if prev_t.get("active") else None
-                )
-                fetched = {**prev_t, **fetched}
-                if last_active_at:
-                    fetched["last_active_at"] = last_active_at
-        if not unreadable:
-            # A successful read clears any error carried over from a failed run.
-            fetched.pop("fetch_error", None)
-            fetched.pop("fetch_error_at", None)
-        tracked.append(fetched)
-        print(f"Tracked id={fetched['id']} active={fetched.get('active')} title={fetched.get('title')!r}", file=sys.stderr)
+    tracked = fetch_configured_tracked(tracked_config, prev_tracked_by_id)
 
     print("Fetching comparables...", file=sys.stderr)
     comparables = fetch_comparables(prev)
@@ -6795,6 +6985,9 @@ def main():
 
     changes = diff_snapshots(prev, snapshot)
     verify_removals(changes, snapshot)
+    # Až po verify_removals: obnovený srovnávací záznam už je zpátky v comparables
+    # a potvrzené zmizení je v newly_inactive. Žádný další request.
+    attach_portal_tracked(snapshot, changes, tracked_config, prev, folded, overrides)
     # Before the pool and the history: both record `relist_of`, so the stamp
     # must already be on the listings when they are written.
     update_gone_archive(snapshot, changes)
