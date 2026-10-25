@@ -192,8 +192,9 @@ def _flat_candidate(c, drops, news):
     """Signály jednoho bytu → (skóre, kind, důvod), nebo None, když žhavý není."""
     # Nevysvětlený rozpor plochy (deal_basis): Kč/m² nesedí, takže ani
     # „žhavý" není -- Radim 30. 9.: mimo medián i žhavé nabídky.
+    # Okolní čtvrti (#26) nejsou sledovaný trh, žhavé být nemohou.
     if (c.get("deal_outlier") or c.get("exclude_from_stats") or c.get("tx_suspect")
-            or c.get("area_mismatch")):
+            or c.get("area_mismatch") or c.get("scope") == "fringe"):
         return None
     price = c.get("price_czk")
     if not price:
