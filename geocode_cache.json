@@ -8722,6 +8722,10 @@
   "road": "Kovářská",
   "suburb": "Prosek"
  },
+ "50.10587,14.47420": {
+  "at": "2026-10-26T15:21:26Z",
+  "error": "HTTPError: 429 Client Error: Too many requests for url: https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=50.105867&lon=14.474204&zoom=18&addressdet"
+ },
  "50.10589,14.47570": {
   "at": "2026-10-21T20:17:31Z",
   "distance_m": 0,
