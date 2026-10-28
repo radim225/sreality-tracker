@@ -11,8 +11,8 @@
  "gone_means": "rezervováno/prodáno (web prodané z ceníku vyřazuje)",
  "access_note": "robots.txt neexistuje (404); podmínky zakazují jen zásah do obsahu webu",
  "baseline_at": "2026-09-27T14:56:46Z",
- "fetched_at": "2026-10-27T10:47:53Z",
- "last_ok_at": "2026-10-27T10:47:53Z",
+ "fetched_at": "2026-10-28T11:29:57Z",
+ "last_ok_at": "2026-10-28T11:29:57Z",
  "units": {
   "F10.001": {
    "id": "F10.001",
@@ -483,10 +483,11 @@
    "status_raw": "Předrezervace",
    "source_created_at": "2026-08-07T08:09:13.297Z",
    "first_seen": "2026-09-27T14:56:46Z",
-   "last_change_at": "2026-09-27T14:56:46Z",
+   "last_change_at": "2026-10-28T11:29:57Z",
    "last_price_czk": 13142900,
    "last_price_at": "2026-09-27T14:56:46Z",
-   "baseline": true
+   "baseline": true,
+   "gone_at": "2026-10-28T11:29:57Z"
   },
   "F10.503": {
    "id": "F10.503",
@@ -667,6 +668,27 @@
    "last_price_czk": 22303300,
    "last_price_at": "2026-09-27T14:56:46Z",
    "baseline": true
+  },
+  "F3.603": {
+   "id": "F3.603",
+   "building": "F3F4",
+   "floor": 7,
+   "floor_raw": "patro 6",
+   "disposition": "2+kk",
+   "area_sqm": 53.5,
+   "area_interior_sqm": 54.7,
+   "terrace_sqm": 4.4,
+   "price_czk": 10866400,
+   "price_excl_vat_czk": 9702143,
+   "price_with_extras_czk": 12051400,
+   "extras": "SK02, PS51",
+   "status": "volny",
+   "status_raw": "Dostupný",
+   "source_created_at": "2025-02-14T11:00:13.723Z",
+   "first_seen": "2026-10-28T11:29:57Z",
+   "last_change_at": "2026-10-28T11:29:57Z",
+   "last_price_at": "2026-10-28T11:29:57Z",
+   "last_price_czk": 10866400
   },
   "F4.203": {
    "id": "F4.203",
