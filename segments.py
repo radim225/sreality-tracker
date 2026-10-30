@@ -71,12 +71,12 @@ AXES = (
         ("neurceno", "Neurčeno"),
     )),
     ("lokalita", "lokalita", (
-        ("praha9", "Praha 9 / Vysočany a okolí"),
-        ("zbytek", "Zbytek Prahy"),
+        ("praha9", "Vysočany a okolí (P9, Libeň, Karlín, Žižkov)"),
+        ("zbytek", "Jinonice a další sledované oblasti (ne celá Praha)"),
     )),
     ("reference", "reference", (
         ("novostavba_1kk_25_35_praha9",
-         "Referenční: novostavba 1+kk 25–35 m², Praha 9 a okolí"),
+         "Referenční: novostavba 1+kk 25–35 m², Vysočany a okolí (P9, Libeň, Karlín, Žižkov)"),
     )),
 )
 REFERENCE_LO, REFERENCE_HI = 25.0, 35.0
@@ -122,19 +122,32 @@ DEFINITIONS = {
         "řadí jen podle plochy; bez dispozice i bez plochy = neurčeno."
     ),
     "lokalita": (
-        "Praha 9 / Vysočany a okolí = oblast vysocany (Vysočany, Hloubětín, "
-        "Hrdlořezy, Libeň, Karlín, Žižkov, Malešice). Záznam bez area je tahle "
-        "oblast, stejně jako ve zbytku trackeru. Zbytek Prahy = Jinonice a "
-        "každá další sledovaná oblast."
+        "Vysočany a okolí = oblast vysocany. Není to administrativní Praha 9: "
+        "kruh bere Vysočany, Libeň, Karlín, Žižkov, Hloubětín, Hrdlořezy a "
+        "Malešice a na okraji i sousední čtvrtě. Záznam bez area patří sem, "
+        "stejně jako ve zbytku trackeru. Druhý koš není zbytek Prahy. Jsou to "
+        "jen Jinonice a další sledované oblasti (Jinonice, Radlice, Košíře, "
+        "Stodůlky, Hlubočepy a jejich okraj). Čtvrtě se nedělí: část inzerátů "
+        "nemá city_part a kruh přetahuje i cizí čtvrť, takže řez podle názvu "
+        "čtvrti by lhal. Tracker má dvě oblasti."
     ),
     "reference": (
-        "Novostavba, dispozice 1+kk, plocha 25–35 m² včetně, lokalita Praha 9 "
-        "a okolí. Prodej a pronájem zvlášť. Je to pásmo trhu, ne konkrétní byt."
+        "Novostavba, dispozice 1+kk, plocha 25–35 m² včetně, oblast Vysočany "
+        "a okolí (P9, Libeň, Karlín, Žižkov a sousední čtvrtě v tom kruhu). "
+        "Prodej a pronájem zvlášť. Je to pásmo trhu, ne konkrétní byt."
     ),
     "aktivni": (
-        "Ke konci týdne v nabídce: first_seen do konce týdne, gone_at prázdné "
-        "nebo po konci týdne, last_seen v tom týdnu nebo později. Vyřazené "
-        "(exclude_from_stats) a uklizené zombie (gone_stale) se nepočítají."
+        "Stejná množina jako sale_count a rent_count ve snapshotu: inzerát je "
+        "v posledním sběru (last_seen je okamžik toho snapshotu), má Kč/m², "
+        "není exclude_from_stats, nemá area_mismatch a není uklizená zombie. "
+        "Inzerát, který ze snapshotu vypadl a nemá potvrzené gone_at, se "
+        "nepočítá. Dřív stačilo last_seen od začátku týdne, řada proto jen "
+        "rostla. Starší týdny berou inzerát viděný ještě v neděli nebo později "
+        "(last_seen >= konec týdne), s first_seen do konce týdne a bez gone_at "
+        "před koncem. Hlášený týden je poslední uzavřený a jeho počet je počet "
+        "ve snapshotu, včetně inzerátů přibylých až v rozpracovaném týdnu. "
+        "stats.sale_count je jen Vysočany a okolí; Jinonice mají vlastní "
+        "sale_count v area_stats. Součet obou lokalit je součet obou."
     ),
     "stejne_inzeraty": (
         "Průnik aktivních inzerátů na konci tohoto a minulého týdne. Změna ceny "
@@ -162,9 +175,10 @@ DEFINITIONS = {
         "takového segmentu nevzejde. Tenhle modul alerty neposílá."
     ),
     "pokryti": (
-        "Změna počtu aktivních se hlásí jen při stabilním pokrytí: oba týdny "
-        "končí 1. 9. 2026 nebo později, v okně není změna konfigurace sběru "
-        "a v okně se neobjevila nová oblast ani nový zdroj."
+        "Poznámka pokrytí se pořád počítá: týden před 1. 9. 2026, změna "
+        "konfigurace sběru, nová oblast nebo nový zdroj. Příznak skoku počtu "
+        "aktivních se z ní nespouští. Je vypnutý, dokud se počet neověří proti "
+        "snapshotu. Metrika active_count v souhrnu zůstává."
     ),
     "krize": (
         "Krizový signál: v jedné ose a jednom typu obchodu (typ domu, velikost "
@@ -186,6 +200,8 @@ THRESHOLDS = {
     "duration_vs_4w_pct": DURATION_VS_4W_PCT,
     "duration_weeks": DURATION_WEEKS,
     "active_count_pct": ACTIVE_COUNT_PCT,
+    # Metrika zůstává. Příznak je vypnutý, dokud se počet neověří proti snapshotu.
+    "active_count_flag": False,
     "krizovy_min_segments": CRISIS_MIN_SEGMENTS,
     "krizovy_weeks": 2,
     "coverage_from": "2026-09-01",
@@ -280,7 +296,11 @@ def house_segment(rec, now_year):
 
 
 def location_band(rec):
-    """Praha 9 a okolí (oblast vysocany, včetně záznamu bez area) vs. zbytek."""
+    """Oblast vysocany (včetně záznamu bez area) vs. ostatní sledované oblasti.
+
+    Klíč praha9 není administrativní Praha 9. Štítek říká, které čtvrtě v
+    kruhu leží. Druhý klíč není celá Praha, jen Jinonice a další sledované.
+    """
     return "praha9" if poolmod.area_of(rec) == poolmod.HOME_AREA else "zbytek"
 
 
@@ -325,20 +345,82 @@ def segment_ids_for(rec, now_year):
     return ids
 
 
-def is_active(rec, start, end):
-    """V nabídce ke konci týdne. Viz DEFINITIONS['aktivni']."""
-    if rec.get("exclude_from_stats") or rec.get("gone_stale"):
+def _in_stats(rec):
+    """Řádek, který compute_stats pustí do sale_count / rent_count.
+
+    Bez Kč/m², s exclude_from_stats nebo s area_mismatch ve statistice není.
+    Aktivní počet má být tahle množina, ne širší pool.
+    """
+    if rec.get("exclude_from_stats") or rec.get("gone_stale") or rec.get("area_mismatch"):
         return False
     if rec.get("transaction_type") not in ("prodej", "pronajem"):
         return False
+    return bool(rec.get("price_czk_per_sqm"))
+
+
+def _observation_instant(records, as_of_dt):
+    """Okamžik posledního sběru, který as_of už vidí.
+
+    Po update_from_snapshot mají inzeráty ve snapshotu last_seen rovné
+    generated_at a ostatní starší. To je celá živá množina, i když se segmenty
+    spouští o chvíli později a as_of je „teď“.
+    """
+    latest = None
+    for rec in records:
+        seen = poolmod.parse_ts(rec.get("last_seen"))
+        if seen is None or seen > as_of_dt:
+            continue
+        if latest is None or seen > latest:
+            latest = seen
+    return latest
+
+
+def is_active(rec, start, end, live_at, snapshot_week):
+    """V nabídce. Hlášený týden = přesně snapshot. Starší týden = viděn v neděli.
+
+    Viz DEFINITIONS['aktivni']. snapshot_week je jen poslední uzavřený týden:
+    tam se počet musí rovnat sale_count / rent_count, ne součtu všeho, co
+    pool ještě neoznačil jako zmizelé.
+    """
+    if not _in_stats(rec):
+        return False
+    seen = poolmod.parse_ts(rec.get("last_seen"))
+    if seen is None:
+        return False
+    gone = poolmod.parse_ts(rec.get("gone_at"))
+    if snapshot_week:
+        # Ve snapshotu je přesně to, co má last_seen rovné poslednímu sběru.
+        # gone_at se tu nečte: sale_count ho taky nečte, a řádek ve snapshotu
+        # už v nabídce je.
+        return live_at is not None and seen == live_at
     first = poolmod.parse_ts(rec.get("first_seen"))
     if first is None or first > end:
         return False
-    gone = poolmod.parse_ts(rec.get("gone_at"))
     if gone is not None and gone <= end:
         return False
-    seen = poolmod.parse_ts(rec.get("last_seen"))
-    return seen is not None and seen >= start
+    # Neděle včetně. last_seen >= začátek týdne nechávalo v týdnu i inzerát,
+    # který jsme viděli v pondělí a do neděle už v nabídce nebyl, a hlavně
+    # každý pozdější sběr — řada pak jen rostla.
+    return seen >= end
+
+
+def closed_week(as_of_dt, week=None):
+    """Poslední ISO týden, který vůči as_of už skončil.
+
+    Vyžádaný týden, který ještě běží, se nepoužije. Pondělní souhrn by jinak
+    hlásil rozpracovaný týden. Konec týdne je neděle 23:59:59 UTC; týden je
+    uzavřený, teprve když je as_of přísně po tom okamžiku.
+    """
+    if week:
+        _start, end = market.week_bounds(week)
+        if as_of_dt > end:
+            return week
+    key = market.previous_week_key(market.iso_week_key(as_of_dt))
+    while True:
+        _start, end = market.week_bounds(key)
+        if as_of_dt > end:
+            return key
+        key = market.previous_week_key(key)
 
 
 def _history(rec):
@@ -618,18 +700,14 @@ def _flags(point, series_by_week, coverage):
                     f"medián doby na trhu je o {move} % nad průměrem 4 týdnů (práh +{DURATION_VS_4W_PCT:g} %)",
                 ))
 
-    if coverage:
-        skipped.append(_reason("active_count", f"pokrytí není stabilní ({coverage})"))
-    elif not prev or prev[0]["n"] < MIN_N or prev[0]["n"] <= 0:
-        skipped.append(_reason("active_count", "minulý týden nemá n≥20"))
-    else:
-        earlier_n = prev[0]["n"]
-        move = _r1((point["n"] - earlier_n) / earlier_n * 100)
-        if move is not None and abs(move) >= ACTIVE_COUNT_PCT:
-            fired.append(_reason(
-                "active_count",
-                f"počet aktivních se změnil o {move} % (práh {ACTIVE_COUNT_PCT:g} %, pokrytí stabilní)",
-            ))
+    # Příznak je vypnutý schválně, i když by práh vyšel a pokrytí bylo stabilní.
+    # Kontrola pokrytí skok o desítky procent nechytila (coverage_note prázdné).
+    # Metrika active_count v bodu zůstává. Až se počet ověří proti snapshotu,
+    # práh ACTIVE_COUNT_PCT se sem vrátí — do té doby se ticho nezapíše jako úspěch.
+    skipped.append(_reason(
+        "active_count",
+        "příznak počtu aktivních je vypnutý, dokud se počet neověří proti snapshotu",
+    ))
     return fired, skipped
 
 
@@ -679,7 +757,7 @@ def build_summary(records, state=None, as_of=None, week=None):
     """Agregovaný souhrn uzavřeného týdne. Záznamy se do výsledku nekopírují."""
     state = state or {}
     as_of_dt = poolmod.parse_ts(as_of) or datetime.now(timezone.utc)
-    week_key = week or market.previous_week_key(market.iso_week_key(as_of_dt))
+    week_key = closed_week(as_of_dt, week)
     now_year = as_of_dt.year
     records = poolmod.records_of(records)
     source_first = _earliest(records, lambda r: r.get("source") or "sreality")
@@ -693,10 +771,16 @@ def build_summary(records, state=None, as_of=None, week=None):
     weeks.reverse()
 
     # Aktivní množina po týdnech, jednou. Segmenty se z ní jen třídí.
+    # Hlášený týden se bere ze snapshotu (poslední sběr). Starší týdny z toho,
+    # kdo byl vidět ještě v jejich neděli — jinak řada jen roste.
+    live_at = _observation_instant(records, as_of_dt)
     active = {}
     for key in weeks:
         start, end = market.week_bounds(key)
-        active[key] = [r for r in records if is_active(r, start, end)]
+        active[key] = [
+            r for r in records
+            if is_active(r, start, end, live_at, snapshot_week=(key == week_key))
+        ]
 
     grouped = {row["segment_id"]: {key: [] for key in weeks} for row in catalog()}
     for key in weeks:
@@ -954,7 +1038,8 @@ def card_html(summary):
   <p class="hint">Větší posun (stačí jedno, jen při n≥{MIN_N}): medián Kč/m² ±{MEDIAN_WW_PCT:g} % t/t nebo
      ±{MEDIAN_VS_4W_PCT:g} % proti průměru 4 týdnů; podíl slev o {DISCOUNT_SHARE_PP:g} p. b. nad průměrem
      8 týdnů; průměrná sleva stejných inzerátů nad {AVG_DISCOUNT_PCT:g} %; medián doby na trhu
-     +{DURATION_VS_4W_PCT:g} % proti 4 týdnům; počet aktivních ±{ACTIVE_COUNT_PCT:g} % jen při stabilním pokrytí.
+     +{DURATION_VS_4W_PCT:g} % proti 4 týdnům. Počet aktivních se v tabulce ukazuje,
+     jeho příznak je vypnutý, dokud počet nesedí se snapshotem.
      Strojově: <code>weekly_segments.json</code>.</p>
 </div>"""
 
@@ -969,14 +1054,53 @@ def dashboard_card(path=None):
     return card_html(summary)
 
 
+def stamp_live_snapshot(records, snapshot):
+    """Srovná příznaky se snapshotem, ze kterého se počítá sale_count.
+
+    Pool se nezapisuje. Volající má předat kopie: funkce mění předané
+    slovníky. `apply_overrides` na poolu umí smazat exclude_from_stats,
+    který ve snapshotu nechal nesoulad typu obchodu, a starší shard nemá
+    area_mismatch. Bez téhle kopie by počet o pár inzerátů minul
+    sale_count. Inzerát, který ve snapshotu je, není zombie.
+    """
+    by_id = {}
+    for comp in snapshot.get("comparables") or []:
+        cid = comp.get("id")
+        if cid is not None:
+            by_id[str(cid)] = comp
+    for rec in records:
+        comp = by_id.get(str(rec.get("id")))
+        if comp is None:
+            continue
+        rec["exclude_from_stats"] = bool(comp.get("exclude_from_stats"))
+        rec["price_czk_per_sqm"] = comp.get("price_czk_per_sqm")
+        if comp.get("area"):
+            rec["area"] = comp["area"]
+        if comp.get("area_mismatch"):
+            rec["area_mismatch"] = True
+        else:
+            rec.pop("area_mismatch", None)
+        rec.pop("gone_stale", None)
+    return records
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description="Týdenní segmenty trhu (jen agregace, bez alertů).")
     parser.add_argument("--as-of", help="ISO čas, vůči kterému se bere uzavřený týden")
     parser.add_argument("--week", help="ISO týden, např. 2026-W41 (jinak poslední uzavřený)")
     parser.add_argument("--output", default=str(OUTPUT_PATH))
+    parser.add_argument(
+        "--snapshot",
+        default=str(ROOT / "latest_snapshot.json"),
+        help="Snapshot, ze kterého se doplní area_mismatch (soubor se nemění)",
+    )
     args = parser.parse_args(argv)
+    records = poolmod.records_of(poolmod.load_pool())
+    snap_path = Path(args.snapshot)
+    if snap_path.exists():
+        stamp_live_snapshot(records, json.loads(snap_path.read_text(encoding="utf-8")))
     summary = publish(
-        poolmod.load_pool(), poolmod.load_state(),
+        records, poolmod.load_state(),
         as_of=args.as_of, week=args.week, path=args.output,
     )
     print(

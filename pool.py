@@ -45,6 +45,9 @@ POOL_FIELDS = (
     "price_czk", "fees_czk", "fees_missing", "fees_source", "electricity_czk",
     "electricity_estimated", "total_czk", "price_czk_per_sqm", "price_old_czk",
     "deal_pct", "deal_outlier", "exclude_from_stats",
+    # Same flag compute_stats uses to drop a row from sale_count. Absence
+    # means the contradiction is gone; update_from_snapshot clears a stale True.
+    "area_mismatch",
     # attributes (see scrape.enrich_comparable)
     "building_condition", "building_condition_name", "is_new_building",
     "building_type", "building_type_name", "energy_rating", "furnished",
@@ -220,6 +223,12 @@ def update_from_snapshot(pool, snapshot, changes=None, at=None):
         if newer:
             rec.update(view)
             rec["last_seen"] = at
+            # The flag is stored only while the m² contradiction stands.
+            # A newer snapshot without it has resolved the row; keeping the
+            # old True would leave the advert out of the same count sale_count
+            # publishes.
+            if "area_mismatch" not in view:
+                rec.pop("area_mismatch", None)
             if at < (rec.get("first_seen") or at):
                 rec["first_seen"] = at
         else:
