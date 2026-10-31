@@ -4577,13 +4577,17 @@
    {
     "gone_at": "2026-10-05T05:29:24Z",
     "returned_at": "2026-10-05T17:22:48Z"
+   },
+   {
+    "gone_at": "2026-10-10T14:42:58Z",
+    "returned_at": "2026-10-11T15:16:43Z"
    }
   ],
   "first_seen": "2026-09-26T20:38:36Z",
   "floor_area_sqm": 28.0,
   "floor_number": 3,
   "furnished": "ne",
-  "gone_at": "2026-10-10T14:42:58Z",
+  "gone_at": "2026-10-31T20:02:36Z",
   "house_number": "1270",
   "id": 1220961100,
   "images": [
@@ -4600,7 +4604,6 @@
   "lon": 14.3839895112677,
   "price_czk": 6480000,
   "price_czk_per_sqm": 231429,
-  "returned_at": "2026-10-11T15:16:43Z",
   "seller_name": "Jan Bahorec",
   "source": "sreality",
   "street": "Plzeňská",
@@ -11591,6 +11594,51 @@
   "total_czk": 22000,
   "transaction_type": "pronajem",
   "url": "https://www.sreality.cz/detail/pronajem/byt/2%2B1/x/1455108172"
+ },
+ "1456083020": {
+  "address": {
+   "distance_m": 2,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (2 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Na Palouku 3237/9, Třebešín"
+  },
+  "address_exact": true,
+  "approx_location": false,
+  "area": "vysocany",
+  "city_part": "Strašnice",
+  "description": "Pronájem 2kk 50m2 P10 Strašnice, Na Palouku, novostavba, balkon, garáž.\r\n\r\nByt má praktickou vstupní chodbu se vstupy do obývacího pokoje, ložnice, komory, koupelny a samostatné toalety. \r\n\r\nV chodbě najdete věšák na kabáty, vstup do praktické komory. Koupelna vybavena pračkou a toaletní skříňkou. Kuchyňská linka vybavená varnou deskou, odsavačem par, lednicí. \r\n\r\nOkna s výhledem na strašnické vily mají vnitřní žaluzie. 5 minut od domu tramvajová stanice Vozovna Strašnice, ze které se dostanete pohodlně do centra nebo na metro Strašnická.\r\n\r\nByt je volný a ihned k nastěhování, pro domluvení prohlídky volejte makléře.",
+  "disposition": "2+kk",
+  "fees_czk": 5000,
+  "first_seen": "2026-10-07T15:42:56Z",
+  "floor_area_sqm": 55.0,
+  "floor_number": 5,
+  "furnished": "ne",
+  "gone_at": "2026-10-31T20:02:36Z",
+  "house_number": "3237",
+  "id": 1456083020,
+  "images": [
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/nCR9NVflLBaEbFROBIBL3CK/510f.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/nCR9NVflLBaEbFRWjIBLncf/a330.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/kcKfrMAkFMsuhXMQIBLnc7/e07c.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/kcKfrMAkFCHDToUwTIBLndZ/830f.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_A/nCR9NVflLBkdq1GNTIBLnd2/c0ae.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+  ],
+  "is_new_building": false,
+  "last_price_czk": 18000,
+  "lat": 50.0789679395756,
+  "locality": "Na Palouku, Strašnice, Praha",
+  "lon": 14.4876368512308,
+  "price_czk": 18000,
+  "price_czk_per_sqm": 436,
+  "seller_name": "Olga Shejbalová",
+  "source": "sreality",
+  "street": "Na Palouku",
+  "thumb": "https://d18-a.sdn.cz/d_18/c_img_qG_A/nCR9NVflLBaEbFROBIBL3CK/510f.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+  "title": "Pronájem bytu 2+kk 55 m²",
+  "total_czk": 24000,
+  "transaction_type": "pronajem",
+  "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/1456083020"
  },
  "1458839628": {
   "address": {
@@ -98882,6 +98930,49 @@
   "transaction_type": "prodej",
   "url": "https://www.sreality.cz/detail/prodej/byt/1%2Bkk/x/971706444"
  },
+ "972685388": {
+  "address": {
+   "distance_m": 0,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (0 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Kurta Konráda 2445/5, Prosek"
+  },
+  "address_exact": true,
+  "approx_location": false,
+  "area": "vysocany",
+  "city_part": "Libeň",
+  "description": "Prostorný 3+1 s garáží a balkonem – TOP lokalita s rychlým spojením do centra (Praha 9, Českomoravská)\nHledáte komfortní bydlení v širším centru Prahy, kde máte veškerou občanskou vybavenost i skvělou dopravní dostupnost na dosah ruky?\nNabízím k prodeji velkoryse řešený byt 3+1 o výměře 76 m² s balkonem (4 m²), vlastním podzemním garážovým stáním a sklepem. Byt se nachází ve 3. patře udržovaného bytového domu z roku 2012 v žádané ulici Kurta Konráda na Praze 9 – Libni.\nProč je tento byt skvělou volbou?\n•\tVýborná lokalita & rychlé spojení do centra: Stanice metra B – Českomoravská je vzdálena jen pár minut chůze. Do centra Prahy se pohodlně dostanete během několika minut. V těsné blízkosti najdete také tramvajové zastávky a vlakové nádraží Praha-Libeň.\n•\tGarážové stání v ceně – bezproblémové parkování: Už žádné zdlouhavé hledání místa. Součástí prodeje je vlastní podzemní garážové stání přímo v domě, kam se dostanete pohodlně výtahem.\n•\tCeloroční komfort & klimatizace: Byt je orientovaný na dvě světové strany, což zajišťuje skvělé proudění vzduchu. V letních měsících oceníte klimatizaci s rozvodem do dvou hlavních pokojů (venkovní jednotka je umístěna na balkoně).\n•\tPraktická dispoz",
+  "disposition": "3+kk",
+  "first_seen": "2026-10-21T13:52:57Z",
+  "floor_area_sqm": 76.0,
+  "floor_number": 3,
+  "furnished": "ano",
+  "gone_at": "2026-10-31T20:02:36Z",
+  "house_number": "2445",
+  "id": 972685388,
+  "images": [
+   "https://d18-a.sdn.cz/d_18/c_img_qG_C/nPQ64TBsMvBXFDPF5DIIyErE/3e3d.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_C/nPQ64TBsMvDvIuUFuNIIyFQV/41d0.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_C/nPQ64TBsMvDLsWDGAdIIyF9I/3eb6.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_C/kPw320bnC5C2PLREpbIIyGS5/28f7.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_C/kPw320bnC5Dv66YFf7IIyHau/3d1a.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+  ],
+  "is_new_building": false,
+  "last_price_czk": 12900000,
+  "lat": 50.10438343107152,
+  "locality": "Kurta Konráda, Libeň, Praha",
+  "lon": 14.488365581995039,
+  "price_czk": 12900000,
+  "price_czk_per_sqm": 169737,
+  "source": "sreality",
+  "street": "Kurta Konráda",
+  "thumb": "https://d18-a.sdn.cz/d_18/c_img_qG_C/nPQ64TBsMvBXFDPF5DIIyErE/3e3d.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+  "title": "Prodej bytu 3+kk 76 m²",
+  "total_czk": 12900000,
+  "transaction_type": "prodej",
+  "url": "https://www.sreality.cz/detail/prodej/byt/3%2Bkk/x/972685388"
+ },
  "973082700": {
   "address": {
    "distance_m": 5,
@@ -114079,6 +114170,39 @@
   "total_czk": 31000,
   "transaction_type": "pronajem",
   "url": "https://reality.idnes.cz/detail/pronajem/byt/praha-8-nad-okrouhlikem/6a96a1f479cd04ca47083a28/"
+ },
+ "idnes-6a9707078900f9bc350ef11d": {
+  "address": {
+   "note": "číslo domu uvedené v popisu inzerátu",
+   "precision": "text",
+   "source": "popis",
+   "text": "Lukášova 188/2, Žižkov"
+  },
+  "approx_location": true,
+  "area": "vysocany",
+  "city_part": "Žižkov",
+  "description": "Prodej bytu 1+kk 37 m² PARKOVACÍ STÁNÍ V PODZEMNÍ GARÁŽI V CENĚ BYTU. NÍZKÉ MĚSÍČNÍ NÁKLADY. Nabízím k prodeji světlý byt 1+kk o celkové ploše 36,7 m² v atraktivní lokalitě Praha 3 – Žižkov, v ulici Lukášova 188/2, v moderním polyfunkčním domě. Velkou výhodou je vlastní parkovací stání v podzemní garáži, které je již zahrnuto v kupní ceně bytu. Nový majitel tak má zajištěné pohodlné a bezpečné parkování přímo v domě a nemusí řešit hledání volného místa v okolí. Další výhodou jsou nízké měsíční náklady na provoz bytu. Dispozice bytu zahrnuje prostorný obytný pokoj s kuchyňským koutem o velikosti 28,26 m², koupelnu s WC 3,32 m², chodbu 2,45 m², praktickou komoru 2,62 m² a lodžii 2,15 m². Dům je dobře udržovaný, vybavený výtahy a nabízí komfortní bydlení v lokalitě s výbornou občanskou vybaveností a dopravní dostupností. V bezprostřední blízkosti se nachází park Vítkov, zastávky MHD, obchody, restaurace a další služby. Byt je vhodný jak pro vlastní bydlení, tak jako investiční příležitost k pronájmu. Tato nemovitost je určena výhradně přímým zájemcům o koupi. Na inzerát můžete také reagovat přímo na webu Bezrealitky.",
+  "disposition": "1+kk",
+  "first_seen": "2026-09-01T22:38:34Z",
+  "floor_area_sqm": 37.0,
+  "gone_at": "2026-10-31T00:00:00Z",
+  "id": "idnes-6a9707078900f9bc350ef11d",
+  "images": [
+   "https://sta-reality2.1gr.cz/sta/compile/thumbs/4/3/1/87360a4aac8215c02093cf83bfc36.webp"
+  ],
+  "last_price_czk": 7290000,
+  "lat": 50.0873519444,
+  "locality": "Lukášova, Praha 3 - Žižkov",
+  "lon": 14.4571036111,
+  "price_czk": 7290000,
+  "price_czk_per_sqm": 197027,
+  "source": "idnes",
+  "street": "Lukášova",
+  "thumb": "https://sta-reality2.1gr.cz/sta/compile/thumbs/4/3/1/87360a4aac8215c02093cf83bfc36.webp",
+  "title": "Prodej bytu 1+kk 37 m²",
+  "total_czk": 7290000,
+  "transaction_type": "prodej",
+  "url": "https://reality.idnes.cz/detail/prodej/byt/praha-3-lukasova/6a9707078900f9bc350ef11d/"
  },
  "idnes-6a986fbce4620940d7042149": {
   "address": {
