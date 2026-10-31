@@ -90849,6 +90849,56 @@
   "transaction_type": "pronajem",
   "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/669130828"
  },
+ "67043404": {
+  "address": {
+   "distance_m": 17,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (17 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Viklefova 1810/14, Žižkov"
+  },
+  "address_exact": false,
+  "approx_location": false,
+  "area": "vysocany",
+  "city_part": "Žižkov",
+  "description": "Základní parametry\n   - Dispozice: 1+1 / 2+kk\n   - Užitná plocha: 46,5 m² (+ budoucí sklep)\n   - Vlastnictví: Osobní\n   - Podlaží: 1. patro (2. NP) v cihlovém domě s novým výtahem\n   - Orientace: Všechna okna směřují do tichého, zeleného vnitrobloku\n   \nVýjimečná hypotéka k převzetí\n   - Úroková sazba: 1,84 % p.a. s fixací až do konce dubna 2029 (Česká spořitelna)\n   - Zůstatek jistiny: cca 2 900 000 Kč (splátka 12 144 Kč/měs.)\n   - Dofinancování: Zbytek ceny lze doplatit z vlastních zdrojů nebo přifinancovat odděleným hypotečním úvěrem u ČS (dle podmínek banky).\n\nStav a dispozice bytu\n   - Kuchyně / obývací prostor (16 m²): Moderní linka s vestavěnými spotřebiči (trouba, varná deska, digestoř, myčka; lednice po domluvě).\n  - Ložnice (19 m²): Samostatný pokoj s výhledem do zeleně (možnost ponechat šatní skříň).\n  - Úložné prostory: Samostatná praktická komora / spíž přímo v bytě.\n  - Technický stav: Elektroinstalace v mědi, plovoucí vinylové podlahy.\n  - Vytápění a ohřev vody: Vlastní úsporný plynový kondenzační kotel Bosch (instalován 2023, pravidelně servisován).\n\nDům a hospodaření SVJ\n  - Cihlový dům po částečné revitalizaci: moderní výtah, plastové stoupačky, kamerový systém.\n ",
+  "disposition": "1+1",
+  "fees_czk": 2325,
+  "first_seen": "2026-10-24T12:46:45Z",
+  "floor_area_sqm": 47.0,
+  "floor_number": 2,
+  "gone_at": "2026-10-31T23:26:49Z",
+  "id": 67043404,
+  "images": [
+   "https://d18-a.sdn.cz/d_18/c_img_qG_D/nCXhmtHPUCaRYmRswIKLy2j/c2b5.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_D/kPyfG4fPEeCdpo1fsbIKLy2c/e672.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_D/kPyfG4fPEeDb3WcZhvIKLy2o/e080.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_D/nCXhmtHPUD9QxwTXyIKLy2v/883f.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qG_D/nCXhmtHPUD8nezOjnIKLy2k/f831.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+  ],
+  "is_new_building": false,
+  "last_price_czk": 7600000,
+  "lat": 50.09038460876731,
+  "locality": "Viklefova, Žižkov, Praha",
+  "lon": 14.47392390513022,
+  "price_czk": 7600000,
+  "price_czk_per_sqm": 161702,
+  "relisted_as": {
+   "id": "idnes-6adc6eae9d72b87e7d0261a2",
+   "linked_at": "2026-10-31T23:25:57Z",
+   "text_similarity": 0.94,
+   "url": "https://reality.idnes.cz/detail/prodej/byt/praha-3-viklefova/6adc6eae9d72b87e7d0261a2/",
+   "verdict": "same"
+  },
+  "seller_name": "Ing. Kateřina Vondroušová",
+  "source": "sreality",
+  "street": "Viklefova",
+  "thumb": "https://d18-a.sdn.cz/d_18/c_img_qG_D/nCXhmtHPUCaRYmRswIKLy2j/c2b5.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+  "title": "Prodej bytu 1+1 47 m²",
+  "total_czk": 7600000,
+  "transaction_type": "prodej",
+  "url": "https://www.sreality.cz/detail/prodej/byt/1%2B1/x/67043404"
+ },
  "6717516": {
   "address": {
    "distance_m": 32,
