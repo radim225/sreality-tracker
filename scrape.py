@@ -3525,7 +3525,7 @@ OWN_PROPERTY = {
 # So the two extra units are read separately and the card shows both views.
 #
 # One secret, not three, so there is one thing to set and one thing to forget:
-#   OWN_EXTRA_PRICES_CZK="garaz=500000,komora=110110"
+#   OWN_EXTRA_PRICES_CZK="garaz=<castka>,komora=<castka>"
 OWN_EXTRA_PRICES = sources.env_map("OWN_EXTRA_PRICES_CZK")
 # Deposits already paid, and the share of the price a bank will lend. Together
 # these answer the question Radim asked to have on the card: how much of his
