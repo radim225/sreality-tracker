@@ -41,7 +41,7 @@
  "1028513868": {
   "id": "1028513868",
   "first_seen": "2026-07-09T17:49:12Z",
-  "last_seen": "2026-11-04T12:12:19Z",
+  "last_seen": "2026-11-04T19:53:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -86,7 +86,7 @@
   "floors_total": 3,
   "backfilled": true,
   "dist_km": 1.79,
-  "deal_pct": -16,
+  "deal_pct": -18,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -320,7 +320,7 @@
  "1089462348": {
   "id": "1089462348",
   "first_seen": "2026-07-08T10:06:28Z",
-  "last_seen": "2026-11-04T12:12:19Z",
+  "last_seen": "2026-11-04T19:53:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -360,7 +360,7 @@
   "floors_total": null,
   "backfilled": true,
   "dist_km": 2.12,
-  "deal_pct": -7,
+  "deal_pct": -6,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -2483,7 +2483,7 @@
   "id": "2605278028",
   "first_seen": "2026-07-07T10:47:34Z",
   "last_seen": "2026-11-04T00:41:59Z",
-  "gone_at": null,
+  "gone_at": "2026-11-04T19:53:47Z",
   "price_history": [
    {
     "at": "2026-07-07",
@@ -2564,8 +2564,8 @@
   "parking_state": "priced",
   "parking_price_czk": 2420,
   "exclude_from_stats": false,
-  "gone_last_price_czk": 26000,
-  "gone_last_total_czk": 36000,
+  "gone_last_price_czk": 25500,
+  "gone_last_total_czk": 35000,
   "area": "vysocany",
   "resurrected_at": "2026-09-30T14:59:30Z",
   "house_class": "novostavba",
@@ -2691,7 +2691,7 @@
  "2665009228": {
   "id": "2665009228",
   "first_seen": "2026-07-27T17:29:31Z",
-  "last_seen": "2026-11-04T12:12:19Z",
+  "last_seen": "2026-11-04T19:53:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2809,7 +2809,7 @@
  "2696716364": {
   "id": "2696716364",
   "first_seen": "2026-07-07T10:47:34Z",
-  "last_seen": "2026-11-04T12:12:19Z",
+  "last_seen": "2026-11-04T19:53:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3013,7 +3013,7 @@
  "2839470156": {
   "id": "2839470156",
   "first_seen": "2026-07-09T10:47:27Z",
-  "last_seen": "2026-11-04T12:12:19Z",
+  "last_seen": "2026-11-04T19:53:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3912,7 +3912,7 @@
  "3311853644": {
   "id": "3311853644",
   "first_seen": "2026-07-22T10:13:56Z",
-  "last_seen": "2026-11-04T12:12:19Z",
+  "last_seen": "2026-11-04T19:53:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5544,7 +5544,7 @@
  "4180140108": {
   "id": "4180140108",
   "first_seen": "2026-07-17T09:46:26Z",
-  "last_seen": "2026-11-04T12:12:19Z",
+  "last_seen": "2026-11-04T19:53:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5926,7 +5926,7 @@
  "45146188": {
   "id": "45146188",
   "first_seen": "2026-07-16T17:02:42Z",
-  "last_seen": "2026-11-04T12:12:19Z",
+  "last_seen": "2026-11-04T19:53:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5981,7 +5981,7 @@
   "floors_total": 8,
   "backfilled": true,
   "dist_km": 2.42,
-  "deal_pct": 6,
+  "deal_pct": 5,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -6904,7 +6904,7 @@
  "882630732": {
   "id": "882630732",
   "first_seen": "2026-07-02T17:27:02Z",
-  "last_seen": "2026-11-04T12:12:19Z",
+  "last_seen": "2026-11-04T19:53:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6954,7 +6954,7 @@
   "backfilled": true,
   "source": "sreality",
   "dist_km": 1.39,
-  "deal_pct": 15,
+  "deal_pct": 14,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -7076,7 +7076,7 @@
  "960421964": {
   "id": "960421964",
   "first_seen": "2026-07-09T10:47:27Z",
-  "last_seen": "2026-11-04T12:12:19Z",
+  "last_seen": "2026-11-04T19:53:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10765,7 +10765,7 @@
  "bez-863730": {
   "id": "bez-863730",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-11-04T00:41:59Z",
+  "last_seen": "2026-11-04T19:53:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11009,7 +11009,7 @@
  "bez-981957": {
   "id": "bez-981957",
   "first_seen": "2026-07-21T10:14:29Z",
-  "last_seen": "2026-11-04T12:12:19Z",
+  "last_seen": "2026-11-04T19:53:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11052,7 +11052,7 @@
   "parking": null,
   "backfilled": true,
   "dist_km": 1.36,
-  "deal_pct": -31,
+  "deal_pct": -30,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "house_class": "starsi",
@@ -13578,7 +13578,7 @@
  "idnes-6a1c18ee6d13c98fa102e4c8": {
   "id": "idnes-6a1c18ee6d13c98fa102e4c8",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-11-04T00:41:59Z",
+  "last_seen": "2026-11-04T19:53:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -14450,7 +14450,7 @@
  "idnes-6a2aca7dae30040b1a04a726": {
   "id": "idnes-6a2aca7dae30040b1a04a726",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-11-04T12:12:19Z",
+  "last_seen": "2026-11-04T19:53:47Z",
   "gone_at": null,
   "price_history": [
    {
@@ -14473,8 +14473,8 @@
   "street": "Kolbenova",
   "locality": "Kolbenova, Praha 9 - Vysočany",
   "city_part": "Vysočany",
-  "lat": 50.11092946824341,
-  "lon": 14.513391410335613,
+  "lat": 50.11094297368145,
+  "lon": 14.513050318148975,
   "pod_harfou": false,
   "price_czk": 10762500,
   "fees_czk": null,
@@ -14487,8 +14487,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "dist_km": 2.1,
-  "deal_pct": 0,
+  "dist_km": 2.08,
+  "deal_pct": -1,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "area": "vysocany",
