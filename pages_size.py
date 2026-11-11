@@ -42,7 +42,13 @@ def excluded_entries(path=None):
 
 
 def is_excluded(rel_path, entries):
-    """Jako Jekyll: shoda celé cesty, jejího adresáře nebo glob vzoru."""
+    """Jako Jekyll: shoda celé cesty, jejího adresáře nebo glob vzoru.
+
+    `fnmatch` bere `*` jako `.*`, ale vzor `test_*.py` stejně sedí jen tam,
+    kde cesta začíná na `test_`. Soubor v podadresáři chce druhý vzor
+    `**/test_*.py` (Jekyll: exclude `README.md` i `**/README.md`).
+    `**/…` naopak nesedí na kořen, protože před jménem čeká lomítko.
+    """
     rel = rel_path.replace(os.sep, "/").removeprefix("./")
     for entry in entries:
         e = entry.rstrip("/")

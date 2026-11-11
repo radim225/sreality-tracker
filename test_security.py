@@ -157,7 +157,7 @@ class Security(unittest.TestCase):
             scrape.OWN_DEPOSITS_CZK,
         )
         scrape.OWN_PROPERTY['price_czk'] = marker_price
-        scrape.OWN_EXTRA_PRICES = {'garaz': marker_garage, 'komora': 110110}
+        scrape.OWN_EXTRA_PRICES = {'garaz': marker_garage, 'komora': 90_000}
         scrape.OWN_DEPOSITS_CZK = marker_deposit
         try:
             target = Mock()
