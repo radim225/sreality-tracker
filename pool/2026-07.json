@@ -41,7 +41,7 @@
  "1028513868": {
   "id": "1028513868",
   "first_seen": "2026-07-09T17:49:12Z",
-  "last_seen": "2026-11-11T06:03:48Z",
+  "last_seen": "2026-11-11T16:15:59Z",
   "gone_at": null,
   "price_history": [
    {
@@ -320,7 +320,7 @@
  "1089462348": {
   "id": "1089462348",
   "first_seen": "2026-07-08T10:06:28Z",
-  "last_seen": "2026-11-11T06:03:48Z",
+  "last_seen": "2026-11-11T16:15:59Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2691,7 +2691,7 @@
  "2665009228": {
   "id": "2665009228",
   "first_seen": "2026-07-27T17:29:31Z",
-  "last_seen": "2026-11-11T06:03:48Z",
+  "last_seen": "2026-11-11T16:15:59Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2809,7 +2809,7 @@
  "2696716364": {
   "id": "2696716364",
   "first_seen": "2026-07-07T10:47:34Z",
-  "last_seen": "2026-11-11T06:03:48Z",
+  "last_seen": "2026-11-11T16:15:59Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2850,7 +2850,7 @@
   "backfilled": true,
   "dist_km": 2.47,
   "price_old_czk": null,
-  "deal_pct": -6,
+  "deal_pct": -5,
   "deal_outlier": false,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
@@ -3013,7 +3013,7 @@
  "2839470156": {
   "id": "2839470156",
   "first_seen": "2026-07-09T10:47:27Z",
-  "last_seen": "2026-11-11T06:03:48Z",
+  "last_seen": "2026-11-11T16:15:59Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3035,6 +3035,11 @@
     "at": "2026-10-23",
     "price_czk": 5550000,
     "total_czk": 5550000
+   },
+   {
+    "at": "2026-11-11",
+    "price_czk": 5400000,
+    "total_czk": 5400000
    }
   ],
   "url": "https://www.sreality.cz/detail/prodej/byt/1%2Bkk/x/2839470156",
@@ -3049,21 +3054,21 @@
   "lat": 50.101564,
   "lon": 14.505326,
   "pod_harfou": false,
-  "price_czk": 5550000,
+  "price_czk": 5400000,
   "fees_czk": null,
   "fees_missing": true,
   "fees_source": null,
   "electricity_czk": null,
   "electricity_estimated": false,
-  "total_czk": 5550000,
-  "price_czk_per_sqm": 154167,
+  "total_czk": 5400000,
+  "price_czk_per_sqm": 150000,
   "garage": false,
   "parking": false,
   "floor_number": 4,
   "floors_total": 5,
   "backfilled": true,
   "dist_km": 1.12,
-  "deal_pct": -20,
+  "deal_pct": -24,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 9,
@@ -3089,8 +3094,8 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 16847,
-  "edited": "2026-10-23",
+  "views": 17610,
+  "edited": "2026-11-11",
   "since": "2026-07-09",
   "parking_state": "none",
   "parking_price_czk": null,
@@ -3912,7 +3917,7 @@
  "3311853644": {
   "id": "3311853644",
   "first_seen": "2026-07-22T10:13:56Z",
-  "last_seen": "2026-11-11T06:03:48Z",
+  "last_seen": "2026-11-11T16:15:59Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3967,7 +3972,7 @@
   "floors_total": 6,
   "backfilled": true,
   "dist_km": 1.39,
-  "deal_pct": -15,
+  "deal_pct": -14,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -5544,7 +5549,7 @@
  "4180140108": {
   "id": "4180140108",
   "first_seen": "2026-07-17T09:46:26Z",
-  "last_seen": "2026-11-11T06:03:48Z",
+  "last_seen": "2026-11-11T16:15:59Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5604,7 +5609,7 @@
   "floors_total": null,
   "backfilled": true,
   "dist_km": 1.45,
-  "deal_pct": -4,
+  "deal_pct": -3,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -5926,7 +5931,7 @@
  "45146188": {
   "id": "45146188",
   "first_seen": "2026-07-16T17:02:42Z",
-  "last_seen": "2026-11-11T06:03:48Z",
+  "last_seen": "2026-11-11T16:15:59Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5981,7 +5986,7 @@
   "floors_total": 8,
   "backfilled": true,
   "dist_km": 2.42,
-  "deal_pct": 5,
+  "deal_pct": 4,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -6904,7 +6909,7 @@
  "882630732": {
   "id": "882630732",
   "first_seen": "2026-07-02T17:27:02Z",
-  "last_seen": "2026-11-11T06:03:48Z",
+  "last_seen": "2026-11-11T16:15:59Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6954,7 +6959,7 @@
   "backfilled": true,
   "source": "sreality",
   "dist_km": 1.39,
-  "deal_pct": 13,
+  "deal_pct": 15,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -7076,7 +7081,7 @@
  "960421964": {
   "id": "960421964",
   "first_seen": "2026-07-09T10:47:27Z",
-  "last_seen": "2026-11-11T06:03:48Z",
+  "last_seen": "2026-11-11T16:15:59Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7121,7 +7126,7 @@
   "floors_total": 5,
   "backfilled": true,
   "dist_km": 1.11,
-  "deal_pct": -22,
+  "deal_pct": -23,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 2,
@@ -8006,7 +8011,7 @@
  "bez-1029927": {
   "id": "bez-1029927",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-11-10T21:56:53Z",
+  "last_seen": "2026-11-11T16:15:59Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9157,7 +9162,7 @@
  "bez-1046325": {
   "id": "bez-1046325",
   "first_seen": "2026-07-17T14:55:13Z",
-  "last_seen": "2026-11-10T21:56:53Z",
+  "last_seen": "2026-11-11T16:15:59Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9197,7 +9202,7 @@
   "exclude_from_stats": false,
   "dist_km": 1.81,
   "area": "vysocany",
-  "deal_pct": 1,
+  "deal_pct": 2,
   "deal_outlier": false,
   "house_class": null,
   "house_class_source": null
@@ -9650,7 +9655,7 @@
  "bez-349115": {
   "id": "bez-349115",
   "first_seen": "2026-07-17T09:46:26Z",
-  "last_seen": "2026-11-10T21:56:53Z",
+  "last_seen": "2026-11-11T16:15:59Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9684,7 +9689,7 @@
   "backfilled": true,
   "exclude_from_stats": false,
   "dist_km": 0.59,
-  "deal_pct": -3,
+  "deal_pct": -4,
   "deal_outlier": false,
   "area": "vysocany",
   "house_class": null,
@@ -10190,7 +10195,7 @@
  "bez-754575": {
   "id": "bez-754575",
   "first_seen": "2026-07-17T09:46:26Z",
-  "last_seen": "2026-11-10T21:56:53Z",
+  "last_seen": "2026-11-11T16:15:59Z",
   "gone_at": null,
   "price_history": [
    {
@@ -13319,7 +13324,7 @@
  "idnes-6a0c59a72b5ffab24208d684": {
   "id": "idnes-6a0c59a72b5ffab24208d684",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-11-10T21:56:53Z",
+  "last_seen": "2026-11-11T16:15:59Z",
   "gone_at": null,
   "price_history": [
    {
@@ -14456,7 +14461,7 @@
  "idnes-6a2aca7dae30040b1a04a726": {
   "id": "idnes-6a2aca7dae30040b1a04a726",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-11-10T21:56:53Z",
+  "last_seen": "2026-11-11T16:15:59Z",
   "gone_at": null,
   "price_history": [
    {
@@ -14479,8 +14484,8 @@
   "street": "Kolbenova",
   "locality": "Kolbenova, Praha 9 - Vysočany",
   "city_part": "Vysočany",
-  "lat": 50.110935589509886,
-  "lon": 14.513325199238356,
+  "lat": 50.110885315937566,
+  "lon": 14.513669442988594,
   "pod_harfou": false,
   "price_czk": 10762500,
   "fees_czk": null,
@@ -14493,7 +14498,7 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "dist_km": 2.09,
+  "dist_km": 2.11,
   "deal_pct": 0,
   "deal_outlier": false,
   "exclude_from_stats": false,
@@ -14842,7 +14847,7 @@
  "idnes-6a3170496e725c29510c6cd5": {
   "id": "idnes-6a3170496e725c29510c6cd5",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-11-11T06:03:48Z",
+  "last_seen": "2026-11-11T16:15:59Z",
   "gone_at": null,
   "price_history": [
    {
@@ -14880,7 +14885,7 @@
   "parking": null,
   "backfilled": true,
   "dist_km": 2.27,
-  "deal_pct": -7,
+  "deal_pct": -5,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "area": "vysocany",
