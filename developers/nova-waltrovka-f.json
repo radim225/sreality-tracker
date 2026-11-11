@@ -11,8 +11,8 @@
  "gone_means": "rezervováno/prodáno (web prodané z ceníku vyřazuje)",
  "access_note": "robots.txt neexistuje (404); podmínky zakazují jen zásah do obsahu webu",
  "baseline_at": "2026-09-27T14:56:46Z",
- "fetched_at": "2026-11-10T13:41:31Z",
- "last_ok_at": "2026-11-10T13:41:31Z",
+ "fetched_at": "2026-11-11T12:53:41Z",
+ "last_ok_at": "2026-11-11T12:53:41Z",
  "units": {
   "F10.001": {
    "id": "F10.001",
@@ -584,6 +584,25 @@
    "last_price_at": "2026-09-27T14:56:46Z",
    "baseline": true
   },
+  "F3.304": {
+   "id": "F3.304",
+   "building": "F3F4",
+   "floor": 4,
+   "floor_raw": "patro 3",
+   "disposition": "1+kk",
+   "area_sqm": 31.3,
+   "area_interior_sqm": 32.3,
+   "price_czk": 6052300,
+   "price_excl_vat_czk": 5403839,
+   "price_with_extras_czk": 6052300,
+   "status": "volny",
+   "status_raw": "Dostupný",
+   "source_created_at": "2025-02-14T11:00:11.607Z",
+   "first_seen": "2026-11-11T12:53:41Z",
+   "last_change_at": "2026-11-11T12:53:41Z",
+   "last_price_at": "2026-11-11T12:53:41Z",
+   "last_price_czk": 6052300
+  },
   "F3.306": {
    "id": "F3.306",
    "building": "F3F4",
@@ -709,11 +728,11 @@
    "price_excl_vat_czk": 13787143,
    "price_with_extras_czk": 16366700,
    "extras": "SK17, PS59",
-   "status": "volny",
-   "status_raw": "Dostupný",
+   "status": "predrezervace",
+   "status_raw": "Předrezervace",
    "source_created_at": "2025-02-14T11:00:11.173Z",
    "first_seen": "2026-09-27T14:56:46Z",
-   "last_change_at": "2026-09-27T14:56:46Z",
+   "last_change_at": "2026-11-11T12:53:41Z",
    "last_price_czk": 15441600,
    "last_price_at": "2026-09-27T14:56:46Z",
    "baseline": true
