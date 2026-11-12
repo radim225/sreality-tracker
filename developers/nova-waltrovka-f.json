@@ -11,8 +11,8 @@
  "gone_means": "rezervováno/prodáno (web prodané z ceníku vyřazuje)",
  "access_note": "robots.txt neexistuje (404); podmínky zakazují jen zásah do obsahu webu",
  "baseline_at": "2026-09-27T14:56:46Z",
- "fetched_at": "2026-11-11T12:53:41Z",
- "last_ok_at": "2026-11-11T12:53:41Z",
+ "fetched_at": "2026-11-12T13:55:53Z",
+ "last_ok_at": "2026-11-12T13:55:53Z",
  "units": {
   "F10.001": {
    "id": "F10.001",
@@ -237,10 +237,11 @@
    "status_raw": "Předrezervace",
    "source_created_at": "2026-08-07T08:09:12.735Z",
    "first_seen": "2026-09-27T14:56:46Z",
-   "last_change_at": "2026-10-20T10:18:13Z",
+   "last_change_at": "2026-11-12T13:55:53Z",
    "last_price_czk": 11428100,
    "last_price_at": "2026-09-27T14:56:46Z",
-   "baseline": true
+   "baseline": true,
+   "gone_at": "2026-11-12T13:55:53Z"
   },
   "F10.206": {
    "id": "F10.206",
@@ -365,7 +366,7 @@
    "disposition": "2+kk",
    "area_sqm": 50.0,
    "area_interior_sqm": 53.7,
-   "loggia_sqm": 8.8,
+   "loggia_sqm": 8.7,
    "price_czk": 11198400,
    "price_excl_vat_czk": 9998571,
    "price_with_extras_czk": 12217400,
@@ -599,9 +600,10 @@
    "status_raw": "Dostupný",
    "source_created_at": "2025-02-14T11:00:11.607Z",
    "first_seen": "2026-11-11T12:53:41Z",
-   "last_change_at": "2026-11-11T12:53:41Z",
+   "last_change_at": "2026-11-12T13:55:53Z",
    "last_price_at": "2026-11-11T12:53:41Z",
-   "last_price_czk": 6052300
+   "last_price_czk": 6052300,
+   "gone_at": "2026-11-12T13:55:53Z"
   },
   "F3.306": {
    "id": "F3.306",
