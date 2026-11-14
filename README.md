@@ -93,7 +93,8 @@ Symetricky k přidání:
 | `fee_review_queue.json` | Pronájmy, u kterých parser odmítl hádat poplatek — k ručnímu projití. |
 | `test_*.py` | Offline testy; přesný seznam a pořadí je v kroku „Run tests“ workflow `scrape.yml`. |
 | `dashboard.html` / `index.html` | Statický dashboard (GitHub Pages servíruje `index.html`). |
-| `snapshots/` | Historické snapshoty jednotlivých běhů. |
+| `snapshots/` | Lokální kopie snapshotů (v repu není). Archiv všech běhů je v GitHub Releases `snapshots-RRRR-MM`, stáhne ho `python snapshots_release.py restore`. |
+| `snapshots_release.py` | Nahrání snapshotu běhu do Release (Actions) a obnova archivu s kontrolou SHA-256. |
 | `.github/workflows/scrape.yml` | Naplánovaná automatizace. |
 | `.github/workflows/developers.yml` | Denní archiv ceníků developerů. |
 
@@ -372,5 +373,6 @@ python scrape.py
 # úplný sled testů je v sekci „Testy jako v CI“ výše
 
 # jednorázové naplnění poolu z archivu snapshotů
+python snapshots_release.py restore   # stáhne archiv z Releases do snapshots/
 python backfill_pool.py
 ```

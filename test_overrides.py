@@ -8,6 +8,7 @@ returns the parser's numbers. The same id, gone then active, keeps the record.
 Run: python3 test_overrides.py
 """
 import json
+import re
 import sys
 import tempfile
 from pathlib import Path
@@ -195,7 +196,32 @@ gone_card = scrape.overrides_card(
     [],
 )
 check("gone listing still listed on the card", "400" in gone_card, True)
-check("gone listing is labelled as waiting", "není v nabídce" in gone_card, True)
+check("gone listing is labelled", "zmizelý inzerát" in gone_card, True)
+
+# --- card redesign: one row per correction, ids only in data-* -------------- #
+# Id a URL z cizího inzerátu: id jde jen do data-* (escapované), odkaz jen https,
+# mazání žádný inline handler a nikdy na jeden klik (potvrzení dělá JS).
+evil_id = '9" onmouseover="alert(1)'
+row_card = scrape.overrides_card(
+    {evil_id: {"id": evil_id, "floor_area_sqm": 91.5, "fees_czk": 5300, "note": "půdorys"},
+     "77": {"id": "77", "exclude_from_stats": True}},
+    [{"id": evil_id, "title": "Byt", "url": "https://www.sreality.cz/detail/x", "source": "sreality",
+      "floor_area_portal_sqm": 196.0, "floor_area_source": "override"},
+     {"id": 77, "title": "Jiný", "url": "javascript:alert(1)"}],
+)
+check("card: no inline handler at all", re.findall(r'\son[a-z]+="', row_card), [])
+check("card: hostile id escaped in data-*", 'data-ov-row="9&quot; onmouseover=&quot;alert(1)"' in row_card, True)
+check("card: hostile id never raw", 'onmouseover="alert' in row_card, False)
+check("card: live row opens the detail", 'data-ov-open="77"' in row_card, True)
+check("card: delete is a data-* button", row_card.count("data-ov-del="), 2)
+check("card: area as before -> after", "196\u00a0m² (portál) → 91,5\u00a0m² (oprava)" in row_card, True)
+check("card: fee shows the new value", "poplatky 5 300 Kč" in row_card, True)
+check("card: excluded is the table's badge", '<span class="badge bad">mimo statistiku</span>' in row_card, True)
+check("card: https link kept", 'href="https://www.sreality.cz/detail/x"' in row_card, True)
+check("card: javascript: link dropped", "javascript:" in row_card, False)
+check("card: one vocabulary", ("Smazat opravu" in row_card, "🗑" in row_card), (True, False))
+check("card: gone row has no openable button", 'data-ov-open=' in scrape.overrides_card(
+    {"5": {"id": "5", "note": "x"}}, []), False)
 
 
 # --- normalize rejects junk ---------------------------------------------- #
@@ -209,6 +235,60 @@ try:
     check("zero m² rejected", True, False)
 except ValueError:
     check("zero m² rejected", True, True)
+
+
+# --- card: what the correction changed ------------------------------------ #
+sale = {"id": 4004937804, "title": "Prodej bytu 3+kk 196 m²", "transaction_type": "prodej",
+        "price_czk": 19950000, "floor_area_sqm": 91.5, "floor_area_portal_sqm": 196.0,
+        "floor_area_source": "override", "price_czk_per_sqm": 218033,
+        "url": "https://www.sreality.cz/detail/x/4004937804"}
+ov_sale = {"id": "4004937804", "floor_area_sqm": 91.5, "note": "Podlahová plocha 91,5 m² podle Radima"}
+eff = " | ".join(scrape.override_effect(ov_sale, sale))
+check("effect: portal -> corrected area, Czech decimals", "196 m² (portál) → 91,5 m² (oprava)" in eff, True)
+check("effect: Kč/m² before -> after", "101 786 Kč/m² → 218 033 Kč/m²" in eff, True)
+check("no dot decimals in effect", "91.5" in eff, False)
+card = scrape.overrides_card({"4004937804": ov_sale}, [sale])
+check("row opens the detail via data-ov-open", 'data-ov-open="4004937804"' in card, True)
+check("row keeps a link to the portal", "sreality.cz/detail/x/4004937804" in card, True)
+
+same = dict(sale, id=4131835980, title="Pronájem bytu 3+kk 225 m²", floor_area_sqm=103.0,
+            floor_area_portal_sqm=103.0, transaction_type="pronajem", total_czk=67900)
+eff = " | ".join(scrape.override_effect({"id": "4131835980", "floor_area_sqm": 103.0}, same))
+check("effect: no-op override is called out", "oprava ji nemění" in eff, True)
+check("effect: title area mentioned when it differs", "titulek inzerátu uvádí 225" in eff, True)
+
+fees = " | ".join(scrape.override_effect({"id": "1", "floor_area_sqm": 50, "fees_czk": 3000},
+                                         dict(sale, floor_area_portal_sqm=60.0, floor_area_sqm=50.0)))
+check("effect: no Kč/m² before when a fee is overridden", "Kč/m² →" in fees, False)
+
+excl = dict(sale, floor_area_source="popis", floor_area_sqm=42.0, floor_area_portal_sqm=47.0, area_mismatch=True)
+eff = " | ".join(scrape.override_effect({"id": "1", "exclude_from_stats": True}, excl))
+check("effect: shows the area actually used", "plocha ve statistice 42 m²" in eff, True)
+check("effect: shows portal area and mismatch", "portál uvádí 47" in eff and "nesedí" in eff, True)
+check("effect: excluded explained", "nepočítá do mediánu" in eff, True)
+
+pending = " | ".join(scrape.override_effect(ov_sale, dict(sale, floor_area_source="field", floor_area_sqm=196.0)))
+check("effect: not-yet-applied area is flagged", "neprojevila" in pending, True)
+
+arch = {"400": {"id": 400, "title": "Starý inzerát", "url": "https://example.com/400", "gone_at": "2026-09-24T23:14:46Z"}}
+gone_card = scrape.overrides_card({"400": {"id": "400", "floor_area_sqm": 33}}, [], archive=arch)
+check("gone listing takes title from the archive", "Starý inzerát" in gone_card, True)
+check("gone listing shows when it vanished", "zmizel 24. 9. 2026" in gone_card, True)
+check("gone listing is not an openable button", "data-ov-open" in gone_card, False)
+
+# --- normalize: non-finite numbers and empty records ----------------------- #
+for label, payload in (
+    ("NaN area rejected", {"id": "1", "floor_area_sqm": float("nan")}),
+    ("Infinity area rejected", {"id": "1", "floor_area_sqm": float("inf")}),
+    ("Infinity fee rejected", {"id": "1", "fees_czk": float("inf")}),
+    ("NaN fee rejected", {"id": "1", "fees_czk": float("nan")}),
+    ("override with no fields rejected", {"id": "1"}),
+):
+    try:
+        scrape.normalize_override(payload)
+        check(label, True, False)
+    except ValueError:
+        check(label, True, True)
 
 
 # --- modal JS: the save button must be clickable --------------------------- #
@@ -233,6 +313,18 @@ submit = src[src.index("async function submitOverride"):src.index("function over
 check("pending stored only after ok", submit.index("setOvPending(id, entry)") > submit.index("if (r.ok)"), True)
 check("token never in a URL", re.search(r"dispatches[^`]*\$\{pageToken", src), None)
 check("save button in a sticky footer", ".ov-footer {{ position: sticky;" in src, True)
+# Karta Opravy v JS: mazání jen přes potvrzení v řádku, stav „čeká" z ov_pending,
+# detail ukazuje opravu a vede zpátky na kartu.
+card_js = src[src.index("function ovCardRow"):src.index("function initMap() {")]
+check("card delete dispatches only from the confirm step",
+      card_js.index("dispatchWorkflow({override_delete") > card_js.index("async function ovCardDelete"), True)
+check("first click only asks", "data-ov-del-yes" in card_js and "ovCardAskDelete(del.closest" in card_js, True)
+check("no window.confirm", "confirm(" in card_js.replace("data-ov-confirm", ""), False)
+check("pending state shown per row", "ovCardSync();\ninitMap();" in src, True)
+check("modal links back to the card", 'data-ov-jump="${escapeHtml(String(item.id))}"' in src, True)
+check("modal summary escapes note", "escapeHtml(item.override_note)" in src[src.index("function ovModalNoteHtml"):], True)
+check("one vocabulary in the modal badge", "upraveno ručně" in src, False)
+check("area correction needs a note", "else if (area && !note)" in src, True)
 
 
 print()

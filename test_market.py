@@ -262,6 +262,12 @@ public = json.dumps(est_cov, ensure_ascii=False).lower()
 for word in ("hypot", "splátk", "mortgage", "pokryje", "payment"):
     check(f"the estimate carries no {word!r}", word in public, False)
 
+# --- #21: nevysvětlená plocha mimo odhad nájmu ---------------------------- #
+ok_rec = {"transaction_type": "pronajem", "disposition": "1+kk", "floor_area_sqm": 30}
+check("1+kk 30 m² se známým poplatkem jde do odhadu", market.base_eligible(ok_rec), True)
+check("area_mismatch nejde do odhadu",
+      market.base_eligible(dict(ok_rec, area_mismatch=True)), False)
+
 print()
 if FAILURES:
     print(f"{len(FAILURES)} case(s) failed: {', '.join(FAILURES)}")

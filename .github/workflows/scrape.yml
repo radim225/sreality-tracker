@@ -11,11 +11,11 @@ on:
   workflow_dispatch:
     inputs:
       add_url:
-        description: "Sreality listing URL to add to tracked.json before scraping"
+        description: "URL inzerátu (Sreality, Bezrealitky nebo iDNES) k přidání do tracked.json před scrapem"
         required: false
         default: ""
       remove_url:
-        description: "Sreality listing URL (or numeric id) to remove from tracked.json before scraping"
+        description: "URL nebo id (Sreality / bez-… / idnes-…) k odebrání z tracked.json před scrapem"
         required: false
         default: ""
       override_set:
@@ -68,7 +68,10 @@ jobs:
           # the concurrency queue would otherwise start from a stale commit and
           # its push would be rejected as non-fast-forward.
           ref: main
-          fetch-depth: 0
+          # Mělký klon (#17): plné snapshoty už v repu nejsou, historie se
+          # nepotřebuje. Rebase před pushem funguje i tak -- remote main
+          # navazuje na commit, ze kterého se klonovalo.
+          fetch-depth: 1
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -122,6 +125,7 @@ jobs:
           python test_report.py
           python test_notify.py
           python test_security.py
+          python test_tracked_url.py
           python test_sale_extras.py
           python test_relist.py
           python test_gone_archive.py
@@ -138,6 +142,7 @@ jobs:
           python test_mapguard.py
           python test_photo_archive.py
           python test_segments.py
+          python test_snapshots_release.py
 
       - name: Run scraper
         env:
@@ -197,10 +202,22 @@ jobs:
         run: python pages_size.py
 
       - name: Commit and push results
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add snapshots latest_snapshot.json last_changes.json changes_history.json dashboard.html index.html tracked.json overrides.json
+          # Plný snapshot běhu jde do GitHub Release (snapshots_release.py, #17),
+          # ne do repa. Když upload selže, commitne se postaru (-f přes
+          # .gitignore) -- ztratit snapshot je horší než jednou větší repo.
+          for snap in snapshots/snapshot-*.json; do
+            [ -e "$snap" ] || continue
+            if ! python snapshots_release.py upload "$snap"; then
+              echo "::warning::Snapshot $snap se nepodařilo nahrát do Release, commituji ho do repa."
+              git add -f "$snap"
+            fi
+          done
+          git add latest_snapshot.json last_changes.json changes_history.json dashboard.html index.html tracked.json overrides.json
           git add changes_log.jsonl pool reports fee_review_queue.json
           # Jen když existují: chybějící soubor by git add shodil a s ním
           # commit celého běhu (snapshot, pool, dashboard).

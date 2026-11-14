@@ -124,6 +124,23 @@ def summary_of(records, state=None, week=WEEK, as_of=AS_OF):
     return segments.build_summary(records, state=state, as_of=as_of, week=week)
 
 
+# --- okolní čtvrti, velké byty a zástupná cena ------------------------------ #
+_s, _e = market.week_bounds(WEEK)
+check("okolní čtvrť (fringe) není aktivní", segments.is_active(listing(900, scope="fringe", price_czk_per_sqm=100_000), _s, _e, None, False), False)
+check("sledovaná čtvrť (core) je aktivní", segments.is_active(listing(901, scope="core", price_czk_per_sqm=100_000), _s, _e, None, False), True)
+check("4+kk z #27 mimo časové řady", segments.is_active(listing(902, disposition="4+kk", price_czk_per_sqm=100_000), _s, _e, None, False), False)
+check("cena 1 Kč není cena", segments._money({"transaction_type": "prodej"}, {"price_czk": 1}), None)
+check("nájem 1 Kč není cena", segments._money({"transaction_type": "pronajem"}, {"total_czk": 1}), None)
+check("skutečná cena projde", segments._money({"transaction_type": "prodej"}, {"price_czk": 5_000_000}), 5_000_000.0)
+placeholder = [listing(950 + i, price_czk_per_sqm=100_000) for i in range(25)]
+placeholder[0]["price_history"] = [
+    {"at": "2026-06-01", "price_czk": 1},
+    {"at": "2026-10-06", "price_czk": 19_800_000},
+]
+pl = one(summary_of(placeholder), "prodej:typ:panel")
+check("1 Kč → 19,8 mil. nedělá z průměrné změny miliony %",
+      (pl["same_listings_n"] >= 20, abs(pl["same_listings_avg_change_pct"]) < 1), (True, True))
+
 panel = [listing(i) for i in range(25)]
 # +3,2 % až v hlášeném týdnu. Medián se pohne o 3,2 (práh t/t), ne o 5 proti 4 týdnům.
 for rec in panel:

@@ -124,16 +124,16 @@ DEFINITIONS = {
     "lokalita": (
         "Vysočany a okolí = oblast vysocany. Není to administrativní Praha 9: "
         "kruh bere Vysočany, Libeň, Karlín, Žižkov, Hloubětín, Hrdlořezy a "
-        "Malešice a na okraji i sousední čtvrtě. Záznam bez area patří sem, "
+        "Malešice. Sousední čtvrtě, které Sreality vrací od 7. 10. (scope "
+        "fringe, #26), se nepočítají. Záznam bez area patří sem, "
         "stejně jako ve zbytku trackeru. Druhý koš není zbytek Prahy. Jsou to "
         "jen Jinonice a další sledované oblasti (Jinonice, Radlice, Košíře, "
-        "Stodůlky, Hlubočepy a jejich okraj). Čtvrtě se nedělí: část inzerátů "
-        "nemá city_part a kruh přetahuje i cizí čtvrť, takže řez podle názvu "
-        "čtvrti by lhal. Tracker má dvě oblasti."
+        "Stodůlky, Hlubočepy). Po čtvrtích se nedělí: část inzerátů nemá "
+        "city_part. Tracker má dvě oblasti."
     ),
     "reference": (
         "Novostavba, dispozice 1+kk, plocha 25–35 m² včetně, oblast Vysočany "
-        "a okolí (P9, Libeň, Karlín, Žižkov a sousední čtvrtě v tom kruhu). "
+        "a okolí (P9, Libeň, Karlín, Žižkov; bez okolních čtvrtí, #26). "
         "Prodej a pronájem zvlášť. Je to pásmo trhu, ne konkrétní byt."
     ),
     "aktivni": (
@@ -216,6 +216,11 @@ FORBIDDEN_SUBSTRINGS = (
     "owncard", "709/r", "mortgage", "anuita", "hypoindex",
     "own_price", "own_ltv", "own_deposit", "own_extra", "m0rtgage",
 )
+
+
+# Spodní hranice skutečné ceny; pod ní jde o zástupné číslo portálu.
+MIN_SALE_CZK = 100_000
+MIN_RENT_CZK = 1_000
 
 
 def _r1(value):
@@ -353,6 +358,11 @@ def _in_stats(rec):
     """
     if rec.get("exclude_from_stats") or rec.get("gone_stale") or rec.get("area_mismatch"):
         return False
+    # Okolní čtvrti (#26) a velké byty z #27 nejsou v časových řadách nikde
+    # jinde (pool.window): okolí od 7. 10. řídí Sreality, ne trh, a velké byty
+    # by v týdnu zapnutí naráz „přibyly" do koše Velký.
+    if rec.get("scope") == "fringe" or not poolmod.in_trend(rec):
+        return False
     if rec.get("transaction_type") not in ("prodej", "pronajem"):
         return False
     return bool(rec.get("price_czk_per_sqm"))
@@ -448,7 +458,10 @@ def _money(rec, entry):
         value = float(value)
     except (TypeError, ValueError):
         return None
-    return value if value > 0 else None
+    # „1 Kč" a podobné zástupné ceny (cena na dotaz) nejsou cena: 1 → 19,8 mil.
+    # by jinak udělalo z průměrné změny ceny segmentu miliony procent (W45).
+    floor = MIN_RENT_CZK if rec.get("transaction_type") == "pronajem" else MIN_SALE_CZK
+    return value if value >= floor else None
 
 
 def asking_known_at(rec, when):

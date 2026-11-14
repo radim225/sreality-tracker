@@ -22,6 +22,8 @@ def main():
     history = json.loads(scrape.CHANGES_HISTORY_PATH.read_text())
     now = snapshot['generated_at']
     all_pool = pool.load_pool()
+    # Okolní čtvrti (#26) mimo okno odhadu, stejně jako v update_pool_and_reports.
+    scrape.mark_scope(all_pool.values())
     estimate = market.rent_estimate(pool.window(all_pool, now=now),
                                    as_of=now, state=pool.load_state(), allow_switch=False)
     # The same post-passes main() runs between enrich and render. They read text
@@ -42,10 +44,14 @@ def main():
     scrape.apply_overrides(comps, overrides)
     scrape.apply_overrides(snapshot['tracked'], overrides)
     scrape.flag_transaction_mismatch(comps)
+    scrape.mark_scope(comps)
     scrape.rank_deals(comps)
-    home = [c for c in comps if scrape.listing_area(c) == scrape.HOME_AREA]
+    home = [c for c in comps if scrape.listing_area(c) == scrape.HOME_AREA and scrape.in_core(c)
+            and c.get("disposition") in scrape.TREND_DISPOSITIONS]
     snapshot['stats'] = scrape.compute_stats(home)
-    snapshot['area_stats'] = {k: scrape.compute_stats([c for c in comps if scrape.listing_area(c) == k])
+    snapshot['area_stats'] = {k: scrape.compute_stats([c for c in comps if scrape.listing_area(c) == k
+                                                       and scrape.in_core(c)
+                                                       and c.get("disposition") in scrape.TREND_DISPOSITIONS])
                               for k in scrape.AREAS}
     scrape.render_dashboard(snapshot, changes, snapshot['stats'], history, estimate,
                             scrape.price_histories(all_pool))

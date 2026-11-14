@@ -49,7 +49,7 @@ def main():
     state = poolmod.load_state()
     paths = snapshot_paths(limit)
     if not paths:
-        raise SystemExit("v snapshots/ nic není — není co přehrát")
+        raise SystemExit("v snapshots/ nic není — nejdřív: python3 snapshots_release.py restore")
 
     print(f"Přehrávám {len(paths)} snapshotů...", file=sys.stderr)
     totals = {"new": 0, "updated": 0, "repriced": 0}

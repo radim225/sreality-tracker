@@ -33,7 +33,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: main
-          fetch-depth: 0
+          # Mělký klon stačí: commituje se jen developers/ a rebase na nový
+          # main navazuje na klonovaný commit (#17).
+          fetch-depth: 1
 
       - name: Set up Python
         uses: actions/setup-python@v5

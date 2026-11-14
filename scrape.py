@@ -34,6 +34,7 @@ import ribbon
 import timeline
 import sources
 import ux
+from listing_url import order_tracked, portal_tracked_id
 
 ROOT = Path(__file__).parent
 SNAPSHOTS_DIR = ROOT / "snapshots"
@@ -56,12 +57,27 @@ FEE_QUEUE_PATH = ROOT / "fee_review_queue.json"
 OVERRIDES_PATH = ROOT / "overrides.json"
 
 # Sreality category_sub_cb codes (from /hledani estatesFilterPage)
-DISPOSITION_CODES = {2: "1+kk", 3: "1+1", 4: "2+kk", 5: "2+1", 6: "3+kk", 7: "3+1"}
+# Od #27 (Radim 10. 10.: „spíš sbírejme víc dat, než méně… pak můžeme
+# filtrovat v dashboardu") i velké byty a atypické. Kódy 8–12 a 16 ověřené
+# živě 27. 9. (novostavby.py) a 10. 10. (`velikost=6-a-vice` vrací jen 12,
+# `atypicky` jen 16).
+DISPOSITION_CODES = {
+    2: "1+kk", 3: "1+1", 4: "2+kk", 5: "2+1", 6: "3+kk", 7: "3+1",
+    8: "4+kk", 9: "4+1", 10: "5+kk", 11: "5+1", 12: "6+", 16: "atypický",
+}
+# Dispozice, na kterých stojí časové řady: karta Statistika oblastí, týdenní
+# a měsíční zápis, okno poolu a graf nabídky. Sbíralo se jen tohle do 10. 10.
+# a přidání velkých bytů by změnilo složení mediánu -- skok, který není trh.
+# Velké byty jsou v tabulce, na mapě, ve filtrech a ve výhodnosti (ta má
+# medián po dispozicích, takže se nemíchají).
+TREND_DISPOSITIONS = ("1+kk", "1+1", "2+kk", "2+1", "3+kk", "3+1")
+# Sreality's "velikost" slug where it differs from the label.
+VELIKOST_SLUG = {12: "6-a-vice", 16: "atypicky"}
 # The same set as a "velikost" query param. Sreality accepts it server-side and
 # resolves it to exactly these categorySubCb codes, so the search returns only
 # relevant dispositions instead of every flat in the ward -- roughly halving the
 # number of search pages we have to walk.
-SEARCH_VELIKOST = ",".join(DISPOSITION_CODES.values())
+SEARCH_VELIKOST = ",".join(VELIKOST_SLUG.get(code, label) for code, label in DISPOSITION_CODES.items())
 TRANSACTION_TYPES = ["pronajem", "prodej"]  # rent, sale
 
 # Standalone garages and parking spaces. Sreality files them under the "Ostatní"
@@ -435,6 +451,47 @@ def assign_area(item):
     d = km_from_center(item.get("lat"), item.get("lon"), key)
     item["dist_km"] = round(d, 2) if d is not None else None
     return item
+
+
+# Od běhu 7. 10. 15:44 vrací Sreality na hledání `region=<čtvrť>` i inzeráty
+# z okolních čtvrtí (Holešovice, Strašnice, Smíchov, Prosek, Střížkov, ...;
+# 473 nových id v jednom běhu, config otisk beze změny, #26). Leží v kruhu
+# oblasti, takže filtrem prošly. Radim (10. 10.): „spíš sbírejme víc dat, než
+# méně… pak filtrovat v dashboardu" -- proto se nezahazují, jen označí:
+#   core   = `city_part` je mezi čtvrtěmi své oblasti (nebo chybí: inzerát bez
+#            čtvrti tu byl i před 7. 10. a zahodit ho by tiše zmenšilo trh),
+#   fringe = jiná čtvrť, včetně obecných „Praha 9" -- před 7. 10. jich bylo 0.
+# Okolí nejde do mediánů, výhodných nabídek, odhadu nájmu, týdenního zápisu
+# ani do změn (nové / zmizelé / zlevněné): jeho přítomnost řídí Sreality, ne
+# trh, a kdyby to Sreality vrátilo, ohlásilo by se 400 „zmizelých".
+SCOPE_CORE = "core"
+SCOPE_FRINGE = "fringe"
+
+
+def listing_scope(item):
+    """`core` or `fringe` for one listing -- see the block above."""
+    ward = item.get("city_part")
+    if not ward:
+        return SCOPE_CORE
+    area = AREAS.get(listing_area(item)) or AREAS[HOME_AREA]
+    return SCOPE_CORE if ward in area["wards"] else SCOPE_FRINGE
+
+
+def mark_scope(items):
+    """Stamp `scope` on every listing (snapshot or pool record); returns how
+    many are fringe. Recomputed every run from area + ward, never carried, so
+    a change to a ward list re-scopes everything at once."""
+    n = 0
+    for item in items:
+        item["scope"] = listing_scope(item)
+        n += item["scope"] == SCOPE_FRINGE
+    return n
+
+
+def in_core(item):
+    """Statistics read only the watched wards. A record without `scope`
+    (everything before #26) is core -- that is what it was collected as."""
+    return item.get("scope") != SCOPE_FRINGE
 
 
 def cdn_url(url):
@@ -1125,13 +1182,13 @@ def normalize_override(payload):
             area = float(payload["floor_area_sqm"])
         except (TypeError, ValueError) as exc:
             raise ValueError("floor_area_sqm must be a number") from exc
-        if area <= 0:
-            raise ValueError("floor_area_sqm must be positive")
+        if not math.isfinite(area) or area <= 0:
+            raise ValueError("floor_area_sqm must be a finite positive number")
         rec["floor_area_sqm"] = area
     if "fees_czk" in payload and payload["fees_czk"] not in (None, ""):
         try:
             fees = int(payload["fees_czk"])
-        except (TypeError, ValueError) as exc:
+        except (TypeError, ValueError, OverflowError) as exc:
             raise ValueError("fees_czk must be an integer") from exc
         if fees < 0:
             raise ValueError("fees_czk must be >= 0")
@@ -1139,6 +1196,9 @@ def normalize_override(payload):
     note = payload.get("note")
     if note:
         rec["note"] = str(note).strip()
+    if len(rec) == 1:
+        # Prázdná oprava by na kartě nic neříkala a nic nezměnila.
+        raise ValueError("override changes nothing: give an area, a fee, a note or exclude_from_stats")
     return rec
 
 
@@ -1362,7 +1422,11 @@ def fetch_tracked(url, listing_id):
     """A record with "unavailable" means the fetch failed, not that the listing
     went away -- main() carries the previous state forward for those. Only a 404
     is treated as a real delisting; that is what Sreality actually serves for a
-    removed advert."""
+    removed advert.
+
+    Bezrealitky and iDNES never reach the network from here. Their tracked card
+    is the comparison row scrape already stored; a second download would be a
+    new request (and a place a cookie could leak)."""
 
     def unreadable(reason):
         return {
@@ -1372,6 +1436,12 @@ def fetch_tracked(url, listing_id):
             "fetched_at": now_iso(),
             "error": reason,
         }
+
+    host = ""
+    if isinstance(url, str):
+        host = (urllib.parse.urlsplit(url).hostname or "").lower()
+    if portal_tracked_id(listing_id) or host not in {"sreality.cz", "www.sreality.cz"}:
+        return unreadable("detail fetch is only for sreality.cz; other portals are paired")
 
     try:
         next_data, status = fetch_next_data(url)
@@ -1448,6 +1518,202 @@ def fetch_tracked(url, listing_id):
         "lon": locality.get("longitude"),
         "approx_location": False,
     }
+
+
+def fetch_configured_tracked(tracked_config, prev_tracked_by_id):
+    """Fetch Sreality seeds only. Portal ids are filled in later from comparables."""
+    n_portal = sum(1 for t in tracked_config if portal_tracked_id(t.get("id")))
+    n_fetch = len(tracked_config) - n_portal
+    extra = f" ({n_portal} from comparison records, no extra request)" if n_portal else ""
+    print(f"Fetching {n_fetch} tracked listing(s){extra}...", file=sys.stderr)
+    tracked = []
+    for t in tracked_config:
+        if portal_tracked_id(t.get("id")):
+            continue
+        fetched = fetch_tracked(t["url"], t["id"])
+        prev_t = prev_tracked_by_id.get(t["id"])
+        unreadable = fetched.get("unavailable", False)
+        if unreadable:
+            # We simply could not read the page. Keep showing the last known
+            # state rather than flipping the listing to "no longer listed" --
+            # that would fire a removal alert about an upstream hiccup.
+            print(
+                f"Tracked id={t['id']} unreadable, keeping last known state: {fetched['error']}",
+                file=sys.stderr,
+            )
+            fetched = (
+                {**prev_t, "fetch_error": fetched["error"], "fetch_error_at": fetched["fetched_at"]}
+                if prev_t
+                else {**fetched, "active": False}
+            )
+        elif not fetched.get("active"):
+            if prev_t:
+                # Carry forward the last time it was *actually* seen active, even
+                # across multiple consecutive inactive runs (prev_t may itself
+                # already be a backfilled record with no fresh active sighting).
+                last_active_at = prev_t.get("last_active_at") or (
+                    prev_t.get("fetched_at") if prev_t.get("active") else None
+                )
+                fetched = {**prev_t, **fetched}
+                if last_active_at:
+                    fetched["last_active_at"] = last_active_at
+        if not unreadable:
+            # A successful read clears any error carried over from a failed run.
+            fetched.pop("fetch_error", None)
+            fetched.pop("fetch_error_at", None)
+        tracked.append(fetched)
+        print(
+            f"Tracked id={fetched['id']} active={fetched.get('active')} title={fetched.get('title')!r}",
+            file=sys.stderr,
+        )
+    return tracked
+
+
+# Fields the tracked card and the price diff already understand. Explicit list:
+# a comparison row is not copied wholesale, so a new key on a portal advert
+# cannot ride into the tracked record (and from there into the public page)
+# without being named here.
+_TRACKED_FROM_COMP = (
+    "title", "disposition", "transaction_type", "fees_czk", "fees_missing",
+    "fees_source", "electricity_czk", "floor_area_sqm", "floor_area_source",
+    "price_czk_per_sqm", "floor_number", "floors_total", "locality", "city_part",
+    "street", "description", "seller_name", "thumb", "lat", "lon", "garage",
+    "parking",
+)
+
+
+def tracked_from_comparable(comp, url=None):
+    """Comparison row -> tracked-card row. No network.
+
+    The card reads the asking price from rent_czk (sale and rent both). The
+    diff reads total_czk, so electricity_estimated has to be present even when
+    the portal left it false.
+    """
+    price = comp.get("price_czk")
+    total = comp.get("total_czk")
+    if total is None:
+        total = price
+    row = {
+        "id": comp.get("id"),
+        "url": comp.get("url") or url,
+        "source": comp.get("source"),
+        "active": True,
+        "fetched_at": comp.get("verified_live_at"),
+        "rent_czk": price,
+        "total_czk": total,
+        "electricity_estimated": bool(comp.get("electricity_estimated")),
+        "images": list(comp.get("images") or []),
+        "sale_extras": list(comp.get("sale_extras") or []),
+        "approx_location": bool(comp.get("approx_location")),
+    }
+    for key in _TRACKED_FROM_COMP:
+        if key in comp:
+            row[key] = comp.get(key)
+    return row
+
+
+def _with_inactive(row, prev_t):
+    """Same disappearance as a Sreality 404: keep the last details, mark inactive."""
+    row = dict(row)
+    row["active"] = False
+    if prev_t:
+        last = prev_t.get("last_active_at")
+        if prev_t.get("active"):
+            last = prev_t.get("fetched_at") or prev_t.get("last_active_at")
+        if last:
+            row["last_active_at"] = last
+        if row.get("rent_czk") is None and prev_t.get("rent_czk") is not None:
+            row["rent_czk"] = prev_t.get("rent_czk")
+            row["total_czk"] = prev_t.get("total_czk")
+            if "electricity_estimated" in prev_t:
+                row["electricity_estimated"] = prev_t.get("electricity_estimated")
+    return row
+
+
+def _index_by_id(rows):
+    out = {}
+    for comp in rows or []:
+        if comp and comp.get("id") is not None and comp["id"] not in out:
+            out[comp["id"]] = comp
+    return out
+
+
+def pair_portal_tracked(config_entries, comparables, prev_tracked, gone=(),
+                        folded=(), prev_comparables=()):
+    """Pair Bezrealitky/iDNES tracked ids with comparison rows already in hand.
+
+    Does not fetch. A confirmed disappearance (`gone`, the same list
+    verify_removals already produced) keeps the card and marks it inactive.
+    A mere absence keeps the previous card. Nothing is dropped.
+    """
+    fresh = _index_by_id(comparables)
+    folded_by_id = _index_by_id(folded)
+    older = _index_by_id(prev_comparables)
+    gone_by_id = _index_by_id(gone)
+    prev_by_id = _index_by_id(prev_tracked)
+    rows = []
+    for entry in config_entries:
+        lid = entry.get("id")
+        url = entry.get("url")
+        prev_t = prev_by_id.get(lid)
+        comp = fresh.get(lid) or folded_by_id.get(lid)
+        if comp is not None:
+            row = tracked_from_comparable(comp, url)
+            if comp.get("active") is False:
+                row = _with_inactive(row, prev_t)
+            rows.append(row)
+            continue
+        if lid in gone_by_id:
+            rows.append(_with_inactive(tracked_from_comparable(gone_by_id[lid], url), prev_t))
+            continue
+        if lid in older:
+            row = tracked_from_comparable(older[lid], url)
+            row["active"] = True
+            rows.append(row)
+            continue
+        if prev_t:
+            kept = dict(prev_t)
+            kept.setdefault("url", url)
+            rows.append(kept)
+            continue
+        rows.append({
+            "id": lid,
+            "url": url,
+            "active": True,
+            "unavailable": True,
+            "electricity_estimated": False,
+            "error": "srovnávací záznam v tomhle běhu není",
+        })
+    return rows
+
+
+def attach_portal_tracked(snapshot, changes, tracked_config, prev, folded, overrides):
+    """Fill portal seeds after verify_removals, then recompute tracked price diffs.
+
+    Sreality seeds are already on snapshot["tracked"]. Portal seeds are ordered
+    in front of them so the Bezrealitky card sits at the top.
+    """
+    portal_config = [t for t in tracked_config if portal_tracked_id(t.get("id"))]
+    portal_rows = []
+    if portal_config:
+        portal_rows = pair_portal_tracked(
+            portal_config,
+            snapshot.get("comparables") or [],
+            (prev or {}).get("tracked") or [],
+            changes.get("newly_inactive") or [],
+            folded,
+            list((prev or {}).get("comparables") or [])
+            + list((prev or {}).get("pending_removal") or []),
+        )
+        apply_overrides(portal_rows, overrides)
+        backfill_missing_areas(portal_rows)
+        flag_transaction_mismatch(portal_rows)
+        attach_sale_extras(portal_rows)
+    snapshot["tracked"] = order_tracked(list(portal_rows) + list(snapshot.get("tracked") or []))
+    if portal_config and prev is not None:
+        changes["tracked_price_changes"] = collect_tracked_price_changes(
+            prev.get("tracked") or [], snapshot["tracked"]
+        )
 
 
 def format_locality(locality):
@@ -2088,8 +2354,12 @@ def search_ward_novostavby(ward, tx_type):
         if data is None:
             raise TransientFetchError(f"novostavby {tx_type}/{ward}: estatesSearch chybí")
         key = key or {}
+        # Od 7. 10. posílá Sreality localityEntityType jako seznam (["ward"]),
+        # dřív řetězec -- obojí je hledání po čtvrti.
+        loc_type = key.get("localityEntityType")
+        loc_types = loc_type if isinstance(loc_type, list) else [loc_type]
         if (sorted(key.get("categorySubCb") or []) != sorted(novostavby.DISPOSITIONS)
-                or key.get("localityEntityType") != "ward"):
+                or loc_types != ["ward"]):
             raise TransientFetchError(
                 f"novostavby {tx_type}/{ward}: Sreality nepoužila filtr "
                 f"(categorySubCb={key.get('categorySubCb')}, locality={key.get('localityEntityType')})")
@@ -2865,6 +3135,10 @@ def home_config(cfg):
     first run after the change compares equal."""
     home = AREAS[HOME_AREA]
     out = {k: v for k, v in (cfg or {}).items() if k != "areas"}
+    # Zápis a odhad čtou jen TREND_DISPOSITIONS, takže přidání velkých bytů
+    # (#27) týden neoznačí jako „změnila se konfigurace".
+    if "dispositions" in out:
+        out["dispositions"] = sorted(TREND_DISPOSITIONS)
     out["wards"] = sorted(home["wards"])
     out["idnes_wards"] = sorted(sources.IDNES_WARDS_BY_AREA.get(HOME_AREA, ()))
     return out
@@ -2897,6 +3171,54 @@ def areas_added_only(prev_cfg, curr_cfg):
     return set(curr_areas) - set(prev_areas)
 
 
+def dispositions_added_only(prev_cfg, curr_cfg):
+    """The dispositions switched on since `prev_cfg`, when that is the ONLY
+    change (#27). Same reasoning as areas_added_only: the big flats already on
+    the market are baseline, not news, but the rest of the run's news stays."""
+    if not prev_cfg or not curr_cfg:
+        return set()
+    prev_core = {k: v for k, v in prev_cfg.items() if k != "dispositions"}
+    curr_core = {k: v for k, v in curr_cfg.items() if k != "dispositions"}
+    if prev_core != curr_core:
+        return set()
+    prev_d, curr_d = set(prev_cfg.get("dispositions") or []), set(curr_cfg.get("dispositions") or [])
+    if not prev_d or not prev_d < curr_d:
+        return set()
+    return curr_d - prev_d
+
+
+def _cmp_price(item):
+    """All-in total once the record knows about electricity, else the base price.
+
+    Snapshots from before the cost-breakdown feature don't have
+    "electricity_estimated" -- their total_czk meant rent+fees only. Comparing
+    those against the new all-in total would report every rental as a price
+    change on that one transition. Tracked rows store the same number in
+    total_czk (rent_czk is the card's copy of the asking price).
+    """
+    if item.get("total_czk") is not None and "electricity_estimated" in item:
+        return item["total_czk"]
+    return item.get("price_czk")
+
+
+def collect_tracked_price_changes(prev_tracked, curr_tracked):
+    prev_by_id = {t["id"]: t for t in prev_tracked or [] if t.get("id") is not None}
+    out = []
+    for curr_t in curr_tracked or []:
+        prev_t = prev_by_id.get(curr_t.get("id"))
+        if (
+            prev_t is not None
+            and _cmp_price(prev_t) != _cmp_price(curr_t)
+            and curr_t.get("active")
+        ):
+            out.append({
+                "id": curr_t["id"],
+                "old_total_czk": prev_t.get("total_czk"),
+                "new_total_czk": curr_t.get("total_czk"),
+            })
+    return out
+
+
 def diff_snapshots(prev, curr):
     changes = {
         "generated_at": now_iso(),
@@ -2913,26 +3235,9 @@ def diff_snapshots(prev, curr):
     # those against the new all-in total would report every rental as a "price
     # change" on this one transition run. Fall back to comparing base price for
     # any record that predates the new schema.
-    def cmp_value(item):
-        if item.get("total_czk") is not None and "electricity_estimated" in item:
-            return item["total_czk"]
-        return item.get("price_czk")
-
-    prev_tracked_by_id = {t["id"]: t for t in prev.get("tracked", [])}
-    for curr_t in curr.get("tracked", []):
-        prev_t = prev_tracked_by_id.get(curr_t["id"])
-        if (
-            prev_t is not None
-            and cmp_value(prev_t) != cmp_value(curr_t)
-            and curr_t.get("active")
-        ):
-            changes["tracked_price_changes"].append(
-                {
-                    "id": curr_t["id"],
-                    "old_total_czk": prev_t.get("total_czk"),
-                    "new_total_czk": curr_t.get("total_czk"),
-                }
-            )
+    changes["tracked_price_changes"] = collect_tracked_price_changes(
+        prev.get("tracked", []), curr.get("tracked", [])
+    )
 
     # A listing absent from one run is only a candidate for removal, not a fact:
     # the search set itself fluctuates run to run. It has to be absent twice in a
@@ -2943,6 +3248,11 @@ def diff_snapshots(prev, curr):
     prev_by_id = {c["id"]: c for c in prev.get("comparables", [])}
     prev_by_id.update(prev_pending)
     curr_by_id = {c["id"]: c for c in curr.get("comparables", [])}
+    # Okolní čtvrti (#26) se do změn nehlásí vůbec: jestli je Sreality vrací,
+    # rozhoduje Sreality, ne trh. Scope se určuje z čtvrti, ne z uloženého
+    # pole, takže platí i pro snapshot z doby před #26.
+    prev_by_id = {k: v for k, v in prev_by_id.items() if listing_scope(v) == SCOPE_CORE}
+    curr_by_id = {k: v for k, v in curr_by_id.items() if listing_scope(v) == SCOPE_CORE}
 
     # The search itself changed shape this run, so an absence says nothing about
     # the listing. Re-baseline silently instead of announcing a mass removal.
@@ -2958,7 +3268,15 @@ def diff_snapshots(prev, curr):
             file=sys.stderr,
         )
         changes["baselined_areas"] = sorted(fresh_areas)
-    if prev.get("config") != curr.get("config") and not fresh_areas:
+    fresh_disps = dispositions_added_only(prev.get("config"), curr.get("config"))
+    if fresh_disps:
+        print(
+            f"New disposition(s) {', '.join(sorted(fresh_disps))} since the last snapshot -- "
+            "their listings are baselined silently, the rest diffs as usual.",
+            file=sys.stderr,
+        )
+        changes["baselined_dispositions"] = sorted(fresh_disps)
+    if prev.get("config") != curr.get("config") and not fresh_areas and not fresh_disps:
         print(
             "Search config changed since the last snapshot -- suppressing removal "
             "detection for this run and re-baselining.",
@@ -2983,13 +3301,14 @@ def diff_snapshots(prev, curr):
             # Same reasoning as removals, mirrored: widening the area surfaces
             # hundreds of listings that have been on the market for months.
             # Calling them "new" would bury the handful that really are.
-            if not changes.get("config_changed") and listing_area(new) not in fresh_areas:
+            if (not changes.get("config_changed") and listing_area(new) not in fresh_areas
+                    and new.get("disposition") not in fresh_disps):
                 changes["new_listings"].append({**new, "first_seen": changes["generated_at"]})
         else:
             # Compare on total cost (rent+fees+electricity for rentals), not
             # just base price, so a fee change shows up as a price change too.
-            old_cmp = cmp_value(old)
-            new_cmp = cmp_value(new)
+            old_cmp = _cmp_price(old)
+            new_cmp = _cmp_price(new)
             # On a re-baseline the totals move for reasons that have nothing to
             # do with the market: merging two portals' copies donates a fee that
             # was only ever stated on one of them, so the all-in total changes
@@ -3194,7 +3513,7 @@ def rank_deals(comparables):
         rows are kept off the median as well as out of the deal list, or a run
         with many un-enriched listings would drag the baseline down and make
         everything else look expensive."""
-        if c.get("exclude_from_stats") or c.get("area_mismatch"):
+        if c.get("exclude_from_stats") or c.get("area_mismatch") or not in_core(c):
             return False
         return not (c.get("transaction_type") == "pronajem" and c.get("fees_missing"))
 
@@ -3219,7 +3538,9 @@ def rank_deals(comparables):
         for k in ("deal_basis", "deal_median", "deal_n", "deal_label"):
             c.pop(k, None)
         v = c.get("price_czk_per_sqm")
-        if not v or c.get("area_mismatch"):
+        # Okolí (#26) se s mediánem sledovaných čtvrtí nesrovnává: Holešovice
+        # „15 % pod mediánem Vysočan" by bylo tvrzení o jiném trhu.
+        if not v or c.get("area_mismatch") or not in_core(c):
             continue
         broad = deal_group(c)
         cls = c["house_class"]
@@ -3303,7 +3624,7 @@ OWN_PROPERTY = {
 # So the two extra units are read separately and the card shows both views.
 #
 # One secret, not three, so there is one thing to set and one thing to forget:
-#   OWN_EXTRA_PRICES_CZK="garaz=500000,komora=110110"
+#   OWN_EXTRA_PRICES_CZK="garaz=<castka>,komora=<castka>"
 OWN_EXTRA_PRICES = sources.env_map("OWN_EXTRA_PRICES_CZK")
 # Deposits already paid, and the share of the price a bank will lend. Together
 # these answer the question Radim asked to have on the card: how much of his
@@ -3430,7 +3751,7 @@ def own_property_stats(comparables):
         # as not-a-price by rank_deals. They belong nowhere near a median.
         if c.get("deal_outlier"):
             return False
-        if c.get("exclude_from_stats"):
+        if c.get("exclude_from_stats") or not in_core(c):
             return False
         sqm = c.get("floor_area_sqm")
         if size_band:
@@ -3653,6 +3974,7 @@ def compute_stats(comparables):
             and c.get("price_czk_per_sqm")
             and not c.get("exclude_from_stats")
             and not c.get("area_mismatch")
+            and in_core(c)
             and (disp_filter is None or c.get("disposition") == disp_filter)
         ]
         if not vals:
@@ -3699,6 +4021,7 @@ def build_tracked_item(tracked, changes):
         change_note = f"No longer listed — showing last known details from {tracked['last_active_at']}"
     return {
         "id": tracked["id"],
+        "source": tracked.get("source"),
         "is_seed": True,
         "title": tracked.get("title"),
         "disposition": tracked.get("disposition"),
@@ -3735,7 +4058,7 @@ def build_tracked_item(tracked, changes):
         "thumb": tracked.get("thumb"),
         "lat": tracked.get("lat"),
         "lon": tracked.get("lon"),
-        "approx_location": False,
+        "approx_location": bool(tracked.get("approx_location")),
         "url": tracked.get("url"),
         "active": tracked.get("active"),
         "change_note": change_note,
@@ -4017,7 +4340,7 @@ def render_tracked_card(tracked):
         else '<span class="badge bad">inactive / removed</span>'
     )
     last_active_html = (
-        f'<div class="modal-note" style="margin-top:8px;">Showing last known details from {tracked["last_active_at"]}</div>'
+        f'<div class="modal-note" style="margin-top:8px;">Showing last known details from {html.escape(str(tracked["last_active_at"]))}</div>'
         if not tracked.get("active") and tracked.get("last_active_at")
         else ""
     )
@@ -4036,7 +4359,7 @@ def render_tracked_card(tracked):
       <div><b>Kč/m² (total)</b>{fmt_czk(tracked.get('price_czk_per_sqm'))}</div>"""
     else:
         extras = "".join(
-            f'<div><b>{html.escape(e["label"])} (z popisu)</b>'
+            f'<div><b>{html.escape(e["label"], quote=True)} (z popisu)</b>'
             f'{" / ".join(fmt_czk(a) for a in e["amounts"])}</div>'
             for e in (tracked.get("sale_extras") or [])
         )
@@ -4054,15 +4377,17 @@ def render_tracked_card(tracked):
     else:
         area_cell = html.escape(str(area))
     move_html = render_price_move(tracked.get("price_history"))
-    return f"""<div class="card seed-card" onclick="openModal({tracked['id']})">
+    # Id jde do data atributu, ne do inline handleru (escape jako JSON.stringify).
+    open_id = html.escape(json.dumps(tracked["id"], ensure_ascii=False), quote=True)
+    return f"""<div class="card seed-card" data-open-id="{open_id}">
   <img class="seed-thumb" src="{html.escape(tracked.get('thumb') or '', quote=True)}" onerror="this.style.visibility='hidden'" alt="">
   <div style="flex:1;">
     <h2 style="margin-top:0;font-size:1rem;">Sledovaný inzerát — {'pronájem' if is_rent else 'prodej'} {active_badge}</h2>
     <div class="seed-grid">
-      <div><b>Title</b>{html.escape(tracked.get('title') or '—')}</div>
-      <div><b>Disposition</b>{html.escape(tracked.get('disposition') or '—')}</div>{money_cells}
+      <div><b>Title</b>{html.escape(tracked.get('title') or '—', quote=True)}</div>
+      <div><b>Disposition</b>{html.escape(tracked.get('disposition') or '—', quote=True)}</div>{money_cells}
       <div><b>m²</b>{area_cell}</div>
-      <div><b>Locality</b>{html.escape(tracked.get('locality') or '—')}</div>
+      <div><b>Locality</b>{html.escape(tracked.get('locality') or '—', quote=True)}</div>
     </div>
     {move_html}
     {last_active_html}
@@ -4181,64 +4506,169 @@ def fee_queue_card(queue):
 </div>"""
 
 
-def overrides_card(overrides, listings):
-    """Ruční opravy inzerátů — karta na dashboardu, stejný tvar jako fronta poplatků.
+def fmt_cz_num(v, digits=2):
+    """České číslo: 91.5 -> „91,5", 103.0 -> „103" (bez zbytečných nul)."""
+    try:
+        x = round(float(v), digits)
+    except (TypeError, ValueError):
+        return str(v)
+    text = str(int(x)) if x == int(x) else f"{x:.{digits}f}".rstrip("0")
+    return text.replace(".", ",")
 
-    Záznam v overrides.json přežije, i když inzerát z nabídky zmizí: stejné id
-    se po návratu znovu opraví. Proto karta ukazuje i id, které teď v tabulce
-    není. Mazání jde stejnou cestou jako sledované inzeráty (PAT + dispatch)."""
+
+def fmt_cz_sqm(v):
+    return f"{fmt_cz_num(v)} m²"
+
+
+def fmt_cz_per_sqm(v):
+    return f"{int(v):,}".replace(",", " ") + " Kč/m²" if v is not None else "—"
+
+
+def _title_area(title):
+    """Plocha z titulku inzerátu („... 225 m²"), nebo None."""
+    m = re.search(r"(\d+(?:[.,]\d+)?)\s*m²", (title or "").replace(" ", " "))
+    return float(m.group(1).replace(",", ".")) if m else None
+
+
+def override_effect(ov, listing):
+    """Co oprava změnila — řádky textu (neescapované). Čistá funkce.
+
+    Původní hodnota portálu je `floor_area_portal_sqm` (apply_overrides ji
+    uloží před přepsáním). Kč/m² „před" se dopočítá jen tam, kde je spolehlivé:
+    s ruční opravou poplatku nemáme původní celkem, takže se nehádá."""
+    lines = []
+    listing = listing or {}
+    if ov.get("floor_area_sqm") is not None:
+        new_area = float(ov["floor_area_sqm"])
+        portal = listing.get("floor_area_portal_sqm")
+        applied = listing.get("floor_area_source") == "override"
+        line = f"plocha {fmt_cz_sqm(new_area)}"
+        if listing and applied and portal:
+            if abs(float(portal) - new_area) < 0.005:
+                line = (f"plocha {fmt_cz_sqm(new_area)} — shodná s uloženým údajem portálu, "
+                        "oprava ji nemění")
+                t_area = _title_area(listing.get("title"))
+                if t_area and abs(t_area - new_area) >= 0.5:
+                    line += f" (titulek inzerátu uvádí {fmt_cz_sqm(t_area)})"
+            else:
+                line = f"plocha {fmt_cz_sqm(portal)} (portál) → {fmt_cz_sqm(new_area)} (oprava)"
+                after = listing.get("price_czk_per_sqm")
+                if listing.get("transaction_type") == "pronajem":
+                    base = listing.get("total_czk")
+                else:
+                    base = listing.get("price_czk")
+                if ov.get("fees_czk") is None and base and after:
+                    before = round(base / float(portal))
+                    line += f" · {fmt_cz_per_sqm(before)} → {fmt_cz_per_sqm(after)}"
+        elif listing and not applied:
+            line += " (zatím se v datech neprojevila — použije se při dalším běhu)"
+        lines.append(line)
+    elif listing.get("floor_area_sqm"):
+        # Bez ruční plochy: ukaž, z jaké plochy se opravdu počítá (titulek
+        # inzerátu může uvádět jinou), a rozpor s popisem.
+        line = f"plocha ve statistice {fmt_cz_sqm(listing['floor_area_sqm'])}"
+        portal = listing.get("floor_area_portal_sqm")
+        if listing.get("floor_area_source") == "popis" and portal:
+            line += f" (portál uvádí {fmt_cz_sqm(portal)}, upraveno podle popisu)"
+        if listing.get("area_mismatch"):
+            line += " — pozor: plocha nesedí s popisem inzerátu"
+        lines.append(line)
+    if ov.get("fees_czk") is not None:
+        lines.append(f"poplatky {fmt_czk(ov['fees_czk'])} (oprava; původní údaj portálu se neuchovává)")
+    if ov.get("exclude_from_stats"):
+        lines.append("mimo statistiku — inzerát se nepočítá do mediánu ani odhadu")
+    return lines
+
+
+_PORTAL_LABELS = {"sreality": "Sreality", "bezrealitky": "Bezrealitky", "idnes": "iDNES"}
+
+
+def overrides_card(overrides, listings, *, extra=(), archive=None):
+    """Ruční opravy inzerátů — karta na dashboardu.
+
+    Jeden řádek = jedna oprava: název (otevře detail inzerátu), co oprava
+    změnila (override_effect, „původně → nově"), poznámka. Mazání je schválně
+    nenápadné a dvoukrokové (JS ovCardAskDelete ukáže potvrzení přímo
+    v řádku): smazaná oprava tiše vrátí parserova čísla do mediánu.
+
+    Záznam v overrides.json přežije, i když inzerát z nabídky zmizí: stejné ID
+    inzerátu se po návratu znovu opraví. Proto karta ukazuje i ID, které teď
+    v tabulce není (název a datum zmizení z gone_archive, je-li tam).
+    `listings` umí otevřít detail (openModal), `extra` (novostavby) otevře
+    JS přes window.openNov. Id jen v data-* atributech -- žádný inline handler;
+    odkaz na portál jen https."""
     if not overrides:
         return ""
     by_id = {str(c.get("id")): c for c in listings}
+    extra_by_id = {str(c.get("id")): c for c in extra}
+    archive = archive or {}
 
-    def fields_of(ov):
-        bits = []
-        if "floor_area_sqm" in ov and ov["floor_area_sqm"] is not None:
-            bits.append(f"m² {ov['floor_area_sqm']}")
-        if "fees_czk" in ov and ov["fees_czk"] is not None:
-            bits.append(f"poplatky {fmt_czk(ov['fees_czk'])}")
-        if ov.get("exclude_from_stats"):
-            bits.append("mimo statistiku")
-        return " · ".join(bits) or "jen poznámka"
+    def effect_html(line):
+        if line.startswith("mimo statistiku"):
+            rest = line[len("mimo statistiku"):].lstrip(" —")
+            return (f'<div class="ov-eff"><span class="badge bad">mimo statistiku</span> '
+                    f'{html.escape(rest)}</div>')
+        return f'<div class="ov-eff">{html.escape(line)}</div>'
 
     rows = []
     for oid in sorted(overrides, key=str):
         ov = overrides[oid]
-        listing = by_id.get(str(oid))
-        title = (listing or {}).get("title") or str(oid)
-        url = (listing or {}).get("url") or ""
+        openable = by_id.get(str(oid))
+        listing = openable or extra_by_id.get(str(oid))
+        arch = archive.get(str(oid)) if listing is None else None
+        shown = listing or arch or {}
         gone = listing is None
-        title_html = html.escape(title)
-        if url:
-            title_html = (
-                f'<a href="{html.escape(url, quote=True)}" target="_blank" '
-                f'rel="noopener">{title_html}</a>'
-            )
+        sid = html.escape(str(oid), quote=True)
+        title = html.escape(str(shown.get("title") or f"Inzerát ID {oid}"))
+        if gone:
+            # Detail zmizelého ukáže JS, jen když ho má GONE_BY_ID.
+            title_html = (f'<span class="ov-title">{title}</span> <button class="linklike" '
+                          f'data-gone-id="{sid}" data-ov-gone hidden>detail</button>')
+        else:
+            title_html = (f'<button class="linklike ov-title" data-ov-open="{sid}" '
+                          f'title="Otevřít detail inzerátu">{title}</button>')
+        url = str(shown.get("url") or "")
+        portal = ""
+        if url.startswith("https://"):
+            label = _PORTAL_LABELS.get(shown.get("source"), "portál")
+            portal = (f' · <a href="{html.escape(url, quote=True)}" target="_blank" '
+                      f'rel="noopener">{label} ↗</a>')
+        effect = "".join(effect_html(line) for line in override_effect(ov, listing)) \
+            or '<div class="ov-eff">jen poznámka</div>'
         note = html.escape(ov.get("note") or "")
-        status = (
-            '<span class="hint">inzerát teď není v nabídce — oprava čeká na stejné id</span>'
-            if gone else ""
-        )
-        delete_id = html.escape(json.dumps(str(oid)), quote=True)
+        status = ""
+        if gone:
+            when = str((arch or {}).get("gone_at") or "")[:10]
+            try:
+                d = datetime.strptime(when, "%Y-%m-%d")
+                when = f"{d.day}. {d.month}. {d.year}"
+            except ValueError:
+                when = ""
+            status = (
+                '<div class="hint">zmizelý inzerát'
+                + (f" (zmizel {html.escape(when)})" if when else "")
+                + " — oprava zůstává uložená a použije se, až se inzerát se stejným ID vrátí</div>"
+            )
         rows.append(
-            f"""<div class="fq-item">
+            f"""<div class="fq-item ov-item{' gone' if gone else ''}" data-ov-row="{sid}">
               <div class="fq-head">
-                <span>{title_html} <span class="hint">{html.escape(str(oid))}</span></span>
-                <button class="popup-btn" style="background:#7f1d1d;"
-                  onclick="manageTracked({{override_delete: {delete_id}}})">🗑 Smazat</button>
+                <span class="ov-name">{title_html}<span data-ov-pend></span></span>
+                <span class="ov-meta">ID {html.escape(str(oid))}{portal} ·
+                  <button class="ov-del" data-ov-del="{sid}">Smazat opravu</button></span>
               </div>
-              <div class="hint">{html.escape(fields_of(ov))}</div>
-              {f'<div class="fq-text">{note}</div>' if note else ""}
+              <div class="ov-changes">{effect}</div>
+              {f'<div class="fq-text">„{note}“</div>' if note else ""}
               {status}
+              <div class="ov-confirm" data-ov-confirm hidden></div>
             </div>"""
         )
     return f"""<div class="card" id="overridesCard">
   <h2 style="margin-top:0;font-size:1rem;">✏️ Opravy ({len(overrides)})</h2>
-  <p class="hint" style="margin:0 0 10px;">Ručně opravená plocha nebo poplatek se <b>počítá do odhadu</b>
-    (přepočítá se celkem i Kč/m²). „Mimo statistiku“ je pro ne-tržní prodej — inzerát zůstane na stránce,
-    do mediánu ne. Záznam se nemaže, když inzerát zmizí: stejné id po návratu nese tutéž opravu.
+  <p class="hint" style="margin:0 0 10px;">Ruční opravy čísel u jednotlivých inzerátů. Opravená plocha
+    nebo poplatky <b>jdou do odhadu</b> (přepočte se celkem i Kč/m²); „mimo statistiku“ = ne-tržní prodej,
+    inzerát zůstane na stránce, do mediánu ne. Oprava platí dál, i když inzerát zmizí a vrátí se se stejným ID.
     Novou opravu zadáš v detailu inzerátu.</p>
-  <div class="scroll">{"".join(rows)}</div>
+  <div class="ov-list">{"".join(rows)}</div>
 </div>"""
 
 
@@ -4357,8 +4787,10 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
 
     fee_queue_card_html = fee_queue_card(build_fee_review_queue(comparables))
     overrides = load_overrides()
-    overrides_card_html = overrides_card(overrides, list(comparables) + list(tracked_list)
-                                         + list(snapshot.get("novostavby") or []))
+    overrides_card_html = overrides_card(
+        overrides, list(comparables) + list(tracked_list),
+        extra=list(snapshot.get("novostavby") or []),
+        archive=gone_archive.load_archive())
     # Ribbon: výběr sekcí + žhavé nabídky. Počítá se z `generated_at`, ne
     # z hodin, aby stejná data dala vždy stejný výběr.
     hot_json = script_json(ribbon.hot_offers(
@@ -4484,6 +4916,21 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
               justify-content: space-between; font-size: 0.8rem; }}
   .fq-head a {{ color: #7ab8ff; }}
   .fq-text {{ font-size: 0.72rem; color: #999; margin-top: 3px; }}
+  /* Karta Opravy: řádek = název · co se změnilo · poznámka; mazání nenápadné. */
+  .ov-item {{ border-radius: 6px; transition: background .4s; }}
+  .ov-item.ov-flash {{ background: #2a2410; }}
+  .ov-name {{ min-width: 0; }}
+  .ov-title {{ font-weight: 600; font-size: 0.84rem; }}
+  .ov-item.gone .ov-title {{ color: #999; }}
+  .ov-meta {{ font-size: 0.7rem; color: #888; white-space: nowrap; }}
+  .ov-changes {{ font-size: 0.78rem; color: #bbb; margin-top: 3px; }}
+  .ov-eff + .ov-eff {{ margin-top: 2px; }}
+  .ov-del {{ background: none; border: none; padding: 0; font: inherit; color: #888;
+             text-decoration: underline; cursor: pointer; }}
+  .ov-del:hover, .ov-del:focus-visible {{ color: #f88; }}
+  .ov-confirm {{ display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-top: 6px;
+                 padding: 6px 10px; background: #2a1414; border-radius: 6px; font-size: 0.78rem; }}
+  .ov-confirm[hidden], .ov-del[hidden] {{ display: none; }}
   .ov-form {{ background: #11141b; border-radius: 8px; padding: 10px; margin: 12px 0; }}
   .ov-form h3 {{ margin: 0 0 8px; font-size: 0.85rem; color: #d9c38f; }}
   .ov-form label {{ display: block; font-size: 0.7rem; color: #9aa; margin: 6px 0 2px; }}
@@ -4680,12 +5127,7 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
     </select>
     <select id="dealDisp">
       <option value="">Všechny dispozice</option>
-      <option value="1+kk">1+kk</option>
-      <option value="1+1">1+1</option>
-      <option value="2+kk">2+kk</option>
-      <option value="2+1">2+1</option>
-      <option value="3+kk">3+kk</option>
-      <option value="3+1">3+1</option>
+      {"".join(f'<option value="{d}">{d}</option>' for d in DISPOSITION_CODES.values())}
     </select>
     {deal_basis.house_select_html()}
   </div>
@@ -4702,7 +5144,7 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
   <h2 style="margin-top:0;font-size:1rem;">⚙️ Sledované inzeráty</h2>
   <div id="trackedList"></div>
   <div class="controls" style="margin:10px 0 0;">
-    <input id="addUrlInput" type="text" placeholder="https://www.sreality.cz/detail/..." style="flex:1;min-width:200px;">
+    <input id="addUrlInput" type="text" placeholder="URL ze Sreality, Bezrealitky nebo iDNES" style="flex:1;min-width:200px;">
     <button class="popup-btn" onclick="manageTracked({{add_url: document.getElementById('addUrlInput').value.trim()}})">➕ Sledovat</button>
   </div>
   <div id="patRow" class="controls" style="display:none;margin:8px 0 0;">
@@ -4730,7 +5172,7 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
 {fee_queue_card_html}
 
 <div class="card" id="areaStatsCard">
-  <h2 style="margin-top:0;font-size:1rem;">📊 Statistika oblastí ({", ".join(DISPOSITION_CODES.values())})</h2>
+  <h2 style="margin-top:0;font-size:1rem;">📊 Statistika oblastí ({", ".join(TREND_DISPOSITIONS)})</h2>
   <div id="areaStats"></div>
   <div class="cost-note">*nájem Kč/m² = nájem + poplatky + odhad elektřiny ({ELECTRICITY_ESTIMATE_CZK} Kč), ne holý nájem.
     Každá oblast má vlastní medián; odhad nájmu a týdenní zápis počítají jen Vysočany.</div>
@@ -4821,12 +5263,7 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
   </select>
   <select id="filterDisp">
     <option value="">All dispositions</option>
-    <option value="1+kk">1+kk</option>
-    <option value="1+1">1+1</option>
-    <option value="2+kk">2+kk</option>
-    <option value="2+1">2+1</option>
-    <option value="3+kk">3+kk</option>
-    <option value="3+1">3+1</option>
+    {"".join(f'<option value="{d}">{d}</option>' for d in DISPOSITION_CODES.values())}
   </select>
   <select id="filterSource">
     <option value="">All sources</option>
@@ -4840,6 +5277,9 @@ def render_dashboard(snapshot, changes, stats, history, estimate=None, histories
   </label>
   <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;">
     <input type="checkbox" id="filterFees" style="width:auto;"> Jen se známými poplatky
+  </label>
+  <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;" title="Od 7. 10. vrací Sreality i inzeráty z okolních čtvrtí. Do mediánů, výhodných nabídek ani změn nejdou.">
+    <input type="checkbox" id="filterFringe" style="width:auto;"> I okolní čtvrti
   </label>
   <input id="search" type="text" placeholder="Hledat název / ulici / lokalitu…">
   {ux.table_controls_html()}
@@ -5091,7 +5531,7 @@ function renderTrackedList() {
         <div class="hat">${escapeHtml(t.locality || "")} · ${t.active ? "aktivní" : "neaktivní"}</div>
       </div>
       <button class="popup-btn" style="background:#7f1d1d;" title="Přestat sledovat"
-        onclick="manageTracked({remove_url: ${escapeHtml(JSON.stringify(String(t.id).replace(/^(bez|idnes)-/, "")))}})">🗑 Přestat sledovat</button>
+        onclick="manageTracked({remove_url: ${escapeHtml(JSON.stringify(String(t.id)))}})">🗑 Přestat sledovat</button>
     </div>`).join("") : '<div style="color:#888;font-size:0.8rem;">Žádné sledované inzeráty.</div>';
 }
 
@@ -5169,7 +5609,7 @@ async function dispatchWorkflow(inputs) {
 
 async function manageTracked(inputs) {
   const val = inputs.add_url ?? inputs.remove_url ?? inputs.override_set ?? inputs.override_delete;
-  if (!val) { setManageStatus("Vlož URL inzerátu ze Sreality."); return; }
+  if (!val) { setManageStatus("Vlož URL inzerátu ze Sreality, Bezrealitky nebo iDNES."); return; }
   if (!pageToken) {
     pendingAction = {modal: false, run: () => manageTracked(inputs)};
     askForPat();
@@ -5254,11 +5694,52 @@ function garageParkingHtml(item) {
   return `<div><b>Garáž</b>${fmt(item.garage)}</div><div><b>Parkování</b>${fmt(item.parking)}</div>`;
 }
 
+function fmtSqm(v) {
+  const n = Number(v);
+  if (v == null || v === "" || !isFinite(n)) return "—";
+  return n.toLocaleString("cs-CZ", {maximumFractionDigits: 1}) + " m²";
+}
+
+// Krátká verze scrape.override_effect pro detail a tooltip v tabulce:
+// [popisek, původně | null, nově], naformátované. Původní plochu drží
+// floor_area_portal_sqm; původní poplatek se po opravě nikde nenese.
+function ovChanges(item) {
+  const ov = (item.override && typeof item.override === "object") ? item.override : null;
+  if (!ov) return [];
+  const out = [];
+  if (ov.floor_area_sqm != null) {
+    let before = item.floor_area_portal_sqm;
+    // Jen když se oprava v datech už projevila -- jinak portálová plocha není „původně".
+    if (item.floor_area_source !== "override" || Number(before) === Number(ov.floor_area_sqm)) before = null;
+    out.push(["Plocha", before == null ? null : fmtSqm(before), fmtSqm(ov.floor_area_sqm)]);
+  }
+  if (ov.fees_czk != null) out.push(["Poplatky", null, fmtCzk(Number(ov.fees_czk)) + "/měs"]);
+  return out;
+}
+
+function ovSummaryText(item) {
+  const bits = ovChanges(item).map(([l, b, a]) => b ? `${l} ${b} → ${a}` : `${l} ${a}`);
+  if (item.override && item.override.exclude_from_stats) bits.push("mimo statistiku");
+  return bits.join(" · ") || "jen poznámka";
+}
+
 function overrideBadges(item) {
   let out = "";
-  if (item.override) out += ' <span class="badge approx">oprava</span>';
+  if (item.override) out += ` <span class="badge approx" title="${escapeHtml("Oprava: " + ovSummaryText(item))}">oprava</span>`;
   if (item.exclude_from_stats) out += ' <span class="badge bad">mimo statistiku</span>';
   return out;
+}
+
+// V detailu inzerátu: co oprava mění a cesta zpátky na kartu Opravy.
+function ovModalNoteHtml(item) {
+  if (!item.override) return "";
+  const chg = ovChanges(item).map(([l, b, a]) =>
+    `${l} ${b ? `<s>${escapeHtml(b)}</s> → ` : ""}<b>${escapeHtml(a)}</b>`);
+  if (item.override.exclude_from_stats) chg.push("mimo statistiku");
+  const note = item.override_note ? ` — „${escapeHtml(item.override_note)}“` : "";
+  const jump = document.getElementById("overridesCard")
+    ? ` <button class="linklike" data-ov-jump="${escapeHtml(String(item.id))}">všechny opravy →</button>` : "";
+  return `<div class="modal-note">✏️ Oprava: ${chg.join(" · ") || "jen poznámka"}${note}${jump}</div>`;
 }
 
 /* ---- ruční oprava z detailu inzerátu ----
@@ -5322,7 +5803,7 @@ function fmtHm(ms) {
 }
 
 function ovBadgeHtml(st) {
-  const manual = st.applied ? ' <span class="badge approx">upraveno ručně</span>' : "";
+  const manual = st.applied ? ' <span class="badge approx">oprava</span>' : "";
   if (st.kind === "pending")
     return `<span class="badge warn">${st.op === "delete" ? "smazání " : ""}čeká na zpracování (odesláno ${fmtHm(st.at)})</span>${manual}`;
   if (st.kind === "confirmed") return `<span class="badge ok">uloženo ✓</span>${manual}`;
@@ -5355,6 +5836,9 @@ function saveOverride(id) {
   if (payload.floor_area_sqm !== undefined && !(payload.floor_area_sqm > 0)) err = "m² musí být kladné číslo.";
   else if (payload.fees_czk !== undefined && !(Number.isInteger(payload.fees_czk) && payload.fees_czk >= 0)) err = "Poplatky musí být celé číslo ≥ 0.";
   else if (!area && !fees && !note && !exclude) err = "Vyplň aspoň jedno pole opravy.";
+  // Ruční plocha přepíše portál a posune Kč/m²; bez zdroje za měsíc nikdo neví,
+  // jestli platí 196 z inzerátu, nebo 91,5 odněkud jinud.
+  else if (area && !note) err = "U opravy plochy napiš do poznámky, odkud číslo je.";
   if (err) {
     setOvStatus("err", escapeHtml(err) + " Nic se neodeslalo.");
     const form = document.getElementById("ovForm");
@@ -5425,7 +5909,7 @@ function overrideFormHtml(item) {
     <input id="ovArea" type="number" min="0" step="0.1" value="${areaVal}" placeholder="${escapeHtml(String(item.floor_area_sqm ?? ""))}">
     <label>Poplatky Kč/měs (teď ${item.fees_missing ? "neuvedeno" : escapeHtml(String(item.fees_czk ?? "—"))})</label>
     <input id="ovFees" type="number" min="0" step="1" value="${feesVal}" placeholder="${item.fees_missing ? "" : escapeHtml(String(item.fees_czk ?? ""))}">
-    <label>Poznámka</label>
+    <label>Poznámka (u opravy plochy povinná — odkud číslo je)</label>
     <textarea id="ovNote" placeholder="proč to není tržní / odkud je oprava">${noteVal}</textarea>
     <label class="ov-check"><input id="ovExclude" type="checkbox" ${excl}> Mimo statistiku (ne-tržní prodej — zůstane na stránce, ne v mediánu)</label>
     <p class="hint" style="margin:6px 0 0;">Poznámka se commituje do veřejného repa a vypíše se na této
@@ -5471,7 +5955,7 @@ function buildModalHtml(item) {
     <h2>${escapeHtml(item.title || "Listing")} ${approxHtml}${overrideBadges(item)}</h2>
     ${noteHtml}
     ${item.tx_suspect ? `<div class="modal-note">⚠ ${escapeHtml(item.tx_suspect)} — inzerát zůstává, jak ho portál vede, ale je mimo statistiku.</div>` : ""}
-    ${item.override_note ? `<div class="modal-note">Oprava: ${escapeHtml(item.override_note)}</div>` : ""}
+    ${ovModalNoteHtml(item)}
     ${item.relist_of ? `<div class="modal-note">↻ ${item.relist_of.verdict === "maybe" ? "Možná znovu vložený" : "Znovu vložený"} inzerát —
       tentýž byt byl v nabídce už od ${fmtDay(item.relist_of.listed_since || item.relist_of.first_seen)}${item.relist_of.price_czk ? ` za ${fmtCzk(item.relist_of.price_czk)}` : ""},
       zmizel ${fmtDay(item.relist_of.gone_at)} a vrátil se pod novým číslem.
@@ -5723,7 +6207,12 @@ function render() {
 // z doby, kdy se sledovaly jen Vysočany.
 // ---------------------------------------------------------------------------
 function areaOf(x) { return (x && x.area) || "vysocany"; }
-function areaOk(x) { const f = window.AREA_FILTER || ""; return !f || areaOf(x) === f; }
+// Okolní čtvrti (#26): skryté, dokud je přepínač „I okolní čtvrti" vypnutý.
+// Platí pro tabulku, mapu i výhodné nabídky; garáže `scope` nemají.
+function areaOk(x) {
+  if (x && x.scope === "fringe" && !window.SHOW_FRINGE) return false;
+  const f = window.AREA_FILTER || ""; return !f || areaOf(x) === f;
+}
 function areaLabel(x) { return AREA_LABELS[areaOf(x)] || areaOf(x); }
 
 // ---------------------------------------------------------------------------
@@ -5758,7 +6247,7 @@ function renderLiveMedian(rows) {
   const parts = [];
   for (const [tx, label] of [["prodej", "prodej"], ["pronajem", "pronájem"]]) {
     const vals = rows.filter(r => r.transaction_type === tx && r.price_czk_per_sqm
-      && !r.exclude_from_stats && !r.area_mismatch && !r.tx_suspect
+      && !r.exclude_from_stats && !r.area_mismatch && !r.tx_suspect && r.scope !== "fringe"
       && !(tx === "pronajem" && r.fees_missing)).map(r => r.price_czk_per_sqm);
     if (!vals.length) continue;
     parts.push(vals.length >= 4
@@ -5766,7 +6255,7 @@ function renderLiveMedian(rows) {
       : `${label}: málo dat (n = ${vals.length})`);
   }
   el.innerHTML = parts.length
-    ? `Medián Kč/m² pro aktuální filtr: ${parts.join(" · ")}. Bez vyřazených, bez nesedící plochy a bez pronájmů bez poplatků.`
+    ? `Medián Kč/m² pro aktuální filtr: ${parts.join(" · ")}. Bez vyřazených, bez nesedící plochy, bez okolních čtvrtí a bez pronájmů bez poplatků.`
     : "Medián Kč/m² pro aktuální filtr: žádná data.";
 }
 
@@ -6186,6 +6675,116 @@ document.addEventListener("click", ev => {
   openGone(el.getAttribute("data-gone-id"));
 });
 
+/* ---- karta Opravy: detail, mazání ve dvou krocích, stav „čeká" ----
+   Všechno přes data-* atributy (id nikdy do inline handleru). Smazání se
+   neodesílá na první klik: potvrzení se ukáže přímo v řádku, protože smazaná
+   oprava tiše vrátí parserova čísla do mediánu. */
+function ovCardRow(id) {
+  return [...document.querySelectorAll("#overridesCard [data-ov-row]")]
+    .find(r => r.getAttribute("data-ov-row") === String(id)) || null;
+}
+
+function ovOpenListing(id) {
+  const item = ALL_BY_ID.get(String(id));
+  if (item) { openModal(item.id); return; }
+  if (typeof window.novItem === "function" && window.novItem(id) && typeof window.openNov === "function") {
+    window.openNov(String(id)); return;
+  }
+  if (GONE_BY_ID.has(String(id))) openGone(id);
+}
+
+function ovCardSync() {
+  document.querySelectorAll("#overridesCard [data-ov-row]").forEach(row => {
+    const id = row.getAttribute("data-ov-row");
+    const item = ALL_BY_ID.get(id);
+    let st = item ? overrideState(item) : {kind: "none"};
+    if (!item) {
+      const p = loadOvPending()[id];
+      if (p && typeof p.at === "number" && Date.now() - p.at <= OV_PENDING_TTL_MS)
+        st = {kind: "pending", at: p.at, op: p.op};
+    }
+    const pend = st.kind === "pending";
+    const slot = row.querySelector("[data-ov-pend]");
+    if (slot) slot.innerHTML = pend
+      ? ` <span class="badge warn">${st.op === "delete" ? "smazání" : "změna"} čeká na zpracování (odesláno ${fmtHm(st.at)})</span>`
+      : "";
+    const del = row.querySelector("[data-ov-del]");
+    if (del) del.hidden = pend && st.op === "delete";
+    const g = row.querySelector("[data-ov-gone]");
+    if (g) g.hidden = !GONE_BY_ID.has(id);
+  });
+}
+
+function ovCardAskDelete(row) {
+  const box = row && row.querySelector("[data-ov-confirm]");
+  if (!box) return;
+  const back = row.querySelector(".ov-changes .badge.bad") ? " a vrátí se do statistiky" : "";
+  box.innerHTML = `<span>Smazat opravu? Inzerát se vrátí k číslům z portálu${back}.</span>
+    <button class="popup-btn" style="background:#7f1d1d;margin-top:0;" data-ov-del-yes>Ano, smazat opravu</button>
+    <button class="linklike" data-ov-del-no>Zpět</button>
+    <span class="ov-status" data-ov-status></span>`;
+  box.hidden = false;
+  box.querySelector("[data-ov-del-no]").focus();
+}
+
+async function ovCardDelete(row) {
+  if (!row) return;
+  const id = row.getAttribute("data-ov-row");
+  const status = row.querySelector("[data-ov-status]");
+  const say = (kind, msg) => { if (status) { status.className = "ov-status " + kind; status.textContent = msg; } };
+  if (!pageToken) {
+    pendingAction = {modal: false, run: () => ovCardDelete(row)};
+    askForPat();
+    say("info", "Zatím se nic neodeslalo. Vlož GitHub token v kartě Sledované — smazání se pak provede.");
+    return;
+  }
+  const btns = row.querySelectorAll("[data-ov-confirm] button");
+  btns.forEach(b => { b.disabled = true; });
+  say("busy", "Odesílám…");
+  let r;
+  try { r = await dispatchWorkflow({override_delete: id}); } finally { btns.forEach(b => { b.disabled = false; }); }
+  if (r.ok) {
+    setOvPending(id, {op: "delete"});
+    const box = row.querySelector("[data-ov-confirm]");
+    box.hidden = true; box.innerHTML = "";
+    ovCardSync();
+    return;
+  }
+  if (r.kind === "auth") {
+    forgetPat();
+    pendingAction = {modal: false, run: () => ovCardDelete(row)};
+    askForPat();
+  }
+  say("err", r.text);
+}
+
+// Z detailu inzerátu zpátky na jeho řádek v kartě Opravy (rozbalí ji, je-li sbalená).
+function ovJumpToCard(id) {
+  const card = document.getElementById("overridesCard");
+  if (!card) return;
+  if (modalIsOpen()) closeModal();
+  if (card.classList.contains("collapsed")) card.querySelector("h2")?.click();
+  const row = ovCardRow(id) || card;
+  row.scrollIntoView({behavior: "smooth", block: "center"});
+  row.classList.add("ov-flash");
+  setTimeout(() => row.classList.remove("ov-flash"), 1800);
+}
+
+document.addEventListener("click", ev => {
+  const t = ev.target;
+  if (!(t instanceof Element)) return;
+  const open = t.closest("[data-ov-open]");
+  if (open) { ev.preventDefault(); ovOpenListing(open.getAttribute("data-ov-open")); return; }
+  const del = t.closest("[data-ov-del]");
+  if (del) { ovCardAskDelete(del.closest("[data-ov-row]")); return; }
+  const yes = t.closest("[data-ov-del-yes]");
+  if (yes) { ovCardDelete(yes.closest("[data-ov-row]")); return; }
+  const no = t.closest("[data-ov-del-no]");
+  if (no) { const box = no.closest("[data-ov-confirm]"); box.hidden = true; box.innerHTML = ""; return; }
+  const jump = t.closest("[data-ov-jump]");
+  if (jump) { ev.stopPropagation(); ovJumpToCard(jump.getAttribute("data-ov-jump")); }
+});
+
 function initMap() {
   const center = TRACKED.find(t => t.lat != null) || DATA.find(d => d.lat != null);
   if (!center) return;
@@ -6313,6 +6912,10 @@ document.getElementById("filterDisp").addEventListener("change", render);
 document.getElementById("filterSource").addEventListener("change", render);
 document.getElementById("filterPodHarfou").addEventListener("change", render);
 document.getElementById("filterFees").addEventListener("change", render);
+document.getElementById("filterFringe").addEventListener("change", e => {
+  window.SHOW_FRINGE = e.target.checked;
+  document.dispatchEvent(new CustomEvent("areachange"));
+});
 document.getElementById("search").addEventListener("input", render);
 document.getElementById("dealTx").addEventListener("change", renderDeals);
 document.querySelectorAll("select.house-filter").forEach(sel =>
@@ -6332,6 +6935,7 @@ renderDeals();
 renderPodHarfou();
 renderHistory();
 renderTrackedList();
+ovCardSync();
 initMap();
 document.getElementById("garTx")?.addEventListener("change", renderGarages);
 document.getElementById("garSearch")?.addEventListener("input", renderGarages);
@@ -6465,6 +7069,9 @@ def update_pool_and_reports(snapshot, changes):
     # the corrected m²/fee in the estimate, and a deleted override cannot stick
     # as exclude_from_stats on a record that is no longer in the snapshot.
     apply_overrides(list(all_pool.values()), load_overrides(), stamp_ui=False)
+    # Pool records from before #26 have no `scope`; stamping the whole pool
+    # takes the 7. 10. fringe out of the window, the estimate and the reports.
+    mark_scope(all_pool.values())
     shards = pool.save_pool(all_pool)
     notes = [
         f"Pool: {len(all_pool)} inzerátů celkem, +{counts['new']} nových, "
@@ -6664,42 +7271,7 @@ def main():
     prev_tracked_by_id = {t["id"]: t for t in (prev or {}).get("tracked", [])}
 
     tracked_config = load_tracked_config()
-    print(f"Fetching {len(tracked_config)} tracked listing(s)...", file=sys.stderr)
-    tracked = []
-    for t in tracked_config:
-        fetched = fetch_tracked(t["url"], t["id"])
-        prev_t = prev_tracked_by_id.get(t["id"])
-        unreadable = fetched.get("unavailable", False)
-        if unreadable:
-            # We simply could not read the page. Keep showing the last known
-            # state rather than flipping the listing to "no longer listed" --
-            # that would fire a removal alert about an upstream hiccup.
-            print(
-                f"Tracked id={t['id']} unreadable, keeping last known state: {fetched['error']}",
-                file=sys.stderr,
-            )
-            fetched = (
-                {**prev_t, "fetch_error": fetched["error"], "fetch_error_at": fetched["fetched_at"]}
-                if prev_t
-                else {**fetched, "active": False}
-            )
-        elif not fetched.get("active"):
-            if prev_t:
-                # Carry forward the last time it was *actually* seen active, even
-                # across multiple consecutive inactive runs (prev_t may itself
-                # already be a backfilled record with no fresh active sighting).
-                last_active_at = prev_t.get("last_active_at") or (
-                    prev_t.get("fetched_at") if prev_t.get("active") else None
-                )
-                fetched = {**prev_t, **fetched}
-                if last_active_at:
-                    fetched["last_active_at"] = last_active_at
-        if not unreadable:
-            # A successful read clears any error carried over from a failed run.
-            fetched.pop("fetch_error", None)
-            fetched.pop("fetch_error_at", None)
-        tracked.append(fetched)
-        print(f"Tracked id={fetched['id']} active={fetched.get('active')} title={fetched.get('title')!r}", file=sys.stderr)
+    tracked = fetch_configured_tracked(tracked_config, prev_tracked_by_id)
 
     print("Fetching comparables...", file=sys.stderr)
     comparables = fetch_comparables(prev)
@@ -6722,6 +7294,9 @@ def main():
     comparables, folded = merge_cross_portal(comparables)
     for c in comparables:
         assign_area(c)
+    fringe = mark_scope(comparables)
+    if fringe:
+        print(f"Okolní čtvrti (mimo statistiku a změny, #26): {fringe} inzerátů", file=sys.stderr)
     # After enrich (fetch + extra sources) and fold, before rank / stats /
     # pool / estimate / dashboard. An override whose listing is not in this
     # run stays in overrides.json and is applied again when the same id returns.
@@ -6800,6 +7375,9 @@ def main():
 
     changes = diff_snapshots(prev, snapshot)
     verify_removals(changes, snapshot)
+    # Až po verify_removals: obnovený srovnávací záznam už je zpátky v comparables
+    # a potvrzené zmizení je v newly_inactive. Žádný další request.
+    attach_portal_tracked(snapshot, changes, tracked_config, prev, folded, overrides)
     # Before the pool and the history: both record `relist_of`, so the stamp
     # must already be on the listings when they are written.
     update_gone_archive(snapshot, changes)
@@ -6819,14 +7397,21 @@ def main():
     backfill_missing_areas(snapshot["comparables"])
     flag_transaction_mismatch(snapshot["comparables"])
     attach_sale_extras(snapshot["comparables"])
+    mark_scope(snapshot["comparables"])
     comparables = rank_deals(snapshot["comparables"])
     # `stats` stays the home area's, because everything already reading it
     # (the stats card, the report, the own-flat card) means Vysočany.
-    home = [c for c in comparables if listing_area(c) == HOME_AREA]
+    # Okolní čtvrti (#26) ve statistice nejsou -- ani v parkování. A jen
+    # TREND_DISPOSITIONS (#27): karta i zápis jsou časová řada.
+    home = [c for c in comparables
+            if listing_area(c) == HOME_AREA and in_core(c)
+            and c.get("disposition") in TREND_DISPOSITIONS]
     stats = compute_stats(home)
     snapshot["stats"] = stats
     snapshot["area_stats"] = {
-        key: compute_stats([c for c in comparables if listing_area(c) == key]) for key in AREAS
+        key: compute_stats([c for c in comparables if listing_area(c) == key and in_core(c)
+                            and c.get("disposition") in TREND_DISPOSITIONS])
+        for key in AREAS
     }
     snapshot["parking_stats"] = parking_price_stats(home)
     fee_queue = build_fee_review_queue(comparables)
