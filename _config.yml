@@ -7,7 +7,8 @@
 #
 # Stránka za běhu čte gone_archive.json a README odkazuje na
 # changes_history.json -- ty tu být NESMÍ (hlídá test_pages.py).
-# Snapshoty zůstávají v repu; na GitHubu jsou dál k dispozici.
+# Od 14. 11. 2026 snapshoty v repu nejsou (GitHub Releases, #17); exclude
+# zůstává pro lokální kopii po `snapshots_release.py restore`.
 #
 # Testy stránka nečte a na web nepatří. Kořenový glob (test_*.py, conftest.py)
 # v pages_size i v Jekyllu nekryje podadresář — proto i **/test_*.py a

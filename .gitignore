@@ -5,3 +5,7 @@ __pycache__/
 
 # Claude Code worktrees live here: they are checkouts of this repo, not content.
 .claude/
+
+# Plné snapshoty jsou od 14. 11. 2026 v GitHub Releases (snapshots-RRRR-MM),
+# ne v repu (#17). Lokálně: python3 snapshots_release.py restore
+snapshots/
