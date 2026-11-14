@@ -51,6 +51,65 @@ check("prefix jména není adresář",
       pages_size.is_excluded("snapshots_old.json", ["snapshots/"]), False)
 check("glob", pages_size.is_excluded("changes_log.jsonl", ["*.jsonl"]), True)
 
+# Osobní finance a pytest. Ověřeno na is_excluded: test_*.py kryje kořen a
+# nekryje podadresář, **/test_*.py naopak. _config.yml proto má oba tvary.
+check("samotné test_*.py nekryje podadresář",
+      pages_size.is_excluded("pod/test_own_card.py", ["test_*.py"]), False)
+check("samotné **/test_*.py nekryje kořen",
+      pages_size.is_excluded("test_own_card.py", ["**/test_*.py"]), False)
+check("samotné conftest.py nekryje podadresář",
+      pages_size.is_excluded("pod/conftest.py", ["conftest.py"]), False)
+check("test_own_card.py není na webu",
+      pages_size.is_excluded("test_own_card.py", entries), True)
+check("conftest.py není na webu",
+      pages_size.is_excluded("conftest.py", entries), True)
+check("test v podadresáři není na webu",
+      pages_size.is_excluded("pod/test_own_card.py", entries), True)
+check("test o dvě úrovně níž není na webu",
+      pages_size.is_excluded("a/b/test_own_card.py", entries), True)
+check("conftest v podadresáři není na webu",
+      pages_size.is_excluded("pod/conftest.py", entries), True)
+check("conftest o dvě úrovně níž není na webu",
+      pages_size.is_excluded("a/b/conftest.py", entries), True)
+check("scrape.py zůstává publikovaný",
+      pages_size.is_excluded("scrape.py", entries), False)
+
+
+def own_line_has_long_amount(line):
+    """Řádek s OWN_ a číslem o 7+ číslicích v řadě.
+
+    Kratší syntetické částky (90000, 350000, 800000) i podtržená 4_200_000
+    tím neprojdou. Sedm číslic v řadě — reálná kupní cena, zálohy nebo součet —
+    ano.
+    """
+    return "OWN_" in line and re.search(r"\b\d{7,}\b", line) is not None
+
+
+check("syntetická komora na řádku OWN_ projde",
+      own_line_has_long_amount("OWN_EXTRA_PRICES_CZK komora=90000"), False)
+check("syntetická garáž na řádku OWN_ projde",
+      own_line_has_long_amount("OWN_EXTRA_PRICES_CZK garaz=350000"), False)
+check("syntetické zálohy na řádku OWN_ projdou",
+      own_line_has_long_amount("OWN_DEPOSITS_CZK 800000"), False)
+check("podtržená syntetická cena na řádku OWN_ projde",
+      own_line_has_long_amount("OWN_PRICE_CZK = 4_200_000"), False)
+check("sedm číslic v řadě na řádku OWN_ neprojde",
+      own_line_has_long_amount("OWN_PRICE_CZK " + "1" * 7), True)
+check("sedm číslic mimo řádek OWN_ tahle pojistka neřeší",
+      own_line_has_long_amount("price " + "1" * 7), False)
+
+leaks = []
+for path in sorted(ROOT.rglob("*.py")):
+    rel = path.relative_to(ROOT).as_posix()
+    if any(part.startswith((".", "_")) for part in rel.split("/")):
+        continue
+    if pages_size.is_excluded(rel, entries):
+        continue
+    for lineno, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        if own_line_has_long_amount(line):
+            leaks.append(f"{rel}:{lineno}: {line.strip()}")
+check("publikované .py bez 7+ číslic na řádku OWN_", leaks, [])
+
 # Čtení _config.yml: jen blok exclude, komentáře pryč.
 with tempfile.TemporaryDirectory() as tmp:
     root = Path(tmp)

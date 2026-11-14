@@ -80,6 +80,7 @@ Symetricky k přidání:
 | `pool.py` | Trvalý pool inzerátů: jeden záznam = jeden inzerát, co kdy byl viděn. |
 | `pool/` | Shardy poolu po měsících + `state.json` (změny konfigurace, sledování vzorku pro tvrdé filtry). |
 | `market.py` | Deterministické statistiky nad poolem — odhad nájmu, úroveň, trend, pásmo šumu, dynamika prodejů. |
+| `segments.py` | Týdenní segmenty trhu (typ domu, velikost, lokalita, referenční pásmo). Píše jen agregaci do `weekly_segments.json`. |
 | `novostavby.py`, `fetch_novostavby.py` | Samostatná kolekce a lokální ověření novostaveb 4+kk/5+kk u U Kříže. |
 | `developers.py`, `developers_compare.py`, `developers_card.py` | Ceníky developerů, srovnání s nabídkami a karta dashboardu. |
 | `timeline.py` | Grafy vývoje cen a doby na trhu. |
@@ -124,6 +125,23 @@ nejde ověřit ani katastrem. Nikde se proto neobjeví „prodáno za"; jen
 
 Zápis chodí **každý týden i když se nic nestalo** — tichá nepřítomnost zpráv by
 vypadala stejně jako rozbitá pipeline.
+
+### Týdenní segmenty
+
+`segments.py` každý běh scrapu (a stejně tak `python segments.py` nad lokálním
+poolem) spočítá **uzavřený ISO týden** po segmentech, zvlášť pro prodej a
+pronájem. Výstup je `weekly_segments.json` v kořeni repa — strojový souhrn pro
+pondělní job — a karta „Týdenní segmenty“ na dashboardu.
+
+Soubor i karta obsahují **jen agregaci** (počty, mediány, podíly, příznaky).
+Nejsou v nich id inzerátů, adresy, splátka, úvěr, pokrytí nájmu ani konkrétní
+byt. Modul sám nic neposílá; segment pod 20 aktivními inzeráty má `malo_dat`
+a příznak z něj nevzejde.
+
+```bash
+python segments.py
+python segments.py --week 2026-W41 --output /tmp/weekly_segments.json
+```
 
 ### Nastavení notifikací
 
