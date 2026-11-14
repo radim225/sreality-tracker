@@ -81,7 +81,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "1025998924": {
   "id": "1025998924",
@@ -120,7 +121,8 @@
   "parking": false,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1053466700": {
   "id": "1053466700",
@@ -158,7 +160,8 @@
   "garage": true,
   "parking": false,
   "fees_source": "text",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1071924044": {
   "id": "1071924044",
@@ -197,7 +200,8 @@
   "parking": false,
   "fees_source": "field",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1073586252": {
   "id": "1073586252",
@@ -236,7 +240,8 @@
   "parking": true,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1080886092": {
   "id": "1080886092",
@@ -315,7 +320,8 @@
   "gone_last_price_czk": 6999900,
   "gone_last_total_czk": 6999900,
   "exclude_from_stats": false,
-  "resurrected_at": "2026-09-03T12:52:13Z"
+  "resurrected_at": "2026-09-03T12:52:13Z",
+  "scope": "core"
  },
  "1101496396": {
   "id": "1101496396",
@@ -354,7 +360,8 @@
   "parking": false,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1146466380": {
   "id": "1146466380",
@@ -427,7 +434,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 7225600,
-  "gone_last_total_czk": 7225600
+  "gone_last_total_czk": 7225600,
+  "scope": "core"
  },
  "1154478156": {
   "id": "1154478156",
@@ -510,7 +518,8 @@
   "parking_price_czk": 1500,
   "exclude_from_stats": false,
   "gone_last_price_czk": 16990,
-  "gone_last_total_czk": 22490
+  "gone_last_total_czk": 22490,
+  "scope": "core"
  },
  "1180168268": {
   "id": "1180168268",
@@ -548,7 +557,8 @@
   "garage": false,
   "parking": false,
   "fees_source": "field",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1189876556": {
   "id": "1189876556",
@@ -624,7 +634,8 @@
   "house_class": "starsi",
   "house_class_source": "typ",
   "gone_last_price_czk": 6620000,
-  "gone_last_total_czk": 6620000
+  "gone_last_total_czk": 6620000,
+  "scope": "core"
  },
  "120275788": {
   "id": "120275788",
@@ -697,7 +708,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 10100000,
-  "gone_last_total_czk": 10100000
+  "gone_last_total_czk": 10100000,
+  "scope": "core"
  },
  "1218420812": {
   "id": "1218420812",
@@ -736,7 +748,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1228599372": {
   "id": "1228599372",
@@ -775,7 +788,8 @@
   "garage": false,
   "parking": false,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1233354828": {
   "id": "1233354828",
@@ -819,7 +833,8 @@
   "parking": true,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1236136012": {
   "id": "1236136012",
@@ -858,12 +873,13 @@
   "parking": true,
   "fees_source": "field",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1236435020": {
   "id": "1236435020",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -937,7 +953,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "123814732": {
   "id": "123814732",
@@ -976,7 +993,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1254835020": {
   "id": "1254835020",
@@ -1049,7 +1067,8 @@
   "parking_price_czk": null,
   "gone_last_price_czk": 12200000,
   "gone_last_total_czk": 12200000,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1255371340": {
   "id": "1255371340",
@@ -1122,7 +1141,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 15500,
-  "gone_last_total_czk": 21000
+  "gone_last_total_czk": 21000,
+  "scope": "core"
  },
  "1255600204": {
   "id": "1255600204",
@@ -1161,7 +1181,8 @@
   "floors_total": 4,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1278914636": {
   "id": "1278914636",
@@ -1199,7 +1220,8 @@
   "garage": true,
   "parking": true,
   "fees_source": "text",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1301319756": {
   "id": "1301319756",
@@ -1278,7 +1300,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "gone_last_price_czk": 6290000,
-  "gone_last_total_czk": 6290000
+  "gone_last_total_czk": 6290000,
+  "scope": "core"
  },
  "1316876364": {
   "id": "1316876364",
@@ -1322,7 +1345,8 @@
   "parking": false,
   "fees_source": "field",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1328894796": {
   "id": "1328894796",
@@ -1396,7 +1420,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "gone_last_price_czk": 28700,
-  "gone_last_total_czk": 33700
+  "gone_last_total_czk": 33700,
+  "scope": "core"
  },
  "1356759116": {
   "id": "1356759116",
@@ -1467,7 +1492,8 @@
   "since": "2026-06-01",
   "gone_last_price_czk": 21500,
   "gone_last_total_czk": 23000,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1370587212": {
   "id": "1370587212",
@@ -1541,7 +1567,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "gone_last_price_czk": 9360000,
-  "gone_last_total_czk": 9360000
+  "gone_last_total_czk": 9360000,
+  "scope": "core"
  },
  "139592524": {
   "id": "139592524",
@@ -1579,7 +1606,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1396953676": {
   "id": "1396953676",
@@ -1660,7 +1688,8 @@
   "house_class": "novostavba",
   "house_class_source": "stav",
   "gone_last_price_czk": 28900,
-  "gone_last_total_czk": 35100
+  "gone_last_total_czk": 35100,
+  "scope": "core"
  },
  "1404608588": {
   "id": "1404608588",
@@ -1742,7 +1771,8 @@
   "gone_last_total_czk": 7490000,
   "resurrected_at": "2026-10-04T13:24:53Z",
   "house_class": "starsi",
-  "house_class_source": "typ"
+  "house_class_source": "typ",
+  "scope": "core"
  },
  "1405714508": {
   "id": "1405714508",
@@ -1781,7 +1811,8 @@
   "parking": true,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "141553740": {
   "id": "141553740",
@@ -1820,7 +1851,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1422692428": {
   "id": "1422692428",
@@ -1893,7 +1925,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 9590000,
-  "gone_last_total_czk": 9590000
+  "gone_last_total_czk": 9590000,
+  "scope": "core"
  },
  "1426231372": {
   "id": "1426231372",
@@ -1937,7 +1970,8 @@
   "parking": false,
   "fees_source": "field",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1445417804": {
   "id": "1445417804",
@@ -2011,7 +2045,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "gone_last_price_czk": 28200,
-  "gone_last_total_czk": 33200
+  "gone_last_total_czk": 33200,
+  "scope": "core"
  },
  "1459126348": {
   "id": "1459126348",
@@ -2050,7 +2085,8 @@
   "garage": false,
   "parking": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1465380940": {
   "id": "1465380940",
@@ -2088,7 +2124,8 @@
   "garage": false,
   "parking": false,
   "fees_source": "field",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1469640780": {
   "id": "1469640780",
@@ -2127,7 +2164,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "148828236": {
   "id": "148828236",
@@ -2171,7 +2209,8 @@
   "parking": false,
   "fees_source": "field",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1489215564": {
   "id": "1489215564",
@@ -2257,7 +2296,8 @@
   "house_class": "novostavba",
   "house_class_source": "stav",
   "gone_last_price_czk": 9700000,
-  "gone_last_total_czk": 9700000
+  "gone_last_total_czk": 9700000,
+  "scope": "core"
  },
  "1505988684": {
   "id": "1505988684",
@@ -2301,7 +2341,8 @@
   "parking": false,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1514729548": {
   "id": "1514729548",
@@ -2340,7 +2381,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "154378316": {
   "id": "154378316",
@@ -2379,7 +2421,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1551852364": {
   "id": "1551852364",
@@ -2460,7 +2503,8 @@
   "house_class": "novostavba",
   "house_class_source": "stav",
   "gone_last_price_czk": 28500,
-  "gone_last_total_czk": 34400
+  "gone_last_total_czk": 34400,
+  "scope": "core"
  },
  "1560211532": {
   "id": "1560211532",
@@ -2499,12 +2543,13 @@
   "parking": true,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1570738252": {
   "id": "1570738252",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2544,7 +2589,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.31,
-  "deal_pct": -8,
+  "deal_pct": -9,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -2578,7 +2623,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "157675596": {
   "id": "157675596",
@@ -2616,7 +2662,8 @@
   "floor_number": 7,
   "floors_total": 29,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1589187404": {
   "id": "1589187404",
@@ -2654,7 +2701,8 @@
   "garage": true,
   "parking": true,
   "fees_source": "text",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "16151372": {
   "id": "16151372",
@@ -2693,12 +2741,13 @@
   "floors_total": 6,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1656258636": {
   "id": "1656258636",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2743,7 +2792,7 @@
   "fees_source": "note",
   "source": "sreality",
   "dist_km": 1.29,
-  "deal_pct": 18,
+  "deal_pct": 17,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -2777,12 +2826,13 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "1660416076": {
   "id": "1660416076",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2829,7 +2879,7 @@
   "exclude_from_stats": false,
   "dist_km": 1.33,
   "price_old_czk": 12500000,
-  "deal_pct": -7,
+  "deal_pct": -8,
   "deal_outlier": false,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
@@ -2864,7 +2914,8 @@
   "gone_last_total_czk": 12500000,
   "resurrected_at": "2026-11-06T16:06:57Z",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "1695215692": {
   "id": "1695215692",
@@ -2903,12 +2954,13 @@
   "garage": false,
   "parking": false,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1711312972": {
   "id": "1711312972",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T11:32:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2977,7 +3029,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "1715765324": {
   "id": "1715765324",
@@ -3016,7 +3069,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1732440140": {
   "id": "1732440140",
@@ -3055,7 +3109,8 @@
   "parking": false,
   "fees_source": "field",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1735811916": {
   "id": "1735811916",
@@ -3093,7 +3148,8 @@
   "garage": false,
   "parking": true,
   "fees_source": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1736540236": {
   "id": "1736540236",
@@ -3142,7 +3198,8 @@
   "deal_outlier": false,
   "gone_last_price_czk": 20490,
   "gone_last_total_czk": 21990,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1750171724": {
   "id": "1750171724",
@@ -3180,7 +3237,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "177270860": {
   "id": "177270860",
@@ -3219,7 +3277,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1799876684": {
   "id": "1799876684",
@@ -3258,7 +3317,8 @@
   "parking": false,
   "fees_source": "field",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1801143116": {
   "id": "1801143116",
@@ -3331,7 +3391,8 @@
   "since": "2026-03-18",
   "gone_last_price_czk": 10400000,
   "gone_last_total_czk": 10400000,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1830966092": {
   "id": "1830966092",
@@ -3369,12 +3430,13 @@
   "garage": false,
   "parking": true,
   "fees_source": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1871704140": {
   "id": "1871704140",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3414,7 +3476,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.29,
-  "deal_pct": 0,
+  "deal_pct": 1,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -3448,7 +3510,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "1875349580": {
   "id": "1875349580",
@@ -3521,7 +3584,8 @@
   "parking_price_czk": null,
   "gone_last_price_czk": 8990000,
   "gone_last_total_czk": 8990000,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "189460556": {
   "id": "189460556",
@@ -3559,7 +3623,8 @@
   "total_czk": 39900,
   "garage": true,
   "parking": false,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1904255052": {
   "id": "1904255052",
@@ -3597,7 +3662,8 @@
   "garage": true,
   "parking": true,
   "fees_source": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1905324108": {
   "id": "1905324108",
@@ -3635,7 +3701,8 @@
   "garage": true,
   "parking": true,
   "fees_source": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1926922316": {
   "id": "1926922316",
@@ -3684,7 +3751,8 @@
   "parking": false,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1945531212": {
   "id": "1945531212",
@@ -3723,7 +3791,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1952034892": {
   "id": "1952034892",
@@ -3769,7 +3838,8 @@
   "source": "sreality",
   "gone_last_price_czk": 19500,
   "gone_last_total_czk": 25700,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1968959564": {
   "id": "1968959564",
@@ -3808,7 +3878,8 @@
   "parking": false,
   "fees_source": "field",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2037874764": {
   "id": "2037874764",
@@ -3847,7 +3918,8 @@
   "parking": false,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "206041164": {
   "id": "206041164",
@@ -3886,12 +3958,13 @@
   "parking": false,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2062331980": {
   "id": "2062331980",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3926,7 +3999,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.18,
-  "deal_pct": -25,
+  "deal_pct": -26,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -3960,7 +4033,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "2075127884": {
   "id": "2075127884",
@@ -4004,7 +4078,8 @@
   "parking": false,
   "fees_source": "field",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "21360716": {
   "id": "21360716",
@@ -4043,7 +4118,8 @@
   "floors_total": null,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2161897548": {
   "id": "2161897548",
@@ -4114,7 +4190,8 @@
   "since": "2026-06-12",
   "gone_last_price_czk": 21500,
   "gone_last_total_czk": 29000,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2177581900": {
   "id": "2177581900",
@@ -4187,7 +4264,8 @@
   "parking_price_czk": null,
   "gone_last_price_czk": 10300000,
   "gone_last_total_czk": 10300000,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2221404236": {
   "id": "2221404236",
@@ -4226,7 +4304,8 @@
   "parking": false,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2227913548": {
   "id": "2227913548",
@@ -4299,12 +4378,13 @@
   "parking_price_czk": null,
   "gone_last_price_czk": 12400000,
   "gone_last_total_czk": 12400000,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2233184332": {
   "id": "2233184332",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4344,7 +4424,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.87,
-  "deal_pct": -5,
+  "deal_pct": -6,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -4381,12 +4461,13 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "2234683468": {
   "id": "2234683468",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4505,7 +4586,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "2239819852": {
   "id": "2239819852",
@@ -4549,7 +4631,8 @@
   "parking": true,
   "fees_source": "field",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2267054156": {
   "id": "2267054156",
@@ -4588,7 +4671,8 @@
   "parking": true,
   "fees_source": "field",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2267501388": {
   "id": "2267501388",
@@ -4662,7 +4746,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "gone_last_price_czk": 29900,
-  "gone_last_total_czk": 34900
+  "gone_last_total_czk": 34900,
+  "scope": "core"
  },
  "2279141452": {
   "id": "2279141452",
@@ -4701,12 +4786,13 @@
   "parking": false,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2295116620": {
   "id": "2295116620",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4775,7 +4861,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "popis"
+  "house_class_source": "popis",
+  "scope": "core"
  },
  "2303853388": {
   "id": "2303853388",
@@ -4813,7 +4900,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2304201548": {
   "id": "2304201548",
@@ -4892,7 +4980,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "23282508": {
   "id": "23282508",
@@ -4931,7 +5020,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2329321548": {
   "id": "2329321548",
@@ -5009,7 +5099,8 @@
   "parking_price_czk": null,
   "gone_last_price_czk": 6450000,
   "gone_last_total_czk": 6450000,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2336637772": {
   "id": "2336637772",
@@ -5047,12 +5138,13 @@
   "garage": false,
   "parking": false,
   "fees_source": "text",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2354533196": {
   "id": "2354533196",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T11:32:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5126,7 +5218,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "2356969548": {
   "id": "2356969548",
@@ -5170,12 +5263,13 @@
   "parking": false,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2364244044": {
   "id": "2364244044",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5230,7 +5324,7 @@
   "fees_source": "field",
   "source": "sreality",
   "dist_km": 2.21,
-  "deal_pct": -2,
+  "deal_pct": -3,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -5267,7 +5361,8 @@
   "house_class_source": "kolaudace",
   "gone_last_price_czk": 8790000,
   "gone_last_total_czk": 8790000,
-  "resurrected_at": "2026-10-24T12:46:45Z"
+  "resurrected_at": "2026-10-24T12:46:45Z",
+  "scope": "core"
  },
  "240222284": {
   "id": "240222284",
@@ -5306,12 +5401,13 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2406761292": {
   "id": "2406761292",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5395,7 +5491,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "2409009228": {
   "id": "2409009228",
@@ -5476,7 +5573,8 @@
   "since": "2026-05-23",
   "gone_last_price_czk": 23900,
   "gone_last_total_czk": 25400,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2483195980": {
   "id": "2483195980",
@@ -5514,12 +5612,13 @@
   "garage": false,
   "parking": false,
   "fees_source": "text",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2498511692": {
   "id": "2498511692",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5588,7 +5687,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "starsi",
-  "house_class_source": "typ"
+  "house_class_source": "typ",
+  "scope": "core"
  },
  "2525925452": {
   "id": "2525925452",
@@ -5626,7 +5726,8 @@
   "garage": true,
   "parking": true,
   "fees_source": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2548015180": {
   "id": "2548015180",
@@ -5670,7 +5771,8 @@
   "parking": true,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2562949196": {
   "id": "2562949196",
@@ -5743,7 +5845,8 @@
   "parking_price_czk": null,
   "gone_last_price_czk": 4500000,
   "gone_last_total_czk": 4500000,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2571468876": {
   "id": "2571468876",
@@ -5782,7 +5885,8 @@
   "parking": false,
   "fees_source": "field",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2578313292": {
   "id": "2578313292",
@@ -5821,7 +5925,8 @@
   "parking": false,
   "fees_source": "field",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "261857356": {
   "id": "261857356",
@@ -5860,7 +5965,8 @@
   "parking": true,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2630566732": {
   "id": "2630566732",
@@ -5933,7 +6039,8 @@
   "parking_price_czk": null,
   "gone_last_price_czk": 9900000,
   "gone_last_total_czk": 9900000,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2634195020": {
   "id": "2634195020",
@@ -5972,12 +6079,13 @@
   "parking": true,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2636689484": {
   "id": "2636689484",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [],
   "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/2636689484",
@@ -6040,7 +6148,8 @@
   "area": "vysocany",
   "deal_outlier": false,
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "2639298636": {
   "id": "2639298636",
@@ -6079,7 +6188,8 @@
   "parking": true,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2660270156": {
   "id": "2660270156",
@@ -6118,7 +6228,8 @@
   "parking": true,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2663968844": {
   "id": "2663968844",
@@ -6192,7 +6303,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "gone_last_price_czk": 25000,
-  "gone_last_total_czk": 31500
+  "gone_last_total_czk": 31500,
+  "scope": "core"
  },
  "2685567052": {
   "id": "2685567052",
@@ -6231,7 +6343,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2697236556": {
   "id": "2697236556",
@@ -6270,7 +6383,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2711023692": {
   "id": "2711023692",
@@ -6309,7 +6423,8 @@
   "floors_total": 7,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2715058252": {
   "id": "2715058252",
@@ -6347,7 +6462,8 @@
   "garage": true,
   "parking": false,
   "fees_source": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2746347596": {
   "id": "2746347596",
@@ -6385,7 +6501,8 @@
   "garage": false,
   "parking": true,
   "fees_source": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2790125644": {
   "id": "2790125644",
@@ -6429,7 +6546,8 @@
   "parking": true,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2816435020": {
   "id": "2816435020",
@@ -6468,7 +6586,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2824990796": {
   "id": "2824990796",
@@ -6507,7 +6626,8 @@
   "parking": false,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2853208140": {
   "id": "2853208140",
@@ -6592,12 +6712,13 @@
   "gone_last_price_czk": 9749000,
   "gone_last_total_czk": 9749000,
   "resurrected_at": "2026-09-11T19:13:30Z",
-  "area": "vysocany"
+  "area": "vysocany",
+  "scope": "core"
  },
  "2864615500": {
   "id": "2864615500",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6652,7 +6773,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.39,
-  "deal_pct": -3,
+  "deal_pct": -2,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 4,
@@ -6686,7 +6807,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "2865070156": {
   "id": "2865070156",
@@ -6724,7 +6846,8 @@
   "garage": true,
   "parking": false,
   "fees_source": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2872176716": {
   "id": "2872176716",
@@ -6763,7 +6886,8 @@
   "parking": false,
   "fees_source": "field",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2884038732": {
   "id": "2884038732",
@@ -6802,12 +6926,13 @@
   "floors_total": 8,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "290865996": {
   "id": "290865996",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6842,7 +6967,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.47,
-  "deal_pct": -12,
+  "deal_pct": -10,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 2,
@@ -6879,7 +7004,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "starsi",
-  "house_class_source": "typ"
+  "house_class_source": "typ",
+  "scope": "core"
  },
  "2923425868": {
   "id": "2923425868",
@@ -6933,7 +7059,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2960737100": {
   "id": "2960737100",
@@ -7017,12 +7144,13 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "299324236": {
   "id": "299324236",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [],
   "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/299324236",
@@ -7085,7 +7213,8 @@
   "area": "vysocany",
   "deal_outlier": false,
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "3020812364": {
   "id": "3020812364",
@@ -7124,7 +7253,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3106308172": {
   "id": "3106308172",
@@ -7168,7 +7298,8 @@
   "parking": false,
   "fees_source": "field",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3109064780": {
   "id": "3109064780",
@@ -7212,7 +7343,8 @@
   "parking": false,
   "fees_source": "field",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3113349196": {
   "id": "3113349196",
@@ -7251,7 +7383,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3130479436": {
   "id": "3130479436",
@@ -7290,7 +7423,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3149328460": {
   "id": "3149328460",
@@ -7334,7 +7468,8 @@
   "floors_total": 11,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3151396940": {
   "id": "3151396940",
@@ -7372,7 +7507,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3152117836": {
   "id": "3152117836",
@@ -7410,12 +7546,13 @@
   "garage": true,
   "parking": false,
   "fees_source": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3173163084": {
   "id": "3173163084",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7489,7 +7626,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "3180195916": {
   "id": "3180195916",
@@ -7527,7 +7665,8 @@
   "garage": true,
   "parking": true,
   "fees_source": "text",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3182461004": {
   "id": "3182461004",
@@ -7571,7 +7710,8 @@
   "parking": false,
   "fees_source": "field",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3184717900": {
   "id": "3184717900",
@@ -7615,7 +7755,8 @@
   "parking": false,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3200053324": {
   "id": "3200053324",
@@ -7654,7 +7795,8 @@
   "parking": true,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3203366988": {
   "id": "3203366988",
@@ -7693,7 +7835,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3214315596": {
   "id": "3214315596",
@@ -7742,7 +7885,8 @@
   "parking": true,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3215949900": {
   "id": "3215949900",
@@ -7780,7 +7924,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3256741964": {
   "id": "3256741964",
@@ -7819,7 +7964,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3297701964": {
   "id": "3297701964",
@@ -7868,7 +8014,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3310125132": {
   "id": "3310125132",
@@ -7942,7 +8089,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "gone_last_price_czk": 7890000,
-  "gone_last_total_czk": 7890000
+  "gone_last_total_czk": 7890000,
+  "scope": "core"
  },
  "3311960140": {
   "id": "3311960140",
@@ -7981,7 +8129,8 @@
   "parking": false,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3314319436": {
   "id": "3314319436",
@@ -8019,12 +8168,13 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3327627340": {
   "id": "3327627340",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8093,7 +8243,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "334725196": {
   "id": "334725196",
@@ -8132,7 +8283,8 @@
   "parking": true,
   "fees_source": "field",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3350368332": {
   "id": "3350368332",
@@ -8170,7 +8322,8 @@
   "garage": false,
   "parking": true,
   "fees_source": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3356684364": {
   "id": "3356684364",
@@ -8209,7 +8362,8 @@
   "parking": false,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3411710028": {
   "id": "3411710028",
@@ -8248,7 +8402,8 @@
   "parking": true,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3422503756": {
   "id": "3422503756",
@@ -8321,7 +8476,8 @@
   "parking_price_czk": null,
   "gone_last_price_czk": 8990000,
   "gone_last_total_czk": 8990000,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3433591628": {
   "id": "3433591628",
@@ -8354,12 +8510,13 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3448762444": {
   "id": "3448762444",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8394,7 +8551,7 @@
   "fees_source": "note",
   "source": "sreality",
   "dist_km": 1.11,
-  "deal_pct": -11,
+  "deal_pct": -10,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 2,
@@ -8428,7 +8585,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "starsi",
-  "house_class_source": "typ"
+  "house_class_source": "typ",
+  "scope": "core"
  },
  "3449786444": {
   "id": "3449786444",
@@ -8501,7 +8659,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 9950000,
-  "gone_last_total_czk": 9950000
+  "gone_last_total_czk": 9950000,
+  "scope": "core"
  },
  "3473055820": {
   "id": "3473055820",
@@ -8540,7 +8699,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3492118604": {
   "id": "3492118604",
@@ -8579,7 +8739,8 @@
   "parking": true,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "350589004": {
   "id": "350589004",
@@ -8616,7 +8777,8 @@
   "total_czk": 23500,
   "garage": false,
   "parking": false,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3579269964": {
   "id": "3579269964",
@@ -8690,7 +8852,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "gone_last_price_czk": 30500,
-  "gone_last_total_czk": 35500
+  "gone_last_total_czk": 35500,
+  "scope": "core"
  },
  "3642011724": {
   "id": "3642011724",
@@ -8729,7 +8892,8 @@
   "parking": true,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3668766796": {
   "id": "3668766796",
@@ -8767,7 +8931,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3682639948": {
   "id": "3682639948",
@@ -8806,7 +8971,8 @@
   "parking": false,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3710341964": {
   "id": "3710341964",
@@ -8885,7 +9051,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "3717263436": {
   "id": "3717263436",
@@ -8958,7 +9125,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 12100000,
-  "gone_last_total_czk": 12100000
+  "gone_last_total_czk": 12100000,
+  "scope": "core"
  },
  "3728601164": {
   "id": "3728601164",
@@ -8996,7 +9164,8 @@
   "garage": true,
   "parking": false,
   "fees_source": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3735584844": {
   "id": "3735584844",
@@ -9040,7 +9209,8 @@
   "parking": true,
   "fees_source": "field",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3768815692": {
   "id": "3768815692",
@@ -9118,7 +9288,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 9360000,
-  "gone_last_total_czk": 9360000
+  "gone_last_total_czk": 9360000,
+  "scope": "core"
  },
  "3791143756": {
   "id": "3791143756",
@@ -9202,12 +9373,13 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "3807547468": {
   "id": "3807547468",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9247,7 +9419,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.61,
-  "deal_pct": 27,
+  "deal_pct": 30,
   "deal_outlier": false,
   "price_old_czk": 7990000,
   "building_condition": 1,
@@ -9284,7 +9456,8 @@
   "house_class_source": "kolaudace",
   "gone_last_price_czk": 7750000,
   "gone_last_total_czk": 7750000,
-  "resurrected_at": "2026-11-10T21:56:53Z"
+  "resurrected_at": "2026-11-10T21:56:53Z",
+  "scope": "core"
  },
  "3812749388": {
   "id": "3812749388",
@@ -9328,7 +9501,8 @@
   "parking": false,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3816637260": {
   "id": "3816637260",
@@ -9369,7 +9543,8 @@
   "source": "sreality",
   "gone_last_price_czk": 21800,
   "gone_last_total_czk": 23300,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3833152332": {
   "id": "3833152332",
@@ -9410,7 +9585,8 @@
   "source": "sreality",
   "gone_last_price_czk": 9805000,
   "gone_last_total_czk": 9805000,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3833692236": {
   "id": "3833692236",
@@ -9448,7 +9624,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3834703948": {
   "id": "3834703948",
@@ -9521,7 +9698,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 13945000,
-  "gone_last_total_czk": 13945000
+  "gone_last_total_czk": 13945000,
+  "scope": "core"
  },
  "3841192012": {
   "id": "3841192012",
@@ -9564,7 +9742,8 @@
   "garage": true,
   "parking": true,
   "fees_source": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3844817740": {
   "id": "3844817740",
@@ -9637,7 +9816,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 13900000,
-  "gone_last_total_czk": 13900000
+  "gone_last_total_czk": 13900000,
+  "scope": "core"
  },
  "3865149516": {
   "id": "3865149516",
@@ -9676,7 +9856,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3876102220": {
   "id": "3876102220",
@@ -9715,7 +9896,8 @@
   "parking": false,
   "fees_source": "field",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3885473868": {
   "id": "3885473868",
@@ -9754,7 +9936,8 @@
   "parking": false,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3888943180": {
   "id": "3888943180",
@@ -9787,7 +9970,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3898295116": {
   "id": "3898295116",
@@ -9860,7 +10044,8 @@
   "since": "2026-03-18",
   "gone_last_price_czk": 11600000,
   "gone_last_total_czk": 11600000,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3903451212": {
   "id": "3903451212",
@@ -9904,7 +10089,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3912736844": {
   "id": "3912736844",
@@ -9943,7 +10129,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3920490572": {
   "id": "3920490572",
@@ -9984,7 +10171,8 @@
   "source": "sreality",
   "gone_last_price_czk": 26500,
   "gone_last_total_czk": 31600,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3945525324": {
   "id": "3945525324",
@@ -10065,7 +10253,8 @@
   "house_class": "starsi",
   "house_class_source": "typ",
   "gone_last_price_czk": 19900,
-  "gone_last_total_czk": 21400
+  "gone_last_total_czk": 21400,
+  "scope": "core"
  },
  "3946352716": {
   "id": "3946352716",
@@ -10104,7 +10293,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3966083148": {
   "id": "3966083148",
@@ -10142,7 +10332,8 @@
   "garage": true,
   "parking": true,
   "fees_source": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3986485324": {
   "id": "3986485324",
@@ -10181,7 +10372,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3992273740": {
   "id": "3992273740",
@@ -10220,7 +10412,8 @@
   "parking": true,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "4006981708": {
   "id": "4006981708",
@@ -10293,7 +10486,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 5845600,
-  "gone_last_total_czk": 5845600
+  "gone_last_total_czk": 5845600,
+  "scope": "core"
  },
  "4020285516": {
   "id": "4020285516",
@@ -10337,7 +10531,8 @@
   "floors_total": 1,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "4026957900": {
   "id": "4026957900",
@@ -10376,7 +10571,8 @@
   "parking": false,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "4052193356": {
   "id": "4052193356",
@@ -10415,7 +10611,8 @@
   "parking": true,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "4060803148": {
   "id": "4060803148",
@@ -10453,7 +10650,8 @@
   "garage": false,
   "parking": false,
   "fees_source": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "4063666252": {
   "id": "4063666252",
@@ -10491,7 +10689,8 @@
   "garage": false,
   "parking": false,
   "fees_source": "text",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "4066680908": {
   "id": "4066680908",
@@ -10530,7 +10729,8 @@
   "parking": false,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "4073254988": {
   "id": "4073254988",
@@ -10569,7 +10769,8 @@
   "parking": true,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "4085444684": {
   "id": "4085444684",
@@ -10607,7 +10808,8 @@
   "garage": false,
   "parking": true,
   "fees_source": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "4099363660": {
   "id": "4099363660",
@@ -10681,7 +10883,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "gone_last_price_czk": 30800,
-  "gone_last_total_czk": 35800
+  "gone_last_total_czk": 35800,
+  "scope": "core"
  },
  "4109988684": {
   "id": "4109988684",
@@ -10720,7 +10923,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "4136693836": {
   "id": "4136693836",
@@ -10793,7 +10997,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 11599000,
-  "gone_last_total_czk": 11599000
+  "gone_last_total_czk": 11599000,
+  "scope": "core"
  },
  "4172521548": {
   "id": "4172521548",
@@ -10832,7 +11037,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "4179750988": {
   "id": "4179750988",
@@ -10871,7 +11077,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "4234584140": {
   "id": "4234584140",
@@ -10909,7 +11116,8 @@
   "garage": false,
   "parking": true,
   "fees_source": "text",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "4235617100": {
   "id": "4235617100",
@@ -10947,7 +11155,8 @@
   "garage": false,
   "parking": true,
   "fees_source": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "4241449804": {
   "id": "4241449804",
@@ -11025,7 +11234,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 9950000,
-  "gone_last_total_czk": 9950000
+  "gone_last_total_czk": 9950000,
+  "scope": "core"
  },
  "4246900812": {
   "id": "4246900812",
@@ -11074,12 +11284,13 @@
   "parking": false,
   "fees_source": "field",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "4265243212": {
   "id": "4265243212",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11114,7 +11325,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.88,
-  "deal_pct": -8,
+  "deal_pct": -9,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 4,
@@ -11148,7 +11359,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "4265275468": {
   "id": "4265275468",
@@ -11187,12 +11399,13 @@
   "garage": false,
   "parking": false,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "4276437836": {
   "id": "4276437836",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11232,7 +11445,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 2.46,
-  "deal_pct": -8,
+  "deal_pct": -7,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 4,
@@ -11266,7 +11479,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "4282532684": {
   "id": "4282532684",
@@ -11347,7 +11561,8 @@
   "house_class": "novostavba",
   "house_class_source": "stav",
   "gone_last_price_czk": 28900,
-  "gone_last_total_czk": 35300
+  "gone_last_total_czk": 35300,
+  "scope": "core"
  },
  "4288979020": {
   "id": "4288979020",
@@ -11385,12 +11600,13 @@
   "garage": true,
   "parking": true,
   "fees_source": null,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "472662860": {
   "id": "472662860",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11410,7 +11626,7 @@
    }
   ],
   "url": "https://www.sreality.cz/detail/pronajem/byt/3%2Bkk/x/472662860",
-  "title": "To rent apartment 3+kt 85 m²",
+  "title": "Pronájem bytu 3+kk 85 m²",
   "transaction_type": "pronajem",
   "disposition": "3+kk",
   "floor_area_sqm": 85.0,
@@ -11437,7 +11653,7 @@
   "exclude_from_stats": false,
   "dist_km": 1.7,
   "area": "vysocany",
-  "deal_pct": 71,
+  "deal_pct": null,
   "deal_outlier": false,
   "parking_state": "none",
   "parking_price_czk": null,
@@ -11469,7 +11685,8 @@
   "ownership_name": "Osobní",
   "views": 19866,
   "edited": "2026-10-21",
-  "since": "2026-03-25"
+  "since": "2026-03-25",
+  "scope": "fringe"
  },
  "474043212": {
   "id": "474043212",
@@ -11543,7 +11760,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "gone_last_price_czk": 32000,
-  "gone_last_total_czk": 37000
+  "gone_last_total_czk": 37000,
+  "scope": "core"
  },
  "480608332": {
   "id": "480608332",
@@ -11582,7 +11800,8 @@
   "parking": false,
   "fees_source": "field",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "504070220": {
   "id": "504070220",
@@ -11621,7 +11840,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "5148748": {
   "id": "5148748",
@@ -11660,7 +11880,8 @@
   "parking": true,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "546672716": {
   "id": "546672716",
@@ -11699,7 +11920,8 @@
   "parking": false,
   "fees_source": "text",
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "547389516": {
   "id": "547389516",
@@ -11738,12 +11960,13 @@
   "parking": true,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "552435788": {
   "id": "552435788",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11778,7 +12001,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.39,
-  "deal_pct": 16,
+  "deal_pct": 15,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -11815,7 +12038,8 @@
   "resurrected_at": "2026-10-20T20:09:03Z",
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "562032716": {
   "id": "562032716",
@@ -11898,7 +12122,8 @@
   "parking_price_czk": 388,
   "gone_last_price_czk": 23500,
   "gone_last_total_czk": 25000,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "572649548": {
   "id": "572649548",
@@ -11937,7 +12162,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "592244812": {
   "id": "592244812",
@@ -11976,7 +12202,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "603451468": {
   "id": "603451468",
@@ -12055,7 +12282,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "gone_last_price_czk": 9990000,
-  "gone_last_total_czk": 9990000
+  "gone_last_total_czk": 9990000,
+  "scope": "core"
  },
  "664510540": {
   "id": "664510540",
@@ -12094,7 +12322,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "671580236": {
   "id": "671580236",
@@ -12132,12 +12361,13 @@
   "garage": false,
   "parking": false,
   "fees_source": "text",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "67654476": {
   "id": "67654476",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12147,7 +12377,7 @@
    }
   ],
   "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/67654476",
-  "title": "For sale apartment 2+kt 51 m²",
+  "title": "Prodej bytu 2+kk 51 m²",
   "transaction_type": "prodej",
   "disposition": "2+kk",
   "floor_area_sqm": 51.0,
@@ -12209,7 +12439,8 @@
   "area": "vysocany",
   "resurrected_at": "2026-10-09T15:29:00Z",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "682655820": {
   "id": "682655820",
@@ -12287,12 +12518,13 @@
   "edited": "2026-09-17",
   "since": "2026-06-08",
   "gone_last_price_czk": 19500,
-  "gone_last_total_czk": 25829
+  "gone_last_total_czk": 25829,
+  "scope": "core"
  },
  "705409100": {
   "id": "705409100",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T11:32:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12332,7 +12564,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.87,
-  "deal_pct": -6,
+  "deal_pct": -5,
   "deal_outlier": false,
   "parking_state": null,
   "parking_price_czk": null,
@@ -12366,7 +12598,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": null,
-  "house_class_source": null
+  "house_class_source": null,
+  "scope": "core"
  },
  "729280588": {
   "id": "729280588",
@@ -12450,12 +12683,13 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "gone_last_price_czk": 23500,
-  "gone_last_total_czk": 29600
+  "gone_last_total_czk": 29600,
+  "scope": "core"
  },
  "773816396": {
   "id": "773816396",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12500,7 +12734,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 2.78,
-  "deal_pct": -7,
+  "deal_pct": -4,
   "deal_outlier": false,
   "price_old_czk": 6450000,
   "building_condition": 1,
@@ -12534,7 +12768,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "starsi",
-  "house_class_source": "typ"
+  "house_class_source": "typ",
+  "scope": "core"
  },
  "792023884": {
   "id": "792023884",
@@ -12613,7 +12848,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "796586060": {
   "id": "796586060",
@@ -12652,7 +12888,8 @@
   "garage": false,
   "parking": false,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "822931532": {
   "id": "822931532",
@@ -12689,7 +12926,8 @@
   "total_czk": 18500,
   "garage": false,
   "parking": false,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "840007756": {
   "id": "840007756",
@@ -12735,7 +12973,8 @@
   "source": "sreality",
   "gone_last_price_czk": 18500,
   "gone_last_total_czk": 22600,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "840822860": {
   "id": "840822860",
@@ -12774,7 +13013,8 @@
   "parking": false,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "86463308": {
   "id": "86463308",
@@ -12853,7 +13093,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "888598604": {
   "id": "888598604",
@@ -12891,7 +13132,8 @@
   "floor_number": 5,
   "floors_total": 15,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "911164236": {
   "id": "911164236",
@@ -12968,7 +13210,8 @@
   "house_class_source": "kolaudace",
   "gone_last_price_czk": 26000,
   "gone_last_total_czk": 27500,
-  "resurrected_at": "2026-10-26T21:08:58Z"
+  "resurrected_at": "2026-10-26T21:08:58Z",
+  "scope": "core"
  },
  "918397004": {
   "id": "918397004",
@@ -13039,7 +13282,8 @@
   "since": "2026-04-28",
   "gone_last_price_czk": 23000,
   "gone_last_total_czk": 27500,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "934019660": {
   "id": "934019660",
@@ -13116,7 +13360,8 @@
   "gone_last_total_czk": 24400,
   "resurrected_at": "2026-10-05T17:22:48Z",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "959443020": {
   "id": "959443020",
@@ -13160,6 +13405,7 @@
   "parking": true,
   "fees_source": null,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  }
 }
