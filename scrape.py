@@ -2354,8 +2354,12 @@ def search_ward_novostavby(ward, tx_type):
         if data is None:
             raise TransientFetchError(f"novostavby {tx_type}/{ward}: estatesSearch chybí")
         key = key or {}
+        # Od 7. 10. posílá Sreality localityEntityType jako seznam (["ward"]),
+        # dřív řetězec -- obojí je hledání po čtvrti.
+        loc_type = key.get("localityEntityType")
+        loc_types = loc_type if isinstance(loc_type, list) else [loc_type]
         if (sorted(key.get("categorySubCb") or []) != sorted(novostavby.DISPOSITIONS)
-                or key.get("localityEntityType") != "ward"):
+                or loc_types != ["ward"]):
             raise TransientFetchError(
                 f"novostavby {tx_type}/{ward}: Sreality nepoužila filtr "
                 f"(categorySubCb={key.get('categorySubCb')}, locality={key.get('localityEntityType')})")
