@@ -202,6 +202,11 @@ FORBIDDEN_SUBSTRINGS = (
 )
 
 
+# Spodní hranice skutečné ceny; pod ní jde o zástupné číslo portálu.
+MIN_SALE_CZK = 100_000
+MIN_RENT_CZK = 1_000
+
+
 def _r1(value):
     return None if value is None else round(float(value), 1)
 
@@ -329,6 +334,11 @@ def is_active(rec, start, end):
     """V nabídce ke konci týdne. Viz DEFINITIONS['aktivni']."""
     if rec.get("exclude_from_stats") or rec.get("gone_stale"):
         return False
+    # Okolní čtvrti (#26) a velké byty z #27 nejsou v časových řadách nikde
+    # jinde (pool.window): okolí od 7. 10. řídí Sreality, ne trh, a velké byty
+    # by v týdnu zapnutí naráz „přibyly" do koše Velký.
+    if rec.get("scope") == "fringe" or not poolmod.in_trend(rec):
+        return False
     if rec.get("transaction_type") not in ("prodej", "pronajem"):
         return False
     first = poolmod.parse_ts(rec.get("first_seen"))
@@ -366,7 +376,10 @@ def _money(rec, entry):
         value = float(value)
     except (TypeError, ValueError):
         return None
-    return value if value > 0 else None
+    # „1 Kč" a podobné zástupné ceny (cena na dotaz) nejsou cena: 1 → 19,8 mil.
+    # by jinak udělalo z průměrné změny ceny segmentu miliony procent (W45).
+    floor = MIN_RENT_CZK if rec.get("transaction_type") == "pronajem" else MIN_SALE_CZK
+    return value if value >= floor else None
 
 
 def asking_known_at(rec, when):

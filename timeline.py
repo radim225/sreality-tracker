@@ -271,10 +271,17 @@ def build_rows(records, live_ids, archive=None, state=None, snapshot=None, now=N
         area = _area_key(rec)
         tx = rec.get("transaction_type")
         disp = rec.get("disposition")
+        # Velké byty z hlavního sběru (#27) do grafu nejdou: přibyly by naráz
+        # v den zapnutí. 4+kk/5+kk má graf jen z okruhu novostaveb (ukrize).
+        if area != "ukrize" and disp not in DISPS[:6]:
+            skipped["other"] += 1
+            continue
         if area not in AREA_IDX or tx not in TXS or disp not in DISP_IDX:
             skipped["other"] += 1
             continue
-        if rec.get("exclude_from_stats"):
+        # Okolní čtvrti (#26): od 7. 10. je Sreality vrací navíc, v grafu by
+        # se tvářily jako skok nabídky o ~400 bytů.
+        if rec.get("exclude_from_stats") or rec.get("scope") == "fringe":
             skipped["excluded"] += 1
             continue
         st = status_of(rec, live_ids, relisted, tracks.get(area))

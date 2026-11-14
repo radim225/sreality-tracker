@@ -78,6 +78,19 @@ try:
     check("filtr stavu se na server neposílá", "stav" in sent_params[0], False)
 
     scrape.fetch_next_data = lambda url, params=None, parse_on_404=False: (
+        fake_page([result(10)], {"localityEntityType": ["ward"]}), 200)
+    check("localityEntityType jako seznam [\"ward\"] (Sreality od 7. 10.) projde",
+          [g["id"] for g in scrape.search_ward_novostavby("Jinonice", "prodej")], [10])
+
+    scrape.fetch_next_data = lambda url, params=None, parse_on_404=False: (
+        fake_page([result(10)], {"localityEntityType": ["fulltext"]}), 200)
+    try:
+        scrape.search_ward_novostavby("Jinonice", "prodej")
+        check("hledání mimo čtvrť = chyba", "no error", "TransientFetchError")
+    except scrape.TransientFetchError:
+        check("hledání mimo čtvrť = chyba", "TransientFetchError", "TransientFetchError")
+
+    scrape.fetch_next_data = lambda url, params=None, parse_on_404=False: (
         fake_page([result(10)], {"categorySubCb": None}), 200)
     try:
         scrape.search_ward_novostavby("Jinonice", "prodej")
