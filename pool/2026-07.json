@@ -36,12 +36,13 @@
   "floor_number": 3,
   "floors_total": 9,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1028513868": {
   "id": "1028513868",
   "first_seen": "2026-07-09T17:49:12Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -125,7 +126,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "starsi",
-  "house_class_source": "typ"
+  "house_class_source": "typ",
+  "scope": "core"
  },
  "1062527052": {
   "id": "1062527052",
@@ -205,7 +207,8 @@
   "gone_last_price_czk": 19500,
   "gone_last_total_czk": 24000,
   "resurrected_at": "2026-10-05T17:22:48Z",
-  "area": "vysocany"
+  "area": "vysocany",
+  "scope": "core"
  },
  "1074651212": {
   "id": "1074651212",
@@ -244,7 +247,8 @@
   "floor_number": 1,
   "floors_total": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1085333580": {
   "id": "1085333580",
@@ -320,12 +324,13 @@
   "house_class": "novostavba",
   "house_class_source": "stav",
   "gone_last_price_czk": 9990000,
-  "gone_last_total_czk": 9990000
+  "gone_last_total_czk": 9990000,
+  "scope": "core"
  },
  "1089462348": {
   "id": "1089462348",
   "first_seen": "2026-07-08T10:06:28Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -399,7 +404,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "1179242572": {
   "id": "1179242572",
@@ -438,7 +444,8 @@
   "floor_number": 4,
   "floors_total": 5,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "118612044": {
   "id": "118612044",
@@ -477,7 +484,8 @@
   "floor_number": 2,
   "floors_total": 6,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1202446412": {
   "id": "1202446412",
@@ -516,7 +524,8 @@
   "floors_total": null,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1247080524": {
   "id": "1247080524",
@@ -560,7 +569,8 @@
   "floors_total": 8,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1252323404": {
   "id": "1252323404",
@@ -604,7 +614,8 @@
   "floors_total": null,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1304416332": {
   "id": "1304416332",
@@ -643,7 +654,8 @@
   "floor_number": 10,
   "floors_total": 10,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1381163084": {
   "id": "1381163084",
@@ -719,7 +731,8 @@
   "house_class": "novostavba",
   "house_class_source": "stav",
   "gone_last_price_czk": 23000,
-  "gone_last_total_czk": 28500
+  "gone_last_total_czk": 28500,
+  "scope": "core"
  },
  "1446826060": {
   "id": "1446826060",
@@ -803,7 +816,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "gone_last_price_czk": 23500,
-  "gone_last_total_czk": 25000
+  "gone_last_total_czk": 25000,
+  "scope": "core"
  },
  "1463279692": {
   "id": "1463279692",
@@ -844,7 +858,8 @@
   "backfilled": true,
   "gone_last_price_czk": 8500000,
   "gone_last_total_czk": 8500000,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1465184332": {
   "id": "1465184332",
@@ -918,7 +933,8 @@
   "exclude_from_stats": false,
   "gone_last_price_czk": 27500,
   "gone_last_total_czk": 33500,
-  "resurrected_at": "2026-09-12T12:11:47Z"
+  "resurrected_at": "2026-09-12T12:11:47Z",
+  "scope": "core"
  },
  "1516953676": {
   "id": "1516953676",
@@ -996,7 +1012,8 @@
   "parking_price_czk": null,
   "gone_last_price_czk": 15990,
   "gone_last_total_czk": 18921,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1534054476": {
   "id": "1534054476",
@@ -1035,7 +1052,8 @@
   "floor_number": 6,
   "floors_total": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "154062924": {
   "id": "154062924",
@@ -1074,7 +1092,8 @@
   "floor_number": 3,
   "floors_total": 4,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1556996172": {
   "id": "1556996172",
@@ -1113,7 +1132,8 @@
   "floor_number": 6,
   "floors_total": 8,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1639768140": {
   "id": "1639768140",
@@ -1162,7 +1182,8 @@
   "floor_number": 1,
   "floors_total": 8,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1762874188": {
   "id": "1762874188",
@@ -1245,7 +1266,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 28000,
-  "gone_last_total_czk": 39000
+  "gone_last_total_czk": 39000,
+  "scope": "core"
  },
  "1770901580": {
   "id": "1770901580",
@@ -1318,7 +1340,8 @@
   "parking_price_czk": null,
   "gone_last_price_czk": 26000,
   "gone_last_total_czk": 31400,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1775951948": {
   "id": "1775951948",
@@ -1357,7 +1380,8 @@
   "floors_total": 6,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1786699852": {
   "id": "1786699852",
@@ -1441,7 +1465,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "gone_last_price_czk": 21500,
-  "gone_last_total_czk": 26357
+  "gone_last_total_czk": 26357,
+  "scope": "core"
  },
  "1829393228": {
   "id": "1829393228",
@@ -1480,7 +1505,8 @@
   "floors_total": 6,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "185524300": {
   "id": "185524300",
@@ -1551,7 +1577,8 @@
   "since": "2026-07-09",
   "gone_last_price_czk": 19490,
   "gone_last_total_czk": 20990,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1870516300": {
   "id": "1870516300",
@@ -1595,7 +1622,8 @@
   "deal_outlier": false,
   "gone_last_price_czk": 27000,
   "gone_last_total_czk": 31000,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1874382924": {
   "id": "1874382924",
@@ -1669,7 +1697,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "gone_last_price_czk": 9517000,
-  "gone_last_total_czk": 9517000
+  "gone_last_total_czk": 9517000,
+  "scope": "core"
  },
  "1917968460": {
   "id": "1917968460",
@@ -1747,7 +1776,8 @@
   "parking_price_czk": 2000,
   "gone_last_price_czk": 25000,
   "gone_last_total_czk": 30400,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "1991823436": {
   "id": "1991823436",
@@ -1786,7 +1816,8 @@
   "floor_number": 10,
   "floors_total": 10,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2043338828": {
   "id": "2043338828",
@@ -1825,7 +1856,8 @@
   "floors_total": 10,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "212389964": {
   "id": "212389964",
@@ -1903,7 +1935,8 @@
   "parking_price_czk": null,
   "gone_last_price_czk": 24310,
   "gone_last_total_czk": 29875,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2187317324": {
   "id": "2187317324",
@@ -1942,7 +1975,8 @@
   "floor_number": 5,
   "floors_total": 7,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2241716300": {
   "id": "2241716300",
@@ -1981,7 +2015,8 @@
   "floor_number": 4,
   "floors_total": 4,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "224321612": {
   "id": "224321612",
@@ -2057,7 +2092,8 @@
   "house_class": "novostavba",
   "house_class_source": "stav",
   "gone_last_price_czk": 15900,
-  "gone_last_total_czk": 23037
+  "gone_last_total_czk": 23037,
+  "scope": "core"
  },
  "2273697868": {
   "id": "2273697868",
@@ -2096,7 +2132,8 @@
   "floor_number": 6,
   "floors_total": 15,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2316034124": {
   "id": "2316034124",
@@ -2135,7 +2172,8 @@
   "floors_total": 10,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2354569292": {
   "id": "2354569292",
@@ -2174,7 +2212,8 @@
   "floor_number": 2,
   "floors_total": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2357911628": {
   "id": "2357911628",
@@ -2218,7 +2257,8 @@
   "floors_total": 6,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2438783052": {
   "id": "2438783052",
@@ -2257,7 +2297,8 @@
   "floor_number": 2,
   "floors_total": 3,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2463359052": {
   "id": "2463359052",
@@ -2330,7 +2371,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 28000,
-  "gone_last_total_czk": 33100
+  "gone_last_total_czk": 33100,
+  "scope": "core"
  },
  "2480525388": {
   "id": "2480525388",
@@ -2369,7 +2411,8 @@
   "floor_number": 12,
   "floors_total": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "248815692": {
   "id": "248815692",
@@ -2408,7 +2451,8 @@
   "floor_number": 1,
   "floors_total": 6,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2523521100": {
   "id": "2523521100",
@@ -2482,7 +2526,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "gone_last_price_czk": 7974910,
-  "gone_last_total_czk": 7974910
+  "gone_last_total_czk": 7974910,
+  "scope": "core"
  },
  "2605278028": {
   "id": "2605278028",
@@ -2574,7 +2619,8 @@
   "area": "vysocany",
   "resurrected_at": "2026-09-30T14:59:30Z",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "261873740": {
   "id": "261873740",
@@ -2613,7 +2659,8 @@
   "floors_total": null,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2620055628": {
   "id": "2620055628",
@@ -2652,7 +2699,8 @@
   "floors_total": null,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2649546828": {
   "id": "2649546828",
@@ -2691,12 +2739,13 @@
   "floor_number": 3,
   "floors_total": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2665009228": {
   "id": "2665009228",
   "first_seen": "2026-07-27T17:29:31Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2736,7 +2785,7 @@
   "floors_total": 5,
   "backfilled": true,
   "dist_km": 2.18,
-  "deal_pct": 8,
+  "deal_pct": 9,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -2770,7 +2819,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "2692145228": {
   "id": "2692145228",
@@ -2809,12 +2859,13 @@
   "floor_number": 10,
   "floors_total": 10,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2696716364": {
   "id": "2696716364",
   "first_seen": "2026-07-07T10:47:34Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2855,7 +2906,7 @@
   "backfilled": true,
   "dist_km": 2.47,
   "price_old_czk": null,
-  "deal_pct": -4,
+  "deal_pct": -5,
   "deal_outlier": false,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
@@ -2891,7 +2942,8 @@
   "resurrected_at": "2026-10-16T13:22:52Z",
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "27123788": {
   "id": "27123788",
@@ -2930,7 +2982,8 @@
   "floor_number": 4,
   "floors_total": 4,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2742935628": {
   "id": "2742935628",
@@ -2974,7 +3027,8 @@
   "floor_number": 1,
   "floors_total": 5,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2755649612": {
   "id": "2755649612",
@@ -3013,12 +3067,13 @@
   "floor_number": 5,
   "floors_total": 8,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2839470156": {
   "id": "2839470156",
   "first_seen": "2026-07-09T10:47:27Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3073,7 +3128,7 @@
   "floors_total": 5,
   "backfilled": true,
   "dist_km": 1.12,
-  "deal_pct": -24,
+  "deal_pct": -22,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 9,
@@ -3107,7 +3162,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "starsi",
-  "house_class_source": "typ"
+  "house_class_source": "typ",
+  "scope": "core"
  },
  "2901532748": {
   "id": "2901532748",
@@ -3146,7 +3202,8 @@
   "floor_number": 2,
   "floors_total": 16,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "290377804": {
   "id": "290377804",
@@ -3190,7 +3247,8 @@
   "floor_number": 2,
   "floors_total": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "2935672908": {
   "id": "2935672908",
@@ -3229,7 +3287,8 @@
   "floor_number": 2,
   "floors_total": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3010846796": {
   "id": "3010846796",
@@ -3268,7 +3327,8 @@
   "floor_number": 5,
   "floors_total": 7,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3043938380": {
   "id": "3043938380",
@@ -3411,7 +3471,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 17500,
-  "gone_last_total_czk": 21000
+  "gone_last_total_czk": 21000,
+  "scope": "core"
  },
  "3056197708": {
   "id": "3056197708",
@@ -3450,7 +3511,8 @@
   "floors_total": 5,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3060654156": {
   "id": "3060654156",
@@ -3489,7 +3551,8 @@
   "floor_number": 1,
   "floors_total": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3063210060": {
   "id": "3063210060",
@@ -3528,7 +3591,8 @@
   "floor_number": 5,
   "floors_total": 15,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3066683468": {
   "id": "3066683468",
@@ -3611,7 +3675,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 27600,
-  "gone_last_total_czk": 34550
+  "gone_last_total_czk": 34550,
+  "scope": "core"
  },
  "307556428": {
   "id": "307556428",
@@ -3680,7 +3745,8 @@
   "views": 3269,
   "edited": "2026-08-19",
   "since": "2026-06-30",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3129401420": {
   "id": "3129401420",
@@ -3751,7 +3817,8 @@
   "since": "2026-07-20",
   "gone_last_price_czk": 8242060,
   "gone_last_total_czk": 8242060,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3183337548": {
   "id": "3183337548",
@@ -3790,7 +3857,8 @@
   "floor_number": 3,
   "floors_total": 4,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3211448396": {
   "id": "3211448396",
@@ -3878,7 +3946,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 20490,
-  "gone_last_total_czk": 27035
+  "gone_last_total_czk": 27035,
+  "scope": "core"
  },
  "3275739212": {
   "id": "3275739212",
@@ -3917,12 +3986,13 @@
   "floor_number": 2,
   "floors_total": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3311853644": {
   "id": "3311853644",
   "first_seen": "2026-07-22T10:13:56Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3977,7 +4047,7 @@
   "floors_total": 6,
   "backfilled": true,
   "dist_km": 1.39,
-  "deal_pct": -14,
+  "deal_pct": -15,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -4014,7 +4084,8 @@
   "resurrected_at": "2026-09-08T22:36:56Z",
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "3343048780": {
   "id": "3343048780",
@@ -4053,7 +4124,8 @@
   "floor_number": 10,
   "floors_total": 10,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3367624780": {
   "id": "3367624780",
@@ -4092,7 +4164,8 @@
   "floor_number": 6,
   "floors_total": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3377389644": {
   "id": "3377389644",
@@ -4131,7 +4204,8 @@
   "floor_number": 3,
   "floors_total": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3396194380": {
   "id": "3396194380",
@@ -4204,7 +4278,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 9850000,
-  "gone_last_total_czk": 9850000
+  "gone_last_total_czk": 9850000,
+  "scope": "core"
  },
  "3420315724": {
   "id": "3420315724",
@@ -4243,7 +4318,8 @@
   "floor_number": 5,
   "floors_total": 7,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3422478412": {
   "id": "3422478412",
@@ -4282,7 +4358,8 @@
   "floor_number": 3,
   "floors_total": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3463106636": {
   "id": "3463106636",
@@ -4363,7 +4440,8 @@
   "since": "2026-07-23",
   "gone_last_price_czk": 21490,
   "gone_last_total_czk": 27843,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3530154060": {
   "id": "3530154060",
@@ -4402,7 +4480,8 @@
   "floors_total": 16,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3548958796": {
   "id": "3548958796",
@@ -4475,7 +4554,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 21990,
-  "gone_last_total_czk": 26008
+  "gone_last_total_czk": 26008,
+  "scope": "core"
  },
  "3566067788": {
   "id": "3566067788",
@@ -4549,7 +4629,8 @@
   "gone_last_price_czk": 27500,
   "gone_last_total_czk": 32000,
   "resurrected_at": "2026-09-07T04:23:57Z",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3580293196": {
   "id": "3580293196",
@@ -4598,7 +4679,8 @@
   "floors_total": null,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "36036684": {
   "id": "36036684",
@@ -4679,7 +4761,8 @@
   "house_class": "starsi",
   "house_class_source": "typ",
   "gone_last_price_czk": 6300000,
-  "gone_last_total_czk": 6300000
+  "gone_last_total_czk": 6300000,
+  "scope": "core"
  },
  "3608141900": {
   "id": "3608141900",
@@ -4718,7 +4801,8 @@
   "floor_number": 10,
   "floors_total": 10,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3661484108": {
   "id": "3661484108",
@@ -4757,7 +4841,8 @@
   "floor_number": 3,
   "floors_total": 5,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3662205004": {
   "id": "3662205004",
@@ -4854,7 +4939,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "3679051852": {
   "id": "3679051852",
@@ -4893,7 +4979,8 @@
   "floors_total": 8,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3746885708": {
   "id": "3746885708",
@@ -4932,7 +5019,8 @@
   "floors_total": 4,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3802714188": {
   "id": "3802714188",
@@ -4971,7 +5059,8 @@
   "floor_number": 1,
   "floors_total": 9,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3809402956": {
   "id": "3809402956",
@@ -5010,7 +5099,8 @@
   "floor_number": 3,
   "floors_total": 10,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3835416652": {
   "id": "3835416652",
@@ -5049,7 +5139,8 @@
   "floor_number": 3,
   "floors_total": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3839676492": {
   "id": "3839676492",
@@ -5088,7 +5179,8 @@
   "floor_number": 4,
   "floors_total": 6,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3865698380": {
   "id": "3865698380",
@@ -5161,7 +5253,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 5999900,
-  "gone_last_total_czk": 5999900
+  "gone_last_total_czk": 5999900,
+  "scope": "core"
  },
  "3876909132": {
   "id": "3876909132",
@@ -5205,7 +5298,8 @@
   "floors_total": 12,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3895382092": {
   "id": "3895382092",
@@ -5244,7 +5338,8 @@
   "floor_number": 4,
   "floors_total": 1,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3902464076": {
   "id": "3902464076",
@@ -5320,7 +5415,8 @@
   "since": "2026-07-03",
   "gone_last_price_czk": 15900,
   "gone_last_total_czk": 20600,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "3927822412": {
   "id": "3927822412",
@@ -5359,7 +5455,8 @@
   "floor_number": 4,
   "floors_total": 5,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "4059029580": {
   "id": "4059029580",
@@ -5432,7 +5529,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 4999000,
-  "gone_last_total_czk": 4999000
+  "gone_last_total_czk": 4999000,
+  "scope": "core"
  },
  "4103721036": {
   "id": "4103721036",
@@ -5471,7 +5569,8 @@
   "floor_number": 2,
   "floors_total": 5,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "4105498700": {
   "id": "4105498700",
@@ -5510,7 +5609,8 @@
   "floors_total": 6,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "4152549452": {
   "id": "4152549452",
@@ -5549,12 +5649,13 @@
   "floor_number": 3,
   "floors_total": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "4180140108": {
   "id": "4180140108",
   "first_seen": "2026-07-17T09:46:26Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5614,7 +5715,7 @@
   "floors_total": null,
   "backfilled": true,
   "dist_km": 1.45,
-  "deal_pct": -3,
+  "deal_pct": 6,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -5648,7 +5749,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "panel",
-  "house_class_source": "typ"
+  "house_class_source": "typ",
+  "scope": "core"
  },
  "4215136332": {
   "id": "4215136332",
@@ -5687,7 +5789,8 @@
   "floor_number": 6,
   "floors_total": 8,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "4253933644": {
   "id": "4253933644",
@@ -5726,7 +5829,8 @@
   "floor_number": 2,
   "floors_total": 4,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "4267630668": {
   "id": "4267630668",
@@ -5775,7 +5879,8 @@
   "floor_number": 1,
   "floors_total": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "4270579788": {
   "id": "4270579788",
@@ -5814,7 +5919,8 @@
   "floors_total": 6,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "4275560524": {
   "id": "4275560524",
@@ -5892,7 +5998,8 @@
   "parking_price_czk": null,
   "gone_last_price_czk": 21900,
   "gone_last_total_czk": 27400,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "4278833228": {
   "id": "4278833228",
@@ -5931,12 +6038,13 @@
   "floor_number": 3,
   "floors_total": 4,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "45146188": {
   "id": "45146188",
   "first_seen": "2026-07-16T17:02:42Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6028,7 +6136,8 @@
   "area": "vysocany",
   "house_class": "novostavba",
   "house_class_source": "stav",
-  "resurrected_at": "2026-10-19T15:42:24Z"
+  "resurrected_at": "2026-10-19T15:42:24Z",
+  "scope": "core"
  },
  "506519628": {
   "id": "506519628",
@@ -6067,7 +6176,8 @@
   "floor_number": 8,
   "floors_total": 10,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "518320204": {
   "id": "518320204",
@@ -6106,7 +6216,8 @@
   "floors_total": 6,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "529588300": {
   "id": "529588300",
@@ -6179,7 +6290,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 8790000,
-  "gone_last_total_czk": 8790000
+  "gone_last_total_czk": 8790000,
+  "scope": "core"
  },
  "540790860": {
   "id": "540790860",
@@ -6262,7 +6374,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 20490,
-  "gone_last_total_czk": 25163
+  "gone_last_total_czk": 25163,
+  "scope": "core"
  },
  "545710156": {
   "id": "545710156",
@@ -6306,7 +6419,8 @@
   "deal_outlier": false,
   "gone_last_price_czk": 6465536,
   "gone_last_total_czk": 6465536,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "644472908": {
   "id": "644472908",
@@ -6379,7 +6493,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 8953300,
-  "gone_last_total_czk": 8953300
+  "gone_last_total_czk": 8953300,
+  "scope": "core"
  },
  "655745100": {
   "id": "655745100",
@@ -6450,7 +6565,8 @@
   "since": "2026-07-20",
   "gone_last_price_czk": 16500,
   "gone_last_total_czk": 21000,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "703189068": {
   "id": "703189068",
@@ -6489,7 +6605,8 @@
   "floor_number": 5,
   "floors_total": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "722526284": {
   "id": "722526284",
@@ -6567,7 +6684,8 @@
   "parking_price_czk": null,
   "gone_last_price_czk": 4790000,
   "gone_last_total_czk": 4790000,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "729796684": {
   "id": "729796684",
@@ -6645,7 +6763,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 22500,
-  "gone_last_total_czk": 28500
+  "gone_last_total_czk": 28500,
+  "scope": "core"
  },
  "747495500": {
   "id": "747495500",
@@ -6684,7 +6803,8 @@
   "floor_number": 3,
   "floors_total": 5,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "790093900": {
   "id": "790093900",
@@ -6757,7 +6877,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 6525000,
-  "gone_last_total_czk": 6525000
+  "gone_last_total_czk": 6525000,
+  "scope": "core"
  },
  "807260236": {
   "id": "807260236",
@@ -6830,7 +6951,8 @@
   "parking_price_czk": null,
   "exclude_from_stats": false,
   "gone_last_price_czk": 9900000,
-  "gone_last_total_czk": 9900000
+  "gone_last_total_czk": 9900000,
+  "scope": "core"
  },
  "84336716": {
   "id": "84336716",
@@ -6909,12 +7031,13 @@
   "exclude_from_stats": false,
   "gone_last_price_czk": 18000,
   "gone_last_total_czk": 24000,
-  "resurrected_at": "2026-09-21T15:13:15Z"
+  "resurrected_at": "2026-09-21T15:13:15Z",
+  "scope": "core"
  },
  "882630732": {
   "id": "882630732",
   "first_seen": "2026-07-02T17:27:02Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6998,7 +7121,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "stav"
+  "house_class_source": "stav",
+  "scope": "core"
  },
  "927301708": {
   "id": "927301708",
@@ -7037,7 +7161,8 @@
   "floors_total": null,
   "backfilled": true,
   "source": "sreality",
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "959369292": {
   "id": "959369292",
@@ -7081,12 +7206,13 @@
   "floor_number": 2,
   "floors_total": 4,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "960421964": {
   "id": "960421964",
   "first_seen": "2026-07-09T10:47:27Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7131,7 +7257,7 @@
   "floors_total": 5,
   "backfilled": true,
   "dist_km": 1.11,
-  "deal_pct": -23,
+  "deal_pct": -21,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 2,
@@ -7165,7 +7291,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "starsi",
-  "house_class_source": "typ"
+  "house_class_source": "typ",
+  "scope": "core"
  },
  "981061708": {
   "id": "981061708",
@@ -7204,7 +7331,8 @@
   "floor_number": 2,
   "floors_total": 4,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "999616588": {
   "id": "999616588",
@@ -7242,7 +7370,8 @@
   "floor_number": 10,
   "floors_total": 10,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1002352": {
   "id": "bez-1002352",
@@ -7279,7 +7408,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1006128": {
   "id": "bez-1006128",
@@ -7327,7 +7457,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "gone_last_price_czk": 6290000,
-  "gone_last_total_czk": 6290000
+  "gone_last_total_czk": 6290000,
+  "scope": "core"
  },
  "bez-1007550": {
   "id": "bez-1007550",
@@ -7375,7 +7506,8 @@
   "exclude_from_stats": false,
   "gone_stale": true,
   "gone_last_price_czk": 21000,
-  "gone_last_total_czk": 26000
+  "gone_last_total_czk": 26000,
+  "scope": "core"
  },
  "bez-1012432": {
   "id": "bez-1012432",
@@ -7420,7 +7552,8 @@
   "house_class": null,
   "house_class_source": null,
   "gone_last_price_czk": 24900,
-  "gone_last_total_czk": 30900
+  "gone_last_total_czk": 30900,
+  "scope": "core"
  },
  "bez-1013334": {
   "id": "bez-1013334",
@@ -7457,7 +7590,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1013687": {
   "id": "bez-1013687",
@@ -7494,7 +7628,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "bez-1014682": {
   "id": "bez-1014682",
@@ -7544,7 +7679,8 @@
   "house_class": null,
   "house_class_source": null,
   "gone_last_price_czk": 28900,
-  "gone_last_total_czk": 35100
+  "gone_last_total_czk": 35100,
+  "scope": "core"
  },
  "bez-1015021": {
   "id": "bez-1015021",
@@ -7594,7 +7730,8 @@
   "house_class": null,
   "house_class_source": null,
   "gone_last_price_czk": 28900,
-  "gone_last_total_czk": 35300
+  "gone_last_total_czk": 35300,
+  "scope": "core"
  },
  "bez-1017622": {
   "id": "bez-1017622",
@@ -7631,7 +7768,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1019296": {
   "id": "bez-1019296",
@@ -7668,7 +7806,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "bez-1020426": {
   "id": "bez-1020426",
@@ -7705,7 +7844,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "bez-1020846": {
   "id": "bez-1020846",
@@ -7742,7 +7882,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1020911": {
   "id": "bez-1020911",
@@ -7784,7 +7925,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1021932": {
   "id": "bez-1021932",
@@ -7821,7 +7963,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1023031": {
   "id": "bez-1023031",
@@ -7858,7 +8001,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1024723": {
   "id": "bez-1024723",
@@ -7895,7 +8039,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "bez-1025509": {
   "id": "bez-1025509",
@@ -7932,7 +8077,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1029137": {
   "id": "bez-1029137",
@@ -7974,7 +8120,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1029479": {
   "id": "bez-1029479",
@@ -8011,7 +8158,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "bez-1029927": {
   "id": "bez-1029927",
@@ -8062,7 +8210,8 @@
   "gone_last_total_czk": 6300000,
   "resurrected_at": "2026-10-04T19:41:02Z",
   "house_class": null,
-  "house_class_source": null
+  "house_class_source": null,
+  "scope": "core"
  },
  "bez-1030415": {
   "id": "bez-1030415",
@@ -8099,7 +8248,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "bez-1033060": {
   "id": "bez-1033060",
@@ -8136,7 +8286,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1034325": {
   "id": "bez-1034325",
@@ -8173,7 +8324,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "bez-1034638": {
   "id": "bez-1034638",
@@ -8210,7 +8362,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1036893": {
   "id": "bez-1036893",
@@ -8247,7 +8400,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1038187": {
   "id": "bez-1038187",
@@ -8295,7 +8449,8 @@
   "deal_outlier": false,
   "gone_stale": true,
   "gone_last_price_czk": 28700,
-  "gone_last_total_czk": 34500
+  "gone_last_total_czk": 34500,
+  "scope": "core"
  },
  "bez-1040529": {
   "id": "bez-1040529",
@@ -8332,7 +8487,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1040531": {
   "id": "bez-1040531",
@@ -8369,7 +8525,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1040969": {
   "id": "bez-1040969",
@@ -8406,12 +8563,13 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1041443": {
   "id": "bez-1041443",
   "first_seen": "2026-07-18T16:44:55Z",
-  "last_seen": "2026-11-14T11:32:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8451,10 +8609,11 @@
   "exclude_from_stats": false,
   "dist_km": 2.55,
   "area": "vysocany",
-  "deal_pct": 22,
+  "deal_pct": 21,
   "deal_outlier": false,
   "house_class": null,
-  "house_class_source": null
+  "house_class_source": null,
+  "scope": "core"
  },
  "bez-1041466": {
   "id": "bez-1041466",
@@ -8491,7 +8650,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "bez-1041484": {
   "id": "bez-1041484",
@@ -8528,7 +8688,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "bez-1041803": {
   "id": "bez-1041803",
@@ -8565,7 +8726,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1042020": {
   "id": "bez-1042020",
@@ -8602,7 +8764,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1042027": {
   "id": "bez-1042027",
@@ -8639,7 +8802,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "bez-1042037": {
   "id": "bez-1042037",
@@ -8676,7 +8840,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "bez-1042809": {
   "id": "bez-1042809",
@@ -8713,7 +8878,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1043859": {
   "id": "bez-1043859",
@@ -8755,7 +8921,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1044279": {
   "id": "bez-1044279",
@@ -8792,7 +8959,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1044476": {
   "id": "bez-1044476",
@@ -8829,7 +8997,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1044517": {
   "id": "bez-1044517",
@@ -8866,7 +9035,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1044518": {
   "id": "bez-1044518",
@@ -8903,7 +9073,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1044763": {
   "id": "bez-1044763",
@@ -8940,7 +9111,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1045613": {
   "id": "bez-1045613",
@@ -8977,7 +9149,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1045627": {
   "id": "bez-1045627",
@@ -9014,7 +9187,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1045649": {
   "id": "bez-1045649",
@@ -9051,7 +9225,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1045920": {
   "id": "bez-1045920",
@@ -9088,7 +9263,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1045930": {
   "id": "bez-1045930",
@@ -9125,7 +9301,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1046019": {
   "id": "bez-1046019",
@@ -9162,12 +9339,13 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1046325": {
   "id": "bez-1046325",
   "first_seen": "2026-07-17T14:55:13Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9207,10 +9385,11 @@
   "exclude_from_stats": false,
   "dist_km": 1.81,
   "area": "vysocany",
-  "deal_pct": 3,
+  "deal_pct": 1,
   "deal_outlier": false,
   "house_class": null,
-  "house_class_source": null
+  "house_class_source": null,
+  "scope": "core"
  },
  "bez-1046361": {
   "id": "bez-1046361",
@@ -9247,7 +9426,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1046712": {
   "id": "bez-1046712",
@@ -9284,7 +9464,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1047572": {
   "id": "bez-1047572",
@@ -9321,7 +9502,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1048110": {
   "id": "bez-1048110",
@@ -9358,7 +9540,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1048395": {
   "id": "bez-1048395",
@@ -9395,7 +9578,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1048739": {
   "id": "bez-1048739",
@@ -9448,7 +9632,8 @@
   "exclude_from_stats": false,
   "gone_stale": true,
   "gone_last_price_czk": 19500,
-  "gone_last_total_czk": 25000
+  "gone_last_total_czk": 25000,
+  "scope": "core"
  },
  "bez-1049320": {
   "id": "bez-1049320",
@@ -9485,7 +9670,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1049589": {
   "id": "bez-1049589",
@@ -9522,7 +9708,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-1050319": {
   "id": "bez-1050319",
@@ -9569,7 +9756,8 @@
   "deal_pct": 68,
   "deal_outlier": false,
   "gone_last_price_czk": 18000,
-  "gone_last_total_czk": 23000
+  "gone_last_total_czk": 23000,
+  "scope": "core"
  },
  "bez-167754": {
   "id": "bez-167754",
@@ -9613,7 +9801,8 @@
   "backfilled": true,
   "gone_last_price_czk": 23500,
   "gone_last_total_czk": 25000,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-306364": {
   "id": "bez-306364",
@@ -9655,7 +9844,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-349115": {
   "id": "bez-349115",
@@ -9698,7 +9888,8 @@
   "deal_outlier": false,
   "area": "vysocany",
   "house_class": null,
-  "house_class_source": null
+  "house_class_source": null,
+  "scope": "core"
  },
  "bez-365575": {
   "id": "bez-365575",
@@ -9735,7 +9926,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-371154": {
   "id": "bez-371154",
@@ -9772,7 +9964,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-432379": {
   "id": "bez-432379",
@@ -9819,7 +10012,8 @@
   "deal_outlier": false,
   "exclude_from_stats": false,
   "gone_last_price_czk": 23500,
-  "gone_last_total_czk": 30300
+  "gone_last_total_czk": 30300,
+  "scope": "core"
  },
  "bez-435233": {
   "id": "bez-435233",
@@ -9856,7 +10050,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-483590": {
   "id": "bez-483590",
@@ -9893,7 +10088,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-517304": {
   "id": "bez-517304",
@@ -9930,7 +10126,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-531516": {
   "id": "bez-531516",
@@ -9967,7 +10164,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-554595": {
   "id": "bez-554595",
@@ -10010,7 +10208,8 @@
   "deal_outlier": false,
   "gone_stale": true,
   "gone_last_price_czk": 20000,
-  "gone_last_total_czk": 27000
+  "gone_last_total_czk": 27000,
+  "scope": "core"
  },
  "bez-573484": {
   "id": "bez-573484",
@@ -10047,7 +10246,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "bez-619113": {
   "id": "bez-619113",
@@ -10084,7 +10284,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-621208": {
   "id": "bez-621208",
@@ -10121,7 +10322,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-711081": {
   "id": "bez-711081",
@@ -10158,7 +10360,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "bez-731061": {
   "id": "bez-731061",
@@ -10195,7 +10398,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-754575": {
   "id": "bez-754575",
@@ -10243,7 +10447,8 @@
   "deal_outlier": false,
   "area": "vysocany",
   "house_class": null,
-  "house_class_source": null
+  "house_class_source": null,
+  "scope": "core"
  },
  "bez-764065": {
   "id": "bez-764065",
@@ -10280,7 +10485,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-764859": {
   "id": "bez-764859",
@@ -10322,7 +10528,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-772606": {
   "id": "bez-772606",
@@ -10359,7 +10566,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-777630": {
   "id": "bez-777630",
@@ -10396,7 +10604,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "bez-786106": {
   "id": "bez-786106",
@@ -10433,7 +10642,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-794534": {
   "id": "bez-794534",
@@ -10470,7 +10680,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "bez-801446": {
   "id": "bez-801446",
@@ -10507,7 +10718,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-803122": {
   "id": "bez-803122",
@@ -10544,7 +10756,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-807432": {
   "id": "bez-807432",
@@ -10586,12 +10799,13 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-834790": {
   "id": "bez-834790",
   "first_seen": "2026-07-19T01:18:15Z",
-  "last_seen": "2026-11-14T18:10:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10632,7 +10846,8 @@
   "area": "vysocany",
   "house_class": null,
   "house_class_source": null,
-  "resurrected_at": "2026-11-14T11:32:55Z"
+  "resurrected_at": "2026-11-14T11:32:55Z",
+  "scope": "core"
  },
  "bez-841259": {
   "id": "bez-841259",
@@ -10669,7 +10884,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-849087": {
   "id": "bez-849087",
@@ -10706,7 +10922,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-851754": {
   "id": "bez-851754",
@@ -10743,7 +10960,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-854975": {
   "id": "bez-854975",
@@ -10780,12 +10998,13 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-863730": {
   "id": "bez-863730",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-11-14T11:32:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10824,14 +11043,15 @@
   "backfilled": true,
   "exclude_from_stats": false,
   "dist_km": 0.48,
-  "deal_pct": -15,
+  "deal_pct": -14,
   "deal_outlier": false,
   "gone_last_price_czk": 11000000,
   "gone_last_total_czk": 11000000,
   "area": "vysocany",
   "house_class": "novostavba",
   "house_class_source": "popis",
-  "resurrected_at": "2026-10-29T15:21:37Z"
+  "resurrected_at": "2026-10-29T15:21:37Z",
+  "scope": "core"
  },
  "bez-880637": {
   "id": "bez-880637",
@@ -10868,7 +11088,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-903240": {
   "id": "bez-903240",
@@ -10905,7 +11126,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-908940": {
   "id": "bez-908940",
@@ -10942,7 +11164,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-924472": {
   "id": "bez-924472",
@@ -10979,7 +11202,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "bez-972132": {
   "id": "bez-972132",
@@ -11024,12 +11248,13 @@
   "house_class_source": null,
   "area": "vysocany",
   "gone_last_price_czk": 19500,
-  "gone_last_total_czk": 23990
+  "gone_last_total_czk": 23990,
+  "scope": "core"
  },
  "bez-981957": {
   "id": "bez-981957",
   "first_seen": "2026-07-21T10:14:29Z",
-  "last_seen": "2026-11-14T11:32:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11072,12 +11297,13 @@
   "parking": null,
   "backfilled": true,
   "dist_km": 1.36,
-  "deal_pct": -31,
+  "deal_pct": -29,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "house_class": "starsi",
   "house_class_source": "popis",
-  "area": "vysocany"
+  "area": "vysocany",
+  "scope": "core"
  },
  "bez-988489": {
   "id": "bez-988489",
@@ -11114,7 +11340,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-993134": {
   "id": "bez-993134",
@@ -11151,7 +11378,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-994385": {
   "id": "bez-994385",
@@ -11188,7 +11416,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-996116": {
   "id": "bez-996116",
@@ -11225,7 +11454,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "bez-996941": {
   "id": "bez-996941",
@@ -11276,7 +11506,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": null,
-  "house_class_source": null
+  "house_class_source": null,
+  "scope": "core"
  },
  "bez-999294": {
   "id": "bez-999294",
@@ -11337,7 +11568,8 @@
   "gone_last_total_czk": 24390,
   "house_class": null,
   "house_class_source": null,
-  "resurrected_at": "2026-10-24T18:52:58Z"
+  "resurrected_at": "2026-10-24T18:52:58Z",
+  "scope": "core"
  },
  "bez-999736": {
   "id": "bez-999736",
@@ -11374,7 +11606,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-683ffe97d51a01ae7a04b66b": {
   "id": "idnes-683ffe97d51a01ae7a04b66b",
@@ -11411,7 +11644,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6938476892e41f86ba0299bd": {
   "id": "idnes-6938476892e41f86ba0299bd",
@@ -11448,7 +11682,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6938478c430f0f28eb0b16ee": {
   "id": "idnes-6938478c430f0f28eb0b16ee",
@@ -11485,7 +11720,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-693b15b6a7959f2c9301c4a8": {
   "id": "idnes-693b15b6a7959f2c9301c4a8",
@@ -11522,7 +11758,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-694129328bb735042407b9d5": {
   "id": "idnes-694129328bb735042407b9d5",
@@ -11559,7 +11796,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-69459b8f4ad29ce0b40c6864": {
   "id": "idnes-69459b8f4ad29ce0b40c6864",
@@ -11596,7 +11834,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-695cdd486bd15f1f1a048e3a": {
   "id": "idnes-695cdd486bd15f1f1a048e3a",
@@ -11633,7 +11872,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-695cdd6255fa617a2205ed20": {
   "id": "idnes-695cdd6255fa617a2205ed20",
@@ -11670,7 +11910,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-695cdd73629bf44f020041f7": {
   "id": "idnes-695cdd73629bf44f020041f7",
@@ -11707,7 +11948,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-695cddc3d18ee1692e0144e5": {
   "id": "idnes-695cddc3d18ee1692e0144e5",
@@ -11744,7 +11986,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-695cdf6fcf8c68bb6408538a": {
   "id": "idnes-695cdf6fcf8c68bb6408538a",
@@ -11781,7 +12024,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6960ff643c46fbfefe0da0e6": {
   "id": "idnes-6960ff643c46fbfefe0da0e6",
@@ -11823,7 +12067,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-69778b16d9ad83af4405d2f1": {
   "id": "idnes-69778b16d9ad83af4405d2f1",
@@ -11860,7 +12105,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-698481db912e607e9e0082da": {
   "id": "idnes-698481db912e607e9e0082da",
@@ -11897,7 +12143,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-69891103029f21e3250260f8": {
   "id": "idnes-69891103029f21e3250260f8",
@@ -11936,7 +12183,8 @@
   "backfilled": true,
   "gone_last_price_czk": 25000,
   "gone_last_total_czk": 26500,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6989124d57fa157a6e04ab8f": {
   "id": "idnes-6989124d57fa157a6e04ab8f",
@@ -11975,7 +12223,8 @@
   "backfilled": true,
   "gone_last_price_czk": 26000,
   "gone_last_total_czk": 27500,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6992f09b9c5d13fcca0272cf": {
   "id": "idnes-6992f09b9c5d13fcca0272cf",
@@ -12012,7 +12261,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-69b686b5a90d57f42e099ba8": {
   "id": "idnes-69b686b5a90d57f42e099ba8",
@@ -12049,7 +12299,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-69b68913d714079a140861b0": {
   "id": "idnes-69b68913d714079a140861b0",
@@ -12086,7 +12337,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-69b7be634e6b6e17ff0054e1": {
   "id": "idnes-69b7be634e6b6e17ff0054e1",
@@ -12123,7 +12375,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-69c3d63c6029e81c14096c44": {
   "id": "idnes-69c3d63c6029e81c14096c44",
@@ -12160,7 +12413,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-69c6efdd0d054cd8f90ef789": {
   "id": "idnes-69c6efdd0d054cd8f90ef789",
@@ -12197,7 +12451,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-69ccd7efa5ff28bf640978c7": {
   "id": "idnes-69ccd7efa5ff28bf640978c7",
@@ -12234,7 +12489,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-69ce3276a541ff7e560c3a36": {
   "id": "idnes-69ce3276a541ff7e560c3a36",
@@ -12271,7 +12527,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-69cf9b66edc44f7ac70a4020": {
   "id": "idnes-69cf9b66edc44f7ac70a4020",
@@ -12308,7 +12565,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-69e0a9789b404ee2d10fd08f": {
   "id": "idnes-69e0a9789b404ee2d10fd08f",
@@ -12345,7 +12603,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-69e3eb07a3f81d7c070c032e": {
   "id": "idnes-69e3eb07a3f81d7c070c032e",
@@ -12382,7 +12641,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-69e76b726a625a7f7e0c0933": {
   "id": "idnes-69e76b726a625a7f7e0c0933",
@@ -12419,7 +12679,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-69e8bd6e35056f6be909b9d5": {
   "id": "idnes-69e8bd6e35056f6be909b9d5",
@@ -12456,7 +12717,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-69eb3e0ea6d20b7c400fb3f2": {
   "id": "idnes-69eb3e0ea6d20b7c400fb3f2",
@@ -12493,7 +12755,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-69ecaa93e135ba47a8018613": {
   "id": "idnes-69ecaa93e135ba47a8018613",
@@ -12530,7 +12793,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-69f0abdcb2b0e8d64209af39": {
   "id": "idnes-69f0abdcb2b0e8d64209af39",
@@ -12567,7 +12831,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-69f2ebb0f950f094490f0845": {
   "id": "idnes-69f2ebb0f950f094490f0845",
@@ -12604,7 +12869,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-69f38af1e0c43bfcba016f41": {
   "id": "idnes-69f38af1e0c43bfcba016f41",
@@ -12641,7 +12907,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-69f38e1bb6e62db811077789": {
   "id": "idnes-69f38e1bb6e62db811077789",
@@ -12678,7 +12945,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-69f8d6b71a5705e02f0e0246": {
   "id": "idnes-69f8d6b71a5705e02f0e0246",
@@ -12715,7 +12983,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-69f99ff512fdb59d28038a9e": {
   "id": "idnes-69f99ff512fdb59d28038a9e",
@@ -12752,7 +13021,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-69f9fd16da43337c2f0a78d5": {
   "id": "idnes-69f9fd16da43337c2f0a78d5",
@@ -12789,7 +13059,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-69fb4242c9c2797ccf059844": {
   "id": "idnes-69fb4242c9c2797ccf059844",
@@ -12826,7 +13097,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-69fc3f93e4a41a60a807b62b": {
   "id": "idnes-69fc3f93e4a41a60a807b62b",
@@ -12863,7 +13135,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-69fc75134dc37cdf2d036960": {
   "id": "idnes-69fc75134dc37cdf2d036960",
@@ -12900,7 +13173,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-69fd8544d5f448e94503e384": {
   "id": "idnes-69fd8544d5f448e94503e384",
@@ -12937,7 +13211,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a0311710de6c2d5fb0a9162": {
   "id": "idnes-6a0311710de6c2d5fb0a9162",
@@ -12974,7 +13249,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a033bdd9c177f9bbf073fa6": {
   "id": "idnes-6a033bdd9c177f9bbf073fa6",
@@ -13017,7 +13293,8 @@
   "deal_outlier": false,
   "area": "vysocany",
   "gone_last_price_czk": 5845600,
-  "gone_last_total_czk": 5845600
+  "gone_last_total_czk": 5845600,
+  "scope": "core"
  },
  "idnes-6a0487732809b4d690046875": {
   "id": "idnes-6a0487732809b4d690046875",
@@ -13054,7 +13331,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a04bb721fa3aa47270fbd47": {
   "id": "idnes-6a04bb721fa3aa47270fbd47",
@@ -13091,7 +13369,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a05becceca97a9c690d1d79": {
   "id": "idnes-6a05becceca97a9c690d1d79",
@@ -13128,7 +13407,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a0978095798f72f560bf508": {
   "id": "idnes-6a0978095798f72f560bf508",
@@ -13165,7 +13445,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a0ad989eae8213ff50e4522": {
   "id": "idnes-6a0ad989eae8213ff50e4522",
@@ -13207,7 +13488,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a0b34bae0984c45730a151d": {
   "id": "idnes-6a0b34bae0984c45730a151d",
@@ -13244,7 +13526,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a0b3aeebe017feca4009c04": {
   "id": "idnes-6a0b3aeebe017feca4009c04",
@@ -13286,7 +13569,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a0c569ca6043689ce0495d2": {
   "id": "idnes-6a0c569ca6043689ce0495d2",
@@ -13328,7 +13612,8 @@
   "deal_pct": -7,
   "deal_outlier": false,
   "gone_last_price_czk": 7225600,
-  "gone_last_total_czk": 7225600
+  "gone_last_total_czk": 7225600,
+  "scope": "core"
  },
  "idnes-6a0c59a72b5ffab24208d684": {
   "id": "idnes-6a0c59a72b5ffab24208d684",
@@ -13371,7 +13656,8 @@
   "deal_outlier": false,
   "area": "vysocany",
   "house_class": null,
-  "house_class_source": null
+  "house_class_source": null,
+  "scope": "core"
  },
  "idnes-6a0ff9fa54f27625af039b15": {
   "id": "idnes-6a0ff9fa54f27625af039b15",
@@ -13408,7 +13694,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a11270decbadc558a03daa4": {
   "id": "idnes-6a11270decbadc558a03daa4",
@@ -13445,7 +13732,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a13dc05ba382e0d76092c70": {
   "id": "idnes-6a13dc05ba382e0d76092c70",
@@ -13482,7 +13770,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a13f6c3dca4f939c10e6c0b": {
   "id": "idnes-6a13f6c3dca4f939c10e6c0b",
@@ -13519,7 +13808,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a171d39d68268c0960ba348": {
   "id": "idnes-6a171d39d68268c0960ba348",
@@ -13556,7 +13846,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a1a05cb42efbd8ad800eef8": {
   "id": "idnes-6a1a05cb42efbd8ad800eef8",
@@ -13593,12 +13884,13 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a1c18ee6d13c98fa102e4c8": {
   "id": "idnes-6a1c18ee6d13c98fa102e4c8",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-11-14T11:32:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -13641,7 +13933,8 @@
   "deal_outlier": false,
   "area": "vysocany",
   "house_class": null,
-  "house_class_source": null
+  "house_class_source": null,
+  "scope": "core"
  },
  "idnes-6a1f167d8b019d28a4043547": {
   "id": "idnes-6a1f167d8b019d28a4043547",
@@ -13678,7 +13971,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a1fe60654562199c200ebc0": {
   "id": "idnes-6a1fe60654562199c200ebc0",
@@ -13715,7 +14009,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a207122a53e8345210de3fa": {
   "id": "idnes-6a207122a53e8345210de3fa",
@@ -13752,7 +14047,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a211ab9f4a0a3b42b0d207a": {
   "id": "idnes-6a211ab9f4a0a3b42b0d207a",
@@ -13789,7 +14085,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a21201c2f68b6e0a60f85b6": {
   "id": "idnes-6a21201c2f68b6e0a60f85b6",
@@ -13826,7 +14123,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a213ed5becb99bee80a4d72": {
   "id": "idnes-6a213ed5becb99bee80a4d72",
@@ -13868,7 +14166,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a21a0a03db7a531bc018d94": {
   "id": "idnes-6a21a0a03db7a531bc018d94",
@@ -13905,7 +14204,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a21b5c37aafbec7d60419ef": {
   "id": "idnes-6a21b5c37aafbec7d60419ef",
@@ -13942,7 +14242,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a21e5dd7b8e85f7680f6c08": {
   "id": "idnes-6a21e5dd7b8e85f7680f6c08",
@@ -13979,7 +14280,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a229aa39c9fadc90908f607": {
   "id": "idnes-6a229aa39c9fadc90908f607",
@@ -14016,7 +14318,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a22dfc5c7ee926e64033772": {
   "id": "idnes-6a22dfc5c7ee926e64033772",
@@ -14058,7 +14361,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a23f851119a3ab919094bf9": {
   "id": "idnes-6a23f851119a3ab919094bf9",
@@ -14095,7 +14399,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a2665b998e8978e210ac5c5": {
   "id": "idnes-6a2665b998e8978e210ac5c5",
@@ -14132,7 +14437,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a26d0213cb7ee7d56036c43": {
   "id": "idnes-6a26d0213cb7ee7d56036c43",
@@ -14169,7 +14475,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a27bf8e561ee414f400de0a": {
   "id": "idnes-6a27bf8e561ee414f400de0a",
@@ -14206,7 +14513,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a27dac7dbc1136e5e0609c8": {
   "id": "idnes-6a27dac7dbc1136e5e0609c8",
@@ -14243,7 +14551,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a294420ee1b891f710ebfd7": {
   "id": "idnes-6a294420ee1b891f710ebfd7",
@@ -14280,7 +14589,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a29649fb3836769fa03a7c6": {
   "id": "idnes-6a29649fb3836769fa03a7c6",
@@ -14317,7 +14627,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a299262d648bf372a06c06c": {
   "id": "idnes-6a299262d648bf372a06c06c",
@@ -14354,7 +14665,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a2a6c6dfd0181e493029698": {
   "id": "idnes-6a2a6c6dfd0181e493029698",
@@ -14391,7 +14703,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a2a730dab24fffbd2033128": {
   "id": "idnes-6a2a730dab24fffbd2033128",
@@ -14428,7 +14741,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a2a8993453e1630c20b3273": {
   "id": "idnes-6a2a8993453e1630c20b3273",
@@ -14465,7 +14779,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a2aca7dae30040b1a04a726": {
   "id": "idnes-6a2aca7dae30040b1a04a726",
@@ -14513,7 +14828,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "popis"
+  "house_class_source": "popis",
+  "scope": "core"
  },
  "idnes-6a2bb884f5f2d1c18f0a66cb": {
   "id": "idnes-6a2bb884f5f2d1c18f0a66cb",
@@ -14550,7 +14866,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a2bbae09004edff5a087bc8": {
   "id": "idnes-6a2bbae09004edff5a087bc8",
@@ -14587,7 +14904,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a2cf8f749565bfd670f2d21": {
   "id": "idnes-6a2cf8f749565bfd670f2d21",
@@ -14624,7 +14942,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a2d721dbc993fdb27079f5b": {
   "id": "idnes-6a2d721dbc993fdb27079f5b",
@@ -14661,7 +14980,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a300b123e55dbfe85047c0a": {
   "id": "idnes-6a300b123e55dbfe85047c0a",
@@ -14698,7 +15018,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a30573fe45e529c2d086895": {
   "id": "idnes-6a30573fe45e529c2d086895",
@@ -14740,7 +15061,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a307e651b679d430c0eaf88": {
   "id": "idnes-6a307e651b679d430c0eaf88",
@@ -14777,7 +15099,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a31118d1b0ef50276002b27": {
   "id": "idnes-6a31118d1b0ef50276002b27",
@@ -14814,7 +15137,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a31554329d6c8434a0aa9ba": {
   "id": "idnes-6a31554329d6c8434a0aa9ba",
@@ -14851,12 +15175,13 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a3170496e725c29510c6cd5": {
   "id": "idnes-6a3170496e725c29510c6cd5",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-11-14T11:32:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -14899,7 +15224,8 @@
   "exclude_from_stats": false,
   "area": "vysocany",
   "house_class": "novostavba",
-  "house_class_source": "popis"
+  "house_class_source": "popis",
+  "scope": "core"
  },
  "idnes-6a319e219c3ff2341f0f0d47": {
   "id": "idnes-6a319e219c3ff2341f0f0d47",
@@ -14936,7 +15262,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a3236532ee594b0270aa055": {
   "id": "idnes-6a3236532ee594b0270aa055",
@@ -14973,7 +15300,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a32f5d2ded8a7129100d2dd": {
   "id": "idnes-6a32f5d2ded8a7129100d2dd",
@@ -15010,7 +15338,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a342f58d598bfa32b0b92b6": {
   "id": "idnes-6a342f58d598bfa32b0b92b6",
@@ -15047,7 +15376,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a34f01716fbc048460dd223": {
   "id": "idnes-6a34f01716fbc048460dd223",
@@ -15084,7 +15414,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a35256f48a6226aad0eccd5": {
   "id": "idnes-6a35256f48a6226aad0eccd5",
@@ -15121,7 +15452,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a3562079cc1b006810055e4": {
   "id": "idnes-6a3562079cc1b006810055e4",
@@ -15160,7 +15492,8 @@
   "backfilled": true,
   "gone_last_price_czk": 26500,
   "gone_last_total_czk": 28000,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a35621931e80fd0a403cfc0": {
   "id": "idnes-6a35621931e80fd0a403cfc0",
@@ -15197,7 +15530,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a35626e314576d800067757": {
   "id": "idnes-6a35626e314576d800067757",
@@ -15234,7 +15568,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a3831bd08aea041880aea27": {
   "id": "idnes-6a3831bd08aea041880aea27",
@@ -15271,7 +15606,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a38d0388fbbaa366108df7d": {
   "id": "idnes-6a38d0388fbbaa366108df7d",
@@ -15308,7 +15644,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a38f9988f07ab4782040544": {
   "id": "idnes-6a38f9988f07ab4782040544",
@@ -15345,7 +15682,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a39094c508484b96c02bf22": {
   "id": "idnes-6a39094c508484b96c02bf22",
@@ -15382,7 +15720,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a3ae9a8b2c9744c5d002c9b": {
   "id": "idnes-6a3ae9a8b2c9744c5d002c9b",
@@ -15419,7 +15758,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a3b0390d82b066dc50b056f": {
   "id": "idnes-6a3b0390d82b066dc50b056f",
@@ -15456,7 +15796,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a3b9dc846b1891673063a94": {
   "id": "idnes-6a3b9dc846b1891673063a94",
@@ -15493,7 +15834,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a3bc33b44cabd3b0a059b8a": {
   "id": "idnes-6a3bc33b44cabd3b0a059b8a",
@@ -15530,7 +15872,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a3ceb30440e67d0160ca894": {
   "id": "idnes-6a3ceb30440e67d0160ca894",
@@ -15567,7 +15910,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a3d175388ed3ef4c90816fa": {
   "id": "idnes-6a3d175388ed3ef4c90816fa",
@@ -15604,7 +15948,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a3d22bacc648f58ef0d0b28": {
   "id": "idnes-6a3d22bacc648f58ef0d0b28",
@@ -15641,7 +15986,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a3e2148e8f12d7a4f0f671d": {
   "id": "idnes-6a3e2148e8f12d7a4f0f671d",
@@ -15680,7 +16026,8 @@
   "backfilled": true,
   "gone_last_price_czk": 13945000,
   "gone_last_total_czk": 13945000,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a3e23943e564fd5050e2c98": {
   "id": "idnes-6a3e23943e564fd5050e2c98",
@@ -15723,7 +16070,8 @@
   "exclude_from_stats": false,
   "gone_stale": true,
   "gone_last_price_czk": 11599000,
-  "gone_last_total_czk": 11599000
+  "gone_last_total_czk": 11599000,
+  "scope": "core"
  },
  "idnes-6a3e2841f948f8b02f0e3cb5": {
   "id": "idnes-6a3e2841f948f8b02f0e3cb5",
@@ -15766,7 +16114,8 @@
   "exclude_from_stats": false,
   "gone_stale": true,
   "gone_last_price_czk": 12100000,
-  "gone_last_total_czk": 12100000
+  "gone_last_total_czk": 12100000,
+  "scope": "core"
  },
  "idnes-6a3e313e49b069cf180cfdd9": {
   "id": "idnes-6a3e313e49b069cf180cfdd9",
@@ -15803,7 +16152,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a3e493d805082ed860c4b4c": {
   "id": "idnes-6a3e493d805082ed860c4b4c",
@@ -15840,7 +16190,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a3e9bd2266d0f09070edd2c": {
   "id": "idnes-6a3e9bd2266d0f09070edd2c",
@@ -15882,7 +16233,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a422e3b9968b702b5097a9c": {
   "id": "idnes-6a422e3b9968b702b5097a9c",
@@ -15919,7 +16271,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a42512c2c13e6f8960cb0a8": {
   "id": "idnes-6a42512c2c13e6f8960cb0a8",
@@ -15961,7 +16314,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a425e54b7ea1b95f709f30b": {
   "id": "idnes-6a425e54b7ea1b95f709f30b",
@@ -15998,7 +16352,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a4260a836c884743b07feb9": {
   "id": "idnes-6a4260a836c884743b07feb9",
@@ -16035,7 +16390,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a42712e59ae638d9d08798f": {
   "id": "idnes-6a42712e59ae638d9d08798f",
@@ -16072,7 +16428,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a4281e532ee91da90087cf7": {
   "id": "idnes-6a4281e532ee91da90087cf7",
@@ -16109,7 +16466,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a42c4d45b4ffabe8a0a17ba": {
   "id": "idnes-6a42c4d45b4ffabe8a0a17ba",
@@ -16146,7 +16504,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a42f27e76b993c53e0a6316": {
   "id": "idnes-6a42f27e76b993c53e0a6316",
@@ -16183,7 +16542,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a4347805c29be760a07808b": {
   "id": "idnes-6a4347805c29be760a07808b",
@@ -16220,7 +16580,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a436f319abeb7af9300e0ae": {
   "id": "idnes-6a436f319abeb7af9300e0ae",
@@ -16257,7 +16618,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a437728c38f5b28be0c4bcd": {
   "id": "idnes-6a437728c38f5b28be0c4bcd",
@@ -16294,7 +16656,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a438bc1249f58766c03fe26": {
   "id": "idnes-6a438bc1249f58766c03fe26",
@@ -16331,7 +16694,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a438d6133490f088d047b27": {
   "id": "idnes-6a438d6133490f088d047b27",
@@ -16374,7 +16738,8 @@
   "exclude_from_stats": false,
   "gone_stale": true,
   "gone_last_price_czk": 17000,
-  "gone_last_total_czk": 22700
+  "gone_last_total_czk": 22700,
+  "scope": "core"
  },
  "idnes-6a4390f0b1b3fe68040eeb09": {
   "id": "idnes-6a4390f0b1b3fe68040eeb09",
@@ -16411,7 +16776,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a439594f569466e5a03bda8": {
   "id": "idnes-6a439594f569466e5a03bda8",
@@ -16454,7 +16820,8 @@
   "exclude_from_stats": false,
   "gone_stale": true,
   "gone_last_price_czk": 24500,
-  "gone_last_total_czk": 30800
+  "gone_last_total_czk": 30800,
+  "scope": "core"
  },
  "idnes-6a4396c4d8460203a709e451": {
   "id": "idnes-6a4396c4d8460203a709e451",
@@ -16491,7 +16858,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a43ad2dcaf40c5c3509285b": {
   "id": "idnes-6a43ad2dcaf40c5c3509285b",
@@ -16528,7 +16896,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a43d151a906d5260a0f4a2a": {
   "id": "idnes-6a43d151a906d5260a0f4a2a",
@@ -16565,7 +16934,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a43e25c0cfd66d357063696": {
   "id": "idnes-6a43e25c0cfd66d357063696",
@@ -16602,7 +16972,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a43e83e449c6cc8150334f7": {
   "id": "idnes-6a43e83e449c6cc8150334f7",
@@ -16639,7 +17010,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a441afe3bb90a0da1063014": {
   "id": "idnes-6a441afe3bb90a0da1063014",
@@ -16676,7 +17048,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a441eb67e9c9f047f0030a9": {
   "id": "idnes-6a441eb67e9c9f047f0030a9",
@@ -16719,7 +17092,8 @@
   "exclude_from_stats": false,
   "gone_stale": true,
   "gone_last_price_czk": 27500,
-  "gone_last_total_czk": 33500
+  "gone_last_total_czk": 33500,
+  "scope": "core"
  },
  "idnes-6a4426999cde316bec0b72f6": {
   "id": "idnes-6a4426999cde316bec0b72f6",
@@ -16756,7 +17130,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a442803409f7322740aea1a": {
   "id": "idnes-6a442803409f7322740aea1a",
@@ -16793,7 +17168,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a4428c8b5dfb480e402c17f": {
   "id": "idnes-6a4428c8b5dfb480e402c17f",
@@ -16830,7 +17206,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a442cb2dd36166a610aa800": {
   "id": "idnes-6a442cb2dd36166a610aa800",
@@ -16867,7 +17244,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a442f999e74c85a6d0e9b7c": {
   "id": "idnes-6a442f999e74c85a6d0e9b7c",
@@ -16904,7 +17282,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a4430ee2ca2699c6f03a1e8": {
   "id": "idnes-6a4430ee2ca2699c6f03a1e8",
@@ -16946,7 +17325,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a44ba57a7b8ddf60c006948": {
   "id": "idnes-6a44ba57a7b8ddf60c006948",
@@ -16983,7 +17363,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a44da9d5524fea5fa0d81a6": {
   "id": "idnes-6a44da9d5524fea5fa0d81a6",
@@ -17020,7 +17401,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a44ddebededadc18d0ec076": {
   "id": "idnes-6a44ddebededadc18d0ec076",
@@ -17057,7 +17439,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a44fa4a5c50ba51b806c9ce": {
   "id": "idnes-6a44fa4a5c50ba51b806c9ce",
@@ -17094,7 +17477,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a44fb728fe08c7f8d074e42": {
   "id": "idnes-6a44fb728fe08c7f8d074e42",
@@ -17131,7 +17515,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a44fe8e2b0151cd6f056bae": {
   "id": "idnes-6a44fe8e2b0151cd6f056bae",
@@ -17168,7 +17553,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a4515e71656e413f904ae12": {
   "id": "idnes-6a4515e71656e413f904ae12",
@@ -17205,7 +17591,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a451b22f9213abbe702d64d": {
   "id": "idnes-6a451b22f9213abbe702d64d",
@@ -17242,7 +17629,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a454a3d9c598a2d13095a76": {
   "id": "idnes-6a454a3d9c598a2d13095a76",
@@ -17279,7 +17667,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a45531cbe88e687020f2936": {
   "id": "idnes-6a45531cbe88e687020f2936",
@@ -17316,7 +17705,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a4558c0ad5ec922b705b60e": {
   "id": "idnes-6a4558c0ad5ec922b705b60e",
@@ -17353,7 +17743,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a457248dc8b80937f06e7bc": {
   "id": "idnes-6a457248dc8b80937f06e7bc",
@@ -17390,7 +17781,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a45f3dafe65926fa50a7fe4": {
   "id": "idnes-6a45f3dafe65926fa50a7fe4",
@@ -17427,7 +17819,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a460415eb084f55310360ec": {
   "id": "idnes-6a460415eb084f55310360ec",
@@ -17464,7 +17857,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a4624f2e4d718b9ee01ae76": {
   "id": "idnes-6a4624f2e4d718b9ee01ae76",
@@ -17501,7 +17895,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a463102aab96cc6940ca32f": {
   "id": "idnes-6a463102aab96cc6940ca32f",
@@ -17538,7 +17933,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a463f6377ffcd77b7001e09": {
   "id": "idnes-6a463f6377ffcd77b7001e09",
@@ -17575,7 +17971,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a464342ff19406f7d0fdbd3": {
   "id": "idnes-6a464342ff19406f7d0fdbd3",
@@ -17612,7 +18009,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a4643c766e58b3e700d19c1": {
   "id": "idnes-6a4643c766e58b3e700d19c1",
@@ -17649,7 +18047,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a4661a0fb0bfa1adb02ef6d": {
   "id": "idnes-6a4661a0fb0bfa1adb02ef6d",
@@ -17686,7 +18085,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a46639e95e4f96f1607ea1c": {
   "id": "idnes-6a46639e95e4f96f1607ea1c",
@@ -17723,7 +18123,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a46782d348d28226d06d1ff": {
   "id": "idnes-6a46782d348d28226d06d1ff",
@@ -17765,7 +18166,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a467a25f704d1ea1900ca33": {
   "id": "idnes-6a467a25f704d1ea1900ca33",
@@ -17802,7 +18204,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a467eddc2172a5fa30fc87f": {
   "id": "idnes-6a467eddc2172a5fa30fc87f",
@@ -17839,7 +18242,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a469150f5506056940fc05d": {
   "id": "idnes-6a469150f5506056940fc05d",
@@ -17876,7 +18280,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a469a7595617373c00f28d4": {
   "id": "idnes-6a469a7595617373c00f28d4",
@@ -17913,7 +18318,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a46a58d47a4ddc24a0e9ede": {
   "id": "idnes-6a46a58d47a4ddc24a0e9ede",
@@ -17950,7 +18356,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a46c10d3a649e5a050eda5c": {
   "id": "idnes-6a46c10d3a649e5a050eda5c",
@@ -17987,7 +18394,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a46f0892d859ed6ef02b004": {
   "id": "idnes-6a46f0892d859ed6ef02b004",
@@ -18024,7 +18432,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a475bdd22ea1762220c92b8": {
   "id": "idnes-6a475bdd22ea1762220c92b8",
@@ -18061,7 +18470,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a4762ad444cacfe41044dcb": {
   "id": "idnes-6a4762ad444cacfe41044dcb",
@@ -18098,7 +18508,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a47783e639ec87bfb08aa30": {
   "id": "idnes-6a47783e639ec87bfb08aa30",
@@ -18135,7 +18546,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a47784b0c118df72e092673": {
   "id": "idnes-6a47784b0c118df72e092673",
@@ -18172,7 +18584,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a47895745f7bea1220b935a": {
   "id": "idnes-6a47895745f7bea1220b935a",
@@ -18209,7 +18622,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a478a246bb236c7e6043897": {
   "id": "idnes-6a478a246bb236c7e6043897",
@@ -18246,7 +18660,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a4795855260ccb226064167": {
   "id": "idnes-6a4795855260ccb226064167",
@@ -18283,7 +18698,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a47b3ec7bdb75ab9c0c547b": {
   "id": "idnes-6a47b3ec7bdb75ab9c0c547b",
@@ -18325,7 +18741,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a47c2af7ce9c2c87102cd86": {
   "id": "idnes-6a47c2af7ce9c2c87102cd86",
@@ -18367,7 +18784,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a47c72675144a80770a1117": {
   "id": "idnes-6a47c72675144a80770a1117",
@@ -18410,7 +18828,8 @@
   "exclude_from_stats": false,
   "gone_stale": true,
   "gone_last_price_czk": 5999900,
-  "gone_last_total_czk": 5999900
+  "gone_last_total_czk": 5999900,
+  "scope": "core"
  },
  "idnes-6a47c79167bcdc702f0311a9": {
   "id": "idnes-6a47c79167bcdc702f0311a9",
@@ -18452,7 +18871,8 @@
   "deal_outlier": false,
   "exclude_from_stats": false,
   "gone_last_price_czk": 7974910,
-  "gone_last_total_czk": 7974910
+  "gone_last_total_czk": 7974910,
+  "scope": "core"
  },
  "idnes-6a47c81b5c875f13a00e56b4": {
   "id": "idnes-6a47c81b5c875f13a00e56b4",
@@ -18495,7 +18915,8 @@
   "exclude_from_stats": false,
   "gone_stale": true,
   "gone_last_price_czk": 8953300,
-  "gone_last_total_czk": 8953300
+  "gone_last_total_czk": 8953300,
+  "scope": "core"
  },
  "idnes-6a48013de4f39f554a0e0fe4": {
   "id": "idnes-6a48013de4f39f554a0e0fe4",
@@ -18532,7 +18953,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a480390351c31fadf097b97": {
   "id": "idnes-6a480390351c31fadf097b97",
@@ -18569,7 +18991,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a489fc2d31a8242ab0d2527": {
   "id": "idnes-6a489fc2d31a8242ab0d2527",
@@ -18606,7 +19029,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a48bed6f028988df90d5159": {
   "id": "idnes-6a48bed6f028988df90d5159",
@@ -18643,7 +19067,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a48c0dd161b55c2630cb387": {
   "id": "idnes-6a48c0dd161b55c2630cb387",
@@ -18680,7 +19105,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a48c154f321e4cd0c0cc94a": {
   "id": "idnes-6a48c154f321e4cd0c0cc94a",
@@ -18717,7 +19143,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a48c48174e2fae1340937ee": {
   "id": "idnes-6a48c48174e2fae1340937ee",
@@ -18754,7 +19181,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a4912d6c99f2b996601ca44": {
   "id": "idnes-6a4912d6c99f2b996601ca44",
@@ -18791,7 +19219,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a4a0534a46d5cade808185c": {
   "id": "idnes-6a4a0534a46d5cade808185c",
@@ -18828,7 +19257,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a4a44332bb83a9a340d6d6a": {
   "id": "idnes-6a4a44332bb83a9a340d6d6a",
@@ -18875,7 +19305,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a4a9c88d443deada205070a": {
   "id": "idnes-6a4a9c88d443deada205070a",
@@ -18912,7 +19343,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "fringe"
  },
  "idnes-6a4b4b648f658e007506c055": {
   "id": "idnes-6a4b4b648f658e007506c055",
@@ -18949,7 +19381,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a4d13a59cc2dd5f230232bb": {
   "id": "idnes-6a4d13a59cc2dd5f230232bb",
@@ -18986,7 +19419,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a4de2ded8fe5a013b040ee5": {
   "id": "idnes-6a4de2ded8fe5a013b040ee5",
@@ -19023,7 +19457,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a4deaaeca32451922036a54": {
   "id": "idnes-6a4deaaeca32451922036a54",
@@ -19060,7 +19495,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a4e02d071469d7b4c0ac953": {
   "id": "idnes-6a4e02d071469d7b4c0ac953",
@@ -19097,7 +19533,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a4e03590061d4a5490e0c29": {
   "id": "idnes-6a4e03590061d4a5490e0c29",
@@ -19134,7 +19571,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a4e657d82ab7248e70388e0": {
   "id": "idnes-6a4e657d82ab7248e70388e0",
@@ -19171,7 +19609,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a4e66c436bd3aeb5b0478db": {
   "id": "idnes-6a4e66c436bd3aeb5b0478db",
@@ -19208,7 +19647,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a4e73f8e6940dfa1d0c46c6": {
   "id": "idnes-6a4e73f8e6940dfa1d0c46c6",
@@ -19245,7 +19685,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a4e88e3b5929a77ee0a97c9": {
   "id": "idnes-6a4e88e3b5929a77ee0a97c9",
@@ -19282,7 +19723,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a4f1e4efad799920803f484": {
   "id": "idnes-6a4f1e4efad799920803f484",
@@ -19319,7 +19761,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a4f2514ac7f58201e0ac8b8": {
   "id": "idnes-6a4f2514ac7f58201e0ac8b8",
@@ -19356,7 +19799,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a4f3f4d4f4078401f08e616": {
   "id": "idnes-6a4f3f4d4f4078401f08e616",
@@ -19393,7 +19837,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a4f4af3c83fb304930c1eeb": {
   "id": "idnes-6a4f4af3c83fb304930c1eeb",
@@ -19430,7 +19875,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a4f66310a4cec724a03e477": {
   "id": "idnes-6a4f66310a4cec724a03e477",
@@ -19467,7 +19913,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a4fb8f17c4d85a02b0fe3b7": {
   "id": "idnes-6a4fb8f17c4d85a02b0fe3b7",
@@ -19504,7 +19951,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a4fd461d0364f874b055694": {
   "id": "idnes-6a4fd461d0364f874b055694",
@@ -19546,7 +19994,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a5092248ef474d5ce049ff2": {
   "id": "idnes-6a5092248ef474d5ce049ff2",
@@ -19583,7 +20032,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a50b3b1ab589f606c0de43e": {
   "id": "idnes-6a50b3b1ab589f606c0de43e",
@@ -19620,7 +20070,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a50c63702c865ed170a78a4": {
   "id": "idnes-6a50c63702c865ed170a78a4",
@@ -19657,7 +20108,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a50d4307b54aa420f0c2757": {
   "id": "idnes-6a50d4307b54aa420f0c2757",
@@ -19694,7 +20146,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a50e71adfefc2bc5c0e9375": {
   "id": "idnes-6a50e71adfefc2bc5c0e9375",
@@ -19731,7 +20184,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a50ed9b6acdd65520053dc4": {
   "id": "idnes-6a50ed9b6acdd65520053dc4",
@@ -19768,7 +20222,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a50f3a0e8369d358f0e617b": {
   "id": "idnes-6a50f3a0e8369d358f0e617b",
@@ -19805,7 +20260,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a50f46896fb6e4f9d0d3375": {
   "id": "idnes-6a50f46896fb6e4f9d0d3375",
@@ -19842,7 +20298,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a50f935d37bf981460b55b7": {
   "id": "idnes-6a50f935d37bf981460b55b7",
@@ -19879,7 +20336,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a50fdb5c4deb95a680ae89d": {
   "id": "idnes-6a50fdb5c4deb95a680ae89d",
@@ -19916,7 +20374,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a5108fbc0c2cf9f2602758c": {
   "id": "idnes-6a5108fbc0c2cf9f2602758c",
@@ -19953,7 +20412,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a51e1227d00d58f73040320": {
   "id": "idnes-6a51e1227d00d58f73040320",
@@ -19990,7 +20450,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a548ce0962ee04dba0968a4": {
   "id": "idnes-6a548ce0962ee04dba0968a4",
@@ -20037,7 +20498,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a54f59d892f2a1ddc04d4b5": {
   "id": "idnes-6a54f59d892f2a1ddc04d4b5",
@@ -20074,7 +20536,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a55ecad4b148df62a0a92f7": {
   "id": "idnes-6a55ecad4b148df62a0a92f7",
@@ -20111,7 +20574,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a568036ca076073180c2b0b": {
   "id": "idnes-6a568036ca076073180c2b0b",
@@ -20148,7 +20612,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a57476bb7068d397408e004": {
   "id": "idnes-6a57476bb7068d397408e004",
@@ -20185,7 +20650,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a5767766b83f3054904e695": {
   "id": "idnes-6a5767766b83f3054904e695",
@@ -20222,7 +20688,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a57a5eebf77a4e1b70e2738": {
   "id": "idnes-6a57a5eebf77a4e1b70e2738",
@@ -20259,7 +20726,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a57a61524f82d0b0409a80c": {
   "id": "idnes-6a57a61524f82d0b0409a80c",
@@ -20296,7 +20764,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a57a645a763f998fa09e0f4": {
   "id": "idnes-6a57a645a763f998fa09e0f4",
@@ -20333,7 +20802,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a57a6dc24b23d1d3609d935": {
   "id": "idnes-6a57a6dc24b23d1d3609d935",
@@ -20370,7 +20840,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a57a718d215f15ace0e3cfc": {
   "id": "idnes-6a57a718d215f15ace0e3cfc",
@@ -20407,7 +20878,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a589d209cf6551a35015930": {
   "id": "idnes-6a589d209cf6551a35015930",
@@ -20444,7 +20916,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a58b49237d277ea0a034a36": {
   "id": "idnes-6a58b49237d277ea0a034a36",
@@ -20492,7 +20965,8 @@
   "exclude_from_stats": false,
   "gone_stale": true,
   "gone_last_price_czk": 4790000,
-  "gone_last_total_czk": 4790000
+  "gone_last_total_czk": 4790000,
+  "scope": "core"
  },
  "idnes-6a58ec514c748d39c1036c48": {
   "id": "idnes-6a58ec514c748d39c1036c48",
@@ -20529,7 +21003,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a58f2688634fa2722067ba7": {
   "id": "idnes-6a58f2688634fa2722067ba7",
@@ -20572,7 +21047,8 @@
   "exclude_from_stats": false,
   "gone_stale": true,
   "gone_last_price_czk": 8790000,
-  "gone_last_total_czk": 8790000
+  "gone_last_total_czk": 8790000,
+  "scope": "core"
  },
  "idnes-6a59f06ee729ca172405c5fa": {
   "id": "idnes-6a59f06ee729ca172405c5fa",
@@ -20614,7 +21090,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a5a0d1b4db6b8b49c0c4268": {
   "id": "idnes-6a5a0d1b4db6b8b49c0c4268",
@@ -20656,7 +21133,8 @@
   "deal_pct": -11,
   "deal_outlier": false,
   "gone_last_price_czk": 9360000,
-  "gone_last_total_czk": 9360000
+  "gone_last_total_czk": 9360000,
+  "scope": "core"
  },
  "idnes-6a5a109da02ca1c4d20f2e87": {
   "id": "idnes-6a5a109da02ca1c4d20f2e87",
@@ -20693,7 +21171,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a5a1bb88d7755bb490e8214": {
   "id": "idnes-6a5a1bb88d7755bb490e8214",
@@ -20730,7 +21209,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a5a1f95fad670296a0a892d": {
   "id": "idnes-6a5a1f95fad670296a0a892d",
@@ -20767,7 +21247,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a5a44bf33a73991c0002507": {
   "id": "idnes-6a5a44bf33a73991c0002507",
@@ -20815,7 +21296,8 @@
   "exclude_from_stats": false,
   "gone_stale": true,
   "gone_last_price_czk": 21900,
-  "gone_last_total_czk": 27400
+  "gone_last_total_czk": 27400,
+  "scope": "core"
  },
  "idnes-6a5badd0dd967883320262fb": {
   "id": "idnes-6a5badd0dd967883320262fb",
@@ -20852,12 +21334,13 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a5cf1c4719f99fb6402761d": {
   "id": "idnes-6a5cf1c4719f99fb6402761d",
   "first_seen": "2026-07-20T01:20:55Z",
-  "last_seen": "2026-11-14T11:32:55Z",
+  "last_seen": "2026-11-14T21:08:02Z",
   "gone_at": null,
   "price_history": [
    {
@@ -20890,7 +21373,7 @@
   "parking": null,
   "backfilled": true,
   "dist_km": 1.55,
-  "deal_pct": -27,
+  "deal_pct": -26,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "area": "vysocany",
@@ -20898,7 +21381,8 @@
   "house_class_source": null,
   "gone_last_price_czk": 7490000,
   "gone_last_total_czk": 7490000,
-  "resurrected_at": "2026-11-09T18:52:48Z"
+  "resurrected_at": "2026-11-09T18:52:48Z",
+  "scope": "core"
  },
  "idnes-6a5d105aa6bdf179e40028d6": {
   "id": "idnes-6a5d105aa6bdf179e40028d6",
@@ -20935,7 +21419,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a5df30ea09719303006ff1b": {
   "id": "idnes-6a5df30ea09719303006ff1b",
@@ -20972,7 +21457,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a5df73844eeeb3773040f1a": {
   "id": "idnes-6a5df73844eeeb3773040f1a",
@@ -21009,7 +21495,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a5e0c0e01654f84ab01c5ca": {
   "id": "idnes-6a5e0c0e01654f84ab01c5ca",
@@ -21046,7 +21533,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a5e45f3d8f0cbb8670d3b02": {
   "id": "idnes-6a5e45f3d8f0cbb8670d3b02",
@@ -21083,7 +21571,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a5f3721bc106d4997029124": {
   "id": "idnes-6a5f3721bc106d4997029124",
@@ -21120,7 +21609,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a608fdb3009527e900e8544": {
   "id": "idnes-6a608fdb3009527e900e8544",
@@ -21157,7 +21647,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a60db1884fce2c4f405c09c": {
   "id": "idnes-6a60db1884fce2c4f405c09c",
@@ -21204,7 +21695,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a61cfff0543f160af0f33db": {
   "id": "idnes-6a61cfff0543f160af0f33db",
@@ -21251,7 +21743,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a61d015069711fc2c0ee5cc": {
   "id": "idnes-6a61d015069711fc2c0ee5cc",
@@ -21298,7 +21791,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a623d17559436cde2036a77": {
   "id": "idnes-6a623d17559436cde2036a77",
@@ -21335,7 +21829,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a62755e17f1d182b602b75e": {
   "id": "idnes-6a62755e17f1d182b602b75e",
@@ -21372,7 +21867,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a627b8d1f51691c3904dd10": {
   "id": "idnes-6a627b8d1f51691c3904dd10",
@@ -21409,7 +21905,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a627c5fb15a3541a806bf8c": {
   "id": "idnes-6a627c5fb15a3541a806bf8c",
@@ -21446,7 +21943,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a6370bc3b45882ff50cfa34": {
   "id": "idnes-6a6370bc3b45882ff50cfa34",
@@ -21483,7 +21981,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a6530e16ef3a0101e0a22b4": {
   "id": "idnes-6a6530e16ef3a0101e0a22b4",
@@ -21522,7 +22021,8 @@
   "backfilled": true,
   "gone_last_price_czk": 18500,
   "gone_last_total_czk": 20000,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a65315c2d3742210a0ed9b7": {
   "id": "idnes-6a65315c2d3742210a0ed9b7",
@@ -21559,7 +22059,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a6531bd04a24302d80f1e25": {
   "id": "idnes-6a6531bd04a24302d80f1e25",
@@ -21596,7 +22097,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a65c257a4f31fb2960aae36": {
   "id": "idnes-6a65c257a4f31fb2960aae36",
@@ -21633,7 +22135,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a666b4e3f925565630a2ca7": {
   "id": "idnes-6a666b4e3f925565630a2ca7",
@@ -21685,7 +22188,8 @@
   "deal_outlier": false,
   "exclude_from_stats": false,
   "gone_last_price_czk": 22000,
-  "gone_last_total_czk": 29000
+  "gone_last_total_czk": 29000,
+  "scope": "core"
  },
  "idnes-6a6740e1aef49166180e2cde": {
   "id": "idnes-6a6740e1aef49166180e2cde",
@@ -21722,7 +22226,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a6745b4249389ddac0a7f7f": {
   "id": "idnes-6a6745b4249389ddac0a7f7f",
@@ -21759,7 +22264,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a67534740aa4bb1220828bf": {
   "id": "idnes-6a67534740aa4bb1220828bf",
@@ -21796,7 +22302,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a677675bfe734fb740fba55": {
   "id": "idnes-6a677675bfe734fb740fba55",
@@ -21833,7 +22340,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a67941f80177a8a61074e5c": {
   "id": "idnes-6a67941f80177a8a61074e5c",
@@ -21870,7 +22378,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a67cad8cc176904a70df926": {
   "id": "idnes-6a67cad8cc176904a70df926",
@@ -21907,7 +22416,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a67db44d0e73708a20f01e9": {
   "id": "idnes-6a67db44d0e73708a20f01e9",
@@ -21944,7 +22454,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a68b58288f32a1f6b087cad": {
   "id": "idnes-6a68b58288f32a1f6b087cad",
@@ -21991,7 +22502,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a68c1f435f1095a540fe7a5": {
   "id": "idnes-6a68c1f435f1095a540fe7a5",
@@ -22028,7 +22540,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a693f27bf5e23f6d907f399": {
   "id": "idnes-6a693f27bf5e23f6d907f399",
@@ -22065,7 +22578,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a69403f1b9e3afc930e8a3a": {
   "id": "idnes-6a69403f1b9e3afc930e8a3a",
@@ -22107,7 +22621,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a6942fc129c99fa570d2e97": {
   "id": "idnes-6a6942fc129c99fa570d2e97",
@@ -22144,7 +22659,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a69ce7b81168b6db105eec7": {
   "id": "idnes-6a69ce7b81168b6db105eec7",
@@ -22181,7 +22697,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a6a14af7d5554b4000e6ad6": {
   "id": "idnes-6a6a14af7d5554b4000e6ad6",
@@ -22218,7 +22735,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a6a39731ddf4d03f204f09a": {
   "id": "idnes-6a6a39731ddf4d03f204f09a",
@@ -22255,7 +22773,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a6b20bf9a77f46d2606cf76": {
   "id": "idnes-6a6b20bf9a77f46d2606cf76",
@@ -22294,7 +22813,8 @@
   "backfilled": true,
   "gone_last_price_czk": 9900000,
   "gone_last_total_czk": 9900000,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a6b237e654cccccff023487": {
   "id": "idnes-6a6b237e654cccccff023487",
@@ -22331,7 +22851,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a6b2e150c02de945f029175": {
   "id": "idnes-6a6b2e150c02de945f029175",
@@ -22368,7 +22889,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  },
  "idnes-6a6c6db3aa82b71cb809da7c": {
   "id": "idnes-6a6c6db3aa82b71cb809da7c",
@@ -22421,7 +22943,8 @@
   "deal_outlier": false,
   "area": "vysocany",
   "gone_last_price_czk": 23500,
-  "gone_last_total_czk": 31000
+  "gone_last_total_czk": 31000,
+  "scope": "core"
  },
  "idnes-6a6caa77ff01f3c0210db219": {
   "id": "idnes-6a6caa77ff01f3c0210db219",
@@ -22458,6 +22981,7 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "exclude_from_stats": false
+  "exclude_from_stats": false,
+  "scope": "core"
  }
 }
