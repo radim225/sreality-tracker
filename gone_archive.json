@@ -37848,13 +37848,22 @@
    "source": "sreality-ulice",
    "text": "Barrandovský most, Hlubočepy"
   },
+  "address_exact": false,
   "approx_location": false,
   "area": "jinonice",
   "city_part": "Hlubočepy",
+  "description": "Hledáte ideální bydlení pro rodinu s dětmi? Nabízíme prostorný a světlý byt o dispozici 3+kk a celkové ploše 85 m² se dvěma velkými terasami (každá 15 m²), situovaný v klidné rezidenční části Prahy 5 – Barrandov. \r\nByt prošel rekonstrukcí a je připraven k okamžitému nastěhování. \r\n\r\n Dispozice bytu: \r\n • Prostorná vstupní chodba se šatní skříní a samostatnou garderobní částí pro uložení kabátů, bot i sezónních věcí \r\n• Dvě samostatné neprůchozí ložnice \r\n• Oddělená koupelna a samostatné WC\r\n • Velký obývací pokoj s kuchyňským koutem jako přirozené centrum rodinného života s přímým vstupem na terasu  \r\n\r\nVýhody lokality:  \r\n• Dvě prostorné terasy vhodné pro relaxaci i grilování \r\n• Dětská hřiště přímo u domu \r\n• Příjemné rezidenční prostředí vhodné pro rodinné bydlení \r\n• Blízkost přírody a zeleně pro sport i volnočasové aktivity \r\n\r\n Dopravní dostupnost: \r\n • Tramvajová zastávka Sídliště Barrandov v bezprostřední blízkosti domu \r\n• Autobusová zastávka Poliklinika Barrandov cca 2–4 minuty pěšky \r\n• Pohodlné spojení na metro linky B  \r\n\r\nByt nabízí kombinaci komfortního prostoru, funkční dispozice a výborné dostupnosti do centra města. \r\n\r\nDíky dvěma terasám poskytuje nadstandardní v",
   "disposition": "3+kk",
+  "episodes": [
+   {
+    "gone_at": "2026-09-27T05:14:32Z",
+    "returned_at": "2026-09-27T14:24:59Z"
+   }
+  ],
   "first_seen": "2026-09-26T20:38:36Z",
   "floor_area_sqm": 85.0,
-  "gone_at": "2026-09-27T05:14:32Z",
+  "floor_number": 2,
+  "gone_at": "2026-11-15T00:00:06Z",
   "id": 2144784460,
   "images": [
    "https://d18-a.sdn.cz/d_18/c_img_qE_A/kO7lxrd9zlCmkC5y5LHbfes5/19c0.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
@@ -37863,13 +37872,14 @@
    "https://d18-a.sdn.cz/d_18/c_img_qE_A/kO7lxrd9zlC0nqxwcsHbfeuM/0f97.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
    "https://d18-a.sdn.cz/d_18/c_img_qE_A/nO573v8MsNBXDtvWgHbfeui/9936.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
   ],
+  "is_new_building": true,
   "last_price_czk": 1,
   "lat": 50.0338384,
   "locality": "Barrandovský most, Hlubočepy, Praha",
   "lon": 14.3829234,
   "price_czk": 1,
   "price_czk_per_sqm": 0,
-  "returned_at": "2026-09-27T14:24:59Z",
+  "seller_name": "Tetiana Antoch",
   "source": "sreality",
   "street": "Barrandovský most",
   "thumb": "https://d18-a.sdn.cz/d_18/c_img_qE_A/kO7lxrd9zlCmkC5y5LHbfes5/19c0.jpeg?fl=res,400,400,1|shr,,20|webp,60",
@@ -94283,6 +94293,49 @@
   "total_czk": 36005,
   "transaction_type": "pronajem",
   "url": "https://www.sreality.cz/detail/pronajem/byt/3%2Bkk/x/3936206924"
+ },
+ "3937796172": {
+  "address": {
+   "distance_m": 10,
+   "note": "nejbližší adresa k bodu, který Sreality uvádí — odhad (10 m od bodu)",
+   "precision": "estimate",
+   "source": "nominatim",
+   "text": "Pod Kavalírkou 1322/24, Praha 5"
+  },
+  "address_exact": false,
+  "approx_location": false,
+  "area": "jinonice",
+  "city_part": "Košíře",
+  "description": "Pronájem bytu 2+kk s krásnou velkou terasou, v novějším domě v klidné části Prahy 5 - Kavalírka. 5 minut autobusem nebo tram na Metro Anděl.\n\n+ Terasa, + Sklep, + Garážového stání v ceně v suterénu domu\n\nVybavení: Kuchyňská linka, varná deska s troubou, vestavěná lednice, koupelna s vanou a wc, automatická pračka se sušičkou, vestavěná šatní skříň v předsíni. V blízkosti je škola, obchody, restaurace, tramvajová stanice, autobusová stanice. Výška stropu 268cm. Max. 3 osoby, pes ne.\n\nAdresa: Praha 5 - Košíře, lokalita Kavalírka, ul. Pod Kavalírkou.",
+  "disposition": "2+kk",
+  "fees_czk": 4000,
+  "first_seen": "2026-11-04T12:12:19Z",
+  "floor_area_sqm": 63.0,
+  "floor_number": 5,
+  "gone_at": "2026-11-15T00:00:06Z",
+  "id": 3937796172,
+  "images": [
+   "https://d18-a.sdn.cz/d_18/c_img_qH_A/kb4JgeTdk3RI9DKFsIRAnQC/6d88.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qH_A/nQO0xPd86TDi9WNDk13IRAnQR/b7c5.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qH_A/kb4JgeTdkbxLFDdPPIRAnQC/0e5b.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qH_A/kb4JgeTdk3whEJi6RIRAnQG/2da8.jpeg?fl=res,800,800,1|shr,,20|jpg,80",
+   "https://d18-a.sdn.cz/d_18/c_img_qH_A/nQO0xPd86TBSHZcDTkSIRAnQM/4ce2.jpeg?fl=res,800,800,1|shr,,20|jpg,80"
+  ],
+  "is_new_building": false,
+  "last_price_czk": 26000,
+  "lat": 50.06931503679173,
+  "locality": "Pod Kavalírkou, Košíře, Praha",
+  "lon": 14.372750706122297,
+  "price_czk": 26000,
+  "price_czk_per_sqm": 500,
+  "seller_name": "eurocont reality",
+  "source": "sreality",
+  "street": "Pod Kavalírkou",
+  "thumb": "https://d18-a.sdn.cz/d_18/c_img_qH_A/kb4JgeTdk3RI9DKFsIRAnQC/6d88.jpeg?fl=res,400,400,1|shr,,20|webp,60",
+  "title": "Pronájem bytu 2+kk 63 m²",
+  "total_czk": 31500,
+  "transaction_type": "pronajem",
+  "url": "https://www.sreality.cz/detail/pronajem/byt/2%2Bkk/x/3937796172"
  },
  "3938070604": {
   "address": {
