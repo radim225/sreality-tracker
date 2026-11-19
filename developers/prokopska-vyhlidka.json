@@ -10,8 +10,8 @@
  "location_note": "mezi Radlickou a Novoveskou (přibližně, u Radlické 355)",
  "access_note": "robots.txt zakazuje jen /admin/",
  "baseline_at": "2026-09-27T14:56:46Z",
- "fetched_at": "2026-11-18T14:26:42Z",
- "last_ok_at": "2026-11-18T14:26:42Z",
+ "fetched_at": "2026-11-19T14:37:36Z",
+ "last_ok_at": "2026-11-19T14:37:36Z",
  "units": {
   "A1.1.1": {
    "id": "A1.1.1",
@@ -180,11 +180,11 @@
    "disposition": "2+kk",
    "area_sqm": 48.3,
    "accessory_area_sqm": 5.2,
-   "status": "rezervace",
-   "status_raw": "Rezervovaný",
+   "status": "prodano",
+   "status_raw": "Prodaný",
    "source_id": "44699459",
    "first_seen": "2026-09-27T14:56:46Z",
-   "last_change_at": "2026-09-27T14:56:46Z",
+   "last_change_at": "2026-11-19T14:37:36Z",
    "baseline": true
   },
   "A1.2.4": {
@@ -208,11 +208,11 @@
    "disposition": "2+kk",
    "area_sqm": 48.3,
    "accessory_area_sqm": 5.2,
-   "status": "rezervace",
-   "status_raw": "Rezervovaný",
+   "status": "prodano",
+   "status_raw": "Prodaný",
    "source_id": "44699465",
    "first_seen": "2026-09-27T14:56:46Z",
-   "last_change_at": "2026-09-27T14:56:46Z",
+   "last_change_at": "2026-11-19T14:37:36Z",
    "baseline": true
   },
   "A1.2.6": {
@@ -935,14 +935,14 @@
    "disposition": "1,5+kk",
    "area_sqm": 29.7,
    "accessory_area_sqm": 5.7,
-   "status": "predrezervace",
-   "status_raw": "Před-rezervovaný",
+   "price_czk": 7163000,
+   "status": "volny",
+   "status_raw": "Volný",
    "source_id": "44699611",
    "first_seen": "2026-09-27T14:56:46Z",
-   "last_change_at": "2026-11-13T13:20:53Z",
-   "last_price_czk": 7194000,
-   "last_price_at": "2026-09-27T14:56:46Z",
-   "price_hidden_at": "2026-11-13T13:20:53Z",
+   "last_change_at": "2026-11-19T14:37:36Z",
+   "last_price_czk": 7163000,
+   "last_price_at": "2026-11-19T14:37:36Z",
    "baseline": true
   },
   "A2.5.1": {
@@ -966,11 +966,11 @@
    "disposition": "4+kk",
    "area_sqm": 104.3,
    "accessory_area_sqm": 101.4,
-   "status": "rezervace",
-   "status_raw": "Rezervovaný",
+   "status": "prodano",
+   "status_raw": "Prodaný",
    "source_id": "44699618",
    "first_seen": "2026-09-27T14:56:46Z",
-   "last_change_at": "2026-09-27T14:56:46Z",
+   "last_change_at": "2026-11-19T14:37:36Z",
    "baseline": true
   },
   "A3.1.1": {
