@@ -42,7 +42,7 @@
  "1028513868": {
   "id": "1028513868",
   "first_seen": "2026-07-09T17:49:12Z",
-  "last_seen": "2026-11-19T13:05:06Z",
+  "last_seen": "2026-11-19T23:13:17Z",
   "gone_at": null,
   "price_history": [
    {
@@ -330,7 +330,7 @@
  "1089462348": {
   "id": "1089462348",
   "first_seen": "2026-07-08T10:06:28Z",
-  "last_seen": "2026-11-19T13:05:06Z",
+  "last_seen": "2026-11-19T23:13:17Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2745,7 +2745,7 @@
  "2665009228": {
   "id": "2665009228",
   "first_seen": "2026-07-27T17:29:31Z",
-  "last_seen": "2026-11-19T13:05:06Z",
+  "last_seen": "2026-11-19T23:13:17Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2865,7 +2865,7 @@
  "2696716364": {
   "id": "2696716364",
   "first_seen": "2026-07-07T10:47:34Z",
-  "last_seen": "2026-11-19T13:05:06Z",
+  "last_seen": "2026-11-19T23:13:17Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2906,7 +2906,7 @@
   "backfilled": true,
   "dist_km": 2.47,
   "price_old_czk": null,
-  "deal_pct": -4,
+  "deal_pct": -5,
   "deal_outlier": false,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
@@ -3073,7 +3073,7 @@
  "2839470156": {
   "id": "2839470156",
   "first_seen": "2026-07-09T10:47:27Z",
-  "last_seen": "2026-11-19T13:05:06Z",
+  "last_seen": "2026-11-19T23:13:17Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3997,7 +3997,7 @@
  "3311853644": {
   "id": "3311853644",
   "first_seen": "2026-07-22T10:13:56Z",
-  "last_seen": "2026-11-19T02:00:37Z",
+  "last_seen": "2026-11-19T23:13:17Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4024,6 +4024,11 @@
     "at": "2026-09-16",
     "price_czk": 9950000,
     "total_czk": 9950000
+   },
+   {
+    "at": "2026-11-19",
+    "price_czk": 9650000,
+    "total_czk": 9650000
    }
   ],
   "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/3311853644",
@@ -4038,23 +4043,23 @@
   "lat": 50.1039745039,
   "lon": 14.5081401426,
   "pod_harfou": true,
-  "price_czk": 9950000,
+  "price_czk": 9650000,
   "fees_czk": null,
   "fees_missing": true,
   "fees_source": null,
   "electricity_czk": null,
   "electricity_estimated": false,
-  "total_czk": 9950000,
-  "price_czk_per_sqm": 165833,
+  "total_czk": 9650000,
+  "price_czk_per_sqm": 160833,
   "garage": false,
   "parking": false,
   "floor_number": 1,
   "floors_total": 6,
   "backfilled": true,
   "dist_km": 1.39,
-  "deal_pct": -15,
+  "deal_pct": -19,
   "deal_outlier": false,
-  "price_old_czk": null,
+  "price_old_czk": 9950000,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
   "is_new_building": true,
@@ -4078,8 +4083,8 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 16084,
-  "edited": "2026-11-14",
+  "views": 16341,
+  "edited": "2026-11-19",
   "since": "2026-07-18",
   "parking_state": "none",
   "parking_price_czk": null,
@@ -5660,7 +5665,7 @@
  "4180140108": {
   "id": "4180140108",
   "first_seen": "2026-07-17T09:46:26Z",
-  "last_seen": "2026-11-19T13:05:06Z",
+  "last_seen": "2026-11-19T23:13:17Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5720,7 +5725,7 @@
   "floors_total": null,
   "backfilled": true,
   "dist_km": 1.45,
-  "deal_pct": -2,
+  "deal_pct": -5,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -7042,7 +7047,7 @@
  "882630732": {
   "id": "882630732",
   "first_seen": "2026-07-02T17:27:02Z",
-  "last_seen": "2026-11-19T02:00:37Z",
+  "last_seen": "2026-11-19T23:13:17Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7092,7 +7097,7 @@
   "backfilled": true,
   "source": "sreality",
   "dist_km": 1.39,
-  "deal_pct": 13,
+  "deal_pct": 12,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -7118,7 +7123,7 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 15209,
+  "views": 15428,
   "edited": "2026-10-29",
   "since": "2026-07-02",
   "parking_state": "unpriced",
@@ -7217,7 +7222,7 @@
  "960421964": {
   "id": "960421964",
   "first_seen": "2026-07-09T10:47:27Z",
-  "last_seen": "2026-11-19T13:05:06Z",
+  "last_seen": "2026-11-19T23:13:17Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11011,7 +11016,7 @@
  "bez-863730": {
   "id": "bez-863730",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-11-19T02:00:37Z",
+  "last_seen": "2026-11-19T23:13:17Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11050,7 +11055,7 @@
   "backfilled": true,
   "exclude_from_stats": false,
   "dist_km": 0.48,
-  "deal_pct": -14,
+  "deal_pct": -16,
   "deal_outlier": false,
   "gone_last_price_czk": 11000000,
   "gone_last_total_czk": 11000000,
@@ -11261,7 +11266,7 @@
  "bez-981957": {
   "id": "bez-981957",
   "first_seen": "2026-07-21T10:14:29Z",
-  "last_seen": "2026-11-19T02:00:37Z",
+  "last_seen": "2026-11-19T23:13:17Z",
   "gone_at": null,
   "price_history": [
    {
@@ -13897,7 +13902,7 @@
  "idnes-6a1c18ee6d13c98fa102e4c8": {
   "id": "idnes-6a1c18ee6d13c98fa102e4c8",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-11-19T02:00:37Z",
+  "last_seen": "2026-11-19T23:13:17Z",
   "gone_at": null,
   "price_history": [
    {
@@ -14797,7 +14802,7 @@
  "idnes-6a2aca7dae30040b1a04a726": {
   "id": "idnes-6a2aca7dae30040b1a04a726",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-11-19T13:05:06Z",
+  "last_seen": "2026-11-19T23:13:17Z",
   "gone_at": null,
   "price_history": [
    {
@@ -14820,8 +14825,8 @@
   "street": "Kolbenova",
   "locality": "Kolbenova, Praha 9 - Vysočany",
   "city_part": "Vysočany",
-  "lat": 50.11093267258723,
-  "lon": 14.513730265459193,
+  "lat": 50.1109192819868,
+  "lon": 14.5138352401302,
   "pod_harfou": false,
   "price_czk": 10762500,
   "fees_czk": null,
@@ -14835,7 +14840,7 @@
   "parking": null,
   "backfilled": true,
   "dist_km": 2.12,
-  "deal_pct": -1,
+  "deal_pct": -3,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "area": "vysocany",
@@ -15193,7 +15198,7 @@
  "idnes-6a3170496e725c29510c6cd5": {
   "id": "idnes-6a3170496e725c29510c6cd5",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-11-19T13:05:06Z",
+  "last_seen": "2026-11-19T23:13:17Z",
   "gone_at": null,
   "price_history": [
    {
@@ -15216,8 +15221,8 @@
   "street": "Smržových",
   "locality": "Smržových, Praha 9 - Vysočany",
   "city_part": "Vysočany",
-  "lat": 50.10946683280319,
-  "lon": 14.517919998342123,
+  "lat": 50.10947403025729,
+  "lon": 14.518023023724316,
   "pod_harfou": false,
   "price_czk": 9809000,
   "fees_czk": null,
@@ -15230,8 +15235,8 @@
   "garage": null,
   "parking": null,
   "backfilled": true,
-  "dist_km": 2.28,
-  "deal_pct": -6,
+  "dist_km": 2.29,
+  "deal_pct": -8,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "area": "vysocany",
@@ -21353,7 +21358,7 @@
   "id": "idnes-6a5cf1c4719f99fb6402761d",
   "first_seen": "2026-07-20T01:20:55Z",
   "last_seen": "2026-11-19T02:00:37Z",
-  "gone_at": null,
+  "gone_at": "2026-11-19T23:13:17Z",
   "price_history": [
    {
     "at": "2026-07-20",
