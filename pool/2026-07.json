@@ -42,7 +42,7 @@
  "1028513868": {
   "id": "1028513868",
   "first_seen": "2026-07-09T17:49:12Z",
-  "last_seen": "2026-11-20T17:07:35Z",
+  "last_seen": "2026-11-21T01:31:11Z",
   "gone_at": null,
   "price_history": [
    {
@@ -92,7 +92,7 @@
   "floors_total": 3,
   "backfilled": true,
   "dist_km": 1.79,
-  "deal_pct": -17,
+  "deal_pct": -19,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -330,7 +330,7 @@
  "1089462348": {
   "id": "1089462348",
   "first_seen": "2026-07-08T10:06:28Z",
-  "last_seen": "2026-11-20T17:07:35Z",
+  "last_seen": "2026-11-21T01:31:11Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2745,7 +2745,7 @@
  "2665009228": {
   "id": "2665009228",
   "first_seen": "2026-07-27T17:29:31Z",
-  "last_seen": "2026-11-20T17:07:35Z",
+  "last_seen": "2026-11-21T01:31:11Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2865,7 +2865,7 @@
  "2696716364": {
   "id": "2696716364",
   "first_seen": "2026-07-07T10:47:34Z",
-  "last_seen": "2026-11-20T17:07:35Z",
+  "last_seen": "2026-11-21T01:31:11Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2906,7 +2906,7 @@
   "backfilled": true,
   "dist_km": 2.47,
   "price_old_czk": null,
-  "deal_pct": -5,
+  "deal_pct": -4,
   "deal_outlier": false,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
@@ -3073,7 +3073,7 @@
  "2839470156": {
   "id": "2839470156",
   "first_seen": "2026-07-09T10:47:27Z",
-  "last_seen": "2026-11-20T17:07:35Z",
+  "last_seen": "2026-11-21T01:31:11Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3997,7 +3997,7 @@
  "3311853644": {
   "id": "3311853644",
   "first_seen": "2026-07-22T10:13:56Z",
-  "last_seen": "2026-11-20T17:07:35Z",
+  "last_seen": "2026-11-21T01:31:11Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4057,7 +4057,7 @@
   "floors_total": 6,
   "backfilled": true,
   "dist_km": 1.39,
-  "deal_pct": -19,
+  "deal_pct": -18,
   "deal_outlier": false,
   "price_old_czk": 9950000,
   "building_condition": 6,
@@ -5666,7 +5666,7 @@
   "id": "4180140108",
   "first_seen": "2026-07-17T09:46:26Z",
   "last_seen": "2026-11-20T07:09:06Z",
-  "gone_at": null,
+  "gone_at": "2026-11-21T01:31:11Z",
   "price_history": [
    {
     "at": "2026-07-17",
@@ -5760,7 +5760,9 @@
   "area": "vysocany",
   "house_class": "panel",
   "house_class_source": "typ",
-  "scope": "core"
+  "scope": "core",
+  "gone_last_price_czk": 23990,
+  "gone_last_total_czk": 29765
  },
  "4215136332": {
   "id": "4215136332",
@@ -7224,7 +7226,7 @@
  "960421964": {
   "id": "960421964",
   "first_seen": "2026-07-09T10:47:27Z",
-  "last_seen": "2026-11-20T17:07:35Z",
+  "last_seen": "2026-11-21T01:31:11Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7269,7 +7271,7 @@
   "floors_total": 5,
   "backfilled": true,
   "dist_km": 1.11,
-  "deal_pct": -20,
+  "deal_pct": -21,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 2,
@@ -8176,7 +8178,7 @@
  "bez-1029927": {
   "id": "bez-1029927",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-11-20T07:09:06Z",
+  "last_seen": "2026-11-21T01:31:11Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9359,7 +9361,7 @@
  "bez-1046325": {
   "id": "bez-1046325",
   "first_seen": "2026-07-17T14:55:13Z",
-  "last_seen": "2026-11-20T07:09:06Z",
+  "last_seen": "2026-11-21T01:31:11Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9864,7 +9866,7 @@
  "bez-349115": {
   "id": "bez-349115",
   "first_seen": "2026-07-17T09:46:26Z",
-  "last_seen": "2026-11-20T07:09:06Z",
+  "last_seen": "2026-11-21T01:31:11Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9898,7 +9900,7 @@
   "backfilled": true,
   "exclude_from_stats": false,
   "dist_km": 0.59,
-  "deal_pct": -3,
+  "deal_pct": -4,
   "deal_outlier": false,
   "area": "vysocany",
   "house_class": null,
@@ -10418,7 +10420,7 @@
  "bez-754575": {
   "id": "bez-754575",
   "first_seen": "2026-07-17T09:46:26Z",
-  "last_seen": "2026-11-20T07:09:06Z",
+  "last_seen": "2026-11-21T01:31:11Z",
   "gone_at": null,
   "price_history": [
    {
@@ -10457,7 +10459,7 @@
   "backfilled": true,
   "exclude_from_stats": false,
   "dist_km": 0.59,
-  "deal_pct": -9,
+  "deal_pct": -10,
   "deal_outlier": false,
   "area": "vysocany",
   "house_class": null,
@@ -13632,7 +13634,7 @@
  "idnes-6a0c59a72b5ffab24208d684": {
   "id": "idnes-6a0c59a72b5ffab24208d684",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-11-20T07:09:06Z",
+  "last_seen": "2026-11-21T01:31:11Z",
   "gone_at": null,
   "price_history": [
    {
@@ -13666,7 +13668,7 @@
   "backfilled": true,
   "exclude_from_stats": false,
   "dist_km": null,
-  "deal_pct": 2,
+  "deal_pct": 1,
   "deal_outlier": false,
   "area": "vysocany",
   "house_class": null,
@@ -15200,7 +15202,7 @@
  "idnes-6a3170496e725c29510c6cd5": {
   "id": "idnes-6a3170496e725c29510c6cd5",
   "first_seen": "2026-07-05T19:17:38Z",
-  "last_seen": "2026-11-20T07:09:06Z",
+  "last_seen": "2026-11-21T01:31:11Z",
   "gone_at": null,
   "price_history": [
    {
@@ -15238,7 +15240,7 @@
   "parking": null,
   "backfilled": true,
   "dist_km": 2.29,
-  "deal_pct": -6,
+  "deal_pct": -7,
   "deal_outlier": false,
   "exclude_from_stats": false,
   "area": "vysocany",
