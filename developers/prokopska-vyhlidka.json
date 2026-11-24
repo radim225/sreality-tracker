@@ -10,8 +10,8 @@
  "location_note": "mezi Radlickou a Novoveskou (přibližně, u Radlické 355)",
  "access_note": "robots.txt zakazuje jen /admin/",
  "baseline_at": "2026-09-27T14:56:46Z",
- "fetched_at": "2026-11-23T16:20:41Z",
- "last_ok_at": "2026-11-23T16:20:41Z",
+ "fetched_at": "2026-11-24T16:09:24Z",
+ "last_ok_at": "2026-11-24T16:09:24Z",
  "units": {
   "A1.1.1": {
    "id": "A1.1.1",
@@ -311,9 +311,9 @@
    "source_id": "44699484",
    "first_seen": "2026-09-27T14:56:46Z",
    "last_change_at": "2026-11-23T16:20:41Z",
-   "baseline": true,
+   "last_price_czk": 9688000,
    "last_price_at": "2026-11-23T16:20:41Z",
-   "last_price_czk": 9688000
+   "baseline": true
   },
   "A1.3.5": {
    "id": "A1.3.5",
@@ -588,9 +588,9 @@
    "source_id": "44699539",
    "first_seen": "2026-09-27T14:56:46Z",
    "last_change_at": "2026-11-23T16:20:41Z",
-   "baseline": true,
+   "last_price_czk": 8898000,
    "last_price_at": "2026-11-23T16:20:41Z",
-   "last_price_czk": 8898000
+   "baseline": true
   },
   "A2.1.6": {
    "id": "A2.1.6",
@@ -731,11 +731,11 @@
    "disposition": "1+kk",
    "area_sqm": 29.7,
    "accessory_area_sqm": 5.7,
-   "status": "rezervace",
-   "status_raw": "Rezervovaný",
+   "status": "prodano",
+   "status_raw": "Prodaný",
    "source_id": "44699567",
    "first_seen": "2026-09-27T14:56:46Z",
-   "last_change_at": "2026-09-27T14:56:46Z",
+   "last_change_at": "2026-11-24T16:09:24Z",
    "baseline": true
   },
   "A2.3.1": {
@@ -841,11 +841,11 @@
    "disposition": "1+kk",
    "area_sqm": 29.7,
    "accessory_area_sqm": 5.7,
-   "status": "rezervace",
-   "status_raw": "Rezervovaný",
+   "status": "prodano",
+   "status_raw": "Prodaný",
    "source_id": "44699589",
    "first_seen": "2026-09-27T14:56:46Z",
-   "last_change_at": "2026-09-27T14:56:46Z",
+   "last_change_at": "2026-11-24T16:09:24Z",
    "baseline": true
   },
   "A2.4.1": {
@@ -1446,11 +1446,11 @@
    "disposition": "4+kk",
    "area_sqm": 104.3,
    "accessory_area_sqm": 101.4,
-   "status": "rezervace",
-   "status_raw": "Rezervovaný",
+   "status": "prodano",
+   "status_raw": "Prodaný",
    "source_id": "44699717",
    "first_seen": "2026-09-27T14:56:46Z",
-   "last_change_at": "2026-10-06T12:10:01Z",
+   "last_change_at": "2026-11-24T16:09:24Z",
    "baseline": true
   },
   "B.1.1": {
@@ -1513,16 +1513,15 @@
    "disposition": "2+kk",
    "area_sqm": 53.4,
    "accessory_area_sqm": 58.1,
-   "price_excl_vat_czk": 9803571,
-   "price_czk": 10980000,
-   "status": "volny",
-   "status_raw": "Volný",
+   "status": "predrezervace",
+   "status_raw": "Před-rezervovaný",
    "source_id": "44699731",
    "first_seen": "2026-10-02T11:14:58Z",
-   "last_change_at": "2026-11-21T13:38:49Z",
+   "last_change_at": "2026-11-24T16:09:24Z",
    "returned_at": "2026-10-27T10:47:53Z",
    "last_price_czk": 10980000,
-   "last_price_at": "2026-10-02T11:14:58Z"
+   "last_price_at": "2026-10-02T11:14:58Z",
+   "price_hidden_at": "2026-11-24T16:09:24Z"
   },
   "B.1.5": {
    "id": "B.1.5",
@@ -1836,11 +1835,11 @@
    "disposition": "2+kk",
    "area_sqm": 53.5,
    "accessory_area_sqm": 7.2,
-   "status": "predrezervace",
-   "status_raw": "Před-rezervovaný",
+   "status": "rezervace",
+   "status_raw": "Rezervovaný",
    "source_id": "44699787",
    "first_seen": "2026-10-02T11:14:58Z",
-   "last_change_at": "2026-11-03T12:57:10Z",
+   "last_change_at": "2026-11-24T16:09:24Z",
    "returned_at": "2026-10-27T10:47:53Z",
    "last_price_czk": 10544000,
    "last_price_at": "2026-10-02T11:14:58Z",
@@ -1976,16 +1975,15 @@
    "disposition": "2+kk",
    "area_sqm": 48.9,
    "accessory_area_sqm": 4.9,
-   "price_excl_vat_czk": 8473214,
-   "price_czk": 9490000,
-   "status": "volny",
-   "status_raw": "Volný",
+   "status": "predrezervace",
+   "status_raw": "Před-rezervovaný",
    "source_id": "44699812",
    "first_seen": "2026-10-02T11:14:58Z",
-   "last_change_at": "2026-11-21T13:38:49Z",
+   "last_change_at": "2026-11-24T16:09:24Z",
    "returned_at": "2026-10-27T10:47:53Z",
    "last_price_czk": 9490000,
-   "last_price_at": "2026-10-02T11:14:58Z"
+   "last_price_at": "2026-10-02T11:14:58Z",
+   "price_hidden_at": "2026-11-24T16:09:24Z"
   },
   "B.4.4": {
    "id": "B.4.4",
@@ -2634,16 +2632,15 @@
    "disposition": "4+kk",
    "area_sqm": 104.3,
    "accessory_area_sqm": 101.4,
-   "price_excl_vat_czk": 17139286,
-   "price_czk": 19196000,
-   "status": "volny",
-   "status_raw": "Volný",
+   "status": "predrezervace",
+   "status_raw": "Před-rezervovaný",
    "source_id": "44699930",
    "first_seen": "2026-10-02T11:14:58Z",
-   "last_change_at": "2026-11-20T14:15:45Z",
+   "last_change_at": "2026-11-24T16:09:24Z",
    "returned_at": "2026-10-27T10:47:53Z",
    "last_price_czk": 19196000,
-   "last_price_at": "2026-11-20T14:15:45Z"
+   "last_price_at": "2026-11-20T14:15:45Z",
+   "price_hidden_at": "2026-11-24T16:09:24Z"
   },
   "C2.1.1": {
    "id": "C2.1.1",
@@ -2813,16 +2810,15 @@
    "disposition": "2+kk",
    "area_sqm": 48.3,
    "accessory_area_sqm": 5.2,
-   "price_excl_vat_czk": 7897321,
-   "price_czk": 8845000,
-   "status": "volny",
-   "status_raw": "Volný",
+   "status": "predrezervace",
+   "status_raw": "Před-rezervovaný",
    "source_id": "44699963",
    "first_seen": "2026-10-02T11:14:58Z",
-   "last_change_at": "2026-11-18T14:26:42Z",
+   "last_change_at": "2026-11-24T16:09:24Z",
    "returned_at": "2026-10-27T10:47:53Z",
    "last_price_czk": 8845000,
-   "last_price_at": "2026-10-02T11:14:58Z"
+   "last_price_at": "2026-10-02T11:14:58Z",
+   "price_hidden_at": "2026-11-24T16:09:24Z"
   },
   "C2.2.4": {
    "id": "C2.2.4",
@@ -2918,16 +2914,15 @@
    "disposition": "3+kk",
    "area_sqm": 79.4,
    "accessory_area_sqm": 9.8,
-   "price_excl_vat_czk": 12688392,
-   "price_czk": 14211000,
-   "status": "volny",
-   "status_raw": "Volný",
+   "status": "predrezervace",
+   "status_raw": "Před-rezervovaný",
    "source_id": "44699982",
    "first_seen": "2026-10-02T11:14:58Z",
-   "last_change_at": "2026-11-21T13:38:49Z",
+   "last_change_at": "2026-11-24T16:09:24Z",
    "returned_at": "2026-10-27T10:47:53Z",
    "last_price_czk": 14211000,
-   "last_price_at": "2026-10-02T11:14:58Z"
+   "last_price_at": "2026-10-02T11:14:58Z",
+   "price_hidden_at": "2026-11-24T16:09:24Z"
   },
   "C2.3.3": {
    "id": "C2.3.3",
@@ -2936,16 +2931,15 @@
    "disposition": "2+kk",
    "area_sqm": 48.3,
    "accessory_area_sqm": 5.2,
-   "price_excl_vat_czk": 8374107,
-   "price_czk": 9379000,
-   "status": "volny",
-   "status_raw": "Volný",
+   "status": "predrezervace",
+   "status_raw": "Před-rezervovaný",
    "source_id": "44699985",
    "first_seen": "2026-10-02T11:14:58Z",
-   "last_change_at": "2026-11-21T13:38:49Z",
+   "last_change_at": "2026-11-24T16:09:24Z",
    "returned_at": "2026-10-27T10:47:53Z",
    "last_price_czk": 9379000,
-   "last_price_at": "2026-10-02T11:14:58Z"
+   "last_price_at": "2026-10-02T11:14:58Z",
+   "price_hidden_at": "2026-11-24T16:09:24Z"
   },
   "C2.3.4": {
    "id": "C2.3.4",
@@ -2988,16 +2982,15 @@
    "disposition": "4+kk",
    "area_sqm": 107.4,
    "accessory_area_sqm": 14.5,
-   "price_excl_vat_czk": 16761607,
-   "price_czk": 18773000,
-   "status": "volny",
-   "status_raw": "Volný",
+   "status": "predrezervace",
+   "status_raw": "Před-rezervovaný",
    "source_id": "44699994",
    "first_seen": "2026-10-02T11:14:58Z",
-   "last_change_at": "2026-11-20T14:15:45Z",
+   "last_change_at": "2026-11-24T16:09:24Z",
    "returned_at": "2026-10-27T10:47:53Z",
    "last_price_czk": 18773000,
-   "last_price_at": "2026-10-02T11:14:58Z"
+   "last_price_at": "2026-10-02T11:14:58Z",
+   "price_hidden_at": "2026-11-24T16:09:24Z"
   },
   "C2.3.7": {
    "id": "C2.3.7",
