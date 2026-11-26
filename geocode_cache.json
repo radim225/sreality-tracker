@@ -1392,6 +1392,10 @@
   "road": "U Komína",
   "suburb": "Radlice"
  },
+ "50.05563,14.38277": {
+  "at": "2026-11-26T14:02:19Z",
+  "error": "ReadTimeout: HTTPSConnectionPool(host='nominatim.openstreetmap.org', port=443): Read timed out. (read timeout=15)"
+ },
  "50.05564,14.34973": {
   "at": "2026-11-19T23:15:33Z",
   "distance_m": 5,
@@ -4771,6 +4775,14 @@
   "road": "Plaňanská",
   "suburb": "Malešice"
  },
+ "50.08142,14.49941": {
+  "at": "2026-11-26T14:02:04Z",
+  "distance_m": 2,
+  "house_number": "708/60a",
+  "postcode": "108 00",
+  "road": "Počernická",
+  "suburb": "Malešice"
+ },
  "50.08142,14.49969": {
   "at": "2026-09-27T15:19:00Z",
   "distance_m": 2,
@@ -5869,6 +5881,14 @@
   "road": "Bernasova",
   "suburb": "Žižkov"
  },
+ "50.08626,14.45856": {
+  "at": "2026-11-26T14:01:50Z",
+  "distance_m": 0,
+  "house_number": "431/17",
+  "postcode": "130 00",
+  "road": "Jeseniova",
+  "suburb": "Žižkov"
+ },
  "50.08627,14.51548": {
   "at": "2026-09-27T15:10:46Z",
   "distance_m": 4,
@@ -5939,6 +5959,14 @@
   "house_number": "2879/5",
   "postcode": "130 00",
   "road": "U Staré cihelny",
+  "suburb": "Žižkov"
+ },
+ "50.08636,14.46054": {
+  "at": "2026-11-26T14:02:26Z",
+  "distance_m": 0,
+  "house_number": "2862/48",
+  "postcode": "130 00",
+  "road": "Jeseniova",
   "suburb": "Žižkov"
  },
  "50.08640,14.46129": {
@@ -7469,6 +7497,14 @@
   "road": "Buková",
   "suburb": "Žižkov"
  },
+ "50.08931,14.49419": {
+  "at": "2026-11-26T14:01:53Z",
+  "distance_m": 0,
+  "house_number": "2553/4",
+  "postcode": "130 00",
+  "road": "Buková",
+  "suburb": "Žižkov"
+ },
  "50.08932,14.46748": {
   "at": "2026-09-29T10:50:57Z",
   "distance_m": 5,
@@ -8357,6 +8393,14 @@
   "road": "Pod Lipami",
   "suburb": "Žižkov"
  },
+ "50.09081,14.47678": {
+  "at": "2026-11-26T14:02:48Z",
+  "distance_m": 61,
+  "house_number": "2905/54",
+  "postcode": "130 00",
+  "road": "Biskupcova",
+  "suburb": "Žižkov"
+ },
  "50.09081,14.49798": {
   "at": "2026-10-25T13:22:09Z",
   "distance_m": 0,
@@ -8638,6 +8682,14 @@
   "house_number": "2687/18",
   "postcode": "130 00",
   "road": "Za Žižkovskou vozovnou",
+  "suburb": "Žižkov"
+ },
+ "50.09175,14.49664": {
+  "at": "2026-11-26T14:02:20Z",
+  "distance_m": 0,
+  "house_number": "2499/246",
+  "postcode": "130 00",
+  "road": "Hartigova",
   "suburb": "Žižkov"
  },
  "50.09176,14.48243": {
@@ -9530,6 +9582,14 @@
   "road": "Hrdlořezská",
   "suburb": "Hrdlořezy"
  },
+ "50.09369,14.46007": {
+  "at": "2026-11-26T14:02:50Z",
+  "distance_m": 4,
+  "house_number": "554/1",
+  "postcode": "186 00",
+  "road": "Na Střelnici",
+  "suburb": "Karlín"
+ },
  "50.09369,14.49803": {
   "at": "2026-10-15T23:10:33Z",
   "distance_m": 0,
@@ -9756,6 +9816,14 @@
   "house_number": "228/6",
   "postcode": "190 00",
   "road": "Nad Smetankou",
+  "suburb": "Hrdlořezy"
+ },
+ "50.09430,14.50004": {
+  "at": "2026-11-26T14:02:33Z",
+  "distance_m": 42,
+  "house_number": "223/4",
+  "postcode": "190 00",
+  "road": "V Třešňovce",
   "suburb": "Hrdlořezy"
  },
  "50.09433,14.45009": {
@@ -11369,6 +11437,14 @@
   "road": "Tusarova",
   "suburb": "Holešovice"
  },
+ "50.10219,14.47779": {
+  "at": "2026-11-26T14:01:51Z",
+  "distance_m": 0,
+  "house_number": "1100/5",
+  "postcode": "180 00",
+  "road": "V Mezihoří",
+  "suburb": "Praha 8"
+ },
  "50.10220,14.45448": {
   "at": "2026-11-03T02:22:38Z",
   "distance_m": 19,
@@ -11970,6 +12046,14 @@
   "road": "Podkovářská",
   "suburb": "Vysočany"
  },
+ "50.10337,14.47801": {
+  "at": "2026-11-26T14:02:22Z",
+  "distance_m": 0,
+  "house_number": "1848/2",
+  "postcode": "180 00",
+  "road": "Vacínova",
+  "suburb": "Praha 8"
+ },
  "50.10337,14.47802": {
   "at": "2026-11-04T19:55:43Z",
   "distance_m": 1,
@@ -12495,6 +12579,13 @@
   "road": "Pod Harfou",
   "suburb": "Vysočany"
  },
+ "50.10403,14.50849": {
+  "at": "2026-11-26T14:02:31Z",
+  "distance_m": 6,
+  "postcode": "190 07",
+  "road": "Pod Harfou",
+  "suburb": "Vysočany"
+ },
  "50.10404,14.51583": {
   "at": "2026-11-06T06:30:49Z",
   "distance_m": 15,
@@ -13014,6 +13105,14 @@
   "postcode": "170 00",
   "road": "V Háji",
   "suburb": "Holešovice"
+ },
+ "50.10468,14.48854": {
+  "at": "2026-11-26T14:02:26Z",
+  "distance_m": 0,
+  "house_number": "2457/6",
+  "postcode": "190 00",
+  "road": "Kurta Konráda",
+  "suburb": "Prosek"
  },
  "50.10471,14.48725": {
   "at": "2026-11-05T12:22:32Z",
@@ -13686,6 +13785,14 @@
   "road": "U Svobodárny",
   "suburb": "Prosek"
  },
+ "50.10574,14.48990": {
+  "at": "2026-11-26T14:02:28Z",
+  "distance_m": 12,
+  "house_number": "2567/32",
+  "postcode": "190 00",
+  "road": "Drahobejlova",
+  "suburb": "Prosek"
+ },
  "50.10574,14.52380": {
   "at": "2026-09-26T21:13:52Z",
   "distance_m": 6,
@@ -13709,6 +13816,13 @@
   "postcode": "180 00",
   "road": "Ronkova",
   "suburb": "Praha 8"
+ },
+ "50.10578,14.49302": {
+  "at": "2026-11-26T14:02:32Z",
+  "distance_m": 25,
+  "postcode": "190 93",
+  "road": "Ocelářská",
+  "suburb": "Prosek"
  },
  "50.10579,14.49051": {
   "at": "2026-11-15T21:13:08Z",
@@ -14523,6 +14637,13 @@
   "road": "Andrštova",
   "suburb": "Praha 8"
  },
+ "50.10779,14.48244": {
+  "at": "2026-11-26T14:02:30Z",
+  "distance_m": 46,
+  "postcode": "190 93",
+  "road": "Nad Kolčavkou",
+  "suburb": "Prosek"
+ },
  "50.10784,14.47440": {
   "at": "2026-11-16T18:37:04Z",
   "distance_m": 7,
@@ -14694,6 +14815,14 @@
   "postcode": "190 00",
   "road": "Svatošových",
   "suburb": "Vysočany"
+ },
+ "50.10819,14.47533": {
+  "at": "2026-11-26T14:02:34Z",
+  "distance_m": 16,
+  "house_number": "1077/13",
+  "postcode": "180 00",
+  "road": "U Libeňského pivovaru",
+  "suburb": "Libeň"
  },
  "50.10822,14.47529": {
   "at": "2026-09-26T21:13:20Z",
@@ -15853,6 +15982,13 @@
   "road": "Bratří Dohalských",
   "suburb": "Vysočany"
  },
+ "50.11093,14.51391": {
+  "at": "2026-11-26T14:02:48Z",
+  "distance_m": 40,
+  "postcode": "190 07",
+  "road": "Kolbenova",
+  "suburb": "Vysočany"
+ },
  "50.11093,14.51949": {
   "at": "2026-09-27T05:14:56Z",
   "distance_m": 24,
@@ -16744,6 +16880,14 @@
   "distance_m": 0,
   "postcode": "180 81",
   "road": "Bulovka",
+  "suburb": "Libeň"
+ },
+ "50.11458,14.47040": {
+  "at": "2026-11-26T14:02:21Z",
+  "distance_m": 0,
+  "house_number": "615/164",
+  "postcode": "180 00",
+  "road": "Zenklova",
   "suburb": "Libeň"
  },
  "50.11460,14.47716": {
@@ -17639,6 +17783,14 @@
   "postcode": "182 00",
   "road": "U Stírky",
   "suburb": "Libeň"
+ },
+ "50.11957,14.48575": {
+  "at": "2026-11-26T14:02:27Z",
+  "distance_m": 0,
+  "house_number": "871/9",
+  "postcode": "190 00",
+  "road": "Žitenická",
+  "suburb": "Prosek"
  },
  "50.11961,14.48415": {
   "at": "2026-10-22T04:36:28Z",

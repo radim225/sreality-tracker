@@ -2,7 +2,7 @@
  "1022903116": {
   "id": "1022903116",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-25T14:20:44Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -883,7 +883,7 @@
  "1236435020": {
   "id": "1236435020",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-25T14:20:44Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2553,7 +2553,7 @@
  "1570738252": {
   "id": "1570738252",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-26T00:23:47Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2568,7 +2568,7 @@
    }
   ],
   "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/1570738252",
-  "title": "For sale apartment 2+kt 54 m²",
+  "title": "Prodej bytu 2+kk 54 m²",
   "transaction_type": "prodej",
   "disposition": "2+kk",
   "floor_area_sqm": 54.0,
@@ -2593,7 +2593,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.31,
-  "deal_pct": -8,
+  "deal_pct": -7,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -2751,7 +2751,7 @@
  "1656258636": {
   "id": "1656258636",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-25T14:20:44Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -2969,7 +2969,7 @@
  "1711312972": {
   "id": "1711312972",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-26T00:23:47Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3445,7 +3445,7 @@
  "1871704140": {
   "id": "1871704140",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-26T00:23:47Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -3490,7 +3490,7 @@
   "fees_source": "note",
   "source": "sreality",
   "dist_km": 1.29,
-  "deal_pct": -1,
+  "deal_pct": 0,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 6,
@@ -3981,17 +3981,22 @@
  "2062331980": {
   "id": "2062331980",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-26T00:23:47Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
     "at": "2026-06-28",
     "price_czk": 8960000,
     "total_czk": null
+   },
+   {
+    "at": "2026-11-26",
+    "price_czk": 8260000,
+    "total_czk": 8260000
    }
   ],
   "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/2062331980",
-  "title": "For sale apartment 2+kt 62 m²",
+  "title": "Prodej bytu 2+kk 62 m²",
   "transaction_type": "prodej",
   "disposition": "2+kk",
   "floor_area_sqm": 62.0,
@@ -3999,8 +4004,8 @@
   "locality": "Čerpadlová, Vysočany, Praha",
   "city_part": "Vysočany",
   "pod_harfou": false,
-  "price_czk": 8960000,
-  "price_czk_per_sqm": 144516,
+  "price_czk": 8260000,
+  "price_czk_per_sqm": 133226,
   "backfilled": true,
   "lat": 50.10098217529259,
   "lon": 14.506336005593353,
@@ -4010,15 +4015,15 @@
   "fees_missing": true,
   "electricity_czk": null,
   "electricity_estimated": false,
-  "total_czk": 8960000,
+  "total_czk": 8260000,
   "garage": true,
   "parking": false,
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.18,
-  "deal_pct": -25,
+  "deal_pct": -31,
   "deal_outlier": false,
-  "price_old_czk": null,
+  "price_old_czk": 8960000,
   "building_condition": 6,
   "building_condition_name": "Novostavba",
   "is_new_building": true,
@@ -4042,8 +4047,8 @@
   "elevator": true,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 25021,
-  "edited": "2026-11-13",
+  "views": 26458,
+  "edited": "2026-11-26",
   "since": "2026-04-13",
   "parking_state": "unpriced",
   "parking_price_czk": null,
@@ -4401,7 +4406,7 @@
  "2233184332": {
   "id": "2233184332",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-26T00:23:47Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4484,7 +4489,7 @@
  "2234683468": {
   "id": "2234683468",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-26T00:23:47Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4819,7 +4824,7 @@
  "2295116620": {
   "id": "2295116620",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-26T00:23:47Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -4829,7 +4834,7 @@
    }
   ],
   "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/2295116620",
-  "title": "Prodej bytu 2+kk 69 m²",
+  "title": "For sale apartment 2+kt 69 m²",
   "transaction_type": "prodej",
   "disposition": "2+kk",
   "floor_area_sqm": 69.0,
@@ -4854,7 +4859,7 @@
   "fees_source": "field",
   "source": "sreality",
   "dist_km": 0.75,
-  "deal_pct": -27,
+  "deal_pct": -26,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -5656,7 +5661,7 @@
  "2498511692": {
   "id": "2498511692",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-26T00:23:47Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -5691,7 +5696,7 @@
   "fees_source": "text",
   "source": "sreality",
   "dist_km": 1.27,
-  "deal_pct": 12,
+  "deal_pct": 14,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 1,
@@ -6123,7 +6128,7 @@
  "2636689484": {
   "id": "2636689484",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-26T00:23:47Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [],
   "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/2636689484",
@@ -6756,7 +6761,7 @@
  "2864615500": {
   "id": "2864615500",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-26T00:23:47Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -6975,7 +6980,7 @@
  "290865996": {
   "id": "290865996",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-26T00:23:47Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7108,7 +7113,7 @@
  "2960737100": {
   "id": "2960737100",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-25T14:20:44Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7197,7 +7202,7 @@
  "299324236": {
   "id": "299324236",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-26T00:23:47Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [],
   "url": "https://www.sreality.cz/detail/prodej/byt/2%2Bkk/x/299324236",
@@ -7599,7 +7604,7 @@
  "3173163084": {
   "id": "3173163084",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-26T00:23:47Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -7639,7 +7644,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.88,
-  "deal_pct": 9,
+  "deal_pct": 10,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 4,
@@ -8221,7 +8226,7 @@
  "3327627340": {
   "id": "3327627340",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-25T14:20:44Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -8563,7 +8568,7 @@
  "3448762444": {
   "id": "3448762444",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-26T00:23:47Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9343,7 +9348,7 @@
  "3791143756": {
   "id": "3791143756",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-25T14:20:44Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -9432,7 +9437,7 @@
  "3807547468": {
   "id": "3807547468",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-26T00:23:47Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11343,7 +11348,7 @@
  "4265243212": {
   "id": "4265243212",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-26T00:23:47Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11458,7 +11463,7 @@
  "4276437836": {
   "id": "4276437836",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-26T00:23:47Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -11473,7 +11478,7 @@
    }
   ],
   "url": "https://www.sreality.cz/detail/prodej/byt/1%2Bkk/x/4276437836",
-  "title": "Prodej bytu 1+kk 29 m²",
+  "title": "For sale apartment 1+kt 29 m²",
   "transaction_type": "prodej",
   "disposition": "1+kk",
   "floor_area_sqm": 29.0,
@@ -11659,7 +11664,7 @@
  "472662860": {
   "id": "472662860",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-26T00:23:47Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12420,7 +12425,7 @@
  "67654476": {
   "id": "67654476",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-26T00:23:47Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12455,7 +12460,7 @@
   "fees_source": null,
   "source": "sreality",
   "dist_km": 0.62,
-  "deal_pct": -6,
+  "deal_pct": -5,
   "deal_outlier": false,
   "price_old_czk": null,
   "building_condition": 4,
@@ -12577,7 +12582,7 @@
  "705409100": {
   "id": "705409100",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-26T00:23:47Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12612,14 +12617,14 @@
   "electricity_czk": null,
   "electricity_estimated": false,
   "total_czk": 9670000,
-  "garage": null,
-  "parking": null,
+  "garage": false,
+  "parking": false,
   "fees_source": null,
   "source": "sreality",
   "dist_km": 1.87,
-  "deal_pct": -4,
+  "deal_pct": -12,
   "deal_outlier": false,
-  "parking_state": null,
+  "parking_state": "none",
   "parking_price_czk": null,
   "price_old_czk": null,
   "building_condition": 6,
@@ -12645,13 +12650,13 @@
   "elevator": null,
   "ownership": 1,
   "ownership_name": "Osobní",
-  "views": 12085,
-  "edited": "2026-09-03",
+  "views": 22081,
+  "edited": "2026-11-26",
   "since": "2026-04-06",
   "exclude_from_stats": false,
   "area": "vysocany",
-  "house_class": null,
-  "house_class_source": null,
+  "house_class": "novostavba",
+  "house_class_source": "stav",
   "scope": "core"
  },
  "729280588": {
@@ -12742,7 +12747,7 @@
  "773816396": {
   "id": "773816396",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-26T00:23:47Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -12762,7 +12767,7 @@
    }
   ],
   "url": "https://www.sreality.cz/detail/prodej/byt/1%2Bkk/x/773816396",
-  "title": "For sale apartment 1+kt 34 m²",
+  "title": "Prodej bytu 1+kk 34 m²",
   "transaction_type": "prodej",
   "disposition": "1+kk",
   "floor_area_sqm": 34.0,
@@ -13074,7 +13079,7 @@
  "86463308": {
   "id": "86463308",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-25T14:20:44Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -13193,7 +13198,7 @@
  "911164236": {
   "id": "911164236",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-25T14:20:44Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
@@ -13343,7 +13348,7 @@
  "934019660": {
   "id": "934019660",
   "first_seen": "2026-06-28T20:00:38Z",
-  "last_seen": "2026-11-26T00:23:47Z",
+  "last_seen": "2026-11-26T13:58:14Z",
   "gone_at": null,
   "price_history": [
    {
